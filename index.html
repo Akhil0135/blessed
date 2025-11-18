@@ -22,8 +22,8 @@ body {
   top: 50px;
   left: 50%;
   transform: translateX(-50%);
-  width: 60px; /* horizontal bar width */
-  height: 120px; /* vertical bar height */
+  width: 60px;
+  height: 120px;
 }
 .cross-vert {
   position: absolute;
@@ -38,7 +38,7 @@ body {
 }
 .cross-hor {
   position: absolute;
-  top: 35%; /* slightly above center */
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 60px;
@@ -139,8 +139,8 @@ body {
   transform: translate(-50%, -50%);
   font-family: 'Great Vibes', cursive;
   font-size: 64px;
-  color: #FFD700;
-  text-shadow: 0 0 15px #FFD700, 0 0 30px #FFEC8B;
+  color: red; /* changed to red */
+  text-shadow: 0 0 15px red, 0 0 30px #FF6347; /* subtle glow */
   z-index: 50;
   display: flex;
   gap: 5px;
@@ -150,7 +150,7 @@ body {
 .birthdayLetter {
   opacity: 0;
   transform: scale(0);
-  transition: opacity 1s ease, transform 1s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 .birthdayLetter.show {
   opacity: 1;
@@ -231,7 +231,7 @@ button.addEventListener('click', () => {
     crossHor.style.animation = 'vibgyor 14s infinite linear';
 
     // Animate "HAPPY BIRTHDAY" letter by letter
-    const text = "HAPPY BIRTHDAY";
+    const text = "HAPPY BIRTHDAY"; // includes space
     birthdayContainer.innerHTML = '';
     for (let i = 0; i < text.length; i++) {
       const span = document.createElement('span');
@@ -240,13 +240,13 @@ button.addEventListener('click', () => {
       birthdayContainer.appendChild(span);
     }
 
-    // Animate letters with 2s gap
+    // Animate letters with 0.3s gap
     setTimeout(() => {
       const letters = birthdayContainer.querySelectorAll('.birthdayLetter');
       letters.forEach((letter, index) => {
         setTimeout(() => {
           letter.classList.add('show');
-        }, index * 2000); // 2 seconds gap
+        }, index * 300); // 0.3 seconds gap
       });
     }, 1000); // start 1 second after sun appears
   }

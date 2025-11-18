@@ -230,13 +230,16 @@ button.addEventListener('click', () => {
     crossHor.style.animation = 'vibgyor 14s infinite linear';
 
     // Animate "HAPPY BIRTHDAY" letter by letter
-    const text = "HAPPY BIRTHDAY"; // includes space
+    const text = "HAPPY BIRTHDAY";
     birthdayContainer.innerHTML = '';
     for (let i = 0; i < text.length; i++) {
       const span = document.createElement('span');
       span.classList.add('birthdayLetter');
-      // if character is space, add &nbsp; for spacing
-      span.innerHTML = text[i] === ' ' ? '&nbsp;' : text[i];
+      span.textContent = text[i];
+      // Add extra space after "HAPPY"
+      if (i === 4) { // after 'Y'
+        span.style.marginRight = '20px'; // tab-like space
+      }
       birthdayContainer.appendChild(span);
     }
 

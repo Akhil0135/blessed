@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Cross Birthday</title>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
@@ -12,11 +13,11 @@ body {
   height: 100vh;
   overflow: hidden;
   position: relative;
-  background-color: #001f3f; /* night */
+  background-color: #001f3f;
   transition: background 2s ease;
 }
 
-/* Proper Christian cross */
+/* Christian cross */
 .cross {
   position: absolute;
   top: 50px;
@@ -60,16 +61,15 @@ body {
   100% { background-color: violet; }
 }
 
-/* Button */
+/* Click button */
 #clickButton {
   position: absolute;
-  top: 200px;
+  top: 220px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 25px;
+  padding: 12px 30px;
   font-size: 18px;
   background-color: gold;
-  color: #001f3f;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -80,28 +80,28 @@ body {
 /* Moon */
 .moon {
   position: absolute;
-  top: 50px;
-  right: 50px;
+  top: 60px;
+  right: 60px;
   width: 120px;
   height: 120px;
   background-color: white;
   border-radius: 50%;
-  box-shadow: 0 0 30px rgba(255,255,255,0.5);
   opacity: 0;
   transition: opacity 2s ease;
+  box-shadow: 0 0 30px rgba(255,255,255,0.4);
   z-index: 5;
 }
 
 /* Stars */
 .stars {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  top: 0;
+  left: 0;
   opacity: 0;
   transition: opacity 2s ease;
+  z-index: 1;
 }
 .star {
   position: absolute;
@@ -111,46 +111,66 @@ body {
   animation: twinkle 2s infinite alternate;
 }
 @keyframes twinkle {
-  0% { opacity: 0.2; transform: scale(0.5); }
+  0% { opacity: 0.2; transform: scale(0.7); }
   50% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0.2; transform: scale(0.5); }
+  100% { opacity: 0.2; transform: scale(0.7); }
 }
 
 /* Sun */
 .sun {
   position: absolute;
-  top: 50px;
-  right: 50px;
+  top: 60px;
+  right: 60px;
   width: 120px;
   height: 120px;
   background-color: yellow;
   border-radius: 50%;
-  box-shadow: 0 0 50px rgba(255,255,0,0.5);
   opacity: 0;
   transition: opacity 2s ease;
   z-index: 5;
+  box-shadow: 0 0 40px rgba(255,255,0,0.4);
 }
 
-/* HAPPY BIRTHDAY text container */
+/* Happy Birthday text */
 #birthdayTextContainer {
   position: absolute;
-  top: 50%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: 'Great Vibes', cursive;
   font-size: 64px;
-  color: red; /* bright red */
-  z-index: 50;
+  color: red;
   display: flex;
-  gap: 5px;
+  gap: 10px;
+  z-index: 50;
 }
 
-/* Each letter */
 .birthdayLetter {
   opacity: 0;
   transform: scale(0);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  position: relative;
 }
+
+/* sparkle */
+.birthdayLetter::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: yellow;
+  opacity: 0;
+  transform: translateX(-50%) scale(0);
+  animation: sparkle 1s infinite;
+}
+@keyframes sparkle {
+  0%,100% { opacity: 0; transform: translateX(-50%) scale(0); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
 .birthdayLetter.show {
   opacity: 1;
   transform: scale(1);
@@ -159,101 +179,86 @@ body {
 </head>
 <body>
 
-<!-- Cross -->
 <div class="cross">
   <div class="cross-vert"></div>
   <div class="cross-hor"></div>
 </div>
 
-<!-- Click button -->
 <button id="clickButton">Click Here</button>
 
-<!-- Moon, Stars, Sun -->
 <div class="moon" id="moon"></div>
 <div class="stars" id="stars"></div>
 <div class="sun" id="sun"></div>
 
-<!-- Birthday text container -->
 <div id="birthdayTextContainer"></div>
 
 <script>
-const button = document.getElementById('clickButton');
-const moon = document.getElementById('moon');
-const stars = document.getElementById('stars');
-const sun = document.getElementById('sun');
-const birthdayContainer = document.getElementById('birthdayTextContainer');
-const crossVert = document.querySelector('.cross-vert');
-const crossHor = document.querySelector('.cross-hor');
+const button = document.getElementById("clickButton");
+const moon = document.getElementById("moon");
+const stars = document.getElementById("stars");
+const sun = document.getElementById("sun");
+const textBox = document.getElementById("birthdayTextContainer");
+const crossVert = document.querySelector(".cross-vert");
+const crossHor = document.querySelector(".cross-hor");
+
 let clickCount = 0;
 
-// Show initial button after 3 seconds
-setTimeout(() => { button.style.display = 'block'; }, 3000);
+setTimeout(() => button.style.display = "block", 3000);
 
-// Generate stars
-const numStars = 100;
-for (let i = 0; i < numStars; i++) {
-  const star = document.createElement('div');
-  star.className = 'star';
-  star.style.top = Math.random() * 100 + '%';
-  star.style.left = Math.random() * 100 + '%';
-  const size = Math.random() * 4 + 2;
-  star.style.width = size + 'px';
-  star.style.height = size + 'px';
-  star.style.animationDuration = (Math.random() * 3 + 2) + 's';
-  stars.appendChild(star);
+/* stars creation */
+for (let i = 0; i < 100; i++) {
+  let s = document.createElement("div");
+  s.className = "star";
+  s.style.top = Math.random() * 100 + "%";
+  s.style.left = Math.random() * 100 + "%";
+  let size = Math.random() * 3 + 2;
+  s.style.width = s.style.height = size + "px";
+  s.style.animationDuration = (Math.random() * 3 + 1.5) + "s";
+  stars.appendChild(s);
 }
 
-// Button click handler
-button.addEventListener('click', () => {
+button.addEventListener("click", () => {
   clickCount++;
 
   if (clickCount === 1) {
-    // Night scene
-    button.style.display = 'none';
-    moon.style.opacity = '1';
-    stars.style.opacity = '1';
+    button.style.display = "none";
+    moon.style.opacity = "1";
+    stars.style.opacity = "1";
 
-    // Button returns after 7 seconds
-    setTimeout(() => { button.style.display = 'block'; }, 7000);
+    setTimeout(() => button.style.display = "block", 7000);
 
   } else if (clickCount === 2) {
-    // Day scene
-    button.style.display = 'none';
-    moon.style.opacity = '0';
-    stars.style.opacity = '0';
+    button.style.display = "none";
 
-    sun.style.opacity = '1';
-    document.body.style.background = 'linear-gradient(to bottom, #87CEEB, #B0E0E6)';
+    moon.style.opacity = "0";
+    stars.style.opacity = "0";
 
-    // VIBGYOR cross
-    crossVert.style.animation = 'vibgyor 14s infinite linear';
-    crossHor.style.animation = 'vibgyor 14s infinite linear';
+    sun.style.opacity = "1";
+    document.body.style.background = "linear-gradient(#87CEEB, #B0E0E6)";
 
-    // Animate "HAPPY BIRTHDAY" letter by letter
-    const text = "HAPPY BIRTHDAY";
-    birthdayContainer.innerHTML = '';
+    /* VIBGYOR Cross */
+    crossVert.style.animation = "vibgyor 14s infinite linear";
+    crossHor.style.animation = "vibgyor 14s infinite linear";
+
+    /* HAPPY BIRTHDAY */
+    const text = "HAPPY    BIRTHDAY";  
+    textBox.innerHTML = "";
+
     for (let i = 0; i < text.length; i++) {
-      const span = document.createElement('span');
-      span.classList.add('birthdayLetter');
+      const span = document.createElement("span");
+      span.className = "birthdayLetter";
       span.textContent = text[i];
-      // Add extra space after "HAPPY"
-      if (i === 4) { // after 'Y'
-        span.style.marginRight = '20px'; // tab-like space
-      }
-      birthdayContainer.appendChild(span);
+      textBox.appendChild(span);
     }
 
-    // Animate letters with 0.3s gap
     setTimeout(() => {
-      const letters = birthdayContainer.querySelectorAll('.birthdayLetter');
-      letters.forEach((letter, index) => {
-        setTimeout(() => {
-          letter.classList.add('show');
-        }, index * 300); // 0.3 seconds gap
+      document.querySelectorAll(".birthdayLetter").forEach((letter, index) => {
+        setTimeout(() => letter.classList.add("show"), index * 300);
       });
-    }, 1000); // start 1 second after sun appears
+    }, 600);
   }
 });
 </script>
+
 </body>
 </html>

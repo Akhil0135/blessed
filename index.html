@@ -3,15 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Navy Blue Background</title>
+<title>Golden Cross</title>
 <style>
   body {
     margin: 0;
     height: 100vh;
     background-color: #001f3f; /* navy blue */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px; /* space from top */
+  }
+
+  /* Cross container */
+  .cross {
+    position: relative;
+    width: 20px;   /* vertical bar width */
+    height: 100px; /* vertical bar height */
+  }
+
+  /* Vertical bar */
+  .cross::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 100px;
+    background-color: gold;
+  }
+
+  /* Horizontal bar */
+  .cross::after {
+    content: '';
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 20px;
+    background-color: gold;
   }
 </style>
 </head>
 <body>
+  <div class="cross"></div>
 </body>
 </html>

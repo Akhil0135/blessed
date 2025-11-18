@@ -27,22 +27,25 @@
     align-items: center;
   }
 
-  /* Vertical part */
-  .cross-vert {
+  /* Vertical and horizontal parts */
+  .cross-vert, .cross-hor {
     position: absolute;
-    width: 20px;
-    height: 100px;
-    background-color: gold;
     transition: background-color 1s ease;
   }
 
-  /* Horizontal part */
-  .cross-hor {
-    position: absolute;
-    width: 60px;
-    height: 20px;
-    background-color: gold;
-    transition: background-color 1s ease;
+  .cross-vert { width: 20px; height: 100px; background-color: gold; }
+  .cross-hor { width: 60px; height: 20px; background-color: gold; }
+
+  /* VIBGYOR animation */
+  @keyframes vibgyor {
+    0% { background-color: violet; }
+    14% { background-color: indigo; }
+    28% { background-color: blue; }
+    42% { background-color: green; }
+    57% { background-color: yellow; }
+    71% { background-color: orange; }
+    85% { background-color: red; }
+    100% { background-color: violet; }
   }
 
   /* Button */
@@ -117,7 +120,6 @@
     transition: opacity 2s ease;
     z-index: 5;
   }
-
 </style>
 </head>
 <body>
@@ -163,28 +165,25 @@
     clickCount++;
 
     if (clickCount === 1) {
-      // First click: night scene
+      // Night scene
       button.style.display = 'none';
       moon.style.opacity = '1';
       stars.style.opacity = '1';
 
-      // Button comes back after 7 seconds
       setTimeout(() => { button.style.display = 'block'; }, 7000);
 
     } else if (clickCount === 2) {
-      // Second click: day scene
+      // Day scene
       button.style.display = 'none';
       moon.style.opacity = '0';
       stars.style.opacity = '0';
 
       sun.style.opacity = '1';
-
-      // Change background to day sky
       document.body.style.background = 'linear-gradient(to bottom, #87CEEB, #B0E0E6)';
 
-      // Change cross color to dark gray for contrast
-      crossVert.style.backgroundColor = '#333333';
-      crossHor.style.backgroundColor = '#333333';
+      // Apply VIBGYOR animation to cross
+      crossVert.style.animation = 'vibgyor 14s infinite linear';
+      crossHor.style.animation = 'vibgyor 14s infinite linear';
     }
   });
 </script>

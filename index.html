@@ -25,7 +25,6 @@
     height: 100px; 
   }
 
-  /* Vertical bar */
   .cross::before {
     content: '';
     position: absolute;
@@ -38,7 +37,6 @@
     box-shadow: 0 0 2px gold;
   }
 
-  /* Horizontal bar */
   .cross::after {
     content: '';
     position: absolute;
@@ -130,7 +128,7 @@
   // Generate stars
   const starsContainer = document.getElementById('stars');
   const numStars = 100;
-  for(let i=0; i<numStars; i++){
+  for(let i = 0; i < numStars; i++) {
     const star = document.createElement('div');
     star.className = 'star';
     star.style.top = Math.random() * 100 + '%';
@@ -141,14 +139,14 @@
     starsContainer.appendChild(star);
   }
 
-  // Click button action
+  // Button click event
   document.getElementById('clickButton').addEventListener('click', () => {
     // Hide button
     document.getElementById('clickButton').style.display = 'none';
     // Fade out cross
-    document.querySelector('.cross').style.opacity = '0';
     document.querySelector('.cross').style.transition = 'opacity 2s ease';
-    // Show moon and stars
+    document.querySelector('.cross').style.opacity = '0';
+    // Fade in moon and stars
     document.getElementById('moon').style.opacity = '1';
     document.getElementById('stars').style.opacity = '1';
   });

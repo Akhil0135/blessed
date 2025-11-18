@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+v<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -106,34 +106,42 @@
     100% { opacity: 0.2; transform: scale(0.5); }
   }
 
-  /* Sun */
-  .sun {
+  /* Sun container to hold sun and rays */
+  .sun-container {
     position: absolute;
     top: 50px;
     right: 50px; /* same as moon */
     width: 120px;
     height: 120px;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 2s ease;
+  }
+
+  /* Sun itself */
+  .sun {
+    width: 100%;
+    height: 100%;
     background-color: yellow;
     border-radius: 50%;
     box-shadow: 0 0 50px rgba(255,255,0,0.7);
-    opacity: 0;
-    transition: opacity 2s ease;
-    z-index: 5;
+    position: relative;
+    z-index: 1;
   }
 
-  /* Sun rays */
+  /* Rays */
   .ray {
     position: absolute;
-    width: 4px;
+    width: 6px;
     height: 40px;
     background-color: yellow;
     top: 50%;
     left: 50%;
-    transform-origin: bottom center;
+    transform-origin: center bottom; /* rotate around bottom of the ray */
+    border-radius: 3px;
     opacity: 0;
-    border-radius: 2px;
-    z-index: 4;
-    transition: opacity 0.5s ease;
+    z-index: 0;
+    transition: opacity 0.3s ease;
   }
 </style>
 </head>
@@ -143,10 +151,17 @@
 
   <div class="moon" id="moon"></div>
   <div class="stars" id="stars"></div>
-  <div class="sun" id="sun"></div>
+
+  <!-- Sun container -->
+  <div class="sun-container" id="sunContainer">
+    <div class="sun"></div>
+  </div>
 
 <script>
   const button = document.getElementById('clickButton');
+  const moon = document.getElementById('moon');
+  const stars = document.getElementById('stars');
+  const sunContainer = document.getElementById('sunContainer');
   let clickCount = 0;
 
   // Show initial button after 3 seconds
@@ -154,30 +169,29 @@
     button.style.display = 'block';
   }, 3000);
 
-  // Generate bigger stars
-  const starsContainer = document.getElementById('stars');
+  // Generate stars
   const numStars = 100;
   for (let i = 0; i < numStars; i++) {
     const star = document.createElement('div');
     star.className = 'star';
     star.style.top = Math.random() * 100 + '%';
     star.style.left = Math.random() * 100 + '%';
-    const size = Math.random() * 4 + 2; // bigger stars
+    const size = Math.random() * 4 + 2;
     star.style.width = size + 'px';
     star.style.height = size + 'px';
     star.style.animationDuration = (Math.random() * 3 + 2) + 's';
-    starsContainer.appendChild(star);
+    stars.appendChild(star);
   }
 
-  // Create sun rays perfectly aligned
-  const sun = document.getElementById('sun');
+  // Create rays
   const numRays = 12;
   const rays = [];
   for (let i = 0; i < numRays; i++) {
     const ray = document.createElement('div');
     ray.className = 'ray';
-    ray.style.transform = `rotate(${i * (360 / numRays)}deg) translateY(-60px)`;
-    sun.appendChild(ray);
+    const angle = (i * 360 / numRays);
+    ray.style.transform = `rotate(${angle}deg) translateY(-60px)`;
+    sunContainer.appendChild(ray);
     rays.push(ray);
   }
 
@@ -188,8 +202,8 @@
     if (clickCount === 1) {
       // First click: show moon and stars
       button.style.display = 'none';
-      document.getElementById('moon').style.opacity = '1';
-      document.getElementById('stars').style.opacity = '1';
+      moon.style.opacity = '1';
+      stars.style.opacity = '1';
 
       // Show button again after 7 seconds
       setTimeout(() => {
@@ -198,16 +212,16 @@
     } else if (clickCount === 2) {
       // Second click: hide moon and stars, show sun with rays
       button.style.display = 'none';
-      document.getElementById('moon').style.opacity = '0';
-      document.getElementById('stars').style.opacity = '0';
+      moon.style.opacity = '0';
+      stars.style.opacity = '0';
 
-      sun.style.opacity = '1';
+      sunContainer.style.opacity = '1';
 
-      // Animate rays one after another
+      // Animate rays sequentially
       rays.forEach((ray, index) => {
         setTimeout(() => {
           ray.style.opacity = '1';
-        }, index * 200); // 0.2s delay between each ray
+        }, index * 200);
       });
     }
   });

@@ -1,26 +1,7 @@
-<!-- Add inside body, after cross and sun/moon elements -->
-<div id="birthdayText">Happy Birthday</div>
+// Show "Happy Birthday" text
+const birthdayText = document.getElementById('birthdayText');
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
-
-#birthdayText {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  font-family: 'Great Vibes', cursive;
-  font-size: 64px;
-  color: #FFD700; /* bright golden */
-  text-shadow: 0 0 10px #FFD700, 0 0 20px #FFEC8B;
-  opacity: 0;
-  transition: opacity 2s ease, transform 2s ease;
-  z-index: 15;
-}
-
-/* Animate in */
-.show-text {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-</style>
+// Delay slightly for smoother effect
+setTimeout(() => {
+  birthdayText.classList.add('show-text');
+}, 1000); // 1 second after sun appears

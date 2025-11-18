@@ -1,287 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Birthday Animation</title>
-
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+  body {
+    margin: 0;
+    height: 100vh;
+    background-color: #001f3f;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
 
-body {
-  margin: 0;
-  height: 100vh;
-  overflow: hidden;
-  position: relative;
-  background-color: #001f3f;
-  transition: background 2s ease;
-}
+  /* Cross */
+  .cross {
+    position: absolute;
+    top: 40px;
+    width: 60px;
+    height: 160px;
+    background: gold;
+  }
+  .cross::before {
+    content: '';
+    position: absolute;
+    top: 45px;
+    left: -50px;
+    width: 160px;
+    height: 40px;
+    background: gold;
+  }
 
-/* Christian cross */
-.cross {
-  position: absolute;
-  top: 50px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 120px;
-}
-.cross-vert {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 120px;
-  background-color: gold;
-  transition: background-color 1s ease;
-  z-index: 2;
-}
-.cross-hor {
-  position: absolute;
-  top: 35%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60px;
-  height: 20px;
-  background-color: gold;
-  transition: background-color 1s ease;
-  z-index: 3;
-}
+  /* Text */
+  #birthdayText {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 55px;
+    font-family: "Brush Script MT", cursive;
+    display: flex;
+    gap: 5px;
+    color: red;
+  }
+  .letter {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .letter.show {
+    opacity: 1;
+  }
 
-/* VIBGYOR animation */
-@keyframes vibgyor {
-  0% { background-color: violet; }
-  14% { background-color: indigo; }
-  28% { background-color: blue; }
-  42% { background-color: green; }
-  57% { background-color: yellow; }
-  71% { background-color: orange; }
-  85% { background-color: red; }
-  100% { background-color: violet; }
-}
+  /* Balloon */
+  .balloon {
+    position: absolute;
+    bottom: -150px;
+    width: 40px;
+    height: 55px;
+    border-radius: 50% 50% 45% 45%;
+    animation: rise 6s linear infinite;
+  }
+  @keyframes rise {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-120vh); opacity: 0; }
+  }
 
-/* Click button */
-#clickButton {
-  position: absolute;
-  top: 220px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 30px;
-  font-size: 18px;
-  background-color: gold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  display: none;
-  z-index: 10;
-}
-
-/* Moon */
-.moon {
-  position: absolute;
-  top: 60px;
-  right: 60px;
-  width: 120px;
-  height: 120px;
-  background-color: white;
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity 2s ease;
-  box-shadow: 0 0 30px rgba(255,255,255,0.4);
-  z-index: 5;
-}
-
-/* Stars */
-.stars {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  transition: opacity 2s ease;
-  z-index: 1;
-}
-.star {
-  position: absolute;
-  background-color: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: twinkle 2s infinite alternate;
-}
-@keyframes twinkle {
-  0% { opacity: 0.2; transform: scale(0.7); }
-  50% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0.2; transform: scale(0.7); }
-}
-
-/* Sun */
-.sun {
-  position: absolute;
-  top: 60px;
-  right: 60px;
-  width: 120px;
-  height: 120px;
-  background-color: yellow;
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity 2s ease;
-  z-index: 5;
-  box-shadow: 0 0 40px rgba(255,255,0,0.4);
-}
-
-/* Happy Birthday text */
-#birthdayTextContainer {
-  position: absolute;
-  top: 55%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Great Vibes', cursive;
-  font-size: 64px;
-  color: red;
-  display: flex;
-  gap: 10px;
-  z-index: 50;
-}
-
-.birthdayLetter {
-  opacity: 0;
-  transform: scale(0);
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-/* Balloons */
-.balloon {
-  position: absolute;
-  bottom: -150px;
-  width: 40px;
-  height: 55px;
-  border-radius: 50%;
-  background-color: red;
-  animation: rise 6s linear forwards;
-}
-@keyframes rise {
-  from { transform: translateY(0); }
-  to { transform: translateY(-120vh); }
-}
-
-/* Confetti */
-.confetti {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  animation: confettiFall 3s linear forwards;
-}
-@keyframes confettiFall {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(120vh) rotate(360deg); }
-}
+  /* Confetti */
+  .confetti {
+    position: absolute;
+    width: 8px;
+    height: 12px;
+    animation: fall 3s linear forwards;
+  }
+  @keyframes fall {
+    from { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+    to { transform: translateY(120vh) rotate(360deg); opacity: 0; }
+  }
 </style>
 </head>
 <body>
-
-<div class="cross">
-  <div class="cross-vert"></div>
-  <div class="cross-hor"></div>
-</div>
-
-<button id="clickButton">Click Here</button>
-
-<div class="moon" id="moon"></div>
-<div class="stars" id="stars"></div>
-<div class="sun" id="sun"></div>
-
-<div id="birthdayTextContainer"></div>
+  <div class="cross"></div>
+  <div id="birthdayText"></div>
 
 <script>
-const button = document.getElementById("clickButton");
-const moon = document.getElementById("moon");
-const stars = document.getElementById("stars");
-const sun = document.getElementById("sun");
-const textBox = document.getElementById("birthdayTextContainer");
-const crossVert = document.querySelector(".cross-vert");
-const crossHor = document.querySelector(".cross-hor");
+// Animate Text
+function startText() {
+  const container = document.getElementById("birthdayText");
+  container.innerHTML = "";
 
-let clickCount = 0;
+  const text = "HAPPY BIRTHDAY";
 
-setTimeout(() => button.style.display = "block", 3000);
+  for (let i = 0; i < text.length; i++) {
+    const span = document.createElement("span");
+    span.textContent = text[i];
+    span.classList.add("letter");
 
-/* create stars */
-for (let i = 0; i < 100; i++) {
-  let s = document.createElement("div");
-  s.className = "star";
-  s.style.top = Math.random() * 100 + "%";
-  s.style.left = Math.random() * 100 + "%";
-  let size = Math.random() * 3 + 2;
-  s.style.width = s.style.height = size + "px";
-  s.style.animationDuration = (Math.random() * 3 + 1.5) + "s";
-  stars.appendChild(s);
+    // Space between HAPPY and BIRTHDAY
+    if (i === 5) span.style.marginRight = "25px";
+
+    container.appendChild(span);
+  }
+
+  const letters = document.querySelectorAll(".letter");
+  letters.forEach((l, index) => {
+    setTimeout(() => {
+      l.classList.add("show");
+    }, index * 100); // 0.1 sec per letter
+  });
 }
 
-button.addEventListener("click", () => {
-  clickCount++;
+// Balloons
+function createBalloons() {
+  setInterval(() => {
+    const balloon = document.createElement("div");
+    balloon.classList.add("balloon");
 
-  if (clickCount === 1) {
-    button.style.display = "none";
-    moon.style.opacity = "1";
-    stars.style.opacity = "1";
+    const colors = ["#ff4d4d", "#ffcc00", "#66ccff", "#ff99ff", "#33ff77"]; 
+    balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
 
-    setTimeout(() => button.style.display = "block", 7000);
+    balloon.style.left = Math.random() * window.innerWidth + "px";
+    balloon.style.animationDuration = (5 + Math.random() * 3) + "s";
 
-  } else if (clickCount === 2) {
-    button.style.display = "none";
+    document.body.appendChild(balloon);
 
-    moon.style.opacity = "0";
-    stars.style.opacity = "0";
+    setTimeout(() => balloon.remove(), 9000);
+  }, 400);
+}
 
-    sun.style.opacity = "1";
-    document.body.style.background = "linear-gradient(#87CEEB, #B0E0E6)";
+// Confetti
+function confettiExplosion() {
+  for (let i = 0; i < 120; i++) {
+    const conf = document.createElement("div");
+    conf.classList.add("confetti");
 
-    /* VIBGYOR Cross */
-    crossVert.style.animation = "vibgyor 14s infinite linear";
-    crossHor.style.animation = "vibgyor 14s infinite linear";
+    const colors = ["red", "yellow", "blue", "green", "purple", "orange"]; 
+    conf.style.background = colors[Math.floor(Math.random() * colors.length)];
 
-    /* HAPPY BIRTHDAY TEXT */
-    const text = "HAPPY    BIRTHDAY";
-    textBox.innerHTML = "";
+    conf.style.left = Math.random() * window.innerWidth + "px";
 
-    for (let i = 0; i < text.length; i++) {
-      const span = document.createElement("span");
-      span.className = "birthdayLetter";
-      span.textContent = text[i];
-      textBox.appendChild(span);
-    }
-
-    setTimeout(() => {
-      document.querySelectorAll(".birthdayLetter").forEach((letter, index) => {
-        setTimeout(() => letter.style.opacity = letter.style.transform = "1", index * 100);
-      });
-    }, 500);
-
-    /* BALLOONS */
-    for (let i = 0; i < 15; i++) {
-      let b = document.createElement("div");
-      b.className = "balloon";
-      b.style.left = Math.random() * 100 + "%";
-      b.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
-      b.style.animationDelay = Math.random()*2 + "s";
-      document.body.appendChild(b);
-    }
-
-    /* CONFETTI */
-    for (let i = 0; i < 70; i++) {
-      let c = document.createElement("div");
-      c.className = "confetti";
-      c.style.left = Math.random()*100 + "%";
-      c.style.top = Math.random()*20 + "%";
-      c.style.backgroundColor = `hsl(${Math.random()*360}, 90%, 60%)`;
-      document.body.appendChild(c);
-    }
+    document.body.appendChild(conf);
+    setTimeout(() => conf.remove(), 3500);
   }
-});
-</script>
+}
 
+// Start Everything
+setTimeout(() => {
+  startText();
+  createBalloons();
+  confettiExplosion();
+}, 500);
+</script>
 </body>
 </html>

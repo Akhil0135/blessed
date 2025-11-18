@@ -14,38 +14,35 @@
     transition: background 2s ease;
   }
 
-  /* Cross */
+  /* Cross wrapper */
   .cross {
     position: absolute;
     top: 50px;
     left: 50%;
     transform: translateX(-50%);
-    width: 20px;
-    height: 100px;
-    transition: background-color 1s ease;
+    width: 60px; /* horizontal width */
+    height: 100px; /* vertical height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .cross::before, .cross::after {
-    content: '';
+  /* Vertical part */
+  .cross-vert {
     position: absolute;
+    width: 20px;
+    height: 100px;
     background-color: gold;
     transition: background-color 1s ease;
   }
 
-  .cross::before {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 100px;
-  }
-
-  .cross::after {
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  /* Horizontal part */
+  .cross-hor {
+    position: absolute;
     width: 60px;
     height: 20px;
+    background-color: gold;
+    transition: background-color 1s ease;
   }
 
   /* Button */
@@ -124,7 +121,12 @@
 </style>
 </head>
 <body>
-  <div class="cross"></div>
+  <!-- Cross with separate divs -->
+  <div class="cross">
+    <div class="cross-vert"></div>
+    <div class="cross-hor"></div>
+  </div>
+
   <button id="clickButton">Click Here</button>
 
   <div class="moon" id="moon"></div>
@@ -136,8 +138,8 @@
   const moon = document.getElementById('moon');
   const stars = document.getElementById('stars');
   const sun = document.getElementById('sun');
-  const crossBefore = document.querySelector('.cross::before') || document.querySelector('.cross');
-  const cross = document.querySelector('.cross');
+  const crossVert = document.querySelector('.cross-vert');
+  const crossHor = document.querySelector('.cross-hor');
   let clickCount = 0;
 
   // Show initial button after 3 seconds
@@ -161,31 +163,28 @@
     clickCount++;
 
     if (clickCount === 1) {
-      // First click: show moon + stars, cross stays gold
+      // First click: night scene
       button.style.display = 'none';
       moon.style.opacity = '1';
       stars.style.opacity = '1';
 
-      // Show button again after 7 seconds
+      // Button comes back after 7 seconds
       setTimeout(() => { button.style.display = 'block'; }, 7000);
 
     } else if (clickCount === 2) {
-      // Second click: hide moon + stars, show sun, change background to day
+      // Second click: day scene
       button.style.display = 'none';
       moon.style.opacity = '0';
       stars.style.opacity = '0';
 
       sun.style.opacity = '1';
 
-      // Change background to day
+      // Change background to day sky
       document.body.style.background = 'linear-gradient(to bottom, #87CEEB, #B0E0E6)';
 
-      // Change cross color to dark gray to suit daytime
-      cross.style.setProperty('--cross-color', '#333333');
-      cross.querySelectorAll('::before, ::after');
-      cross.style.setProperty('color', '#333'); // fallback if needed
-      cross.querySelectorAll('::before').forEach(e=>e.style.backgroundColor='#333');
-      cross.querySelectorAll('::after').forEach(e=>e.style.backgroundColor='#333');
+      // Change cross color to dark gray for contrast
+      crossVert.style.backgroundColor = '#333333';
+      crossHor.style.backgroundColor = '#333333';
     }
   });
 </script>

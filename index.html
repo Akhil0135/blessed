@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Realistic Golden Cross</title>
+<title>Golden Cross</title>
 <style>
   body {
     margin: 0;
@@ -15,10 +15,11 @@
     padding-top: 50px;
   }
 
+  /* Cross container */
   .cross {
     position: relative;
-    width: 30px;    /* vertical bar width */
-    height: 120px;  /* vertical bar height */
+    width: 20px;   /* vertical bar width */
+    height: 100px; /* vertical bar height */
   }
 
   /* Vertical bar */
@@ -28,25 +29,25 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 30px;
-    height: 120px;
-    background: linear-gradient(135deg, #FFD700, #FFA500); /* gold gradient */
-    border-radius: 3px;
-    box-shadow: 0 0 10px gold, 0 0 20px rgba(255, 215, 0, 0.5); /* glow */
+    width: 20px;
+    height: 100px;
+    background-color: gold;
+    /* sharp edges: remove border-radius */
+    box-shadow: 0 0 10px gold, 0 0 20px gold, 0 0 30px rgba(255, 215, 0, 0.5);
   }
 
   /* Horizontal bar */
   .cross::after {
     content: '';
     position: absolute;
-    top: 45%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 70px;
-    height: 25px;
-    background: linear-gradient(135deg, #FFD700, #FFA500); /* gold gradient */
-    border-radius: 3px;
-    box-shadow: 0 0 10px gold, 0 0 20px rgba(255, 215, 0, 0.5); /* glow */
+    width: 60px;
+    height: 20px;
+    background-color: gold;
+    /* sharp edges: remove border-radius */
+    box-shadow: 0 0 10px gold, 0 0 20px gold, 0 0 30px rgba(255, 215, 0, 0.5);
   }
 </style>
 </head>

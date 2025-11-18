@@ -139,8 +139,7 @@ body {
   transform: translate(-50%, -50%);
   font-family: 'Great Vibes', cursive;
   font-size: 64px;
-  color: red; /* changed to red */
-  text-shadow: 0 0 15px red, 0 0 30px #FF6347; /* subtle glow */
+  color: red; /* bright red */
   z-index: 50;
   display: flex;
   gap: 5px;
@@ -236,7 +235,8 @@ button.addEventListener('click', () => {
     for (let i = 0; i < text.length; i++) {
       const span = document.createElement('span');
       span.classList.add('birthdayLetter');
-      span.textContent = text[i];
+      // if character is space, add &nbsp; for spacing
+      span.innerHTML = text[i] === ' ' ? '&nbsp;' : text[i];
       birthdayContainer.appendChild(span);
     }
 

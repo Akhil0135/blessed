@@ -114,9 +114,11 @@
   <div class="stars" id="stars"></div>
 
 <script>
-  // Show button after 3 seconds
+  const button = document.getElementById('clickButton');
+
+  // Show initial button after 3 seconds
   setTimeout(() => {
-    document.getElementById('clickButton').style.display = 'block';
+    button.style.display = 'block';
   }, 3000);
 
   // Generate bigger stars
@@ -135,13 +137,18 @@
   }
 
   // Button click event
-  const button = document.getElementById('clickButton');
   button.addEventListener('click', () => {
     // Hide button
     button.style.display = 'none';
+
     // Show moon and stars
     document.getElementById('moon').style.opacity = '1';
     document.getElementById('stars').style.opacity = '1';
+
+    // Show button again after 7 seconds
+    setTimeout(() => {
+      button.style.display = 'block';
+    }, 7000);
   });
 </script>
 </body>

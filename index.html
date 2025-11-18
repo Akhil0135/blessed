@@ -25,7 +25,6 @@ body {
   width: 60px; /* horizontal bar width */
   height: 120px; /* vertical bar height */
 }
-
 .cross-vert {
   position: absolute;
   top: 0;
@@ -37,10 +36,9 @@ body {
   transition: background-color 1s ease;
   z-index: 2;
 }
-
 .cross-hor {
   position: absolute;
-  top: 35%; /* slightly above center for Christian cross */
+  top: 35%; /* slightly above center */
   left: 50%;
   transform: translate(-50%, -50%);
   width: 60px;
@@ -105,7 +103,6 @@ body {
   opacity: 0;
   transition: opacity 2s ease;
 }
-
 .star {
   position: absolute;
   background-color: white;
@@ -113,7 +110,6 @@ body {
   opacity: 0.8;
   animation: twinkle 2s infinite alternate;
 }
-
 @keyframes twinkle {
   0% { opacity: 0.2; transform: scale(0.5); }
   50% { opacity: 1; transform: scale(1); }
@@ -135,24 +131,30 @@ body {
   z-index: 5;
 }
 
-/* Happy Birthday text */
-#birthdayText {
+/* HAPPY BIRTHDAY text container */
+#birthdayTextContainer {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0);
+  transform: translate(-50%, -50%);
   font-family: 'Great Vibes', cursive;
   font-size: 64px;
-  color: #FFD700; /* bright golden */
+  color: #FFD700;
   text-shadow: 0 0 15px #FFD700, 0 0 30px #FFEC8B;
-  opacity: 0;
-  z-index: 50; /* above everything */
-  transition: opacity 2s ease, transform 2s ease;
+  z-index: 50;
+  display: flex;
+  gap: 5px;
 }
 
-.show-text {
+/* Each letter */
+.birthdayLetter {
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 1s ease, transform 1s ease;
+}
+.birthdayLetter.show {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transform: scale(1);
 }
 </style>
 </head>
@@ -164,19 +166,23 @@ body {
   <div class="cross-hor"></div>
 </div>
 
+<!-- Click button -->
 <button id="clickButton">Click Here</button>
 
+<!-- Moon, Stars, Sun -->
 <div class="moon" id="moon"></div>
 <div class="stars" id="stars"></div>
 <div class="sun" id="sun"></div>
-<div id="birthdayText">Happy Birthday</div>
+
+<!-- Birthday text container -->
+<div id="birthdayTextContainer"></div>
 
 <script>
 const button = document.getElementById('clickButton');
 const moon = document.getElementById('moon');
 const stars = document.getElementById('stars');
 const sun = document.getElementById('sun');
-const birthdayText = document.getElementById('birthdayText');
+const birthdayContainer = document.getElementById('birthdayTextContainer');
 const crossVert = document.querySelector('.cross-vert');
 const crossHor = document.querySelector('.cross-hor');
 let clickCount = 0;
@@ -198,6 +204,7 @@ for (let i = 0; i < numStars; i++) {
   stars.appendChild(star);
 }
 
+// Button click handler
 button.addEventListener('click', () => {
   clickCount++;
 
@@ -207,6 +214,7 @@ button.addEventListener('click', () => {
     moon.style.opacity = '1';
     stars.style.opacity = '1';
 
+    // Button returns after 7 seconds
     setTimeout(() => { button.style.display = 'block'; }, 7000);
 
   } else if (clickCount === 2) {
@@ -218,14 +226,29 @@ button.addEventListener('click', () => {
     sun.style.opacity = '1';
     document.body.style.background = 'linear-gradient(to bottom, #87CEEB, #B0E0E6)';
 
-    // Apply VIBGYOR animation to cross
+    // VIBGYOR cross
     crossVert.style.animation = 'vibgyor 14s infinite linear';
     crossHor.style.animation = 'vibgyor 14s infinite linear';
 
-    // Show "Happy Birthday" text after 1s
+    // Animate "HAPPY BIRTHDAY" letter by letter
+    const text = "HAPPY BIRTHDAY";
+    birthdayContainer.innerHTML = '';
+    for (let i = 0; i < text.length; i++) {
+      const span = document.createElement('span');
+      span.classList.add('birthdayLetter');
+      span.textContent = text[i];
+      birthdayContainer.appendChild(span);
+    }
+
+    // Animate letters with 2s gap
     setTimeout(() => {
-      birthdayText.classList.add('show-text');
-    }, 1000);
+      const letters = birthdayContainer.querySelectorAll('.birthdayLetter');
+      letters.forEach((letter, index) => {
+        setTimeout(() => {
+          letter.classList.add('show');
+        }, index * 2000); // 2 seconds gap
+      });
+    }, 1000); // start 1 second after sun appears
   }
 });
 </script>

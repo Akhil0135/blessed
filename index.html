@@ -110,8 +110,7 @@
   .sun {
     position: absolute;
     top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 50px; /* same as moon */
     width: 120px;
     height: 120px;
     background-color: yellow;
@@ -120,6 +119,21 @@
     opacity: 0;
     transition: opacity 2s ease;
     z-index: 5;
+  }
+
+  /* Sun rays */
+  .ray {
+    position: absolute;
+    width: 4px;
+    height: 40px;
+    background-color: yellow;
+    top: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    opacity: 0;
+    border-radius: 2px;
+    z-index: 4;
+    transition: opacity 0.5s ease;
   }
 
   /* Mountains */
@@ -153,7 +167,7 @@
     button.style.display = 'block';
   }, 3000);
 
-  // Generate stars
+  // Generate bigger stars
   const starsContainer = document.getElementById('stars');
   const numStars = 100;
   for (let i = 0; i < numStars; i++) {
@@ -166,6 +180,18 @@
     star.style.height = size + 'px';
     star.style.animationDuration = (Math.random() * 3 + 2) + 's';
     starsContainer.appendChild(star);
+  }
+
+  // Create sun rays
+  const sun = document.getElementById('sun');
+  const numRays = 12;
+  const rays = [];
+  for (let i = 0; i < numRays; i++) {
+    const ray = document.createElement('div');
+    ray.className = 'ray';
+    ray.style.transform = `rotate(${i * (360 / numRays)}deg) translateY(-60px)`;
+    sun.appendChild(ray);
+    rays.push(ray);
   }
 
   // Button click event
@@ -187,8 +213,15 @@
       button.style.display = 'none';
       document.getElementById('moon').style.opacity = '0';
       document.getElementById('stars').style.opacity = '0';
-      document.getElementById('sun').style.opacity = '1';
       document.getElementById('mountains').style.opacity = '1';
+      sun.style.opacity = '1';
+
+      // Animate rays one after another
+      rays.forEach((ray, index) => {
+        setTimeout(() => {
+          ray.style.opacity = '1';
+        }, index * 200); // 0.2s delay between each ray
+      });
     }
   });
 </script>

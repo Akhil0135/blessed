@@ -133,33 +133,7 @@
     opacity: 0;
     border-radius: 2px;
     z-index: 4;
-  }
-
-  /* Mountains */
-  .mountains {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 200%;
-    height: 100px;
-    background: repeating-linear-gradient(
-      to right,
-      #2e2e2e 0 50px,
-      #3e3e3e 50px 100px
-    );
-    opacity: 0;
-    transition: opacity 2s ease;
-    z-index: 2;
-  }
-
-  /* Mountain animation */
-  .mountains.show {
-    animation: mountainsMove 5s linear forwards;
-  }
-
-  @keyframes mountainsMove {
-    0% { left: -100%; }
-    100% { left: 0%; }
+    transition: opacity 0.5s ease;
   }
 </style>
 </head>
@@ -170,7 +144,6 @@
   <div class="moon" id="moon"></div>
   <div class="stars" id="stars"></div>
   <div class="sun" id="sun"></div>
-  <div class="mountains" id="mountains"></div>
 
 <script>
   const button = document.getElementById('clickButton');
@@ -223,14 +196,12 @@
         button.style.display = 'block';
       }, 7000);
     } else if (clickCount === 2) {
-      // Second click: hide moon and stars, show sun and mountains
+      // Second click: hide moon and stars, show sun with rays
       button.style.display = 'none';
       document.getElementById('moon').style.opacity = '0';
       document.getElementById('stars').style.opacity = '0';
 
       sun.style.opacity = '1';
-      document.getElementById('mountains').style.opacity = '1';
-      document.getElementById('mountains').classList.add('show');
 
       // Animate rays one after another
       rays.forEach((ray, index) => {

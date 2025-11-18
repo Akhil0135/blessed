@@ -10,7 +10,7 @@
     height: 100vh;
     overflow: hidden;
     position: relative;
-    background-color: #001f3f; /* initial night */
+    background-color: #001f3f; /* night */
     transition: background 2s ease;
   }
 
@@ -22,30 +22,30 @@
     transform: translateX(-50%);
     width: 20px;
     height: 100px;
+    transition: background-color 1s ease;
+  }
+
+  .cross::before, .cross::after {
+    content: '';
+    position: absolute;
+    background-color: gold;
+    transition: background-color 1s ease;
   }
 
   .cross::before {
-    content: '';
-    position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 20px;
     height: 100px;
-    background-color: gold;
-    box-shadow: 0 0 2px gold;
   }
 
   .cross::after {
-    content: '';
-    position: absolute;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 60px;
     height: 20px;
-    background-color: gold;
-    box-shadow: 0 0 2px gold;
   }
 
   /* Button */
@@ -110,7 +110,7 @@
   .sun {
     position: absolute;
     top: 50px;
-    right: 50px; /* same as moon */
+    right: 50px;
     width: 120px;
     height: 120px;
     background-color: yellow;
@@ -121,45 +121,6 @@
     z-index: 5;
   }
 
-  /* Clouds */
-  .cloud {
-    position: absolute;
-    width: 150px;
-    height: 80px;
-    background: rgba(255,255,255,0.8);
-    border-radius: 50%;
-    filter: blur(2px);
-    z-index: 4;
-    opacity: 0;
-  }
-
-  .cloud1 { top: 80px; left: -200px; animation: cloudMove 30s linear infinite; }
-  .cloud2 { top: 150px; left: -400px; animation: cloudMove 40s linear infinite; }
-  .cloud3 { top: 50px; left: -600px; animation: cloudMove 35s linear infinite; }
-
-  @keyframes cloudMove {
-    0% { left: -200px; }
-    100% { left: 100%; }
-  }
-
-  /* Birds */
-  .bird {
-    position: absolute;
-    width: 20px;
-    height: 10px;
-    background: black;
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    z-index: 6;
-    opacity: 0;
-  }
-
-  .bird1 { top: 200px; left: -50px; animation: birdFly 15s linear infinite; }
-  .bird2 { top: 250px; left: -100px; animation: birdFly 20s linear infinite; }
-
-  @keyframes birdFly {
-    0% { left: -50px; }
-    100% { left: 100%; }
-  }
 </style>
 </head>
 <body>
@@ -170,26 +131,17 @@
   <div class="stars" id="stars"></div>
   <div class="sun" id="sun"></div>
 
-  <div class="cloud cloud1"></div>
-  <div class="cloud cloud2"></div>
-  <div class="cloud cloud3"></div>
-
-  <div class="bird bird1"></div>
-  <div class="bird bird2"></div>
-
 <script>
   const button = document.getElementById('clickButton');
   const moon = document.getElementById('moon');
   const stars = document.getElementById('stars');
   const sun = document.getElementById('sun');
-  const clouds = document.querySelectorAll('.cloud');
-  const birds = document.querySelectorAll('.bird');
+  const crossBefore = document.querySelector('.cross::before') || document.querySelector('.cross');
+  const cross = document.querySelector('.cross');
   let clickCount = 0;
 
   // Show initial button after 3 seconds
-  setTimeout(() => {
-    button.style.display = 'block';
-  }, 3000);
+  setTimeout(() => { button.style.display = 'block'; }, 3000);
 
   // Generate stars
   const numStars = 100;
@@ -209,26 +161,31 @@
     clickCount++;
 
     if (clickCount === 1) {
-      // First click: show moon and stars
+      // First click: show moon + stars, cross stays gold
       button.style.display = 'none';
       moon.style.opacity = '1';
       stars.style.opacity = '1';
 
+      // Show button again after 7 seconds
       setTimeout(() => { button.style.display = 'block'; }, 7000);
+
     } else if (clickCount === 2) {
-      // Second click: hide moon and stars, show sun + clouds + birds
+      // Second click: hide moon + stars, show sun, change background to day
       button.style.display = 'none';
       moon.style.opacity = '0';
       stars.style.opacity = '0';
 
       sun.style.opacity = '1';
 
-      // Show clouds and birds
-      clouds.forEach(cloud => cloud.style.opacity = '1');
-      birds.forEach(bird => bird.style.opacity = '1');
-
-      // Change background to day sky
+      // Change background to day
       document.body.style.background = 'linear-gradient(to bottom, #87CEEB, #B0E0E6)';
+
+      // Change cross color to dark gray to suit daytime
+      cross.style.setProperty('--cross-color', '#333333');
+      cross.querySelectorAll('::before, ::after');
+      cross.style.setProperty('color', '#333'); // fallback if needed
+      cross.querySelectorAll('::before').forEach(e=>e.style.backgroundColor='#333');
+      cross.querySelectorAll('::after').forEach(e=>e.style.backgroundColor='#333');
     }
   });
 </script>

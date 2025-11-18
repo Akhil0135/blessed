@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Golden Cross</title>
+<title>Realistic Golden Cross</title>
 <style>
   body {
     margin: 0;
@@ -12,14 +12,13 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 50px; /* space from top */
+    padding-top: 50px;
   }
 
-  /* Cross container */
   .cross {
     position: relative;
-    width: 20px;   /* vertical bar width */
-    height: 100px; /* vertical bar height */
+    width: 30px;    /* vertical bar width */
+    height: 120px;  /* vertical bar height */
   }
 
   /* Vertical bar */
@@ -29,21 +28,25 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 20px;
-    height: 100px;
-    background-color: gold;
+    width: 30px;
+    height: 120px;
+    background: linear-gradient(135deg, #FFD700, #FFA500); /* gold gradient */
+    border-radius: 3px;
+    box-shadow: 0 0 10px gold, 0 0 20px rgba(255, 215, 0, 0.5); /* glow */
   }
 
   /* Horizontal bar */
   .cross::after {
     content: '';
     position: absolute;
-    top: 40%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60px;
-    height: 20px;
-    background-color: gold;
+    width: 70px;
+    height: 25px;
+    background: linear-gradient(135deg, #FFD700, #FFA500); /* gold gradient */
+    border-radius: 3px;
+    box-shadow: 0 0 10px gold, 0 0 20px rgba(255, 215, 0, 0.5); /* glow */
   }
 </style>
 </head>

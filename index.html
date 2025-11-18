@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Golden Cross Birthday</title>
+<title>Birthday Animation</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
@@ -148,32 +148,35 @@ body {
 .birthdayLetter {
   opacity: 0;
   transform: scale(0);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  position: relative;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* sparkle */
-.birthdayLetter::after {
-  content: "";
+/* Balloons */
+.balloon {
   position: absolute;
-  top: -10px;
-  left: 50%;
-  width: 6px;
-  height: 6px;
+  bottom: -150px;
+  width: 40px;
+  height: 55px;
   border-radius: 50%;
-  background: yellow;
-  opacity: 0;
-  transform: translateX(-50%) scale(0);
-  animation: sparkle 1s infinite;
+  background-color: red;
+  animation: rise 6s linear forwards;
 }
-@keyframes sparkle {
-  0%,100% { opacity: 0; transform: translateX(-50%) scale(0); }
-  50% { opacity: 1; transform: translateX(-50%) scale(1); }
+@keyframes rise {
+  from { transform: translateY(0); }
+  to { transform: translateY(-120vh); }
 }
 
-.birthdayLetter.show {
-  opacity: 1;
-  transform: scale(1);
+/* Confetti */
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  animation: confettiFall 3s linear forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(120vh) rotate(360deg); }
 }
 </style>
 </head>
@@ -205,7 +208,7 @@ let clickCount = 0;
 
 setTimeout(() => button.style.display = "block", 3000);
 
-/* stars creation */
+/* create stars */
 for (let i = 0; i < 100; i++) {
   let s = document.createElement("div");
   s.className = "star";
@@ -240,8 +243,8 @@ button.addEventListener("click", () => {
     crossVert.style.animation = "vibgyor 14s infinite linear";
     crossHor.style.animation = "vibgyor 14s infinite linear";
 
-    /* HAPPY BIRTHDAY */
-    const text = "HAPPY    BIRTHDAY";  
+    /* HAPPY BIRTHDAY TEXT */
+    const text = "HAPPY    BIRTHDAY";
     textBox.innerHTML = "";
 
     for (let i = 0; i < text.length; i++) {
@@ -253,9 +256,29 @@ button.addEventListener("click", () => {
 
     setTimeout(() => {
       document.querySelectorAll(".birthdayLetter").forEach((letter, index) => {
-        setTimeout(() => letter.classList.add("show"), index * 300);
+        setTimeout(() => letter.style.opacity = letter.style.transform = "1", index * 100);
       });
-    }, 600);
+    }, 500);
+
+    /* BALLOONS */
+    for (let i = 0; i < 15; i++) {
+      let b = document.createElement("div");
+      b.className = "balloon";
+      b.style.left = Math.random() * 100 + "%";
+      b.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
+      b.style.animationDelay = Math.random()*2 + "s";
+      document.body.appendChild(b);
+    }
+
+    /* CONFETTI */
+    for (let i = 0; i < 70; i++) {
+      let c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = Math.random()*100 + "%";
+      c.style.top = Math.random()*20 + "%";
+      c.style.backgroundColor = `hsl(${Math.random()*360}, 90%, 60%)`;
+      document.body.appendChild(c);
+    }
   }
 });
 </script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Sunrise Scene with Pasture</title>
+<title>Cinematic Sunrise Scene with Garden</title>
 <style>
   body {
     margin: 0;
@@ -141,16 +141,32 @@
     100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
   }
 
-  /* Green Pasture */
-  .pasture {
+  /* Garden */
+  .garden {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 200px;
-    background: linear-gradient(to top, #2ecc71 0%, #27ae60 50%, rgba(255,255,255,0) 100%);
+    height: 250px;
+    z-index: 0;
     opacity: 0;
     transition: opacity 3s ease-in-out;
-    z-index: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
+  .grass-blade {
+    width: 2px;
+    height: 60px;
+    background: #27ae60;
+    margin: 0 1px;
+    animation: sway 3s infinite alternate ease-in-out;
+  }
+
+  @keyframes sway {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(0) rotate(5deg); }
   }
 
 </style>
@@ -184,8 +200,8 @@
 <!-- Lens Flare -->
 <div class="lens-flare"></div>
 
-<!-- Pasture -->
-<div class="pasture"></div>
+<!-- Garden -->
+<div class="garden" id="garden"></div>
 
 <script>
 // Generate stars
@@ -202,6 +218,16 @@ for (let i = 0; i < 200; i++) {
   star.style.top = y + 'px';
   star.style.animationDelay = Math.random() * 2 + 's';
   document.body.appendChild(star);
+}
+
+// Populate garden with grass blades
+const garden = document.getElementById('garden');
+for(let i = 0; i < window.innerWidth/3; i++) {
+  const blade = document.createElement('div');
+  blade.classList.add('grass-blade');
+  blade.style.height = (50 + Math.random()*50)+'px';
+  blade.style.animationDuration = (2 + Math.random()*2)+'s';
+  garden.appendChild(blade);
 }
 
 // Click button after 3 seconds
@@ -234,8 +260,8 @@ setTimeout(() => {
     const flare = document.querySelector('.lens-flare');
     flare.style.opacity = 1;
 
-    // Show pasture
-    document.querySelector('.pasture').style.opacity = 1;
+    // Show garden
+    document.querySelector('.garden').style.opacity = 1;
 
     // Cross color for day with subtle glow
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';

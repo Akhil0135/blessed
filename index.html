@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constellation Message with Moon</title>
+<title>Aurora Borealis Message</title>
 <style>
   body, html {
     margin: 0;
@@ -20,13 +20,17 @@
     position: absolute;
     border-radius: 50%;
     background: white;
-    opacity: 0.7;
+    opacity: 0.8;
     box-shadow: 0 0 6px rgba(255,255,255,0.7);
-    width: 2px;
-    height: 2px;
+    animation: twinkle 2s infinite alternate;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0.3; transform: scale(1); }
   }
 
-  /* Moon */
+  /* Moving Moon */
   .moon {
     position: absolute;
     width: 120px;
@@ -34,8 +38,14 @@
     background: radial-gradient(circle, #fefbd8 0%, #f5e7a0 70%, #e0c97f 100%);
     border-radius: 50%;
     top: 50px;
-    left: 50px;
+    left: -150px;
     box-shadow: 0 0 30px 10px #fffacd;
+    animation: moveMoon 60s linear infinite;
+  }
+  @keyframes moveMoon {
+    0% { left: -150px; top: 50px; }
+    50% { left: 50%; top: 100px; }
+    100% { left: 100%; top: 50px; }
   }
 
   /* Clouds */
@@ -43,7 +53,7 @@
     position: absolute;
     width: 250px;
     height: 100px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 50%;
     filter: blur(20px);
     box-shadow: 0 0 30px rgba(255,255,255,0.05);
@@ -52,7 +62,7 @@
   .cloud::before, .cloud::after {
     content: '';
     position: absolute;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
     width: 150px;
     height: 80px;
     border-radius: 50%;
@@ -63,137 +73,85 @@
   @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
   @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
 
-  /* Constellation point */
-  .letter-point {
+  /* Aurora */
+  .aurora {
     position: absolute;
-    width: 4px;
-    height: 4px;
+    width: 300%;
+    height: 400px;
+    background: linear-gradient(120deg, rgba(0,255,128,0.3), rgba(128,0,255,0.3), rgba(0,255,255,0.3));
+    top: 50%;
+    left: -100%;
     border-radius: 50%;
-    background: #a0c4ff;
-    opacity: 0;
-    box-shadow: 0 0 10px #a0c4ff, 0 0 20px rgba(160,196,255,0.5);
+    filter: blur(80px);
+    animation: moveAurora 20s linear infinite alternate;
+  }
+  @keyframes moveAurora {
+    0% { left: -100%; transform: rotate(0deg); }
+    100% { left: -50%; transform: rotate(5deg); }
   }
 
-  /* Message letters (text) */
+  /* Message */
   .message-letter {
     position: absolute;
     color: white;
     font-size: 2rem;
-    text-shadow: 0 0 10px #fff, 0 0 20px #a0c4ff;
+    text-shadow: 0 0 10px #fff, 0 0 20px #00ffcc;
     opacity: 0;
     pointer-events: none;
-  }
-
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
   }
 </style>
 </head>
 <body>
 
 <div class="moon"></div>
-
-<canvas id="lineCanvas"></canvas>
+<div class="aurora"></div>
 
 <script>
-const canvas = document.getElementById('lineCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+  // Stars
+  for(let i=0;i<150;i++){
+    const star=document.createElement('div');
+    star.classList.add('star');
+    star.style.top=Math.random()*window.innerHeight+'px';
+    star.style.left=Math.random()*window.innerWidth+'px';
+    star.style.width=star.style.height=Math.random()*3+1+'px';
+    document.body.appendChild(star);
+  }
 
-// Background stars
-for(let i=0;i<150;i++){
-  const star = document.createElement('div');
-  star.className = 'star';
-  star.style.top = Math.random()*window.innerHeight+'px';
-  star.style.left = Math.random()*window.innerWidth+'px';
-  star.style.width = star.style.height = Math.random()*3+1+'px';
-  document.body.appendChild(star);
-}
+  // Clouds
+  for(let i=0;i<5;i++){
+    const cloud=document.createElement('div');
+    cloud.classList.add('cloud');
+    cloud.style.top=Math.random()*300+'px';
+    cloud.style.animationDuration=(40 + Math.random()*40)+'s, '+(6 + Math.random()*4)+'s';
+    cloud.style.opacity = 0.05 + Math.random()*0.1;
+    document.body.appendChild(cloud);
+  }
 
-// Clouds
-for(let i=0;i<5;i++){
-  const cloud = document.createElement('div');
-  cloud.className = 'cloud';
-  cloud.style.top = Math.random()*300+'px';
-  cloud.style.animationDuration=(40 + Math.random()*40)+'s, '+(6 + Math.random()*4)+'s';
-  cloud.style.opacity = 0.05 + Math.random()*0.1;
-  document.body.appendChild(cloud);
-}
-
-// Message
-const message = "Night whispers secrets";
-const letters = message.split("");
-const letterPoints = [];
-const letterDivs = [];
-
-// Create letters
-letters.forEach((char,i)=>{
-  const letterDiv = document.createElement('div');
-  letterDiv.className = 'message-letter';
-  letterDiv.innerText = char;
-  document.body.appendChild(letterDiv);
-  letterDivs.push(letterDiv);
-
-  // Create constellation points for each letter
-  const point = document.createElement('div');
-  point.className = 'letter-point';
-  document.body.appendChild(point);
-
-  point.targetX = window.innerWidth/2 - letters.length*10 + i*20;
-  point.targetY = window.innerHeight/2 + (Math.random()*20 - 10);
-  point.style.left = Math.random()*window.innerWidth + 'px';
-  point.style.top = Math.random()*window.innerHeight + 'px';
-
-  letterPoints.push(point);
-});
-
-// Animate points and draw constellation
-function animatePoints(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  letterPoints.forEach((point,i)=>{
-    let x = parseFloat(point.style.left);
-    let y = parseFloat(point.style.top);
-
-    let dx = (point.targetX - x) * 0.02;
-    let dy = (point.targetY - y) * 0.02;
-    x += dx;
-    y += dy;
-    point.style.left = x + 'px';
-    point.style.top = y + 'px';
-    point.style.opacity = 1;
-
-    // Reveal letter gradually
-    if(Math.abs(x-point.targetX)<1 && Math.abs(y-point.targetY)<1){
-      letterDivs[i].style.left = point.targetX + "px";
-      letterDivs[i].style.top = point.targetY + "px";
-      letterDivs[i].style.opacity = 1;
-    }
-
-    // Draw line to nearest neighbor
-    letterPoints.forEach(other=>{
-      if(other===point) return;
-      let ox = parseFloat(other.style.left);
-      let oy = parseFloat(other.style.top);
-      let dist = Math.hypot(ox-x, oy-y);
-      if(dist<50){
-        ctx.beginPath();
-        ctx.moveTo(x+2,y+2);
-        ctx.lineTo(ox+2,oy+2);
-        ctx.strokeStyle = 'rgba(160,196,255,0.4)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-    });
+  // Message
+  const messageText = "The night whispers secrets...";
+  const letters = [];
+  messageText.split("").forEach((char,i)=>{
+    const letter = document.createElement('div');
+    letter.className = 'message-letter';
+    letter.innerText = char;
+    document.body.appendChild(letter);
+    letters.push(letter);
   });
 
-  requestAnimationFrame(animatePoints);
-}
+  // Animate letters with aurora sweep
+  function animateLetters(){
+    const centerX = window.innerWidth/2 - letters.length*7;
+    const centerY = window.innerHeight/2;
+    letters.forEach((letter,i)=>{
+      setTimeout(()=>{
+        letter.style.left = centerX + i*14 + "px";
+        letter.style.top = centerY + "px";
+        letter.style.opacity = 1;
+      }, i*300); // gradual appearance
+    });
+  }
 
-animatePoints();
+  setTimeout(animateLetters, 2000); // wait for aurora to sweep a bit
 </script>
 
 </body>

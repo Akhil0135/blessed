@@ -91,12 +91,12 @@
     100% { transform: scale(1,1); }
   }
 
-  /* Shooting stars with pointed tail */
+  /* Shooting stars with tip pointing along motion */
   .shooting-star {
     position: absolute;
     width: 2px;
     height: 80px;
-    background: linear-gradient(to bottom, white 0%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(to top left, white, rgba(255,255,255,0)); /* tip points along motion */
     transform-origin: top left;
     opacity: 0;
     animation: shoot 2s linear forwards;
@@ -134,7 +134,7 @@
     document.body.appendChild(cloud);
   }
 
-  // Shooting stars top-right to bottom-left
+  // Shooting stars top-right to bottom-left with tip pointing correctly
   function createShootingStar() {
     const star = document.createElement('div');
     star.classList.add('shooting-star');

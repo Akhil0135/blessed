@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Realistic Night Scene</title>
+<title>Cinematic Night Scene</title>
 
 <style>
   body {
@@ -14,52 +14,59 @@
     position: relative;
   }
 
-  /* Moon (Crescent) */
+  /* Crescent Moon */
   .moon {
-    z-index: 10;
     position: absolute;
     top: 80px;
     right: 120px;
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 0 60px #ffffffaa, 0 0 140px #ffffff66;
-    /* Crescent effect */
-    clip-path: path('M 80 0 A 80 80 0 1 0 80 160 A 55 80 0 1 1 80 0 Z');
-}
-
-  .moon::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 35px; /* controls crescent thickness */
     width: 150px;
     height: 150px;
+    background: radial-gradient(circle, #ffffff 40%, #dcdcdc 70%, #b5b5b5 100%);
     border-radius: 50%;
-    background: #000814;
+    box-shadow: 0 0 60px #ffffffaa;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 50%, 35% 50%, 35% 0%);
+  }
+
+  /* Cross */
+  .cross {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 240px;
+  }
+
+  .vertical {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 240px;
+    background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
+  }
+
+  .horizontal {
+    position: absolute;
+    top: 70px; /* raised */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 170px;
+    height: 28px;
+    background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
   }
 
   /* Stars */
   .star {
     position: absolute;
-    z-index: 5; /* behind moon & cross but still visible */
     width: 3px;
     height: 3px;
-    background: #ffffff;
+    background: white;
     border-radius: 50%;
     opacity: 0.9;
-    animation: twinkle 1.8s infinite ease-in-out;
-    box-shadow: 0 0 6px #ffffffaa, 0 0 12px #ffffff55;
-  } {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    background: #ffffff;
-    border-radius: 50%;
-    opacity: 0.9;
-    animation: twinkle 1.8s infinite ease-in-out;
-    box-shadow: 0 0 6px #ffffffaa, 0 0 12px #ffffff55;
+    animation: twinkle 2.5s infinite ease-in-out;
+    pointer-events: none;
   }
 
   @keyframes twinkle {
@@ -68,142 +75,75 @@
     100% { opacity: 0.2; }
   }
 
-  /* Christian Cross */
-  .cross {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 160px;
-    height: 260px;
-}
-
-  .vertical {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 32px;
-    height: 260px;
-    background: linear-gradient(to bottom, #f2d27f, #d4a93f, #b88a2c);
-}
-
-  .horizontal {
-    position: absolute;
-    top: 55px; /* raised from 70px */ /* 35% of 260px */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 32px;
-    background: linear-gradient(to right, #f2d27f, #d4a93f, #b88a2c);
-}
-  /* Click Button */
+  /* Click Here Button */
   .click-btn {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.7);
-    padding: 14px 34px;
+    transform: translate(-50%, -50%);
+    padding: 16px 34px;
     font-size: 22px;
-    font-family: 'Poppins', sans-serif;
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid white;
-    border-radius: 12px;
+    font-weight: bold;
+    background: white;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
     opacity: 0;
-    transition: 0.8s ease;
-    box-shadow: 0 0 14px #ffffffaa;
-    z-index: 20;
+    animation: reveal 1.2s forwards;
   }
 
-  /* Light Sweep */
-  .light-sweep {
-    position: absolute;
-    top: 50%;
-    left: -40%;
-    width: 40%;
-    height: 4px;
-    background: linear-gradient(to right, transparent, #ffffffdd, transparent);
-    filter: blur(6px);
-    opacity: 0;
-    z-index: 15;
-    transform: translateY(-50%);
-  }
-
-  .light-sweep.run {
-    opacity: 1;
-    animation: sweep 0.8s ease-out forwards;
-  }
-
-  @keyframes sweep {
-    0% { left: -40%; }
-    100% { left: 140%; }
+  @keyframes reveal {
+    0% {
+      opacity: 0;
+      filter: blur(8px);
+      transform: translate(-50%, -50%) scale(0.85);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0px);
+      transform: translate(-50%, -50%) scale(1);
+    }
   }
 </style>
 </head>
 <body>
 
 <div class="moon"></div>
+
 <div class="cross">
   <div class="vertical"></div>
   <div class="horizontal"></div>
 </div>
 
 <script>
-// Generate stars without overlapping moon or cross
-const moonRect = { top: 80, left: window.innerWidth - 120 - 150, width: 150, height: 150 };
-const crossRect = { top: 40, left: 60, width: 160, height: 200 };
-
-function isOverlapping(x, y, rect) {
-  return x > rect.left - 10 &&
-         x < rect.left + rect.width + 10 &&
-         y > rect.top - 10 &&
-         y < rect.top + rect.height + 10;
-}
-
-for (let i = 0; i < 250; i++) {
-  let x, y;
-  let safe = false;
-
-  while (!safe) {
-    x = Math.random() * window.innerWidth;
-    y = Math.random() * window.innerHeight;
-
-    if (!isOverlapping(x, y, moonRect) && !isOverlapping(x, y, crossRect)) {
-      safe = true;
-    }
-  }
-
+// Generate non-overlapping stars
+for (let i = 0; i < 200; i++) {
   const star = document.createElement('div');
   star.classList.add('star');
-  star.style.top = y + 'px';
+
+  let x = Math.random() * window.innerWidth;
+  let y = Math.random() * window.innerHeight;
+
+  // Avoid moon + cross zones
+  if ((x > window.innerWidth - 350 && y < 350) || (x > window.innerWidth/2 - 120 && x < window.innerWidth/2 + 120 && y < 300)) {
+    i--;
+    continue;
+  }
+
   star.style.left = x + 'px';
-  star.style.animationDelay = Math.random() * 3 + 's';
+  star.style.top = y + 'px';
+  star.style.animationDelay = Math.random() * 2 + 's';
   document.body.appendChild(star);
 }
 
-  <!-- Click Here Button -->
-  <button id="clickBtn" class="click-btn">Click Here</button>
-
-  <!-- Light Sweep -->
-  <div id="lightSweep" class="light-sweep"></div>
-
-<script>
-// Existing star code kept unchanged above
-
-// Show button after 5 seconds with light sweep
+// Click button after 3 seconds
 setTimeout(() => {
-  const sweep = document.getElementById('lightSweep');
-  const btn = document.getElementById('clickBtn');
-
-  sweep.classList.add('run');
-
-  setTimeout(() => {
-    btn.style.opacity = 1;
-    btn.style.transform = 'translate(-50%, -50%) scale(1)';
-  }, 800);
+  const btn = document.createElement('button');
+  btn.className = 'click-btn';
+  btn.innerText = 'Click Here';
+  document.body.appendChild(btn);
 }, 3000);
 </script>
+
 </body>
 </html>

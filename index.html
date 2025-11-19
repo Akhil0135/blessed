@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Scene with Rotated Crescent Moon</title>
+<title>Night to Day Transition</title>
 <style>
   body {
     margin: 0;
@@ -11,9 +11,10 @@
     background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
     overflow: hidden;
     position: relative;
+    transition: background 3s ease-in-out;
   }
 
-  /* Crescent Moon SVG wrapper rotated 50° anti-clockwise */
+  /* Crescent Moon */
   .moon-wrapper {
     position: absolute;
     top: 80px;
@@ -21,7 +22,8 @@
     width: 150px;
     height: 150px;
     z-index: 2;
-    transform: rotate(-50deg); /* 50° anti-clockwise */
+    transform: rotate(-50deg);
+    transition: opacity 2s ease-in-out;
   }
 
   /* Cross */
@@ -33,6 +35,7 @@
     width: 160px;
     height: 260px;
     z-index: 3;
+    transition: background 3s ease-in-out;
   }
 
   .vertical {
@@ -42,16 +45,18 @@
     width: 32px;
     height: 260px;
     background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
+    transition: background 3s ease-in-out;
   }
 
   .horizontal {
     position: absolute;
-    top: 65px; /* slightly raised */
+    top: 65px;
     left: 50%;
     transform: translateX(-50%);
     width: 190px;
     height: 32px;
     background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
+    transition: background 3s ease-in-out;
   }
 
   /* Stars */
@@ -65,12 +70,28 @@
     animation: twinkle 2.5s infinite ease-in-out;
     pointer-events: none;
     z-index: 1;
+    transition: opacity 2s ease-in-out;
   }
 
   @keyframes twinkle {
     0% { opacity: 0.2; transform: scale(1); }
     50% { opacity: 1; transform: scale(1.5); }
     100% { opacity: 0.2; transform: scale(1); }
+  }
+
+  /* Sun */
+  .sun {
+    position: absolute;
+    top: 80px;
+    right: 120px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FFD700 0%, #FFA500 70%);
+    box-shadow: 0 0 60px #FFD700aa, 0 0 120px #FFD70055;
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 2s ease-in-out;
   }
 
   /* Click Button */
@@ -95,11 +116,12 @@
     0% { opacity: 0; filter: blur(8px); transform: translate(-50%, -50%) scale(0.85); }
     100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
   }
+
 </style>
 </head>
 <body>
 
-<!-- Crescent Moon using SVG -->
+<!-- Crescent Moon SVG -->
 <div class="moon-wrapper">
   <svg viewBox="0 0 100 100" width="150" height="150">
     <circle cx="50" cy="50" r="50" fill="white"/>
@@ -118,6 +140,8 @@
   <div class="vertical"></div>
   <div class="horizontal"></div>
 </div>
+
+<div class="sun"></div>
 
 <script>
 // Generate stars
@@ -147,6 +171,24 @@ setTimeout(() => {
   btn.className = 'click-btn';
   btn.innerText = 'Click Here';
   document.body.appendChild(btn);
+
+  btn.addEventListener('click', () => {
+    // Fade out moon and stars
+    document.querySelector('.moon-wrapper').style.opacity = 0;
+    document.querySelectorAll('.star').forEach(s => s.style.opacity = 0);
+    btn.style.display = 'none';
+
+    // Change background to day
+    document.body.style.background = 'linear-gradient(to bottom, #87CEFA 0%, #ADD8E6 70%, #E0FFFF 100%)';
+
+    // Show sun
+    const sun = document.querySelector('.sun');
+    sun.style.opacity = 1;
+
+    // Optionally change cross color for day
+    document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FFD700, #FFA500)';
+    document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FFD700, #FFA500)';
+  });
 }, 3000);
 </script>
 

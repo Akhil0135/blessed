@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meteor Shower Reveals Message</title>
+<title>Cinematic Meteor Shower Message</title>
 <style>
   body, html {
     margin: 0;
@@ -101,7 +101,7 @@
 
 <script>
   // Stars
-  for(let i=0;i<150;i++){
+  for(let i=0;i<200;i++){
     const star=document.createElement('div');
     star.classList.add('star');
     star.style.top=Math.random()*window.innerHeight+'px';
@@ -131,7 +131,7 @@
     letters.push(letter);
   });
 
-  // Function to create a meteor
+  // Function to create a meteor falling toward letter position
   function createMeteor(index) {
     const meteor = document.createElement('div');
     meteor.className = 'meteor';
@@ -139,18 +139,19 @@
 
     const startX = Math.random()*window.innerWidth;
     const startY = -50;
-    const endX = window.innerWidth/2 - letters.length*6 + index*14;
-    const endY = window.innerHeight/2 + Math.sin(index/letters.length*Math.PI*2)*20;
-    const duration = 1500 + Math.random()*1000;
+    const endX = window.innerWidth/2 - letters.length*7 + index*14; // letters neatly aligned
+    const endY = window.innerHeight/2 + Math.sin(index/letters.length*Math.PI*2)*15; // small sine offset
+
+    const duration = 1200 + Math.random()*800;
     const startTime = performance.now();
 
     function step(now){
       const elapsed = now - startTime;
       const t = Math.min(elapsed/duration,1);
 
-      // Linear diagonal movement
+      // Slightly curved path (cosine for smooth curve)
       const x = startX + (endX - startX)*t;
-      const y = startY + (endY - startY)*t;
+      const y = startY + (endY - startY)*t + Math.sin(t*Math.PI)*50; // small arc
       meteor.style.left = x + "px";
       meteor.style.top = y + "px";
 
@@ -167,11 +168,11 @@
     requestAnimationFrame(step);
   }
 
-  // Start meteor shower to write message
+  // Start meteor shower with increased count and staggered timing
   messageText.split("").forEach((_, i)=>{
     setTimeout(() => {
       createMeteor(i);
-    }, i*250); // stagger meteors for cinematic effect
+    }, i*200); // shorter delay for denser shower
   });
 
 </script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Night Sky</title>
+<title>Realistic Night Sky with Large Shooting Stars</title>
 <style>
   body, html {
     margin: 0;
@@ -80,16 +80,16 @@
   @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
   @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
 
-  /* Shooting stars */
+  /* Large shooting stars */
   .shooting-star {
     position: absolute;
-    width: 8px;   /* thicker head */
-    height: 3px;  /* tail height */
+    width: 12px;   /* much larger head */
+    height: 4px;   /* longer tail */
     background: linear-gradient(0deg, rgba(255,255,255,0) 0%, white 100%);
     border-radius: 50%;
     opacity: 0;
     transform-origin: top left;
-    animation: shoot 3s linear forwards;
+    animation: shoot 3.5s linear forwards; /* slower, cinematic */
   }
 
   @keyframes shoot {
@@ -124,13 +124,13 @@
     document.body.appendChild(cloud);
   }
 
-  // Shooting stars
+  // Large shooting stars
   function createShootingStar(){
     const star=document.createElement('div');
     star.classList.add('shooting-star');
     star.style.top=Math.random()*200+'px';
     star.style.left=window.innerWidth+'px';
-    const duration=2 + Math.random()*1;
+    const duration=2.5 + Math.random()*1; // slower
     star.style.animationDuration=duration+'s';
     document.body.appendChild(star);
     setTimeout(()=>{ star.remove(); }, duration*1000);

@@ -51,7 +51,7 @@ body, html {
   100% { left: 100%; top: 50px; }
 }
 
-/* Aurora */
+/* Aurora with slight waving effect */
 .aurora {
   position: absolute;
   width: 300%;
@@ -62,11 +62,16 @@ body, html {
   border-radius: 50%;
   filter: blur(80px);
   z-index: 2;
-  animation: moveAurora 20s linear infinite alternate;
+  animation: moveAurora 20s linear infinite alternate, waveAurora 6s ease-in-out infinite alternate;
 }
 @keyframes moveAurora {
   0% { left: -100%; transform: rotate(0deg); }
   100% { left: -50%; transform: rotate(5deg); }
+}
+@keyframes waveAurora {
+  0% { transform: rotate(0deg) translateY(0px); }
+  50% { transform: rotate(1deg) translateY(15px); }
+  100% { transform: rotate(0deg) translateY(0px); }
 }
 
 /* Original cinematic clouds */
@@ -139,10 +144,10 @@ for(let i=0;i<150;i++){
   document.body.appendChild(star);
 }
 
-// Original cinematic clouds
+// Clouds layers (original cinematic clouds restored)
 const cloudLayers = [
   { count: 3, z:2, speed: 80, opacity:0.05 }, // behind aurora
-  { count: 3, z:5, speed: 50, opacity:0.08 }  // in front of aurora/moon
+  { count: 3, z:5, speed: 50, opacity:0.08 }  // in front
 ];
 
 cloudLayers.forEach(layer=>{
@@ -158,13 +163,13 @@ cloudLayers.forEach(layer=>{
   }
 });
 
-// Keyframes for moving clouds dynamically
+// Cloud move keyframes
 const style = document.createElement('style');
 style.innerHTML = `
-  @keyframes moveCloud {
-    0% { left: -400px; }
-    100% { left: 100%; }
-  }
+@keyframes moveCloud {
+  0% { left: -400px; }
+  100% { left: 100%; }
+}
 `;
 document.head.appendChild(style);
 
@@ -179,7 +184,7 @@ messageText.split("").forEach((char)=>{
   letters.push(letter);
 });
 
-// Animate letters centered with aurora glow
+// Animate letters
 function animateLetters(){
   const letterSpacing = 38;
   const totalWidth = (letters.length-1)*letterSpacing + 20;
@@ -201,7 +206,7 @@ function animateLetters(){
 }
 setTimeout(animateLetters, 2000);
 
-// Shooting stars (increased count)
+// Shooting stars increased
 function createShootingStar(){
   const star = document.createElement('div');
   star.classList.add('shooting-star');
@@ -213,9 +218,10 @@ function createShootingStar(){
   setTimeout(()=>{ star.remove(); }, duration*1000);
 }
 // More frequent shooting stars
-setInterval(createShootingStar, 1500); // every 1.5s
-setInterval(createShootingStar, 2500); // staggered for multiple stars
-setInterval(createShootingStar, 3500);
+setInterval(createShootingStar, 1200);
+setInterval(createShootingStar, 1800);
+setInterval(createShootingStar, 2400);
+setInterval(createShootingStar, 3000);
 </script>
 
 </body>

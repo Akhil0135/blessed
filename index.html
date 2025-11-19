@@ -70,7 +70,6 @@
     animation: twinkle 2.5s infinite ease-in-out;
     pointer-events: none;
     z-index: 1;
-    transition: opacity 2s ease-in-out;
   }
 
   @keyframes twinkle {
@@ -173,9 +172,13 @@ setTimeout(() => {
   document.body.appendChild(btn);
 
   btn.addEventListener('click', () => {
-    // Fade out moon and stars
+    // Fade out moon
     document.querySelector('.moon-wrapper').style.opacity = 0;
-    document.querySelectorAll('.star').forEach(s => s.style.opacity = 0);
+
+    // Remove all stars completely
+    document.querySelectorAll('.star').forEach(s => s.remove());
+
+    // Hide button
     btn.style.display = 'none';
 
     // Change background to day
@@ -185,7 +188,7 @@ setTimeout(() => {
     const sun = document.querySelector('.sun');
     sun.style.opacity = 1;
 
-    // Optionally change cross color for day
+    // Change cross color for day
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FFD700, #FFA500)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FFD700, #FFA500)';
   });

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shooting Star Rain with Particle Explosion</title>
+<title>Constellation Message</title>
 <style>
   body, html {
     margin: 0;
@@ -15,152 +15,108 @@
     font-family: 'Segoe UI', sans-serif;
   }
 
-  /* Stars */
   .star {
     position: absolute;
     border-radius: 50%;
     background: white;
-    opacity: 0.8;
+    opacity: 0.7;
     box-shadow: 0 0 6px rgba(255,255,255,0.7);
-    animation: twinkle 2s infinite alternate;
-  }
-  @keyframes twinkle {
-    0% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.5); }
-    100% { opacity: 0.3; transform: scale(1); }
-  }
-
-  /* Shooting Star */
-  .shooting-star {
-    position: absolute;
-    width: 6px;
+    width: 2px;
     height: 2px;
-    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, white 100%);
-    border-radius: 50%;
-    opacity: 0.9;
-    transform-origin: top left;
   }
 
-  /* Particle */
-  .particle {
+  .letter-point {
     position: absolute;
     width: 4px;
     height: 4px;
-    background: yellow;
     border-radius: 50%;
-    opacity: 0.9;
-    pointer-events: none;
-    box-shadow: 0 0 10px yellow, 0 0 20px rgba(255,255,0,0.5);
+    background: #a0c4ff;
+    opacity: 0;
+    box-shadow: 0 0 10px #a0c4ff, 0 0 20px rgba(160,196,255,0.5);
   }
 
-  /* Message letters */
-  .message-letter {
+  canvas {
     position: absolute;
-    color: white;
-    font-size: 2rem;
-    text-shadow: 0 0 10px #fff, 0 0 20px #a0c4ff;
-    opacity: 0;
-    pointer-events: none;
+    top: 0;
+    left: 0;
   }
 </style>
 </head>
 <body>
 
+<canvas id="lineCanvas"></canvas>
+
 <script>
-  // Stars
-  for(let i=0;i<150;i++){
-    const star=document.createElement('div');
-    star.classList.add('star');
-    star.style.top=Math.random()*window.innerHeight+'px';
-    star.style.left=Math.random()*window.innerWidth+'px';
-    star.style.width=star.style.height=Math.random()*3+1+'px';
-    document.body.appendChild(star);
-  }
+const canvas = document.getElementById('lineCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  // Message
-  const messageText = "The night whispers secrets...";
-  const letters = [];
-  messageText.split("").forEach((char,i)=>{
-    const letter = document.createElement('div');
-    letter.className = 'message-letter';
-    letter.innerText = char;
-    document.body.appendChild(letter);
-    letters.push(letter);
+// Stars in background
+for(let i=0;i<200;i++){
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.top = Math.random()*window.innerHeight+'px';
+  star.style.left = Math.random()*window.innerWidth+'px';
+  star.style.width = star.style.height = Math.random()*3+1+'px';
+  document.body.appendChild(star);
+}
+
+// Message
+const message = "Night whispers secrets";
+const letters = message.split("");
+const letterPoints = [];
+
+// Create points for each letter
+letters.forEach((char,i)=>{
+  const point = document.createElement('div');
+  point.className = 'letter-point';
+  document.body.appendChild(point);
+  // Arrange letters in center
+  point.targetX = window.innerWidth/2 - letters.length*10 + i*20;
+  point.targetY = window.innerHeight/2 + (Math.random()*20 - 10);
+  point.style.left = Math.random()*window.innerWidth + 'px';
+  point.style.top = Math.random()*window.innerHeight + 'px';
+  letterPoints.push(point);
+});
+
+// Animate stars moving to form letters
+function animatePoints(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  letterPoints.forEach(point=>{
+    let x = parseFloat(point.style.left);
+    let y = parseFloat(point.style.top);
+    // Move slightly toward target
+    let dx = (point.targetX - x) * 0.02;
+    let dy = (point.targetY - y) * 0.02;
+    x += dx;
+    y += dy;
+    point.style.left = x + 'px';
+    point.style.top = y + 'px';
+    point.style.opacity = 1;
+
+    // Draw line to nearest neighbor for constellation effect
+    letterPoints.forEach(other=>{
+      if(other === point) return;
+      let ox = parseFloat(other.style.left);
+      let oy = parseFloat(other.style.top);
+      let dist = Math.hypot(ox-x, oy-y);
+      if(dist<50){
+        ctx.beginPath();
+        ctx.moveTo(x+2,y+2);
+        ctx.lineTo(ox+2,oy+2);
+        ctx.strokeStyle = 'rgba(160,196,255,0.4)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    });
   });
 
-  // Function to create a shooting star
-  function createShootingStar(index){
-    const star = document.createElement('div');
-    star.className = 'shooting-star';
-    document.body.appendChild(star);
+  requestAnimationFrame(animatePoints);
+}
 
-    const startX = window.innerWidth + Math.random()*100;
-    const startY = Math.random()*window.innerHeight/2;
-    const endX = window.innerWidth/2 - letters.length*7 + index*14;
-    const endY = window.innerHeight/2;
-
-    const duration = 1000 + Math.random()*800;
-    const startTime = performance.now();
-
-    function step(now){
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed/duration,1);
-
-      // Diagonal fall with slight curve
-      const x = startX + (endX - startX)*t;
-      const y = startY + (endY - startY)*t + Math.sin(t*Math.PI)*50;
-      star.style.left = x + "px";
-      star.style.top = y + "px";
-
-      if(t < 1){
-        requestAnimationFrame(step);
-      } else {
-        star.remove();
-        createParticles(endX, endY, letters[index]);
-      }
-    }
-
-    requestAnimationFrame(step);
-  }
-
-  // Particle explosion to reveal letter
-  function createParticles(x, y, letter){
-    const particleCount = 20;
-    for(let i=0;i<particleCount;i++){
-      const p = document.createElement('div');
-      p.className = 'particle';
-      document.body.appendChild(p);
-      let angle = Math.random()*2*Math.PI;
-      let distance = 20 + Math.random()*20;
-      let duration = 800 + Math.random()*500;
-      const startTime = performance.now();
-      function move(now){
-        const elapsed = now - startTime;
-        const t = Math.min(elapsed/duration,1);
-        p.style.left = x + Math.cos(angle)*distance*t + "px";
-        p.style.top = y + Math.sin(angle)*distance*t + "px";
-        p.style.opacity = 1 - t;
-        if(t < 1){
-          requestAnimationFrame(move);
-        } else {
-          p.remove();
-        }
-      }
-      requestAnimationFrame(move);
-    }
-    // Reveal the letter after particles
-    setTimeout(()=>{
-      letter.style.left = x + "px";
-      letter.style.top = y + "px";
-      letter.style.opacity = 1;
-    }, 400);
-  }
-
-  // Start cinematic shooting star rain
-  messageText.split("").forEach((_,i)=>{
-    setTimeout(()=>{ createShootingStar(i); }, i*300);
-  });
-
+animatePoints();
 </script>
 
 </body>

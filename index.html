@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Scene with Crescent Moon</title>
+<title>Cinematic Night Scene with Rotated Crescent Moon</title>
 <style>
   body {
     margin: 0;
@@ -11,6 +11,17 @@
     background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
     overflow: hidden;
     position: relative;
+  }
+
+  /* Crescent Moon SVG wrapper rotated 25 degrees */
+  .moon-wrapper {
+    position: absolute;
+    top: 80px;
+    right: 120px;
+    width: 150px;
+    height: 150px;
+    z-index: 2;
+    transform: rotate(25deg); /* Rotate the crescent */
   }
 
   /* Cross */
@@ -83,16 +94,6 @@
   @keyframes reveal {
     0% { opacity: 0; filter: blur(8px); transform: translate(-50%, -50%) scale(0.85); }
     100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
-  }
-
-  /* Crescent Moon SVG wrapper */
-  .moon-wrapper {
-    position: absolute;
-    top: 80px;
-    right: 120px;
-    width: 150px;
-    height: 150px;
-    z-index: 2;
   }
 </style>
 </head>

@@ -21,14 +21,21 @@
     right: 120px;
     width: 150px;
     height: 150px;
-    background: radial-gradient(circle, #ffffff 45%, #e6e6e6 70%, #bfbfbf 100%);
     border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 45%, #e6e6e6 70%, #bfbfbf 100%);
     box-shadow: 0 0 60px #ffffffaa;
-    /* Perfect crescent shape */
-    clip-path: path('M75 0
-        A75 75 0 1 0 75 150
-        A45 75 0 1 1 75 0 Z');
     z-index: 2;
+  }
+
+  .moon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 30px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #00163a;
   }
 
   /* Cross */
@@ -75,9 +82,9 @@
   }
 
   @keyframes twinkle {
-    0% { opacity: 0.2; }
-    50% { opacity: 1; }
-    100% { opacity: 0.2; }
+    0% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0.2; transform: scale(1); }
   }
 
   /* Click Here Button */

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurora Borealis Message</title>
+<title>Aurora Night Message</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
@@ -100,7 +100,7 @@
     text-shadow: 0 0 10px #fff, 0 0 20px #00ffcc;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1s ease, top 1s ease;
+    transition: opacity 1s ease, top 1s ease, left 1s ease;
   }
 </style>
 </head>
@@ -121,19 +121,20 @@
   }
 
   // Clouds
-  for(let i=0;i<5;i++){
+  const cloudCount = 6;
+  for(let i=0;i<cloudCount;i++){
     const cloud=document.createElement('div');
     cloud.classList.add('cloud');
-    cloud.style.top=Math.random()*200+'px';
-    cloud.style.animationDuration=(60 + Math.random()*40)+'s, '+(8 + Math.random()*4)+'s';
-    cloud.style.opacity = 0.05 + Math.random()*0.1;
+    cloud.style.top = Math.random() * 250 + "px";
+    cloud.style.animationDuration = (60 + Math.random()*40) + "s, " + (8 + Math.random()*4) + "s";
+    cloud.style.opacity = 0.05 + Math.random()*0.08;
     document.body.appendChild(cloud);
   }
 
   // Message
   const messageText = "The night whispers secrets...";
   const letters = [];
-  messageText.split("").forEach((char,i)=>{
+  messageText.split("").forEach((char)=>{
     const letter = document.createElement('div');
     letter.className = 'message-letter';
     letter.innerText = char;
@@ -141,21 +142,21 @@
     letters.push(letter);
   });
 
-  // Animate letters in center with proper spacing
+  // Animate letters properly centered with spacing
   function animateLetters(){
-    const totalLength = letters.length;
-    const startX = window.innerWidth/2 - totalLength*20/2; // spacing
+    const totalWidth = letters.length * 40; // approx width per letter
+    const startX = (window.innerWidth - totalWidth)/2;
     const centerY = window.innerHeight/2;
     letters.forEach((letter,i)=>{
       setTimeout(()=>{
-        letter.style.left = startX + i*20 + "px";
+        letter.style.left = startX + i*40 + "px";
         letter.style.top = centerY + "px";
         letter.style.opacity = 1;
-      }, i*300);
+      }, i*250);
     });
   }
 
-  setTimeout(animateLetters, 2000); // wait for aurora sweep
+  setTimeout(animateLetters, 2000);
 </script>
 
 </body>

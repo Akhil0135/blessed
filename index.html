@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constellation Message</title>
+<title>Constellation Message with Moon</title>
 <style>
   body, html {
     margin: 0;
@@ -15,6 +15,7 @@
     font-family: 'Segoe UI', sans-serif;
   }
 
+  /* Stars */
   .star {
     position: absolute;
     border-radius: 50%;
@@ -25,6 +26,44 @@
     height: 2px;
   }
 
+  /* Moon */
+  .moon {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #fefbd8 0%, #f5e7a0 70%, #e0c97f 100%);
+    border-radius: 50%;
+    top: 50px;
+    left: 50px;
+    box-shadow: 0 0 30px 10px #fffacd;
+  }
+
+  /* Clouds */
+  .cloud {
+    position: absolute;
+    width: 250px;
+    height: 100px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    filter: blur(20px);
+    box-shadow: 0 0 30px rgba(255,255,255,0.05);
+    animation: moveCloud linear infinite, morphCloud ease-in-out infinite alternate;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255,255,255,0.05);
+    width: 150px;
+    height: 80px;
+    border-radius: 50%;
+    filter: blur(20px);
+  }
+  .cloud::before { top: -30px; left: 50px; }
+  .cloud::after { top: 20px; left: 100px; }
+  @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
+  @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
+
+  /* Constellation point */
   .letter-point {
     position: absolute;
     width: 4px;
@@ -33,6 +72,16 @@
     background: #a0c4ff;
     opacity: 0;
     box-shadow: 0 0 10px #a0c4ff, 0 0 20px rgba(160,196,255,0.5);
+  }
+
+  /* Message letters (text) */
+  .message-letter {
+    position: absolute;
+    color: white;
+    font-size: 2rem;
+    text-shadow: 0 0 10px #fff, 0 0 20px #a0c4ff;
+    opacity: 0;
+    pointer-events: none;
   }
 
   canvas {
@@ -44,6 +93,8 @@
 </head>
 <body>
 
+<div class="moon"></div>
+
 <canvas id="lineCanvas"></canvas>
 
 <script>
@@ -52,8 +103,8 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Stars in background
-for(let i=0;i<200;i++){
+// Background stars
+for(let i=0;i<150;i++){
   const star = document.createElement('div');
   star.className = 'star';
   star.style.top = Math.random()*window.innerHeight+'px';
@@ -62,32 +113,51 @@ for(let i=0;i<200;i++){
   document.body.appendChild(star);
 }
 
+// Clouds
+for(let i=0;i<5;i++){
+  const cloud = document.createElement('div');
+  cloud.className = 'cloud';
+  cloud.style.top = Math.random()*300+'px';
+  cloud.style.animationDuration=(40 + Math.random()*40)+'s, '+(6 + Math.random()*4)+'s';
+  cloud.style.opacity = 0.05 + Math.random()*0.1;
+  document.body.appendChild(cloud);
+}
+
 // Message
 const message = "Night whispers secrets";
 const letters = message.split("");
 const letterPoints = [];
+const letterDivs = [];
 
-// Create points for each letter
+// Create letters
 letters.forEach((char,i)=>{
+  const letterDiv = document.createElement('div');
+  letterDiv.className = 'message-letter';
+  letterDiv.innerText = char;
+  document.body.appendChild(letterDiv);
+  letterDivs.push(letterDiv);
+
+  // Create constellation points for each letter
   const point = document.createElement('div');
   point.className = 'letter-point';
   document.body.appendChild(point);
-  // Arrange letters in center
+
   point.targetX = window.innerWidth/2 - letters.length*10 + i*20;
   point.targetY = window.innerHeight/2 + (Math.random()*20 - 10);
   point.style.left = Math.random()*window.innerWidth + 'px';
   point.style.top = Math.random()*window.innerHeight + 'px';
+
   letterPoints.push(point);
 });
 
-// Animate stars moving to form letters
+// Animate points and draw constellation
 function animatePoints(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  letterPoints.forEach(point=>{
+  letterPoints.forEach((point,i)=>{
     let x = parseFloat(point.style.left);
     let y = parseFloat(point.style.top);
-    // Move slightly toward target
+
     let dx = (point.targetX - x) * 0.02;
     let dy = (point.targetY - y) * 0.02;
     x += dx;
@@ -96,9 +166,16 @@ function animatePoints(){
     point.style.top = y + 'px';
     point.style.opacity = 1;
 
-    // Draw line to nearest neighbor for constellation effect
+    // Reveal letter gradually
+    if(Math.abs(x-point.targetX)<1 && Math.abs(y-point.targetY)<1){
+      letterDivs[i].style.left = point.targetX + "px";
+      letterDivs[i].style.top = point.targetY + "px";
+      letterDivs[i].style.opacity = 1;
+    }
+
+    // Draw line to nearest neighbor
     letterPoints.forEach(other=>{
-      if(other === point) return;
+      if(other===point) return;
       let ox = parseFloat(other.style.left);
       let oy = parseFloat(other.style.top);
       let dist = Math.hypot(ox-x, oy-y);

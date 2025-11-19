@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Sky with Spaceship Message</title>
+<title>Cinematic Spaceship Message</title>
 <style>
   body, html {
     margin: 0;
@@ -89,57 +89,24 @@
     100% { transform: translate(-100vw, 100vh) rotate(-45deg); opacity: 0; }
   }
 
-  /* Spaceship */
+  /* Spaceship image */
   .spaceship {
     position: absolute;
-    width: 40px;
-    height: 20px;
-    background: #ccc;
-    border-radius: 10px;
-    box-shadow: 0 0 20px #fff, 0 0 30px #a0c4ff;
-    transform-origin: center;
+    width: 60px;
+    height: 60px;
+    background: url('https://i.ibb.co/7Qf7tN2/spaceship.png') no-repeat center/contain;
+    top: -50px;
+    left: -50px;
+    z-index: 10;
   }
 
-  /* Spaceship flames */
-  .flame {
+  /* Message letters */
+  .message-letter {
     position: absolute;
-    width: 8px;
-    height: 12px;
-    background: linear-gradient(to bottom, #fffa80, #ff4e00);
-    border-radius: 50%;
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%) scaleY(1);
-    animation: flameAnim 0.2s infinite alternate;
-  }
-  @keyframes flameAnim {
-    0% { transform: translateX(-50%) scaleY(1); opacity: 0.8; }
-    100% { transform: translateX(-50%) scaleY(1.5); opacity: 1; }
-  }
-
-  /* Message */
-  #centerMessage {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    color: white;
     font-size: 2rem;
-    color: #ffffff;
-    text-shadow: 0 0 10px #ffffff, 0 0 20px #a0c4ff, 0 0 30px #ffffff;
+    text-shadow: 0 0 10px #fff, 0 0 20px #a0c4ff;
     opacity: 0;
-    text-align: center;
-    pointer-events: none;
-    transition: opacity 2s ease-in-out;
-  }
-
-  /* Trail */
-  .trail {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: rgba(255,255,255,0.8);
-    border-radius: 50%;
-    filter: blur(2px);
     pointer-events: none;
   }
 </style>
@@ -147,7 +114,6 @@
 <body>
 
 <div class="moon"></div>
-<div id="centerMessage">The night whispers secrets to those who listen...</div>
 
 <script>
   // Stars
@@ -186,57 +152,60 @@
   // Spaceship
   const spaceship = document.createElement('div');
   spaceship.className = 'spaceship';
-  const flame = document.createElement('div');
-  flame.className = 'flame';
-  spaceship.appendChild(flame);
   document.body.appendChild(spaceship);
 
-  const message = document.getElementById('centerMessage');
-  const trailParticles = [];
+  // Message
+  const messageText = "The night whispers secrets to those who listen...";
+  const letters = [];
 
+  // Prepare letters in hidden state
+  messageText.split("").forEach(char=>{
+    const letter = document.createElement('div');
+    letter.className = 'message-letter';
+    letter.innerText = char;
+    document.body.appendChild(letter);
+    letters.push(letter);
+  });
+
+  // Animate spaceship along a curved path and reveal letters along the path
   function animateSpaceship() {
-    const duration = 4000;
     const startX = -50;
     const startY = -50;
-    const endX = window.innerWidth/2 - 20;
-    const endY = window.innerHeight/2 - 10;
+    const endX = window.innerWidth/2 - 30;
+    const endY = window.innerHeight/2 - 30;
+    const duration = 5000;
+    const startTime = performance.now();
 
-    let startTime = null;
+    function step(now){
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed/duration,1); // 0 -> 1
 
-    function step(timestamp){
-      if(!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime)/duration,1);
+      // Curved path using sine
+      const x = startX + (endX - startX)*t;
+      const y = startY + (endY - startY)*t + Math.sin(t*Math.PI)*100; // curve
 
-      // Move spaceship
-      const x = startX + (endX - startX)*progress;
-      const y = startY + (endY - startY)*progress;
-      spaceship.style.transform = `translate(${x}px, ${y}px) rotate(${progress*360}deg)`;
+      spaceship.style.left = x + "px";
+      spaceship.style.top = y + "px";
 
-      // Add trail
-      const trail = document.createElement('div');
-      trail.className = 'trail';
-      trail.style.left = x + 15 + 'px';
-      trail.style.top = y + 10 + 'px';
-      document.body.appendChild(trail);
-      trailParticles.push(trail);
-
-      // Remove old trails
-      if(trailParticles.length>100){
-        const old = trailParticles.shift();
-        old.remove();
+      // Reveal letters along the path
+      const lettersToShow = Math.floor(t * letters.length);
+      for(let i=0;i<lettersToShow;i++){
+        const lt = letters[i];
+        const angle = i / letters.length * Math.PI; // distribute along curve
+        lt.style.left = endX - 150 + i*12 + "px";
+        lt.style.top = endY + Math.sin(angle)*50 + "px";
+        lt.style.opacity = 1;
       }
 
-      if(progress<1){
+      if(t<1){
         requestAnimationFrame(step);
-      } else {
-        // Reveal message
-        message.style.opacity = 1;
       }
     }
+
     requestAnimationFrame(step);
   }
 
-  setTimeout(animateSpaceship, 3000);
+  setTimeout(animateSpaceship, 2000);
 </script>
 
 </body>

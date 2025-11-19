@@ -13,7 +13,7 @@
     position: relative;
   }
 
-  /* True Thin Crescent Moon */
+  /* Thin White Crescent Moon */
   .moon {
     position: absolute;
     top: 80px;
@@ -21,9 +21,21 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background: radial-gradient(circle at 45% 50%, white 55%, transparent 56%);
+    background: transparent;
     box-shadow: 0 0 60px #ffffffaa;
     z-index: 2;
+  }
+
+  .moon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: white;
+    clip-path: ellipse(20% 50% at 35% 50%);
   }
 
   /* Cross */

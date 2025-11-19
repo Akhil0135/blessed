@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Night to Day Cinematic</title>
+<title>Cinematic Night to Day</title>
 <style>
   body {
     margin: 0;
@@ -35,7 +35,6 @@
     width: 160px;
     height: 260px;
     z-index: 3;
-    transition: background 3s ease-in-out;
   }
 
   .vertical {
@@ -45,7 +44,7 @@
     width: 32px;
     height: 260px;
     background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
-    transition: background 3s ease-in-out;
+    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
   }
 
   .horizontal {
@@ -56,7 +55,7 @@
     width: 190px;
     height: 32px;
     background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
-    transition: background 3s ease-in-out;
+    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
   }
 
   /* Stars */
@@ -90,7 +89,39 @@
     box-shadow: 0 0 60px #FFD700aa, 0 0 120px #FFD70055;
     opacity: 0;
     z-index: 2;
-    transition: opacity 2s ease-in-out;
+    transition: opacity 2s ease-in-out, top 5s ease-in-out;
+  }
+
+  /* Sun rays */
+  .sun-ray {
+    position: absolute;
+    width: 200px;
+    height: 2px;
+    background: rgba(255, 223, 0, 0.3);
+    top: 155px;
+    right: 195px;
+    transform-origin: left center;
+    opacity: 0;
+    z-index: 1;
+  }
+
+  /* Clouds */
+  .cloud {
+    position: absolute;
+    width: 150px;
+    height: 60px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    top: 150px;
+    left: -200px;
+    z-index: 2;
+    filter: blur(4px);
+    animation: cloudMove linear infinite;
+  }
+
+  @keyframes cloudMove {
+    0% { left: -200px; }
+    100% { left: 110%; }
   }
 
   /* Click Button */
@@ -115,7 +146,6 @@
     0% { opacity: 0; filter: blur(8px); transform: translate(-50%, -50%) scale(0.85); }
     100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
   }
-
 </style>
 </head>
 <body>
@@ -135,11 +165,13 @@
   </svg>
 </div>
 
+<!-- Cross -->
 <div class="cross">
   <div class="vertical"></div>
   <div class="horizontal"></div>
 </div>
 
+<!-- Sun -->
 <div class="sun"></div>
 
 <script>
@@ -175,7 +207,7 @@ setTimeout(() => {
     // Fade out moon
     document.querySelector('.moon-wrapper').style.opacity = 0;
 
-    // Remove all stars completely
+    // Remove stars
     document.querySelectorAll('.star').forEach(s => s.remove());
 
     // Hide button
@@ -187,10 +219,31 @@ setTimeout(() => {
     // Show sun
     const sun = document.querySelector('.sun');
     sun.style.opacity = 1;
+    sun.style.top = '50px'; // Slight rise for cinematic effect
 
-    // Change cross color for day (darker orange for contrast)
+    // Sun rays
+    for (let i = 0; i < 12; i++) {
+      const ray = document.createElement('div');
+      ray.classList.add('sun-ray');
+      ray.style.transform = `rotate(${i*30}deg)`;
+      ray.style.transition = 'opacity 2s ease-in-out';
+      document.body.appendChild(ray);
+      setTimeout(() => ray.style.opacity = 1, i*150);
+    }
+
+    // Cross color for day (darker orange/bronze)
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
+
+    // Add moving clouds
+    for(let i=0; i<3; i++){
+      const cloud = document.createElement('div');
+      cloud.className = 'cloud';
+      cloud.style.top = 100 + i*60 + 'px';
+      cloud.style.animationDuration = 50 + i*20 + 's';
+      cloud.style.opacity = 0.3 + i*0.1;
+      document.body.appendChild(cloud);
+    }
   });
 }, 3000);
 </script>

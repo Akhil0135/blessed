@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cinematic Birthday Eve — "On this calm birthday eve so new"</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+  /* Base */
+  html,body{height:100%;margin:0;background:linear-gradient(to top,#030416 0%,#07122b 45%,#0b1833 100%);overflow:hidden}
+  body{font-family:Georgia, 'Times New Roman', serif;color:#fff}
+
+  /* STAR FIELD */
+  .star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;box-shadow:0 0 6px rgba(255,255,255,0.6);opacity:0.9;animation:tw 2.5s infinite alternate}
+  @keyframes tw{0%{opacity:0.25;transform:scale(1)}50%{opacity:1;transform:scale(1.6)}100%{opacity:0.25;transform:scale(1)}}
+
+  /* MOON (JS-driven now - no CSS animation) */
+  .moon{position:absolute;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,#fffbe0 0%,#efe0a0 60%,#d7c07a 100%);top:60px;left:-240px;box-shadow:0 0 12px 3px rgba(255,245,200,0.45);z-index:40;will-change:left,top,transform}
+
+  /* AURORA */
+  .aurora{position:absolute;top:0;left:0;width:200%;height:45vh;background:linear-gradient(120deg,rgba(0,210,140,0.12),rgba(110,20,255,0.10),rgba(0,150,255,0.08));filter:blur(48px);opacity:0.28;z-index:10;animation:auroraX 16s ease-in-out infinite alternate,auroraWave 6s ease-in-out infinite}
+  @keyframes auroraX{0%{transform:translateX(-6%)}100%{transform:translateX(6%)}}
+  @keyframes auroraWave{0%{transform:translateY(0)}50%{transform:translateY(18px)}100%{transform:translateY(0)}}
+
+  /* HORIZON GLOW */
+  .horizon{position:absolute;left:0;right:0;bottom:0;height:18vh;background:linear-gradient(180deg,rgba(10,20,40,0) 0%,rgba(4,8,20,0.35) 60%,rgba(6,10,25,0.6)100%);z-index:5}
+
+  /* CLOUDS (original cinematic) */
+  .cloud{position:absolute;width:360px;height:140px;background:rgba(255,255,255,0.06);border-radius:50%;filter:blur(24px);box-shadow:0 0 30px rgba(255,255,255,0.04);animation:morph 8s ease-in-out infinite;opacity:1}
+  .cloud::before,.cloud::after{content:"";position:absolute;background:rgba(255,255,255,0.06);width:220px;height:110px;border-radius:50%;filter:blur(24px)}
+  .cloud::before{left:60px;top:-34px}.cloud::after{left:160px;top:18px}
+  @keyframes morph{0%{transform:scale(1)}50%{transform:scale(1.08,0.94)}100%{transform:scale(1)}}
+
+  .cloud.layer-back{z-index:12;opacity:0.55}
+  .cloud.layer-mid{z-index:28;opacity:0.85}
+  .cloud.layer-front{z-index:48;opacity:1}
+
+  /* MIST */
+  .mist{position:absolute;left:-8%;width:116%;height:220px;bottom:0;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,0.06)0%,rgba(255,255,255,0)55%);filter:blur(26px);z-index:22;opacity:0.85;animation:mistMove 20s linear infinite}
+  @keyframes mistMove{0%{transform:translateX(0)}100%{transform:translateX(80px)}}
+
+  /* SHOOTING STARS */
+  .shoot{position:absolute;width:10px;height:3px;border-radius:50%;background:linear-gradient(0deg,rgba(255,255,255,0)0%,#fff 100%);transform-origin:top left;filter:drop-shadow(0 0 6px rgba(255,255,255,0.6));z-index:60;will-change:transform,opacity}
+
+  /* MESSAGE */
+  .messageWrap{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);z-index:70;pointer-events:none}
+  .messageLine{font-family:'Playfair Display', Georgia, serif;color:#fff;font-size:36px;letter-spacing:0.6px;line-height:1.3;opacity:0;transform:translateY(8px);text-align:center;max-width:88vw;text-shadow:0 0 12px rgba(255,255,255,0.65);transition:opacity 0.2s linear}
+  .messageStrong{display:inline-block;color:#fff;font-weight:700;text-shadow:0 0 18px rgba(0,255,200,0.9)}
+  .vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0)40%,rgba(0,0,0,0.35)85%);z-index:120}
+
+  @media (max-width:600px){.messageLine{font-size:20px}}
+
+  /* CLICK HERE BUTTON */
+  #clickBtn {
+    position: absolute;
+    bottom: 14vh;
+    left: 50%;
+    transform: translateX(-50%) scale(1.1);
+    padding: 14px 34px;
+    font-size: 20px;
+    font-family: 'Playfair Display', serif;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 40px;
+    color: #fff;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.2s ease, transform 1.2s ease;
+    z-index: 200;
+  }
+
+  @keyframes btnFloat { 0%{transform:translateX(-50%) translateY(0) scale(1.08)}50%{transform:translateX(-50%) translateY(-6px) scale(1.12)}100%{transform:translateX(-50%) translateY(0) scale(1.08)} }
+  #clickBtn.reveal { opacity:1; pointer-events:auto; animation: btnFloat 3.4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="aurora"></div>
+<div class="moon" aria-hidden="true"></div>
+
+<div id="cloudRoot"></div>
+<div class="mist" aria-hidden="true"></div>
+
+<div class="messageWrap" aria-hidden="false">
+  <div id="line1" class="messageLine">On this calm birthday eve so new,</div>
+  <div id="line2" class="messageLine">God softly whispers, <span class="messageStrong">‘My plans are made for you.’</span></div>
+</div>
+
+<button id="clickBtn">Click Here</button>
+<div class="vignette"></div>
+
+<script>
+// ---------- CONFIG ----------
+const MOON_DURATION = 70000; // milliseconds (70s) - adjust if you want faster/slower
+const MOON_START_LEFT_PX = -240; // starting left in px
+const MOON_START_TOP_PX = 60;
+const MOON_MID_LEFT_RATIO = 0.45; // 45% across viewport at mid point
+const MOON_MID_TOP_PX = 80;
+const MOON_END_LEFT_RATIO = 0.75; // 75% across viewport as final position
+const MOON_END_TOP_PX = 60;
+
+// ---------- STARS ----------
+const STAR_COUNT = 220;
+for(let i=0;i<STAR_COUNT;i++){
+  const s = document.createElement('div');
+  s.className='star';
+  s.style.left = Math.random()*100 + 'vw';
+  s.style.top = Math.random()*100 + 'vh';
+  const size = Math.random()*2+0.6;
+  s.style.width = s.style.height = size + 'px';
+  s.style.animationDuration = (2 + Math.random()*2.5) + 's';
+  s.style.opacity = 0.45 + Math.random()*0.6;
+  document.body.appendChild(s);
+}
+
+// ---------- CLOUDS (parallax layers) ----------
+const cloudRoot = document.getElementById('cloudRoot');
+const layers = [
+  {class:'layer-back',count:3,minTop:30,maxTop:130,durBase:80,opacity:0.5},
+  {class:'layer-mid',count:3,minTop:90,maxTop:220,durBase:60,opacity:0.8},
+  {class:'layer-front',count:3,minTop:160,maxTop:320,durBase:40,opacity:1}
+];
+
+layers.forEach(layer=>{
+  for(let i=0;i<layer.count;i++){
+    const c = document.createElement('div');
+    c.className = 'cloud '+layer.class;
+    c.style.top = (Math.random()*(layer.maxTop-layer.minTop)+layer.minTop)+'px';
+    c.style.opacity = layer.opacity;
+    const duration = layer.durBase + Math.random()*30;
+    c.style.animation = `moveCloud ${duration}s linear infinite, morph ${6 + Math.random()*4}s ease-in-out infinite`;
+    c.style.left = (-200 - Math.random()*800) + 'px';
+    cloudRoot.appendChild(c);
+  }
+});
+
+// dynamic keyframes for cloud range
+const dynStyle = document.createElement('style');
+let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+dynStyle.innerHTML = `@keyframes moveCloud { 0%{transform:translateX(-700px)} 100%{transform:translateX(${vw+200}px)} }`;
+document.head.appendChild(dynStyle);
+
+// ---------- SHOOTING STARS ----------
+function spawnShootingStar(){
+  const s = document.createElement('div');
+  s.className='shoot';
+  const startY = Math.random()*180;
+  s.style.top = startY + 'px';
+  s.style.left = window.innerWidth + 'px';
+  const dur = 1.2 + Math.random()*1.6;
+  s.style.transition = `transform ${dur}s linear, opacity ${dur}s linear`;
+  document.body.appendChild(s);
+  // force style calc
+  void s.offsetWidth;
+  s.style.opacity = '1';
+  s.style.transform = `translate(-${(60 + Math.random()*140)}vw, ${40 + Math.random()*80}vh) rotate(-45deg)`;
+  setTimeout(()=>{ s.style.opacity='0' }, dur*650);
+  setTimeout(()=> s.remove(), dur*1100);
+}
+const shootI1 = setInterval(spawnShootingStar, 1200);
+const shootI2 = setInterval(spawnShootingStar, 2000);
+const shootI3 = setInterval(spawnShootingStar, 2800);
+
+// ---------- MOON: JS driven animation so we can track progress ----------
+const moonEl = document.querySelector('.moon');
+let startTime = null;
+let moonFinished = false;
+
+function easeInOutQuad(t){ return t<0.5 ? 2*t*t : -1 + (4-2*t)*t; }
+
+function animateMoon(ts){
+  if (startTime === null) startTime = ts;
+  const elapsed = ts - startTime;
+  const prog = Math.min(elapsed / MOON_DURATION, 1); // 0..1
+  const eased = easeInOutQuad(prog);
+
+  // compute left in px from start to end based on viewport
+  const vwCurrent = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  const startLeft = MOON_START_LEFT_PX;
+  // we use a two-segment curve (start -> mid -> end) for vertical variation
+  const midLeft = vwCurrent * MOON_MID_LEFT_RATIO;
+  const endLeft = vwCurrent * MOON_END_LEFT_RATIO;
+
+  // interpolate piecewise: 0..0.5 => start->mid, 0.5..1 => mid->end
+  let leftPx;
+  if (eased <= 0.5){
+    const p = eased / 0.5;
+    leftPx = startLeft + (midLeft - startLeft) * p;
+  } else {
+    const p = (eased - 0.5) / 0.5;
+    leftPx = midLeft + (endLeft - midLeft) * p;
+  }
+
+  // vertical interpolation similar
+  let topPx;
+  if (eased <= 0.5){
+    const p = eased / 0.5;
+    topPx = MOON_START_TOP_PX + (MOON_MID_TOP_PX - MOON_START_TOP_PX) * p;
+  } else {
+    const p = (eased - 0.5) / 0.5;
+    topPx = MOON_MID_TOP_PX + (MOON_END_TOP_PX - MOON_MID_TOP_PX) * p;
+  }
+
+  moonEl.style.left = leftPx + 'px';
+  moonEl.style.top = topPx + 'px';
+
+  // subtle scale parallax
+  const sx = 1 + Math.sin(elapsed*0.0005)*0.004;
+  const sy = 1 + Math.cos(elapsed*0.00045)*0.004;
+  moonEl.style.transform = `scale(${sx},${sy})`;
+
+  // --------- sync message reveal to moon progress ----------
+  // We'll reveal gradually: use eased progress (0..1) mapped to opacity 0..1
+  const msgOpacity = Math.max(0, Math.min(1, eased));
+  document.getElementById('line1').style.opacity = msgOpacity * 0.95; // slightly less than full
+  document.getElementById('line2').style.opacity = msgOpacity;        // final line slightly more visible
+
+  // also nudge vertical position for subtle rising as it reveals
+  document.getElementById('line1').style.transform = `translateY(${8 - eased*8}px)`;
+  document.getElementById('line2').style.transform = `translateY(${8 - eased*8}px)`;
+
+  if (prog < 1){
+    requestAnimationFrame(animateMoon);
+  } else {
+    // finished
+    moonFinished = true;
+    // reveal button cinematically
+    showCinematicButton();
+  }
+}
+
+// start moon animation after small delay so scene loads calmly
+setTimeout(()=> requestAnimationFrame(animateMoon), 650);
+
+// ---------- Button reveal ----------
+const clickBtn = document.getElementById('clickBtn');
+function showCinematicButton(){
+  if (clickBtn.classList.contains('reveal')) return;
+  clickBtn.classList.add('reveal');
+}
+
+// optional: if user resizes, adjust cloud travel distance and moon path endpoints
+window.addEventListener('resize', ()=>{
+  vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  dynStyle.innerHTML = `@keyframes moveCloud { 0%{transform:translateX(-700px)} 100%{transform:translateX(${vw+200}px)} }`;
+});
+
+// ---------- message float (gentle) ----------
+const mw = document.querySelector('.messageWrap');
+let dir = 1;
+setInterval(()=>{
+  mw.style.transform = `translate(-50%,-50%) translateY(${dir * 2}px)`;
+  dir = -dir;
+}, 2200);
+
+// Clean up shooting star intervals on page unload
+window.addEventListener('beforeunload', ()=>{
+  clearInterval(shootI1); clearInterval(shootI2); clearInterval(shootI3);
+});
+</script>
+</body>
+</html>

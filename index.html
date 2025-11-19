@@ -16,6 +16,7 @@
 
   /* Moon (Crescent) */
   .moon {
+    z-index: 10;
     position: absolute;
     top: 80px;
     right: 120px;
@@ -42,7 +43,7 @@
   /* Stars */
   .star {
     position: absolute;
-    z-index: 1; /* behind moon & cross but still visible */
+    z-index: 5; /* behind moon & cross but still visible */
     width: 3px;
     height: 3px;
     background: #ffffff;
@@ -69,6 +70,7 @@
 
   /* Christian Cross */
   .cross {
+    z-index: 12;
     position: absolute;
     top: 40px;
     left: 60px;
@@ -139,4 +141,4 @@ for (let i = 0; i < 250; i++) {
 }
 
 </body>
-</html>
+  </html>

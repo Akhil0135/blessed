@@ -3,69 +3,59 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Realistic Night Scene</title>
+<title>Cinematic Night Scene</title>
 
 <style>
   body {
     margin: 0;
     height: 100vh;
-    background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
+    background: linear-gradient(to bottom, #060b18 0%, #000611 70%, #000000 100%);
     overflow: hidden;
     position: relative;
   }
 
-  /* Moon (Crescent) */
+  /* Crescent Moon */
   .moon {
-    z-index: 10;
     position: absolute;
-    top: 80px;
-    right: 120px;
+    top: 90px;
+    right: 140px;
     width: 160px;
     height: 160px;
+    background: radial-gradient(circle at 40% 40%, #ffffff 45%, #d9d9d9 70%, #bfbfbf 100%);
     border-radius: 50%;
-    background: white;
-    box-shadow: 0 0 60px #ffffffaa, 0 0 140px #ffffff66;
-    /* Crescent effect */
-    clip-path: path('M 80 0 A 80 80 0 1 0 80 160 A 55 80 0 1 1 80 0 Z');
-}
+    box-shadow: 0 0 50px #ffffffaa;
+    overflow: hidden;
+  }
 
+  /* Cutout to create crescent */
   .moon::after {
     content: "";
     position: absolute;
-    top: 0;
-    left: 35px; /* controls crescent thickness */
-    width: 150px;
-    height: 150px;
+    top: -10px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    background: #000611;
     border-radius: 50%;
-    background: #000814;
   }
 
   /* Stars */
   .star {
     position: absolute;
-    z-index: 5; /* behind moon & cross but still visible */
     width: 3px;
     height: 3px;
     background: #ffffff;
     border-radius: 50%;
     opacity: 0.9;
-    animation: twinkle 1.8s infinite ease-in-out;
-    box-shadow: 0 0 6px #ffffffaa, 0 0 12px #ffffff55;
-  } {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    background: #ffffff;
-    border-radius: 50%;
-    opacity: 0.9;
-    animation: twinkle 1.8s infinite ease-in-out;
-    box-shadow: 0 0 6px #ffffffaa, 0 0 12px #ffffff55;
+    animation: twinkle 2s infinite ease-in-out;
+    box-shadow: 0 0 6px #ffffffaa, 0 0 14px #ffffff66;
+    z-index: 5;
   }
 
   @keyframes twinkle {
-    0% { opacity: 0.2; }
-    50% { opacity: 1; }
-    100% { opacity: 0.2; }
+    0% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0.3; transform: scale(1); }
   }
 
   /* Christian Cross */
@@ -75,50 +65,69 @@
     left: 50%;
     transform: translateX(-50%);
     width: 160px;
-    height: 260px;
-}
+    height: 240px;
+    z-index: 12;
+  }
 
   .vertical {
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 32px;
-    height: 260px;
-    background: linear-gradient(to bottom, #f2d27f, #d4a93f, #b88a2c);
-}
+    width: 28px;
+    height: 240px;
+    background: linear-gradient(to bottom, #f8e7a2, #d9b04d, #b8892b);
+    border-radius: 4px;
+  }
 
   .horizontal {
     position: absolute;
-    top: 91px; /* 35% of 260px */
+    top: 55px; /* raised */
     left: 50%;
     transform: translateX(-50%);
-    width: 200px;
-    height: 32px;
-    background: linear-gradient(to right, #f2d27f, #d4a93f, #b88a2c);
-}
+    width: 180px;
+    height: 28px;
+    background: linear-gradient(to right, #f8e7a2, #d9b04d, #b8892b);
+    border-radius: 4px;
+  }
 </style>
 </head>
 <body>
 
 <div class="moon"></div>
+
 <div class="cross">
   <div class="vertical"></div>
   <div class="horizontal"></div>
 </div>
 
 <script>
-// Generate stars without overlapping moon or cross
-const moonRect = { top: 80, left: window.innerWidth - 120 - 150, width: 150, height: 150 };
-const crossRect = { top: 40, left: 60, width: 160, height: 200 };
+// Areas to avoid for stars
+const moonRect = {
+  top: 90,
+  left: window.innerWidth - 140 - 160,
+  width: 160,
+  height: 160
+};
 
+const crossRect = {
+  top: 40,
+  left: window.innerWidth / 2 - 90,
+  width: 180,
+  height: 240
+};
+
+// Utility: check overlap
 function isOverlapping(x, y, rect) {
-  return x > rect.left - 10 &&
-         x < rect.left + rect.width + 10 &&
-         y > rect.top - 10 &&
-         y < rect.top + rect.height + 10;
+  return (
+    x > rect.left - 20 &&
+    x < rect.left + rect.width + 20 &&
+    y > rect.top - 20 &&
+    y < rect.top + rect.height + 20
+  );
 }
 
+// Generate stars avoiding moon & cross
 for (let i = 0; i < 250; i++) {
   let x, y;
   let safe = false;
@@ -132,13 +141,14 @@ for (let i = 0; i < 250; i++) {
     }
   }
 
-  const star = document.createElement('div');
-  star.classList.add('star');
-  star.style.top = y + 'px';
-  star.style.left = x + 'px';
-  star.style.animationDelay = Math.random() * 3 + 's';
+  const star = document.createElement("div");
+  star.classList.add("star");
+  star.style.top = y + "px";
+  star.style.left = x + "px";
+  star.style.animationDelay = Math.random() * 2 + "s";
   document.body.appendChild(star);
 }
+</script>
 
 </body>
 </html>

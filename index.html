@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Sunrise Scene with Garden</title>
+<title>Cinematic Sunrise Scene with Realistic Garden</title>
 <style>
   body {
     margin: 0;
@@ -151,24 +151,49 @@
     opacity: 0;
     transition: opacity 3s ease-in-out;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
   }
 
-  .grass-blade {
-    width: 2px;
+  /* Bushes */
+  .bush {
+    position: absolute;
+    bottom: 0;
+    width: 80px;
     height: 60px;
+    background: radial-gradient(circle at 50% 50%, #2ecc71, #27ae60);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  /* Flowers */
+  .flower {
+    position: absolute;
+    bottom: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    animation: flowerBounce 3s infinite alternate ease-in-out;
+  }
+
+  @keyframes flowerBounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-6px); }
+  }
+
+  /* Grass blade */
+  .grass-blade {
+    position: absolute;
+    bottom: 0;
+    width: 3px;
     background: #27ae60;
-    margin: 0 1px;
+    border-radius: 50% 50% 0 0;
     animation: sway 3s infinite alternate ease-in-out;
   }
 
   @keyframes sway {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(0) rotate(5deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(5deg); }
   }
-
 </style>
 </head>
 <body>
@@ -220,16 +245,6 @@ for (let i = 0; i < 200; i++) {
   document.body.appendChild(star);
 }
 
-// Populate garden with grass blades
-const garden = document.getElementById('garden');
-for(let i = 0; i < window.innerWidth/3; i++) {
-  const blade = document.createElement('div');
-  blade.classList.add('grass-blade');
-  blade.style.height = (50 + Math.random()*50)+'px';
-  blade.style.animationDuration = (2 + Math.random()*2)+'s';
-  garden.appendChild(blade);
-}
-
 // Click button after 3 seconds
 setTimeout(() => {
   const btn = document.createElement('button');
@@ -260,8 +275,40 @@ setTimeout(() => {
     const flare = document.querySelector('.lens-flare');
     flare.style.opacity = 1;
 
-    // Show garden
-    document.querySelector('.garden').style.opacity = 1;
+    // Generate garden
+    const garden = document.getElementById('garden');
+    garden.style.opacity = 1;
+
+    // Bushes
+    for(let i=0;i<10;i++){
+      const bush = document.createElement('div');
+      bush.className='bush';
+      bush.style.left=Math.random()*window.innerWidth+'px';
+      bush.style.width=50+Math.random()*60+'px';
+      bush.style.height=40+Math.random()*40+'px';
+      garden.appendChild(bush);
+    }
+
+    // Grass blades
+    for(let i=0;i<window.innerWidth/3;i++){
+      const blade = document.createElement('div');
+      blade.classList.add('grass-blade');
+      blade.style.left=Math.random()*window.innerWidth+'px';
+      blade.style.height=50+Math.random()*50+'px';
+      blade.style.animationDuration=2+Math.random()*2+'s';
+      garden.appendChild(blade);
+    }
+
+    // Flowers
+    const colors=['#FF0000','#FFFF00','#FF69B4','#FFA500','#FF1493'];
+    for(let i=0;i<50;i++){
+      const flower = document.createElement('div');
+      flower.className='flower';
+      flower.style.left=Math.random()*window.innerWidth+'px';
+      flower.style.bottom=20+Math.random()*50+'px';
+      flower.style.background=colors[Math.floor(Math.random()*colors.length)];
+      garden.appendChild(flower);
+    }
 
     // Cross color for day with subtle glow
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';

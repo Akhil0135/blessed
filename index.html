@@ -3,197 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Sunrise Scene with Realistic Garden</title>
+<title>Cinematic Sunrise Scene with Tulip Garden</title>
 <style>
-  body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
-    overflow: hidden;
-    position: relative;
-    transition: background 3s ease-in-out;
-  }
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
+  overflow: hidden;
+  position: relative;
+  transition: background 3s ease-in-out;
+}
 
-  /* Crescent Moon */
-  .moon-wrapper {
-    position: absolute;
-    top: 80px;
-    right: 120px;
-    width: 150px;
-    height: 150px;
-    z-index: 2;
-    transform: rotate(-50deg);
-    transition: opacity 2s ease-in-out;
-  }
+/* Crescent Moon */
+.moon-wrapper {
+  position: absolute;
+  top: 80px;
+  right: 120px;
+  width: 150px;
+  height: 150px;
+  z-index: 2;
+  transform: rotate(-50deg);
+  transition: opacity 2s ease-in-out;
+}
 
-  /* Cross */
-  .cross {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 160px;
-    height: 260px;
-    z-index: 3;
-  }
+/* Cross */
+.cross {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 260px;
+  z-index: 3;
+}
 
-  .vertical, .horizontal {
-    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
-  }
+.vertical, .horizontal {
+  transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
+}
 
-  .vertical {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 32px;
-    height: 260px;
-    background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
-    box-shadow: 0 0 15px #d4a93f55;
-    animation: pulseLight 3s infinite alternate;
-  }
+.vertical {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 260px;
+  background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
+  box-shadow: 0 0 15px #d4a93f55;
+  animation: pulseLight 3s infinite alternate;
+}
 
-  .horizontal {
-    position: absolute;
-    top: 65px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 190px;
-    height: 32px;
-    background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
-    box-shadow: 0 0 15px #d4a93f55;
-    animation: pulseLight 3s infinite alternate;
-  }
+.horizontal {
+  position: absolute;
+  top: 65px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 190px;
+  height: 32px;
+  background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
+  box-shadow: 0 0 15px #d4a93f55;
+  animation: pulseLight 3s infinite alternate;
+}
 
-  @keyframes pulseLight {
-    0% { box-shadow: 0 0 10px #d4a93f55; }
-    100% { box-shadow: 0 0 25px #d4a93f88; }
-  }
+@keyframes pulseLight {
+  0% { box-shadow: 0 0 10px #d4a93f55; }
+  100% { box-shadow: 0 0 25px #d4a93f88; }
+}
 
-  /* Stars */
-  .star {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    background: white;
-    border-radius: 50%;
-    opacity: 0.9;
-    animation: twinkle 2.5s infinite ease-in-out;
-    pointer-events: none;
-    z-index: 1;
-  }
+/* Stars */
+.star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.9;
+  animation: twinkle 2.5s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
 
-  @keyframes twinkle {
-    0% { opacity: 0.2; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.5); }
-    100% { opacity: 0.2; transform: scale(1); }
-  }
+@keyframes twinkle {
+  0% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+  100% { opacity: 0.2; transform: scale(1); }
+}
 
-  /* Sun */
-  .sun {
-    position: absolute;
-    top: 80px;
-    right: 120px;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #FFD700 0%, #FFA500 70%);
-    box-shadow: 0 0 80px #FFD700aa, 0 0 200px #FFD70055;
-    opacity: 0;
-    z-index: 2;
-    transition: opacity 2s ease-in-out, top 5s ease-in-out, box-shadow 3s ease-in-out;
-  }
+/* Sun */
+.sun {
+  position: absolute;
+  top: 80px;
+  right: 120px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFD700 0%, #FFA500 70%);
+  box-shadow: 0 0 80px #FFD700aa, 0 0 200px #FFD70055;
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 2s ease-in-out, top 5s ease-in-out, box-shadow 3s ease-in-out;
+}
 
-  /* Lens Flare */
-  .lens-flare {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
-    top: 50px;
-    right: 50px;
-    opacity: 0;
-    z-index: 1;
-    pointer-events: none;
-    transition: opacity 2s ease-in-out;
-  }
+/* Lens Flare */
+.lens-flare {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+  top: 50px;
+  right: 50px;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 2s ease-in-out;
+}
 
-  /* Click Button */
-  .click-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 16px 34px;
-    font-size: 22px;
-    font-weight: bold;
-    background: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    opacity: 0;
-    animation: reveal 1.2s forwards;
-    z-index: 4;
-  }
+/* Click Button */
+.click-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 16px 34px;
+  font-size: 22px;
+  font-weight: bold;
+  background: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  opacity: 0;
+  animation: reveal 1.2s forwards;
+  z-index: 4;
+}
 
-  @keyframes reveal {
-    0% { opacity: 0; filter: blur(8px); transform: translate(-50%, -50%) scale(0.85); }
-    100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
-  }
+@keyframes reveal {
+  0% { opacity: 0; filter: blur(8px); transform: translate(-50%, -50%) scale(0.85); }
+  100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
+}
 
-  /* Garden */
-  .garden {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 250px;
-    z-index: 0;
-    opacity: 0;
-    transition: opacity 3s ease-in-out;
-    overflow: hidden;
-  }
+/* Tulip Garden */
+.garden {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 200px;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 3s ease-in-out;
+  overflow: hidden;
+}
 
-  /* Bushes */
-  .bush {
-    position: absolute;
-    bottom: 0;
-    width: 80px;
-    height: 60px;
-    background: radial-gradient(circle at 50% 50%, #2ecc71, #27ae60);
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
+.tulip {
+  position: absolute;
+  bottom: 0;
+  width: 6px;
+  height: 40px;
+  background: #27ae60;
+  border-radius: 3px;
+  transform-origin: bottom center;
+  animation: sway 2s infinite alternate ease-in-out;
+}
 
-  /* Flowers */
-  .flower {
-    position: absolute;
-    bottom: 0;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    box-shadow: 0 0 4px rgba(0,0,0,0.2);
-    animation: flowerBounce 3s infinite alternate ease-in-out;
-  }
+.tulip-flower {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  bottom: 40px;
+  border-radius: 50% 50% 0 0;
+  transform: rotate(45deg);
+}
 
-  @keyframes flowerBounce {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-6px); }
-  }
+.tulip-flower.red { background: #FF0000; }
+.tulip-flower.pink { background: #FF69B4; }
+.tulip-flower.yellow { background: #FFFF00; }
+.tulip-flower.purple { background: #800080; }
 
-  /* Grass blade */
-  .grass-blade {
-    position: absolute;
-    bottom: 0;
-    width: 3px;
-    background: #27ae60;
-    border-radius: 50% 50% 0 0;
-    animation: sway 3s infinite alternate ease-in-out;
-  }
-
-  @keyframes sway {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(5deg); }
-  }
+@keyframes sway {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(5deg); }
+}
 </style>
 </head>
 <body>
@@ -275,42 +263,28 @@ setTimeout(() => {
     const flare = document.querySelector('.lens-flare');
     flare.style.opacity = 1;
 
-    // Generate garden
+    // Show garden
     const garden = document.getElementById('garden');
     garden.style.opacity = 1;
 
-    // Bushes
-    for(let i=0;i<10;i++){
-      const bush = document.createElement('div');
-      bush.className='bush';
-      bush.style.left=Math.random()*window.innerWidth+'px';
-      bush.style.width=50+Math.random()*60+'px';
-      bush.style.height=40+Math.random()*40+'px';
-      garden.appendChild(bush);
-    }
+    // Tulips
+    const colors = ['red','pink','yellow','purple'];
+    for(let i=0;i<60;i++){
+      const tulip = document.createElement('div');
+      tulip.className = 'tulip';
+      tulip.style.left = Math.random()*window.innerWidth+'px';
+      tulip.style.height = 40 + Math.random()*20 + 'px';
 
-    // Grass blades
-    for(let i=0;i<window.innerWidth/3;i++){
-      const blade = document.createElement('div');
-      blade.classList.add('grass-blade');
-      blade.style.left=Math.random()*window.innerWidth+'px';
-      blade.style.height=50+Math.random()*50+'px';
-      blade.style.animationDuration=2+Math.random()*2+'s';
-      garden.appendChild(blade);
-    }
-
-    // Flowers
-    const colors=['#FF0000','#FFFF00','#FF69B4','#FFA500','#FF1493'];
-    for(let i=0;i<50;i++){
       const flower = document.createElement('div');
-      flower.className='flower';
-      flower.style.left=Math.random()*window.innerWidth+'px';
-      flower.style.bottom=20+Math.random()*50+'px';
-      flower.style.background=colors[Math.floor(Math.random()*colors.length)];
-      garden.appendChild(flower);
+      flower.className = 'tulip-flower ' + colors[Math.floor(Math.random()*colors.length)];
+      flower.style.height = (10 + Math.random()*10)+'px';
+      flower.style.width = flower.style.height;
+      tulip.appendChild(flower);
+
+      garden.appendChild(tulip);
     }
 
-    // Cross color for day with subtle glow
+    // Cross color for day
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
   });

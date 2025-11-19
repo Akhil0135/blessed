@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Scene</title>
+<title>Cinematic Night Scene with Crescent Moon</title>
 <style>
   body {
     margin: 0;
@@ -11,30 +11,6 @@
     background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
     overflow: hidden;
     position: relative;
-  }
-
-  /* Crescent Moon */
-  .moon {
-    position: absolute;
-    top: 80px;
-    right: 120px;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 0 60px #ffffffaa;
-    z-index: 2;
-  }
-
-  .moon::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50px; /* distance from left controls thinness */
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%); /* same as background */
   }
 
   /* Cross */
@@ -59,7 +35,7 @@
 
   .horizontal {
     position: absolute;
-    top: 65px;
+    top: 65px; /* slightly raised */
     left: 50%;
     transform: translateX(-50%);
     width: 190px;
@@ -108,11 +84,34 @@
     0% { opacity: 0; filter: blur(8px); transform: translate(-50%, -50%) scale(0.85); }
     100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
   }
+
+  /* Crescent Moon SVG wrapper */
+  .moon-wrapper {
+    position: absolute;
+    top: 80px;
+    right: 120px;
+    width: 150px;
+    height: 150px;
+    z-index: 2;
+  }
 </style>
 </head>
 <body>
 
-<div class="moon"></div>
+<!-- Crescent Moon using SVG -->
+<div class="moon-wrapper">
+  <svg viewBox="0 0 100 100" width="150" height="150">
+    <circle cx="50" cy="50" r="50" fill="white"/>
+    <circle cx="60" cy="50" r="50" fill="url(#bgGradient)"/>
+    <defs>
+      <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0a0f24"/>
+        <stop offset="70%" stop-color="#000814"/>
+        <stop offset="100%" stop-color="#000000"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
 
 <div class="cross">
   <div class="vertical"></div>
@@ -141,7 +140,7 @@ for (let i = 0; i < 200; i++) {
   document.body.appendChild(star);
 }
 
-// Click button after 3s
+// Show click button after 3 seconds
 setTimeout(() => {
   const btn = document.createElement('button');
   btn.className = 'click-btn';

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Night Sky with Spaceship Message</title>
+<title>Cinematic Night Sky with Spaceship Message</title>
 <style>
   body, html {
     margin: 0;
@@ -89,15 +89,32 @@
     100% { transform: translate(-100vw, 100vh) rotate(-45deg); opacity: 0; }
   }
 
-  /* Spaceship carrier */
+  /* Spaceship */
   .spaceship {
     position: absolute;
     width: 40px;
-    height: 40px;
-    background: url('https://i.ibb.co/JyY8n5f/spaceship.png') no-repeat center/contain;
-    top: -50px;
-    left: -50px;
-    z-index: 10;
+    height: 20px;
+    background: #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #fff, 0 0 30px #a0c4ff;
+    transform-origin: center;
+  }
+
+  /* Spaceship flames */
+  .flame {
+    position: absolute;
+    width: 8px;
+    height: 12px;
+    background: linear-gradient(to bottom, #fffa80, #ff4e00);
+    border-radius: 50%;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) scaleY(1);
+    animation: flameAnim 0.2s infinite alternate;
+  }
+  @keyframes flameAnim {
+    0% { transform: translateX(-50%) scaleY(1); opacity: 0.8; }
+    100% { transform: translateX(-50%) scaleY(1.5); opacity: 1; }
   }
 
   /* Message */
@@ -113,6 +130,17 @@
     text-align: center;
     pointer-events: none;
     transition: opacity 2s ease-in-out;
+  }
+
+  /* Trail */
+  .trail {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    filter: blur(2px);
+    pointer-events: none;
   }
 </style>
 </head>
@@ -155,24 +183,59 @@
   }
   setInterval(createShootingStar, 4000);
 
-  // Add spaceship
+  // Spaceship
   const spaceship = document.createElement('div');
   spaceship.className = 'spaceship';
+  const flame = document.createElement('div');
+  flame.className = 'flame';
+  spaceship.appendChild(flame);
   document.body.appendChild(spaceship);
 
-  function animateSpaceship() {
-    spaceship.style.transition = 'transform 4s cubic-bezier(0.65, 0, 0.35, 1)';
-    setTimeout(() => {
-      spaceship.style.transform = `translate(${window.innerWidth/2 - 20}px, ${window.innerHeight/2 - 20}px)`;
-    }, 100);
+  const message = document.getElementById('centerMessage');
+  const trailParticles = [];
 
-    // Reveal message when spaceship reaches center
-    setTimeout(() => {
-      document.getElementById('centerMessage').style.opacity = 1;
-    }, 4100);
+  function animateSpaceship() {
+    const duration = 4000;
+    const startX = -50;
+    const startY = -50;
+    const endX = window.innerWidth/2 - 20;
+    const endY = window.innerHeight/2 - 10;
+
+    let startTime = null;
+
+    function step(timestamp){
+      if(!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime)/duration,1);
+
+      // Move spaceship
+      const x = startX + (endX - startX)*progress;
+      const y = startY + (endY - startY)*progress;
+      spaceship.style.transform = `translate(${x}px, ${y}px) rotate(${progress*360}deg)`;
+
+      // Add trail
+      const trail = document.createElement('div');
+      trail.className = 'trail';
+      trail.style.left = x + 15 + 'px';
+      trail.style.top = y + 10 + 'px';
+      document.body.appendChild(trail);
+      trailParticles.push(trail);
+
+      // Remove old trails
+      if(trailParticles.length>100){
+        const old = trailParticles.shift();
+        old.remove();
+      }
+
+      if(progress<1){
+        requestAnimationFrame(step);
+      } else {
+        // Reveal message
+        message.style.opacity = 1;
+      }
+    }
+    requestAnimationFrame(step);
   }
 
-  // Launch spaceship after 3 seconds
   setTimeout(animateSpaceship, 3000);
 </script>
 

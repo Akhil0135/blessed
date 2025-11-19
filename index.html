@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Meteor Shower Message</title>
+<title>Moonbeam Reveals Message</title>
 <style>
   body, html {
     margin: 0;
@@ -38,14 +38,8 @@
     background: radial-gradient(circle, #fefbd8 0%, #f5e7a0 70%, #e0c97f 100%);
     border-radius: 50%;
     top: 50px;
-    left: -150px;
+    left: 50px;
     box-shadow: 0 0 30px 10px #fffacd;
-    animation: moveMoon 60s linear infinite;
-  }
-  @keyframes moveMoon {
-    0% { left: -150px; top: 80px; }
-    50% { left: 50%; top: 120px; }
-    100% { left: 100%; top: 80px; }
   }
 
   /* Clouds */
@@ -73,15 +67,15 @@
   @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
   @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
 
-  /* Meteor */
-  .meteor {
+  /* Moonbeam */
+  .moonbeam {
     position: absolute;
-    width: 8px;
-    height: 2px;
-    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, white 100%);
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
     border-radius: 50%;
-    opacity: 0.9;
-    transform-origin: top left;
+    box-shadow: 0 0 30px 10px rgba(255,255,255,0.6);
+    pointer-events: none;
   }
 
   /* Message letters */
@@ -101,7 +95,7 @@
 
 <script>
   // Stars
-  for(let i=0;i<200;i++){
+  for(let i=0;i<150;i++){
     const star=document.createElement('div');
     star.classList.add('star');
     star.style.top=Math.random()*window.innerHeight+'px';
@@ -123,7 +117,7 @@
   // Message
   const messageText = "The night whispers secrets to those who listen...";
   const letters = [];
-  messageText.split("").forEach(char=>{
+  messageText.split("").forEach((char,i)=>{
     const letter = document.createElement('div');
     letter.className = 'message-letter';
     letter.innerText = char;
@@ -131,50 +125,48 @@
     letters.push(letter);
   });
 
-  // Function to create a meteor falling toward letter position
-  function createMeteor(index) {
-    const meteor = document.createElement('div');
-    meteor.className = 'meteor';
-    document.body.appendChild(meteor);
+  // Moonbeam animation
+  function animateMoonbeam() {
+    const beam = document.createElement('div');
+    beam.className = 'moonbeam';
+    document.body.appendChild(beam);
 
-    const startX = Math.random()*window.innerWidth;
-    const startY = -50;
-    const endX = window.innerWidth/2 - letters.length*7 + index*14; // letters neatly aligned
-    const endY = window.innerHeight/2 + Math.sin(index/letters.length*Math.PI*2)*15; // small sine offset
-
-    const duration = 1200 + Math.random()*800;
+    const startX = 100; // moon x
+    const startY = 100; // moon y
+    const centerX = window.innerWidth/2 - letters.length*7;
+    const centerY = window.innerHeight/2;
+    const duration = 4000;
     const startTime = performance.now();
 
     function step(now){
       const elapsed = now - startTime;
       const t = Math.min(elapsed/duration,1);
 
-      // Slightly curved path (cosine for smooth curve)
-      const x = startX + (endX - startX)*t;
-      const y = startY + (endY - startY)*t + Math.sin(t*Math.PI)*50; // small arc
-      meteor.style.left = x + "px";
-      meteor.style.top = y + "px";
+      // Beam moves toward center
+      const x = startX + (centerX - startX)*t;
+      const y = startY + (centerY - startY)*t;
+      beam.style.left = x + "px";
+      beam.style.top = y + "px";
 
-      if(t === 1){
-        meteor.remove();
-        letters[index].style.left = endX + "px";
-        letters[index].style.top = endY + "px";
-        letters[index].style.opacity = 1;
-      } else {
+      // Reveal letters gradually as beam passes
+      const lettersToShow = Math.floor(t * letters.length);
+      for(let i=0;i<lettersToShow;i++){
+        letters[i].style.left = centerX + i*14 + "px";
+        letters[i].style.top = centerY + "px";
+        letters[i].style.opacity = 1;
+      }
+
+      if(t < 1){
         requestAnimationFrame(step);
+      } else {
+        beam.remove();
       }
     }
 
     requestAnimationFrame(step);
   }
 
-  // Start meteor shower with increased count and staggered timing
-  messageText.split("").forEach((_, i)=>{
-    setTimeout(() => {
-      createMeteor(i);
-    }, i*200); // shorter delay for denser shower
-  });
-
+  setTimeout(animateMoonbeam, 1500);
 </script>
 
 </body>

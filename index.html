@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Night Sky with Carried Message</title>
+<title>Night Sky with Spaceship Message</title>
 <style>
   body, html {
     margin: 0;
@@ -89,14 +89,15 @@
     100% { transform: translate(-100vw, 100vh) rotate(-45deg); opacity: 0; }
   }
 
-  /* Carrier star */
-  .carrier {
+  /* Spaceship carrier */
+  .spaceship {
     position: absolute;
-    width: 14px;
-    height: 14px;
-    background: radial-gradient(circle, #ffffff 0%, #a0c4ff 80%);
-    border-radius: 50%;
-    box-shadow: 0 0 20px #ffffff, 0 0 30px #a0c4ff;
+    width: 40px;
+    height: 40px;
+    background: url('https://i.ibb.co/JyY8n5f/spaceship.png') no-repeat center/contain;
+    top: -50px;
+    left: -50px;
+    z-index: 10;
   }
 
   /* Message */
@@ -154,29 +155,25 @@
   }
   setInterval(createShootingStar, 4000);
 
-  // Carrier star animation
-  const carrier = document.createElement('div');
-  carrier.className = 'carrier';
-  document.body.appendChild(carrier);
+  // Add spaceship
+  const spaceship = document.createElement('div');
+  spaceship.className = 'spaceship';
+  document.body.appendChild(spaceship);
 
-  function animateCarrier() {
-    carrier.style.top = '-50px';
-    carrier.style.left = '-50px';
-    carrier.style.transition = 'transform 4s cubic-bezier(0.65, 0, 0.35, 1)';
-    
+  function animateSpaceship() {
+    spaceship.style.transition = 'transform 4s cubic-bezier(0.65, 0, 0.35, 1)';
     setTimeout(() => {
-      carrier.style.transform = `translate(${window.innerWidth/2 - 7}px, ${window.innerHeight/2 - 7}px)`;
+      spaceship.style.transform = `translate(${window.innerWidth/2 - 20}px, ${window.innerHeight/2 - 20}px)`;
     }, 100);
 
-    // Reveal the message after carrier reaches center
+    // Reveal message when spaceship reaches center
     setTimeout(() => {
       document.getElementById('centerMessage').style.opacity = 1;
     }, 4100);
   }
 
-  // Animate carrier star after 3 seconds
-  setTimeout(animateCarrier, 3000);
-
+  // Launch spaceship after 3 seconds
+  setTimeout(animateSpaceship, 3000);
 </script>
 
 </body>

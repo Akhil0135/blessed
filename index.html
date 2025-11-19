@@ -44,7 +44,7 @@
     width: 32px;
     height: 260px;
     background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
-    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
+    transition: background 3s ease-in-out;
   }
 
   .horizontal {
@@ -55,7 +55,7 @@
     width: 190px;
     height: 32px;
     background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
-    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
+    transition: background 3s ease-in-out;
   }
 
   /* Stars */
@@ -92,35 +92,40 @@
     transition: opacity 2s ease-in-out, top 5s ease-in-out;
   }
 
-  /* Sun rays */
-  .sun-ray {
-    position: absolute;
-    width: 200px;
-    height: 2px;
-    background: rgba(255, 223, 0, 0.3);
-    top: 155px;
-    right: 195px;
-    transform-origin: left center;
-    opacity: 0;
-    z-index: 1;
-  }
-
-  /* Clouds */
+  /* Realistic Clouds */
   .cloud {
     position: absolute;
-    width: 150px;
+    width: 180px;
     height: 60px;
     background: rgba(255,255,255,0.4);
-    border-radius: 50%;
-    top: 150px;
+    border-radius: 60px;
+    top: 100px;
     left: -200px;
     z-index: 2;
-    filter: blur(4px);
+    filter: blur(3px);
     animation: cloudMove linear infinite;
   }
 
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255,255,255,0.4);
+    width: 80px;
+    height: 60px;
+    border-radius: 50%;
+  }
+
+  .cloud::before {
+    top: -20px;
+    left: 10px;
+  }
+  .cloud::after {
+    top: -15px;
+    right: 10px;
+  }
+
   @keyframes cloudMove {
-    0% { left: -200px; }
+    0% { left: -250px; }
     100% { left: 110%; }
   }
 
@@ -150,7 +155,7 @@
 </head>
 <body>
 
-<!-- Crescent Moon SVG -->
+<!-- Crescent Moon -->
 <div class="moon-wrapper">
   <svg viewBox="0 0 100 100" width="150" height="150">
     <circle cx="50" cy="50" r="50" fill="white"/>
@@ -219,28 +224,18 @@ setTimeout(() => {
     // Show sun
     const sun = document.querySelector('.sun');
     sun.style.opacity = 1;
-    sun.style.top = '50px'; // Slight rise for cinematic effect
+    sun.style.top = '50px'; // Slight rise
 
-    // Sun rays
-    for (let i = 0; i < 12; i++) {
-      const ray = document.createElement('div');
-      ray.classList.add('sun-ray');
-      ray.style.transform = `rotate(${i*30}deg)`;
-      ray.style.transition = 'opacity 2s ease-in-out';
-      document.body.appendChild(ray);
-      setTimeout(() => ray.style.opacity = 1, i*150);
-    }
-
-    // Cross color for day (darker orange/bronze)
+    // Cross color for day (contrast)
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
 
-    // Add moving clouds
-    for(let i=0; i<3; i++){
+    // Add realistic clouds
+    for(let i=0; i<4; i++){
       const cloud = document.createElement('div');
       cloud.className = 'cloud';
-      cloud.style.top = 100 + i*60 + 'px';
-      cloud.style.animationDuration = 50 + i*20 + 's';
+      cloud.style.top = 50 + i*60 + 'px';
+      cloud.style.animationDuration = 60 + i*20 + 's';
       cloud.style.opacity = 0.3 + i*0.1;
       document.body.appendChild(cloud);
     }

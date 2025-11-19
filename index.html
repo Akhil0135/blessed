@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Sky with Message</title>
+<title>Night Sky with Trajectory Message</title>
 <style>
   body, html {
     margin: 0;
@@ -89,34 +89,20 @@
     100% { transform: translate(-100vw, 100vh) rotate(-45deg); opacity: 0; }
   }
 
-  /* Night Sky Message */
-  .night-message {
+  /* Message letters */
+  .message-letter {
     position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     font-size: 2rem;
     color: #ffffff;
     text-shadow: 0 0 10px #ffffff, 0 0 20px #a0c4ff, 0 0 30px #ffffff;
-    letter-spacing: 2px;
     opacity: 0;
-  }
-  .reveal {
-    animation: writeMessage 8s forwards;
-  }
-  @keyframes writeMessage {
-    0% { opacity: 0; }
-    20% { opacity: 0.3; }
-    50% { opacity: 0.6; }
-    80% { opacity: 0.9; }
-    100% { opacity: 1; }
+    pointer-events: none;
   }
 </style>
 </head>
 <body>
 
 <div class="moon"></div>
-<div class="night-message" id="nightMessage">The night whispers secrets to those who listen...</div>
 
 <script>
   // Stars
@@ -154,11 +140,35 @@
   }
   setInterval(createShootingStar, 4000);
 
-  // Reveal Message along trajectory
-  const message = document.getElementById('nightMessage');
-  setTimeout(()=>{
-    message.classList.add('reveal');
-  }, 4000); // message appears after 4 seconds
+  // Message trajectory effect
+  const messageText = "The night whispers secrets to those who listen...";
+  const centerX = window.innerWidth/2;
+  const centerY = window.innerHeight/2 - 50;
+  const radiusX = 300; // horizontal curve
+  const radiusY = 100; // vertical curve
+  const letters = [];
+
+  messageText.split("").forEach((char, index) => {
+    const letter = document.createElement("div");
+    letter.className = "message-letter";
+    letter.innerText = char;
+    document.body.appendChild(letter);
+    letters.push(letter);
+
+    // Calculate curved path (sin wave)
+    const t = index / (messageText.length - 1);
+    const x = centerX - radiusX/2 + t * radiusX;
+    const y = centerY + Math.sin(t * Math.PI) * radiusY;
+
+    letter.style.left = x + "px";
+    letter.style.top = y + "px";
+
+    // Reveal each letter gradually
+    setTimeout(() => {
+      letter.style.transition = "opacity 0.8s";
+      letter.style.opacity = 1;
+    }, 2000 + index*150); // stagger letters
+  });
 </script>
 
 </body>

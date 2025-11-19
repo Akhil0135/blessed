@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night to Day</title>
+<title>Animated Night Sky</title>
 <style>
-  body {
+  body, html {
     margin: 0;
-    height: 100vh;
+    padding: 0;
     overflow: hidden;
-    background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
-    position: relative;
-    transition: background 3s ease-in-out;
-    font-family: 'Arial', sans-serif;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, #0b0c2a, #1a1a3b); /* dark night sky gradient */
   }
 
-  /* Stars */
   .star {
     position: absolute;
     width: 2px;
@@ -23,132 +21,104 @@
     background: white;
     border-radius: 50%;
     opacity: 0.8;
-    animation: twinkle 2.5s infinite ease-in-out;
-  }
-  @keyframes twinkle {
-    0% {opacity:0.2;}
-    50% {opacity:1;}
-    100% {opacity:0.2;}
+    animation: twinkle 2s infinite alternate;
   }
 
-  /* Crescent Moon */
+  @keyframes twinkle {
+    0% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0.3; transform: scale(1); }
+  }
+
   .moon {
     position: absolute;
-    top: 80px;
-    right: 120px;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, #fefbd8 0%, #f5e7a0 70%, #e0c97f 100%);
+    border-radius: 50%;
+    top: 50px;
+    left: -150px;
+    box-shadow: 0 0 20px 5px #fffacd;
+    animation: moveMoon 60s linear infinite;
+  }
+
+  @keyframes moveMoon {
+    0% { left: -150px; top: 50px; }
+    50% { left: 50%; top: 100px; }
+    100% { left: 100%; top: 50px; }
+  }
+
+  .cloud {
+    position: absolute;
     width: 200px;
-    height: 200px;
-    background: url('https://i.ibb.co/HCz7XGf/realistic-crescent-moon.png') no-repeat center/contain;
-    transition: opacity 2s ease-in-out;
-    z-index: 2;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    filter: blur(10px);
+    top: 100px;
+    animation: moveCloud linear infinite;
   }
 
-  /* Gold Cross */
-  .cross {
-    position: absolute;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px;
-    height: 260px;
-    background: url('https://i.ibb.co/2M0Ckwn/gold-cross.png') no-repeat center/contain;
-    z-index: 3;
-    transition: all 3s ease-in-out;
+  @keyframes moveCloud {
+    0% { left: -250px; }
+    100% { left: 100%; }
   }
 
-  /* Click Button */
-  .click-btn {
+  .shooting-star {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px 50px;
-    font-size: 32px;
-    font-weight: bold;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    background: white;
+    width: 3px;
+    height: 100px;
+    background: linear-gradient(45deg, white, rgba(255,255,255,0));
     opacity: 0;
-    z-index: 4;
-    transition: opacity 1s ease-in-out;
+    transform: rotate(45deg);
+    animation: shoot 3s linear infinite;
   }
 
-  /* Sun */
-  .sun {
-    position: absolute;
-    top: 80px;
-    right: 120px;
-    width: 200px;
-    height: 200px;
-    background: url('https://i.ibb.co/9y1syR7/realistic-sun.png') no-repeat center/contain;
-    opacity: 0;
-    z-index: 2;
-    transition: opacity 2s ease-in-out;
-  }
-
-  /* Tulip Garden */
-  .tulips {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 300px;
-    background: url('https://i.ibb.co/ZK7Qp0y/realistic-tulip-garden.png') no-repeat center bottom/cover;
-    opacity: 0;
-    transition: opacity 3s ease-in-out;
-    z-index: 1;
+  @keyframes shoot {
+    0% { transform: translate(-100px, -100px) rotate(45deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translate(100vw, 100vh) rotate(45deg); opacity: 0; }
   }
 </style>
 </head>
 <body>
 
 <div class="moon"></div>
-<div class="cross"></div>
-<div class="sun"></div>
-<div class="tulips"></div>
 
 <script>
-// Generate stars avoiding cross and moon
-for (let i = 0; i < 250; i++) {
-  const star = document.createElement('div');
-  star.classList.add('star');
-  let x = Math.random() * window.innerWidth;
-  let y = Math.random() * window.innerHeight;
-  // Avoid moon/cross area
-  if ((x > window.innerWidth/2 - 75 && x < window.innerWidth/2 + 75 && y < 260) || 
-      (x > window.innerWidth - 320 && y < 280)) {
-    i--; continue;
+  // Generate stars
+  const starCount = 150;
+  for(let i = 0; i < starCount; i++){
+    const star = document.createElement('div');
+    star.classList.add('star');
+    star.style.top = Math.random() * window.innerHeight + 'px';
+    star.style.left = Math.random() * window.innerWidth + 'px';
+    star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+    document.body.appendChild(star);
   }
-  star.style.left = x + 'px';
-  star.style.top = y + 'px';
-  star.style.animationDelay = Math.random() * 2 + 's';
-  document.body.appendChild(star);
-}
 
-// Show click button after 3s
-setTimeout(() => {
-  const btn = document.createElement('button');
-  btn.className = 'click-btn';
-  btn.innerText = 'Click Here';
-  document.body.appendChild(btn);
-  btn.style.opacity = 1;
+  // Generate clouds
+  const cloudCount = 5;
+  for(let i = 0; i < cloudCount; i++){
+    const cloud = document.createElement('div');
+    cloud.classList.add('cloud');
+    cloud.style.top = Math.random() * 300 + 'px';
+    cloud.style.animationDuration = (30 + Math.random() * 40) + 's';
+    document.body.appendChild(cloud);
+  }
 
-  btn.addEventListener('click', () => {
-    // Hide moon and stars
-    document.querySelector('.moon').style.opacity = 0;
-    document.querySelectorAll('.star').forEach(s => s.remove());
-    btn.style.display = 'none';
+  // Generate shooting stars occasionally
+  function createShootingStar() {
+    const star = document.createElement('div');
+    star.classList.add('shooting-star');
+    star.style.top = Math.random() * window.innerHeight/2 + 'px';
+    star.style.left = '-100px';
+    star.style.animationDuration = (1 + Math.random() * 2) + 's';
+    document.body.appendChild(star);
+    setTimeout(() => { star.remove(); }, 3000);
+  }
 
-    // Show day background
-    document.body.style.background = 'linear-gradient(to bottom, #87CEFA 0%, #ADD8E6 70%, #E0FFFF 100%)';
-
-    // Show sun
-    document.querySelector('.sun').style.opacity = 1;
-
-    // Show tulip garden
-    document.querySelector('.tulips').style.opacity = 1;
-  });
-}, 3000);
+  setInterval(createShootingStar, 4000);
 </script>
 
 </body>

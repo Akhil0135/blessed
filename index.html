@@ -19,13 +19,14 @@
     position: absolute;
     top: 80px;
     right: 120px;
-    width: 150px;
-    height: 150px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 0 60px #ffffff88, 0 0 120px #ffffff55;
-    overflow: hidden;
-  }
+    background: white;
+    box-shadow: 0 0 60px #ffffffaa, 0 0 140px #ffffff66;
+    /* Crescent effect */
+    clip-path: path('M 80 0 A 80 80 0 1 0 80 160 A 55 80 0 1 1 80 0 Z');
+}
 
   .moon::after {
     content: "";
@@ -60,29 +61,29 @@
     position: absolute;
     top: 40px;
     left: 60px;
-    width: 120px;
-    height: 200px;
-  }
+    width: 160px;
+    height: 260px;
+}
 
   .vertical {
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 24px;
-    height: 200px;
+    width: 32px;
+    height: 260px;
     background: linear-gradient(to bottom, #f2d27f, #d4a93f, #b88a2c);
-  }
+}
 
   .horizontal {
     position: absolute;
-    top: 70px; /* 35% of 200px */
+    top: 91px; /* 35% of 260px */
     left: 50%;
     transform: translateX(-50%);
-    width: 160px;
-    height: 24px;
+    width: 200px;
+    height: 32px;
     background: linear-gradient(to right, #f2d27f, #d4a93f, #b88a2c);
-  }
+}
 </style>
 </head>
 <body>

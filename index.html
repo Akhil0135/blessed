@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Day Scene with Rainbow</title>
+<title>Cinematic Day Scene</title>
 <style>
   body {
     margin: 0;
@@ -44,7 +44,8 @@
     width: 32px;
     height: 260px;
     background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
-    transition: background 3s ease-in-out;
+    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
+    box-shadow: 0 0 15px #d4a93f55;
   }
 
   .horizontal {
@@ -55,7 +56,8 @@
     width: 190px;
     height: 32px;
     background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
-    transition: background 3s ease-in-out;
+    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
+    box-shadow: 0 0 15px #d4a93f55;
   }
 
   /* Stars */
@@ -86,25 +88,10 @@
     height: 150px;
     border-radius: 50%;
     background: radial-gradient(circle, #FFD700 0%, #FFA500 70%);
-    box-shadow: 0 0 60px #FFD700aa, 0 0 120px #FFD70055;
+    box-shadow: 0 0 60px #FFD700aa, 0 0 150px #FFD70055;
     opacity: 0;
     z-index: 2;
-    transition: opacity 2s ease-in-out, top 5s ease-in-out;
-  }
-
-  /* Raindrops */
-  .raindrop {
-    position: absolute;
-    width: 2px;
-    height: 15px;
-    background: rgba(255,255,255,0.7);
-    animation: fall linear infinite;
-    z-index: 1;
-  }
-
-  @keyframes fall {
-    0% { transform: translateY(-20px); opacity: 1; }
-    100% { transform: translateY(100vh); opacity: 0; }
+    transition: opacity 2s ease-in-out, top 5s ease-in-out, box-shadow 3s ease-in-out;
   }
 
   /* Click Button */
@@ -130,25 +117,6 @@
     100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
   }
 
-  /* SVG Rainbow paths */
-  .rainbow {
-    position: absolute;
-    width: 100%;
-    height: 400px;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0;
-  }
-
-  .rainbow-path {
-    fill: none;
-    stroke-width: 18;
-    stroke-linecap: round;
-    stroke-dasharray: 2000;
-    stroke-dashoffset: 2000;
-  }
 </style>
 </head>
 <body>
@@ -176,17 +144,6 @@
 
 <!-- Sun -->
 <div class="sun"></div>
-
-<!-- SVG Rainbow -->
-<svg class="rainbow">
-  <path class="rainbow-path" d="M50,500 A400,400 0 0,1 950,500" stroke="red"/>
-  <path class="rainbow-path" d="M50,505 A395,395 0 0,1 950,505" stroke="orange"/>
-  <path class="rainbow-path" d="M50,510 A390,390 0 0,1 950,510" stroke="yellow"/>
-  <path class="rainbow-path" d="M50,515 A385,385 0 0,1 950,515" stroke="green"/>
-  <path class="rainbow-path" d="M50,520 A380,380 0 0,1 950,520" stroke="blue"/>
-  <path class="rainbow-path" d="M50,525 A375,375 0 0,1 950,525" stroke="indigo"/>
-  <path class="rainbow-path" d="M50,530 A370,370 0 0,1 950,530" stroke="violet"/>
-</svg>
 
 <script>
 // Generate stars
@@ -222,35 +179,20 @@ setTimeout(() => {
     // Hide button
     btn.style.display = 'none';
 
-    // Change background to day
+    // Change background to cinematic day
     document.body.style.background = 'linear-gradient(to bottom, #87CEFA 0%, #ADD8E6 70%, #E0FFFF 100%)';
 
-    // Show sun
+    // Show sun with glow
     const sun = document.querySelector('.sun');
     sun.style.opacity = 1;
     sun.style.top = '50px';
+    sun.style.boxShadow = '0 0 80px #FFD700aa, 0 0 200px #FFD70055';
 
-    // Cross color for day
+    // Cross color for day with subtle glow
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
-
-    // Animate rainbow forming
-    const rainbow = document.querySelector('.rainbow');
-    rainbow.style.opacity = 1;
-    const paths = document.querySelectorAll('.rainbow-path');
-    paths.forEach((p, idx) => {
-      setTimeout(() => { p.style.strokeDashoffset = 0; }, idx * 300);
-    });
-
-    // Add rain
-    for(let i=0; i<200; i++){
-      const drop = document.createElement('div');
-      drop.className = 'raindrop';
-      drop.style.left = Math.random() * window.innerWidth + 'px';
-      drop.style.animationDuration = 1 + Math.random()*1 + 's';
-      drop.style.opacity = 0.2 + Math.random()*0.5;
-      document.body.appendChild(drop);
-    }
+    document.querySelector('.vertical').style.boxShadow = '0 0 25px #FF8C0055';
+    document.querySelector('.horizontal').style.boxShadow = '0 0 25px #FF8C0055';
   });
 }, 3000);
 </script>

@@ -42,6 +42,16 @@
   /* Stars */
   .star {
     position: absolute;
+    z-index: 1; /* behind moon & cross but still visible */
+    width: 3px;
+    height: 3px;
+    background: #ffffff;
+    border-radius: 50%;
+    opacity: 0.9;
+    animation: twinkle 1.8s infinite ease-in-out;
+    box-shadow: 0 0 6px #ffffffaa, 0 0 12px #ffffff55;
+  } {
+    position: absolute;
     width: 3px;
     height: 3px;
     background: #ffffff;

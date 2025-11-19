@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shooting Star Reveals Message</title>
+<title>Fireflies Reveal Message</title>
 <style>
   body, html {
     margin: 0;
@@ -73,15 +73,15 @@
   @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
   @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
 
-  /* Shooting star */
-  .shooting-star {
+  /* Firefly */
+  .firefly {
     position: absolute;
-    width: 8px;
-    height: 2px;
-    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, white 100%);
+    width: 6px;
+    height: 6px;
+    background: yellow;
     border-radius: 50%;
-    opacity: 1;
-    transform-origin: top left;
+    box-shadow: 0 0 10px yellow, 0 0 20px rgba(255,255,0,0.5);
+    opacity: 0.8;
   }
 
   /* Message letters */
@@ -131,48 +131,52 @@
     letters.push(letter);
   });
 
-  // Shooting star animation to reveal message
-  function revealMessageByStar() {
-    const star = document.createElement('div');
-    star.className = 'shooting-star';
-    document.body.appendChild(star);
+  // Fireflies animation
+  const fireflies = [];
 
-    const startX = -50;
-    const startY = 50;
-    const endX = window.innerWidth/2 - 100;
-    const endY = window.innerHeight/2 - 50;
-    const duration = 4000; // 4 seconds
-    const startTime = performance.now();
+  letters.forEach((letter, index) => {
+    const firefly = document.createElement('div');
+    firefly.className = 'firefly';
+    firefly.style.top = Math.random()*window.innerHeight + 'px';
+    firefly.style.left = Math.random()*window.innerWidth + 'px';
+    document.body.appendChild(firefly);
+    fireflies.push({element: firefly, letter: letter, delay: index*200});
+  });
 
-    function step(now){
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed/duration,1);
+  function animateFireflies() {
+    fireflies.forEach(f => {
+      const targetX = window.innerWidth/2 - letters.length*6 + f.letter.offsetWidth*fireflies.indexOf(f);
+      const targetY = window.innerHeight/2 + Math.sin(fireflies.indexOf(f)/letters.length*Math.PI*2)*50;
 
-      // Star position along diagonal
-      const x = startX + (endX - startX)*t;
-      const y = startY + (endY - startY)*t;
-      star.style.left = x + "px";
-      star.style.top = y + "px";
+      setTimeout(() => {
+        const animDuration = 2000;
+        const startX = parseFloat(f.element.style.left);
+        const startY = parseFloat(f.element.style.top);
+        const startTime = performance.now();
 
-      // Reveal letters gradually after the star passes
-      const lettersToShow = Math.floor(t * letters.length);
-      for(let i=0; i<lettersToShow; i++){
-        letters[i].style.left = startX + (endX - startX)*(i/letters.length) + "px";
-        letters[i].style.top = startY + (endY - startY)*(i/letters.length) + "px";
-        letters[i].style.opacity = 1;
-      }
+        function move(now) {
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed/animDuration, 1);
+          f.element.style.left = startX + (targetX - startX)*t + "px";
+          f.element.style.top = startY + (targetY - startY)*t + "px";
 
-      if(t<1){
-        requestAnimationFrame(step);
-      } else {
-        star.remove();
-      }
-    }
+          // Reveal letter when firefly reaches
+          if(t === 1) {
+            f.letter.style.left = targetX + "px";
+            f.letter.style.top = targetY + "px";
+            f.letter.style.opacity = 1;
+            f.element.remove();
+          } else {
+            requestAnimationFrame(move);
+          }
+        }
 
-    requestAnimationFrame(step);
+        requestAnimationFrame(move);
+      }, f.delay);
+    });
   }
 
-  setTimeout(revealMessageByStar, 2000);
+  setTimeout(animateFireflies, 1000);
 </script>
 
 </body>

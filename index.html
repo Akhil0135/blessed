@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurora Night Message</title>
+<title>Aurora Night Cinematic Message</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
@@ -32,7 +32,7 @@
     100% { opacity: 0.3; transform: scale(1); }
   }
 
-  /* Moving Moon */
+  /* Moon */
   .moon {
     position: absolute;
     width: 120px;
@@ -95,7 +95,7 @@
     100% { left: -50%; transform: rotate(5deg); }
   }
 
-  /* Message */
+  /* Message Letters */
   .message-letter {
     position: absolute;
     color: #ffffff;
@@ -104,7 +104,7 @@
     opacity: 0;
     pointer-events: none;
     z-index: 4;
-    transition: opacity 1s ease, top 1s ease, left 1s ease;
+    transition: opacity 1s ease, top 1s ease, left 1s ease, text-shadow 1s ease;
   }
 </style>
 </head>
@@ -129,13 +129,13 @@
   for(let i=0;i<cloudCount;i++){
     const cloud=document.createElement('div');
     cloud.classList.add('cloud');
-    cloud.style.top = Math.random() * 200 + 50 + "px"; // distribute vertically
+    cloud.style.top = Math.random() * 200 + 50 + "px";
     cloud.style.animationDuration = (60 + Math.random()*40) + "s, " + (8 + Math.random()*4) + "s";
     cloud.style.opacity = 0.05 + Math.random()*0.08;
     document.body.appendChild(cloud);
   }
 
-  // Message
+  // Message Letters
   const messageText = "The night whispers secrets...";
   const letters = [];
   messageText.split("").forEach((char)=>{
@@ -146,23 +146,30 @@
     letters.push(letter);
   });
 
-  // Animate letters properly centered with spacing
+  // Animate letters centered with proper spacing
   function animateLetters(){
-    const totalLetters = letters.length;
-    const letterSpacing = 38; // px spacing
-    const totalWidth = (totalLetters-1)*letterSpacing + letters[0].offsetWidth;
+    const letterSpacing = 38; // spacing
+    const totalWidth = (letters.length-1) * letterSpacing + 20; // 20 = approx letter width
     const startX = (window.innerWidth - totalWidth)/2;
     const centerY = window.innerHeight/2;
+
     letters.forEach((letter,i)=>{
       setTimeout(()=>{
         letter.style.left = startX + i*letterSpacing + "px";
         letter.style.top = centerY + "px";
         letter.style.opacity = 1;
-      }, i*250);
+        // Aurora dynamic glow effect
+        letter.style.textShadow = `
+          0 0 20px #0ff, 
+          0 0 30px #0f0, 
+          0 0 40px #0ff, 
+          0 0 50px #0ff
+        `;
+      }, i*300);
     });
   }
 
-  setTimeout(animateLetters, 2000); // wait for aurora sweep
+  setTimeout(animateLetters, 2000); // after aurora starts
 </script>
 
 </body>

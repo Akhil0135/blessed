@@ -42,6 +42,7 @@
     top: 50px;
     left: -150px;
     box-shadow: 0 0 30px 10px #fffacd;
+    z-index: 3;
     animation: moveMoon 60s linear infinite;
   }
   @keyframes moveMoon {
@@ -59,6 +60,7 @@
     border-radius: 50%;
     filter: blur(25px);
     box-shadow: 0 0 40px rgba(255,255,255,0.08);
+    z-index: 2;
     animation: moveCloud linear infinite, morphCloud ease-in-out infinite alternate;
   }
   .cloud::before, .cloud::after {
@@ -85,6 +87,7 @@
     left: -100%;
     border-radius: 50%;
     filter: blur(80px);
+    z-index: 1;
     animation: moveAurora 20s linear infinite alternate;
   }
   @keyframes moveAurora {
@@ -100,6 +103,7 @@
     text-shadow: 0 0 10px #fff, 0 0 20px #00ffcc;
     opacity: 0;
     pointer-events: none;
+    z-index: 4;
     transition: opacity 1s ease, top 1s ease, left 1s ease;
   }
 </style>
@@ -125,7 +129,7 @@
   for(let i=0;i<cloudCount;i++){
     const cloud=document.createElement('div');
     cloud.classList.add('cloud');
-    cloud.style.top = Math.random() * 250 + "px";
+    cloud.style.top = Math.random() * 200 + 50 + "px"; // distribute vertically
     cloud.style.animationDuration = (60 + Math.random()*40) + "s, " + (8 + Math.random()*4) + "s";
     cloud.style.opacity = 0.05 + Math.random()*0.08;
     document.body.appendChild(cloud);
@@ -144,19 +148,21 @@
 
   // Animate letters properly centered with spacing
   function animateLetters(){
-    const totalWidth = letters.length * 40; // approx width per letter
+    const totalLetters = letters.length;
+    const letterSpacing = 38; // px spacing
+    const totalWidth = (totalLetters-1)*letterSpacing + letters[0].offsetWidth;
     const startX = (window.innerWidth - totalWidth)/2;
     const centerY = window.innerHeight/2;
     letters.forEach((letter,i)=>{
       setTimeout(()=>{
-        letter.style.left = startX + i*40 + "px";
+        letter.style.left = startX + i*letterSpacing + "px";
         letter.style.top = centerY + "px";
         letter.style.opacity = 1;
       }, i*250);
     });
   }
 
-  setTimeout(animateLetters, 2000);
+  setTimeout(animateLetters, 2000); // wait for aurora sweep
 </script>
 
 </body>

@@ -78,7 +78,7 @@ body, html {
   border-radius: 50%;
   filter: blur(20px);
   box-shadow: 0 0 30px rgba(255,255,255,0.05);
-  animation: moveCloud linear infinite, morphCloud ease-in-out infinite alternate;
+  animation: morphCloud ease-in-out infinite alternate;
 }
 .cloud::before, .cloud::after {
   content:'';
@@ -91,7 +91,6 @@ body, html {
 }
 .cloud::before { top: -30px; left: 50px; }
 .cloud::after { top: 20px; left: 100px; }
-@keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
 @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1,0.9); } 100% { transform: scale(1,1); } }
 
 /* Shooting stars */
@@ -130,71 +129,93 @@ body, html {
 <div class="aurora"></div>
 
 <script>
-  // Stars
-  for(let i=0;i<150;i++){
-    const star = document.createElement('div');
-    star.classList.add('star');
-    star.style.top = Math.random()*window.innerHeight+'px';
-    star.style.left = Math.random()*window.innerWidth+'px';
-    star.style.width = star.style.height = Math.random()*3+1+'px';
-    document.body.appendChild(star);
-  }
+// Stars
+for(let i=0;i<150;i++){
+  const star = document.createElement('div');
+  star.classList.add('star');
+  star.style.top = Math.random()*window.innerHeight+'px';
+  star.style.left = Math.random()*window.innerWidth+'px';
+  star.style.width = star.style.height = Math.random()*3+1+'px';
+  document.body.appendChild(star);
+}
 
-  // Original clouds
-  const cloudCount = 6;
-  for(let i=0;i<cloudCount;i++){
+// Original cinematic clouds
+const cloudLayers = [
+  { count: 3, z:2, speed: 80, opacity:0.05 }, // behind aurora
+  { count: 3, z:5, speed: 50, opacity:0.08 }  // in front of aurora/moon
+];
+
+cloudLayers.forEach(layer=>{
+  for(let i=0;i<layer.count;i++){
     const cloud = document.createElement('div');
     cloud.classList.add('cloud');
     cloud.style.top = Math.random()*300+'px';
-    cloud.style.animationDuration = (40 + Math.random()*40)+'s, '+(6 + Math.random()*4)+'s';
+    cloud.style.opacity = layer.opacity;
+    cloud.style.zIndex = layer.z;
+    const duration = layer.speed + Math.random()*40;
+    cloud.style.animation = `moveCloud ${duration}s linear infinite, morphCloud ${6 + Math.random()*4}s ease-in-out infinite alternate`;
     document.body.appendChild(cloud);
   }
+});
 
-  // Message letters
-  const messageText = "The night whispers secrets...";
-  const letters = [];
-  messageText.split("").forEach((char)=>{
-    const letter = document.createElement('div');
-    letter.className = 'message-letter';
-    letter.innerText = char;
-    document.body.appendChild(letter);
-    letters.push(letter);
+// Keyframes for moving clouds dynamically
+const style = document.createElement('style');
+style.innerHTML = `
+  @keyframes moveCloud {
+    0% { left: -400px; }
+    100% { left: 100%; }
+  }
+`;
+document.head.appendChild(style);
+
+// Message letters
+const messageText = "The night whispers secrets...";
+const letters = [];
+messageText.split("").forEach((char)=>{
+  const letter = document.createElement('div');
+  letter.className = 'message-letter';
+  letter.innerText = char;
+  document.body.appendChild(letter);
+  letters.push(letter);
+});
+
+// Animate letters centered with aurora glow
+function animateLetters(){
+  const letterSpacing = 38;
+  const totalWidth = (letters.length-1)*letterSpacing + 20;
+  const startX = (window.innerWidth - totalWidth)/2;
+  const centerY = window.innerHeight/2;
+  letters.forEach((letter,i)=>{
+    setTimeout(()=>{
+      letter.style.left = startX + i*letterSpacing + "px";
+      letter.style.top = centerY + "px";
+      letter.style.opacity = 1;
+      letter.style.textShadow = `
+        0 0 20px #0ff,
+        0 0 30px #0f0,
+        0 0 40px #0ff,
+        0 0 50px #0ff
+      `;
+    }, i*250);
   });
+}
+setTimeout(animateLetters, 2000);
 
-  // Animate letters centered with aurora glow
-  function animateLetters(){
-    const letterSpacing = 38;
-    const totalWidth = (letters.length-1)*letterSpacing + 20;
-    const startX = (window.innerWidth - totalWidth)/2;
-    const centerY = window.innerHeight/2;
-    letters.forEach((letter,i)=>{
-      setTimeout(()=>{
-        letter.style.left = startX + i*letterSpacing + "px";
-        letter.style.top = centerY + "px";
-        letter.style.opacity = 1;
-        letter.style.textShadow = `
-          0 0 20px #0ff,
-          0 0 30px #0f0,
-          0 0 40px #0ff,
-          0 0 50px #0ff
-        `;
-      }, i*250);
-    });
-  }
-  setTimeout(animateLetters, 2000);
-
-  // Shooting stars
-  function createShootingStar(){
-    const star = document.createElement('div');
-    star.classList.add('shooting-star');
-    star.style.top = Math.random()*200+'px';
-    star.style.left = window.innerWidth+'px';
-    const duration = 2.5 + Math.random()*1;
-    star.style.animationDuration = duration+'s';
-    document.body.appendChild(star);
-    setTimeout(()=>{ star.remove(); }, duration*1000);
-  }
-  setInterval(createShootingStar, 4000);
+// Shooting stars (increased count)
+function createShootingStar(){
+  const star = document.createElement('div');
+  star.classList.add('shooting-star');
+  star.style.top = Math.random()*200+'px';
+  star.style.left = window.innerWidth+'px';
+  const duration = 2 + Math.random()*1.5;
+  star.style.animationDuration = duration+'s';
+  document.body.appendChild(star);
+  setTimeout(()=>{ star.remove(); }, duration*1000);
+}
+// More frequent shooting stars
+setInterval(createShootingStar, 1500); // every 1.5s
+setInterval(createShootingStar, 2500); // staggered for multiple stars
+setInterval(createShootingStar, 3500);
 </script>
 
 </body>

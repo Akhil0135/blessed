@@ -13,7 +13,7 @@
     position: relative;
   }
 
-  /* Proper Thin Crescent Moon */
+  /* Crescent Moon */
   .moon {
     position: absolute;
     top: 80px;
@@ -30,11 +30,11 @@
     content: '';
     position: absolute;
     top: 0;
-    left: 50px; /* controls thinness of crescent */
+    left: 50px; /* distance from left controls thinness */
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%); /* matches background */
+    background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%); /* same as background */
   }
 
   /* Cross */
@@ -59,7 +59,7 @@
 
   .horizontal {
     position: absolute;
-    top: 65px; /* slightly raised */
+    top: 65px;
     left: 50%;
     transform: translateX(-50%);
     width: 190px;
@@ -120,7 +120,7 @@
 </div>
 
 <script>
-// Generate non-overlapping stars
+// Generate stars
 for (let i = 0; i < 200; i++) {
   const star = document.createElement('div');
   star.classList.add('star');
@@ -141,7 +141,7 @@ for (let i = 0; i < 200; i++) {
   document.body.appendChild(star);
 }
 
-// Show click button after 3 seconds
+// Click button after 3s
 setTimeout(() => {
   const btn = document.createElement('button');
   btn.className = 'click-btn';

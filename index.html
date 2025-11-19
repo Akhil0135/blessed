@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Animated Night Sky</title>
+<title>Realistic Animated Night Sky</title>
 <style>
   body, html {
     margin: 0;
@@ -48,7 +48,7 @@
     100% { left: 100%; top: 50px; }
   }
 
-  /* Realistic clouds */
+  /* Realistic morphing clouds */
   .cloud {
     position: absolute;
     width: 250px;
@@ -56,7 +56,7 @@
     background: rgba(255, 255, 255, 0.05);
     border-radius: 50%;
     filter: blur(20px);
-    animation: moveCloud linear infinite;
+    animation: moveCloud linear infinite, morphCloud ease-in-out infinite alternate;
   }
 
   .cloud::before,
@@ -85,14 +85,20 @@
     100% { left: 100%; }
   }
 
-  /* Shooting stars */
+  @keyframes morphCloud {
+    0% { transform: scale(1,1); }
+    50% { transform: scale(1.1, 0.9); }
+    100% { transform: scale(1,1); }
+  }
+
+  /* Shooting stars with pointed tail */
   .shooting-star {
     position: absolute;
-    width: 3px;
+    width: 2px;
     height: 80px;
-    background: linear-gradient(45deg, white, rgba(255,255,255,0));
+    background: linear-gradient(to bottom, white 0%, rgba(255,255,255,0) 100%);
+    transform-origin: top left;
     opacity: 0;
-    transform: rotate(-45deg);
     animation: shoot 2s linear forwards;
   }
 
@@ -118,25 +124,26 @@
     document.body.appendChild(star);
   }
 
-  // Generate realistic clouds
+  // Generate morphing clouds
   const cloudCount = 5;
   for(let i = 0; i < cloudCount; i++){
     const cloud = document.createElement('div');
     cloud.classList.add('cloud');
     cloud.style.top = Math.random() * 300 + 'px';
-    cloud.style.animationDuration = (30 + Math.random() * 40) + 's';
+    cloud.style.animationDuration = (30 + Math.random() * 40) + 's, ' + (6 + Math.random() * 4) + 's';
     document.body.appendChild(cloud);
   }
 
-  // Shooting stars from top-right to bottom-left
+  // Shooting stars top-right to bottom-left
   function createShootingStar() {
     const star = document.createElement('div');
     star.classList.add('shooting-star');
     star.style.top = Math.random() * 200 + 'px';
     star.style.left = window.innerWidth + 'px';
-    star.style.animationDuration = (1 + Math.random() * 2) + 's';
+    const duration = 1 + Math.random() * 1.5;
+    star.style.animationDuration = duration + 's';
     document.body.appendChild(star);
-    setTimeout(() => { star.remove(); }, 3000);
+    setTimeout(() => { star.remove(); }, duration * 1000);
   }
 
   setInterval(createShootingStar, 4000);

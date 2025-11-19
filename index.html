@@ -3,37 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night to Day with Realistic Tulip Garden</title>
+<title>Cinematic Night to Day 4K</title>
 <style>
 body {
   margin: 0;
-  height: 100vh;
+  width: 3840px;
+  height: 2160px;
   background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
   overflow: hidden;
   position: relative;
   transition: background 3s ease-in-out;
+  transform: scale(0.5); /* To fit typical screens while keeping 4K scaling */
+  transform-origin: top left;
 }
 
-/* Crescent Moon */
 .moon-wrapper {
   position: absolute;
-  top: 80px;
-  right: 120px;
-  width: 150px;
-  height: 150px;
+  top: 200px;
+  right: 300px;
+  width: 300px;
+  height: 300px;
   z-index: 2;
   transform: rotate(-50deg);
   transition: opacity 2s ease-in-out;
 }
 
-/* Cross */
 .cross {
   position: absolute;
-  top: 10px;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
-  width: 160px;
-  height: 260px;
+  width: 320px;
+  height: 520px;
   z-index: 3;
 }
 .vertical, .horizontal {
@@ -43,33 +44,32 @@ body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 32px;
-  height: 260px;
+  width: 64px;
+  height: 520px;
   background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
-  box-shadow: 0 0 15px #d4a93f55;
+  box-shadow: 0 0 30px #d4a93f55;
   animation: pulseLight 3s infinite alternate;
 }
 .horizontal {
   position: absolute;
-  top: 65px;
+  top: 130px;
   left: 50%;
   transform: translateX(-50%);
-  width: 190px;
-  height: 32px;
+  width: 380px;
+  height: 64px;
   background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
-  box-shadow: 0 0 15px #d4a93f55;
+  box-shadow: 0 0 30px #d4a93f55;
   animation: pulseLight 3s infinite alternate;
 }
 @keyframes pulseLight {
-  0% { box-shadow: 0 0 10px #d4a93f55; }
-  100% { box-shadow: 0 0 25px #d4a93f88; }
+  0% { box-shadow: 0 0 20px #d4a93f55; }
+  100% { box-shadow: 0 0 50px #d4a93f88; }
 }
 
-/* Stars */
 .star {
   position: absolute;
-  width: 3px;
-  height: 3px;
+  width: 6px;
+  height: 6px;
   background: white;
   border-radius: 50%;
   opacity: 0.9;
@@ -83,48 +83,45 @@ body {
   100% { opacity: 0.2; transform: scale(1); }
 }
 
-/* Sun */
 .sun {
   position: absolute;
-  top: 80px;
-  right: 120px;
-  width: 150px;
-  height: 150px;
+  top: 200px;
+  right: 300px;
+  width: 300px;
+  height: 300px;
   border-radius: 50%;
   background: radial-gradient(circle, #FFD700 0%, #FFA500 70%);
-  box-shadow: 0 0 80px #FFD700aa, 0 0 200px #FFD70055;
+  box-shadow: 0 0 160px #FFD700aa, 0 0 400px #FFD70055;
   opacity: 0;
   z-index: 2;
   transition: opacity 2s ease-in-out, top 5s ease-in-out, box-shadow 3s ease-in-out;
 }
 
-/* Lens Flare */
 .lens-flare {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 600px;
+  height: 600px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
-  top: 50px;
-  right: 50px;
+  top: 100px;
+  right: 100px;
   opacity: 0;
   z-index: 1;
   pointer-events: none;
   transition: opacity 2s ease-in-out;
 }
 
-/* Click Button */
 .click-btn {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 16px 34px;
-  font-size: 22px;
+  padding: 32px 68px;
+  font-size: 44px;
   font-weight: bold;
   background: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 20px;
   cursor: pointer;
   opacity: 0;
   animation: reveal 1.2s forwards;
@@ -135,12 +132,11 @@ body {
   100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
 }
 
-/* Tulip Garden */
 .garden {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 200px;
+  height: 440px;
   z-index: 0;
   opacity: 0;
   transition: opacity 3s ease-in-out;
@@ -149,8 +145,8 @@ body {
 .tulip {
   position: absolute;
   bottom: 0;
-  width: 6px;
-  height: 40px;
+  width: 10px;
+  height: 80px;
   background: #27ae60;
   border-radius: 3px;
   transform-origin: bottom center;
@@ -158,11 +154,10 @@ body {
 }
 .tulip-flower {
   position: absolute;
-  width: 16px;
-  height: 16px;
-  bottom: 40px;
-  border-radius: 50% 50% 0 0;
-  transform: rotate(45deg);
+  width: 32px;
+  height: 32px;
+  bottom: 80px;
+  clip-path: polygon(50% 0%, 80% 40%, 60% 100%, 40% 100%, 20% 40%);
 }
 .tulip-flower.red { background: radial-gradient(circle at 50% 50%, #FF4B4B, #8B0000); }
 .tulip-flower.pink { background: radial-gradient(circle at 50% 50%, #FFB6C1, #FF69B4); }
@@ -176,9 +171,8 @@ body {
 </head>
 <body>
 
-<!-- Crescent Moon -->
 <div class="moon-wrapper">
-  <svg viewBox="0 0 100 100" width="150" height="150">
+  <svg viewBox="0 0 100 100" width="300" height="300">
     <circle cx="50" cy="50" r="50" fill="white"/>
     <circle cx="60" cy="50" r="50" fill="url(#bgGradient)"/>
     <defs>
@@ -191,30 +185,24 @@ body {
   </svg>
 </div>
 
-<!-- Cross -->
 <div class="cross">
   <div class="vertical"></div>
   <div class="horizontal"></div>
 </div>
 
-<!-- Sun -->
 <div class="sun"></div>
-
-<!-- Lens Flare -->
 <div class="lens-flare"></div>
-
-<!-- Garden -->
 <div class="garden" id="garden"></div>
 
 <script>
-// Generate stars
-for (let i = 0; i < 200; i++) {
+// Stars
+for (let i = 0; i < 400; i++) {
   const star = document.createElement('div');
   star.classList.add('star');
   let x = Math.random() * window.innerWidth;
   let y = Math.random() * window.innerHeight;
-  if ((x > window.innerWidth - 350 && y < 350) ||
-      (x > window.innerWidth/2 - 140 && x < window.innerWidth/2 + 140 && y < 330)) {
+  if ((x > window.innerWidth - 600 && y < 600) || 
+      (x > window.innerWidth/2 - 280 && x < window.innerWidth/2 + 280 && y < 660)) {
     i--; continue;
   }
   star.style.left = x + 'px';
@@ -223,7 +211,7 @@ for (let i = 0; i < 200; i++) {
   document.body.appendChild(star);
 }
 
-// Click button after 3 seconds
+// Click button after 3s
 setTimeout(() => {
   const btn = document.createElement('button');
   btn.className = 'click-btn';
@@ -231,51 +219,36 @@ setTimeout(() => {
   document.body.appendChild(btn);
 
   btn.addEventListener('click', () => {
-    // Fade out moon
     document.querySelector('.moon-wrapper').style.opacity = 0;
-
-    // Remove stars
     document.querySelectorAll('.star').forEach(s => s.remove());
-
-    // Hide button
     btn.style.display = 'none';
 
-    // Change background to cinematic day
     document.body.style.background = 'linear-gradient(to bottom, #87CEFA 0%, #ADD8E6 70%, #E0FFFF 100%)';
-
-    // Show sun
     const sun = document.querySelector('.sun');
     sun.style.opacity = 1;
-    sun.style.top = '50px';
-    sun.style.boxShadow = '0 0 120px #FFD700aa, 0 0 300px #FFD70055';
+    sun.style.top = '100px';
+    sun.style.boxShadow = '0 0 240px #FFD700aa, 0 0 600px #FFD70055';
+    document.querySelector('.lens-flare').style.opacity = 1;
 
-    // Show lens flare
-    const flare = document.querySelector('.lens-flare');
-    flare.style.opacity = 1;
-
-    // Show garden
     const garden = document.getElementById('garden');
     garden.style.opacity = 1;
-
-    // Tulips
     const colors = ['red','pink','yellow','purple'];
-    for(let i=0;i<100;i++){
+    for(let i=0; i<200; i++){
       const tulip = document.createElement('div');
       tulip.className = 'tulip';
       tulip.style.left = Math.random()*window.innerWidth+'px';
-      tulip.style.height = 40 + Math.random()*40 + 'px';
-
+      tulip.style.height = 80 + Math.random()*80 + 'px';
+      tulip.style.animationDuration = (2 + Math.random()*2)+'s';
       const flower = document.createElement('div');
       flower.className = 'tulip-flower ' + colors[Math.floor(Math.random()*colors.length)];
-      flower.style.height = (10 + Math.random()*12)+'px';
+      flower.style.height = (24 + Math.random()*20)+'px';
       flower.style.width = flower.style.height;
       flower.style.bottom = tulip.style.height;
+      flower.style.transform = 'rotate(' + (Math.random()*20-10) + 'deg)';
       tulip.appendChild(flower);
-
       garden.appendChild(tulip);
     }
 
-    // Cross color for day
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
   });

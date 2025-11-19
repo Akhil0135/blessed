@@ -1,14 +1,3 @@
-Realistic Cinematic Night body { margin: 0; height: 100vh; background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%); overflow: hidden; } 
-
-/* Stars */ .star { position: absolute; width: 2px; height: 2px; background: #ffffff; border-radius: 50%; opacity: 0.8; animation: twinkle 2.5s infinite ease-in-out; }
-
-@keyframes twinkle { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
-
-/* Moon / .moon { position: absolute; top: 80px; right: 120px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #fdfdfd 30%, #e6e6e6 60%, #bfbfbf 100%); box-shadow: 0 0 60px #ffffff88, 0 0 120px #ffffff55; } / Christian Cross */ .cross { position: absolute; top: 40px; left: 60px; width: 120px; height: 200px; }
-
-.vertical { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 24px; height: 200px; background: linear-gradient(to bottom, #f2d27f, #d4a93f, #b88a2c); }
-
-.horizontal { position: absolute; top: 70px; /* 35% of 200px height */ left: 50%; transform: translateX(-50%); width: 160px; height: 24px; background: linear-gradient(to right, #f2d27f, #d4a93f, #b88a2c); } 
+Realistic Night Scene body { margin: 0; height: 100vh; background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%); overflow: hidden; position: relative; } /* Moon */ .moon { position: absolute; top: 80px; right: 120px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #fdfdfd 30%, #e6e6e6 60%, #bfbfbf 100%); box-shadow: 0 0 60px #ffffff88, 0 0 120px #ffffff55; } /* Stars */ .star { position: absolute; width: 2px; height: 2px; background: #ffffff; border-radius: 50%; opacity: 0.8; animation: twinkle 2.5s infinite ease-in-out; } @keyframes twinkle { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } } /* Christian Cross */ .cross { position: absolute; top: 40px; left: 60px; width: 120px; height: 200px; } .vertical { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 24px; height: 200px; background: linear-gradient(to bottom, #f2d27f, #d4a93f, #b88a2c); } .horizontal { position: absolute; top: 70px; /* 35% of 200px */ left: 50%; transform: translateX(-50%); width: 160px; height: 24px; background: linear-gradient(to right, #f2d27f, #d4a93f, #b88a2c); } 
 
 // Generate stars for (let i = 0; i 
-

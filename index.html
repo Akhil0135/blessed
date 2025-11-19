@@ -60,6 +60,33 @@
 
   /* Responsive tweak */
   @media (max-width:600px){.messageLine{font-size:20px}}
+
+
+/* Aurora Shimmer Reveal */
+.text-container {
+  position: absolute;
+  top: 45%;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  animation: shimmerReveal 6s ease forwards;
+}
+.text-container .line {
+  display: block;
+  font-family: "Georgia", serif;
+  font-size: 32px;
+  letter-spacing: 1.5px;
+  color: #fff4d6;
+  text-shadow: 0 0 8px rgba(255,240,200,0.4), 0 0 20px rgba(255,240,200,0.2);
+}
+@keyframes shimmerReveal {
+  0% { opacity: 0; filter: blur(8px); }
+  30% { opacity: 1; filter: blur(3px); }
+  55% { text-shadow: 0 0 20px rgba(180,255,255,0.7), 0 0 40px rgba(120,200,255,0.4); }
+  80% { opacity: 1; filter: blur(0px); }
+  100% { opacity: 1; }
+}
+
 </style>
 </head>
 <body>

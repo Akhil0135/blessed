@@ -1,208 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night to Day 4K</title>
+<title>Cinematic Night to Day</title>
 <style>
-body {
-  margin: 0;
-  width: 3840px;
-  height: 2160px;
-  background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
-  overflow: hidden;
-  position: relative;
-  transition: background 3s ease-in-out;
-  transform: scale(0.5); /* To fit typical screens while keeping 4K scaling */
-  transform-origin: top left;
-}
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%);
+    position: relative;
+    transition: background 3s ease-in-out;
+    font-family: 'Arial', sans-serif;
+  }
 
-.moon-wrapper {
-  position: absolute;
-  top: 200px;
-  right: 300px;
-  width: 300px;
-  height: 300px;
-  z-index: 2;
-  transform: rotate(-50deg);
-  transition: opacity 2s ease-in-out;
-}
+  /* Stars */
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 2.5s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0% {opacity:0.2;}
+    50% {opacity:1;}
+    100% {opacity:0.2;}
+  }
 
-.cross {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  height: 520px;
-  z-index: 3;
-}
-.vertical, .horizontal {
-  transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
-}
-.vertical {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 64px;
-  height: 520px;
-  background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
-  box-shadow: 0 0 30px #d4a93f55;
-  animation: pulseLight 3s infinite alternate;
-}
-.horizontal {
-  position: absolute;
-  top: 130px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 380px;
-  height: 64px;
-  background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
-  box-shadow: 0 0 30px #d4a93f55;
-  animation: pulseLight 3s infinite alternate;
-}
-@keyframes pulseLight {
-  0% { box-shadow: 0 0 20px #d4a93f55; }
-  100% { box-shadow: 0 0 50px #d4a93f88; }
-}
+  /* Crescent Moon */
+  .moon {
+    position: absolute;
+    top: 80px;
+    right: 120px;
+    width: 200px;
+    height: 200px;
+    background: url('https://i.ibb.co/HCz7XGf/realistic-crescent-moon.png') no-repeat center/contain;
+    transition: opacity 2s ease-in-out;
+    z-index: 2;
+  }
 
-.star {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.9;
-  animation: twinkle 2.5s infinite ease-in-out;
-  pointer-events: none;
-  z-index: 1;
-}
-@keyframes twinkle {
-  0% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.5); }
-  100% { opacity: 0.2; transform: scale(1); }
-}
+  /* Gold Cross */
+  .cross {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 260px;
+    background: url('https://i.ibb.co/2M0Ckwn/gold-cross.png') no-repeat center/contain;
+    z-index: 3;
+    transition: all 3s ease-in-out;
+  }
 
-.sun {
-  position: absolute;
-  top: 200px;
-  right: 300px;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #FFD700 0%, #FFA500 70%);
-  box-shadow: 0 0 160px #FFD700aa, 0 0 400px #FFD70055;
-  opacity: 0;
-  z-index: 2;
-  transition: opacity 2s ease-in-out, top 5s ease-in-out, box-shadow 3s ease-in-out;
-}
+  /* Click Button */
+  .click-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 50px;
+    font-size: 32px;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background: white;
+    opacity: 0;
+    z-index: 4;
+    transition: opacity 1s ease-in-out;
+  }
 
-.lens-flare {
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
-  top: 100px;
-  right: 100px;
-  opacity: 0;
-  z-index: 1;
-  pointer-events: none;
-  transition: opacity 2s ease-in-out;
-}
+  /* Sun */
+  .sun {
+    position: absolute;
+    top: 80px;
+    right: 120px;
+    width: 200px;
+    height: 200px;
+    background: url('https://i.ibb.co/9y1syR7/realistic-sun.png') no-repeat center/contain;
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 2s ease-in-out;
+  }
 
-.click-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 32px 68px;
-  font-size: 44px;
-  font-weight: bold;
-  background: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  opacity: 0;
-  animation: reveal 1.2s forwards;
-  z-index: 4;
-}
-@keyframes reveal {
-  0% { opacity: 0; filter: blur(8px); transform: translate(-50%, -50%) scale(0.85); }
-  100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
-}
-
-.garden {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 440px;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 3s ease-in-out;
-  overflow: hidden;
-}
-.tulip {
-  position: absolute;
-  bottom: 0;
-  width: 10px;
-  height: 80px;
-  background: #27ae60;
-  border-radius: 3px;
-  transform-origin: bottom center;
-  animation: sway 2s infinite alternate ease-in-out;
-}
-.tulip-flower {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  bottom: 80px;
-  clip-path: polygon(50% 0%, 80% 40%, 60% 100%, 40% 100%, 20% 40%);
-}
-.tulip-flower.red { background: radial-gradient(circle at 50% 50%, #FF4B4B, #8B0000); }
-.tulip-flower.pink { background: radial-gradient(circle at 50% 50%, #FFB6C1, #FF69B4); }
-.tulip-flower.yellow { background: radial-gradient(circle at 50% 50%, #FFFF66, #FFD700); }
-.tulip-flower.purple { background: radial-gradient(circle at 50% 50%, #9370DB, #4B0082); }
-@keyframes sway {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(5deg); }
-}
+  /* Tulip Garden */
+  .tulips {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 300px;
+    background: url('https://i.ibb.co/ZK7Qp0y/realistic-tulip-garden.png') no-repeat center bottom/cover;
+    opacity: 0;
+    transition: opacity 3s ease-in-out;
+    z-index: 1;
+  }
 </style>
 </head>
 <body>
 
-<div class="moon-wrapper">
-  <svg viewBox="0 0 100 100" width="300" height="300">
-    <circle cx="50" cy="50" r="50" fill="white"/>
-    <circle cx="60" cy="50" r="50" fill="url(#bgGradient)"/>
-    <defs>
-      <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#0a0f24"/>
-        <stop offset="70%" stop-color="#000814"/>
-        <stop offset="100%" stop-color="#000000"/>
-      </linearGradient>
-    </defs>
-  </svg>
-</div>
-
-<div class="cross">
-  <div class="vertical"></div>
-  <div class="horizontal"></div>
-</div>
-
+<div class="moon"></div>
+<div class="cross"></div>
 <div class="sun"></div>
-<div class="lens-flare"></div>
-<div class="garden" id="garden"></div>
+<div class="tulips"></div>
 
 <script>
-// Stars
-for (let i = 0; i < 400; i++) {
+// Generate stars avoiding cross and moon
+for (let i = 0; i < 250; i++) {
   const star = document.createElement('div');
   star.classList.add('star');
   let x = Math.random() * window.innerWidth;
   let y = Math.random() * window.innerHeight;
-  if ((x > window.innerWidth - 600 && y < 600) || 
-      (x > window.innerWidth/2 - 280 && x < window.innerWidth/2 + 280 && y < 660)) {
+  // Avoid moon/cross area
+  if ((x > window.innerWidth/2 - 75 && x < window.innerWidth/2 + 75 && y < 260) || 
+      (x > window.innerWidth - 320 && y < 280)) {
     i--; continue;
   }
   star.style.left = x + 'px';
@@ -211,46 +125,28 @@ for (let i = 0; i < 400; i++) {
   document.body.appendChild(star);
 }
 
-// Click button after 3s
+// Show click button after 3s
 setTimeout(() => {
   const btn = document.createElement('button');
   btn.className = 'click-btn';
   btn.innerText = 'Click Here';
   document.body.appendChild(btn);
+  btn.style.opacity = 1;
 
   btn.addEventListener('click', () => {
-    document.querySelector('.moon-wrapper').style.opacity = 0;
+    // Hide moon and stars
+    document.querySelector('.moon').style.opacity = 0;
     document.querySelectorAll('.star').forEach(s => s.remove());
     btn.style.display = 'none';
 
+    // Show day background
     document.body.style.background = 'linear-gradient(to bottom, #87CEFA 0%, #ADD8E6 70%, #E0FFFF 100%)';
-    const sun = document.querySelector('.sun');
-    sun.style.opacity = 1;
-    sun.style.top = '100px';
-    sun.style.boxShadow = '0 0 240px #FFD700aa, 0 0 600px #FFD70055';
-    document.querySelector('.lens-flare').style.opacity = 1;
 
-    const garden = document.getElementById('garden');
-    garden.style.opacity = 1;
-    const colors = ['red','pink','yellow','purple'];
-    for(let i=0; i<200; i++){
-      const tulip = document.createElement('div');
-      tulip.className = 'tulip';
-      tulip.style.left = Math.random()*window.innerWidth+'px';
-      tulip.style.height = 80 + Math.random()*80 + 'px';
-      tulip.style.animationDuration = (2 + Math.random()*2)+'s';
-      const flower = document.createElement('div');
-      flower.className = 'tulip-flower ' + colors[Math.floor(Math.random()*colors.length)];
-      flower.style.height = (24 + Math.random()*20)+'px';
-      flower.style.width = flower.style.height;
-      flower.style.bottom = tulip.style.height;
-      flower.style.transform = 'rotate(' + (Math.random()*20-10) + 'deg)';
-      tulip.appendChild(flower);
-      garden.appendChild(tulip);
-    }
+    // Show sun
+    document.querySelector('.sun').style.opacity = 1;
 
-    document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
-    document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
+    // Show tulip garden
+    document.querySelector('.tulips').style.opacity = 1;
   });
 }, 3000);
 </script>

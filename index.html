@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moonbeam Reveals Message</title>
+<title>Shooting Star Rain with Particle Explosion</title>
 <style>
   body, html {
     margin: 0;
@@ -30,52 +30,27 @@
     100% { opacity: 0.3; transform: scale(1); }
   }
 
-  /* Moon */
-  .moon {
+  /* Shooting Star */
+  .shooting-star {
     position: absolute;
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, #fefbd8 0%, #f5e7a0 70%, #e0c97f 100%);
+    width: 6px;
+    height: 2px;
+    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, white 100%);
     border-radius: 50%;
-    top: 50px;
-    left: 50px;
-    box-shadow: 0 0 30px 10px #fffacd;
+    opacity: 0.9;
+    transform-origin: top left;
   }
 
-  /* Clouds */
-  .cloud {
+  /* Particle */
+  .particle {
     position: absolute;
-    width: 250px;
-    height: 100px;
-    background: rgba(255,255,255,0.05);
+    width: 4px;
+    height: 4px;
+    background: yellow;
     border-radius: 50%;
-    filter: blur(20px);
-    box-shadow: 0 0 30px rgba(255,255,255,0.05);
-    animation: moveCloud linear infinite, morphCloud ease-in-out infinite alternate;
-  }
-  .cloud::before, .cloud::after {
-    content: '';
-    position: absolute;
-    background: rgba(255,255,255,0.05);
-    width: 150px;
-    height: 80px;
-    border-radius: 50%;
-    filter: blur(20px);
-  }
-  .cloud::before { top: -30px; left: 50px; }
-  .cloud::after { top: 20px; left: 100px; }
-  @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
-  @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
-
-  /* Moonbeam */
-  .moonbeam {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
-    border-radius: 50%;
-    box-shadow: 0 0 30px 10px rgba(255,255,255,0.6);
+    opacity: 0.9;
     pointer-events: none;
+    box-shadow: 0 0 10px yellow, 0 0 20px rgba(255,255,0,0.5);
   }
 
   /* Message letters */
@@ -91,8 +66,6 @@
 </head>
 <body>
 
-<div class="moon"></div>
-
 <script>
   // Stars
   for(let i=0;i<150;i++){
@@ -104,18 +77,8 @@
     document.body.appendChild(star);
   }
 
-  // Clouds
-  for(let i=0;i<5;i++){
-    const cloud=document.createElement('div');
-    cloud.classList.add('cloud');
-    cloud.style.top=Math.random()*300+'px';
-    cloud.style.animationDuration=(40 + Math.random()*40)+'s, '+(6 + Math.random()*4)+'s';
-    cloud.style.opacity = 0.05 + Math.random()*0.1;
-    document.body.appendChild(cloud);
-  }
-
   // Message
-  const messageText = "The night whispers secrets to those who listen...";
+  const messageText = "The night whispers secrets...";
   const letters = [];
   messageText.split("").forEach((char,i)=>{
     const letter = document.createElement('div');
@@ -125,48 +88,79 @@
     letters.push(letter);
   });
 
-  // Moonbeam animation
-  function animateMoonbeam() {
-    const beam = document.createElement('div');
-    beam.className = 'moonbeam';
-    document.body.appendChild(beam);
+  // Function to create a shooting star
+  function createShootingStar(index){
+    const star = document.createElement('div');
+    star.className = 'shooting-star';
+    document.body.appendChild(star);
 
-    const startX = 100; // moon x
-    const startY = 100; // moon y
-    const centerX = window.innerWidth/2 - letters.length*7;
-    const centerY = window.innerHeight/2;
-    const duration = 4000;
+    const startX = window.innerWidth + Math.random()*100;
+    const startY = Math.random()*window.innerHeight/2;
+    const endX = window.innerWidth/2 - letters.length*7 + index*14;
+    const endY = window.innerHeight/2;
+
+    const duration = 1000 + Math.random()*800;
     const startTime = performance.now();
 
     function step(now){
       const elapsed = now - startTime;
       const t = Math.min(elapsed/duration,1);
 
-      // Beam moves toward center
-      const x = startX + (centerX - startX)*t;
-      const y = startY + (centerY - startY)*t;
-      beam.style.left = x + "px";
-      beam.style.top = y + "px";
-
-      // Reveal letters gradually as beam passes
-      const lettersToShow = Math.floor(t * letters.length);
-      for(let i=0;i<lettersToShow;i++){
-        letters[i].style.left = centerX + i*14 + "px";
-        letters[i].style.top = centerY + "px";
-        letters[i].style.opacity = 1;
-      }
+      // Diagonal fall with slight curve
+      const x = startX + (endX - startX)*t;
+      const y = startY + (endY - startY)*t + Math.sin(t*Math.PI)*50;
+      star.style.left = x + "px";
+      star.style.top = y + "px";
 
       if(t < 1){
         requestAnimationFrame(step);
       } else {
-        beam.remove();
+        star.remove();
+        createParticles(endX, endY, letters[index]);
       }
     }
 
     requestAnimationFrame(step);
   }
 
-  setTimeout(animateMoonbeam, 1500);
+  // Particle explosion to reveal letter
+  function createParticles(x, y, letter){
+    const particleCount = 20;
+    for(let i=0;i<particleCount;i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      document.body.appendChild(p);
+      let angle = Math.random()*2*Math.PI;
+      let distance = 20 + Math.random()*20;
+      let duration = 800 + Math.random()*500;
+      const startTime = performance.now();
+      function move(now){
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed/duration,1);
+        p.style.left = x + Math.cos(angle)*distance*t + "px";
+        p.style.top = y + Math.sin(angle)*distance*t + "px";
+        p.style.opacity = 1 - t;
+        if(t < 1){
+          requestAnimationFrame(move);
+        } else {
+          p.remove();
+        }
+      }
+      requestAnimationFrame(move);
+    }
+    // Reveal the letter after particles
+    setTimeout(()=>{
+      letter.style.left = x + "px";
+      letter.style.top = y + "px";
+      letter.style.opacity = 1;
+    }, 400);
+  }
+
+  // Start cinematic shooting star rain
+  messageText.split("").forEach((_,i)=>{
+    setTimeout(()=>{ createShootingStar(i); }, i*300);
+  });
+
 </script>
 
 </body>

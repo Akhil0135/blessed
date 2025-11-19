@@ -1,3 +1,103 @@
-Realistic Night Scene body { margin: 0; height: 100vh; background: linear-gradient(to bottom, #0a0f24 0%, #000814 70%, #000000 100%); overflow: hidden; position: relative; } /* Moon */ .moon { position: absolute; top: 80px; right: 120px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #fdfdfd 30%, #e6e6e6 60%, #bfbfbf 100%); box-shadow: 0 0 60px #ffffff88, 0 0 120px #ffffff55; } /* Stars */ .star { position: absolute; width: 2px; height: 2px; background: #ffffff; border-radius: 50%; opacity: 0.8; animation: twinkle 2.5s infinite ease-in-out; } @keyframes twinkle { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } } /* Christian Cross */ .cross { position: absolute; top: 40px; left: 60px; width: 120px; height: 200px; } .vertical { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 24px; height: 200px; background: linear-gradient(to bottom, #f2d27f, #d4a93f, #b88a2c); } .horizontal { position: absolute; top: 70px; /* 35% of 200px */ left: 50%; transform: translateX(-50%); width: 160px; height: 24px; background: linear-gradient(to right, #f2d27f, #d4a93f, #b88a2c); } 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cinematic Night Scene</title>
 
-// Generate stars for (let i = 0; i 
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(circle at top, #0b1a33 0%, #000814 60%, #000000 100%);
+    position: relative;
+  }
+
+  /* Moon */
+  .moon {
+    position: absolute;
+    top: 80px;
+    right: 120px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 35%, #e6e6e6 60%, #bfbfbf 100%);
+    box-shadow: 0 0 50px #ffffffaa, 0 0 120px #ffffff55;
+    filter: blur(0.5px);
+  }
+
+  /* Stars */
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 3s infinite ease-in-out;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; }
+  }
+
+  /* Christian Cross */
+  .cross {
+    position: absolute;
+    top: 40px;
+    left: 60px;
+    width: 120px;
+    height: 200px;
+  }
+
+  .vertical {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 200px;
+    background: linear-gradient(to bottom, #f4d88a, #d9b24c, #b3862e);
+    border-radius: 4px;
+  }
+
+  .horizontal {
+    position: absolute;
+    top: 70px; /* 35% of 200px */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 24px;
+    background: linear-gradient(to right, #f4d88a, #d9b24c, #b3862e);
+    border-radius: 4px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Moon -->
+<div class="moon"></div>
+
+<!-- Cross -->
+<div class="cross">
+  <div class="vertical"></div>
+  <div class="horizontal"></div>
+</div>
+
+<script>
+  // Generate stars
+  for (let i = 0; i < 250; i++) {
+    const star = document.createElement("div");
+    star.classList.add("star");
+    star.style.top = Math.random() * window.innerHeight + "px";
+    star.style.left = Math.random() * window.innerWidth + "px";
+    star.style.animationDelay = Math.random() * 3 + "s";
+    document.body.appendChild(star);
+  }
+</script>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night to Day</title>
+<title>Cinematic Night to Day with Rain and Rainbow</title>
 <style>
   body {
     margin: 0;
@@ -92,41 +92,34 @@
     transition: opacity 2s ease-in-out, top 5s ease-in-out;
   }
 
-  /* Realistic Clouds */
-  .cloud {
+  /* Rain drops */
+  .raindrop {
     position: absolute;
-    width: 180px;
-    height: 60px;
-    background: rgba(255,255,255,0.4);
-    border-radius: 60px;
-    top: 100px;
-    left: -200px;
-    z-index: 2;
-    filter: blur(3px);
-    animation: cloudMove linear infinite;
+    width: 2px;
+    height: 15px;
+    background: rgba(255,255,255,0.7);
+    animation: fall linear infinite;
+    z-index: 1;
   }
 
-  .cloud::before, .cloud::after {
-    content: '';
+  @keyframes fall {
+    0% { transform: translateY(-20px); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  /* Rainbow */
+  .rainbow {
     position: absolute;
-    background: rgba(255,255,255,0.4);
-    width: 80px;
-    height: 60px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    opacity: 0;
     border-radius: 50%;
-  }
-
-  .cloud::before {
-    top: -20px;
-    left: 10px;
-  }
-  .cloud::after {
-    top: -15px;
-    right: 10px;
-  }
-
-  @keyframes cloudMove {
-    0% { left: -250px; }
-    100% { left: 110%; }
+    z-index: 0;
+    transition: opacity 3s ease-in-out;
   }
 
   /* Click Button */
@@ -179,6 +172,9 @@
 <!-- Sun -->
 <div class="sun"></div>
 
+<!-- Rainbow -->
+<div class="rainbow"></div>
+
 <script>
 // Generate stars
 for (let i = 0; i < 200; i++) {
@@ -226,18 +222,21 @@ setTimeout(() => {
     sun.style.opacity = 1;
     sun.style.top = '50px'; // Slight rise
 
-    // Cross color for day (contrast)
+    // Cross color for day
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
 
-    // Add realistic clouds
-    for(let i=0; i<4; i++){
-      const cloud = document.createElement('div');
-      cloud.className = 'cloud';
-      cloud.style.top = 50 + i*60 + 'px';
-      cloud.style.animationDuration = 60 + i*20 + 's';
-      cloud.style.opacity = 0.3 + i*0.1;
-      document.body.appendChild(cloud);
+    // Rainbow
+    document.querySelector('.rainbow').style.opacity = 0.8;
+
+    // Add rain
+    for(let i=0; i<200; i++){
+      const drop = document.createElement('div');
+      drop.className = 'raindrop';
+      drop.style.left = Math.random() * window.innerWidth + 'px';
+      drop.style.animationDuration = 1 + Math.random()*1 + 's';
+      drop.style.opacity = 0.2 + Math.random()*0.5;
+      document.body.appendChild(drop);
     }
   });
 }, 3000);

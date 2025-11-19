@@ -96,16 +96,37 @@
 </div>
 
 <script>
-// Generate stars
+// Generate stars without overlapping moon or cross
+const moonRect = { top: 80, left: window.innerWidth - 120 - 150, width: 150, height: 150 };
+const crossRect = { top: 40, left: 60, width: 160, height: 200 };
+
+function isOverlapping(x, y, rect) {
+  return x > rect.left - 10 &&
+         x < rect.left + rect.width + 10 &&
+         y > rect.top - 10 &&
+         y < rect.top + rect.height + 10;
+}
+
 for (let i = 0; i < 250; i++) {
+  let x, y;
+  let safe = false;
+
+  while (!safe) {
+    x = Math.random() * window.innerWidth;
+    y = Math.random() * window.innerHeight;
+
+    if (!isOverlapping(x, y, moonRect) && !isOverlapping(x, y, crossRect)) {
+      safe = true;
+    }
+  }
+
   const star = document.createElement('div');
   star.classList.add('star');
-  star.style.top = Math.random() * window.innerHeight + 'px';
-  star.style.left = Math.random() * window.innerWidth + 'px';
+  star.style.top = y + 'px';
+  star.style.left = x + 'px';
   star.style.animationDelay = Math.random() * 3 + 's';
   document.body.appendChild(star);
 }
-</script>
 
 </body>
 </html>

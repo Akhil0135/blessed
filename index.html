@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Realistic Night Sky</title>
+<title>Ultra-Realistic Night Sky</title>
 <style>
   body, html {
     margin: 0;
@@ -14,6 +14,7 @@
     background: linear-gradient(to top, #0b0c2a, #1a1a3b);
   }
 
+  /* Stars with glow */
   .star {
     position: absolute;
     width: 2px;
@@ -21,6 +22,7 @@
     background: white;
     border-radius: 50%;
     opacity: 0.8;
+    box-shadow: 0 0 6px rgba(255,255,255,0.7);
     animation: twinkle 2s infinite alternate;
   }
 
@@ -30,15 +32,16 @@
     100% { opacity: 0.3; transform: scale(1); }
   }
 
+  /* Moon */
   .moon {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     background: radial-gradient(circle, #fefbd8 0%, #f5e7a0 70%, #e0c97f 100%);
     border-radius: 50%;
     top: 50px;
     left: -150px;
-    box-shadow: 0 0 20px 5px #fffacd;
+    box-shadow: 0 0 30px 10px #fffacd;
     animation: moveMoon 60s linear infinite;
   }
 
@@ -48,7 +51,7 @@
     100% { left: 100%; top: 50px; }
   }
 
-  /* Realistic morphing clouds */
+  /* Clouds */
   .cloud {
     position: absolute;
     width: 250px;
@@ -56,6 +59,7 @@
     background: rgba(255, 255, 255, 0.05);
     border-radius: 50%;
     filter: blur(20px);
+    box-shadow: 0 0 30px rgba(255,255,255,0.05);
     animation: moveCloud linear infinite, morphCloud ease-in-out infinite alternate;
   }
 
@@ -76,16 +80,16 @@
   @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
   @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
 
-  /* Shooting stars with thick head pointing down-left */
+  /* Shooting stars */
   .shooting-star {
     position: absolute;
-    width: 6px; /* thicker head */
-    height: 2px; /* tail height */
+    width: 8px;   /* thicker head */
+    height: 3px;  /* tail height */
     background: linear-gradient(0deg, rgba(255,255,255,0) 0%, white 100%);
     border-radius: 50%;
     opacity: 0;
     transform-origin: top left;
-    animation: shoot 3s linear forwards; /* slower */
+    animation: shoot 3s linear forwards;
   }
 
   @keyframes shoot {
@@ -126,7 +130,7 @@
     star.classList.add('shooting-star');
     star.style.top=Math.random()*200+'px';
     star.style.left=window.innerWidth+'px';
-    const duration=2 + Math.random()*1; // slower
+    const duration=2 + Math.random()*1;
     star.style.animationDuration=duration+'s';
     document.body.appendChild(star);
     setTimeout(()=>{ star.remove(); }, duration*1000);

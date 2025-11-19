@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Night to Day Transition</title>
+<title>Night to Day Cinematic</title>
 <style>
   body {
     margin: 0;
@@ -188,9 +188,9 @@ setTimeout(() => {
     const sun = document.querySelector('.sun');
     sun.style.opacity = 1;
 
-    // Change cross color for day
-    document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FFD700, #FFA500)';
-    document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FFD700, #FFA500)';
+    // Change cross color for day (darker orange for contrast)
+    document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
+    document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
   });
 }, 3000);
 </script>

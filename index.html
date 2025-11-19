@@ -13,7 +13,7 @@
     position: relative;
   }
 
-  /* Thin Crescent Moon */
+  /* Perfect thin Crescent Moon */
   .moon {
     position: absolute;
     top: 80px;
@@ -24,7 +24,17 @@
     background: white;
     box-shadow: 0 0 60px #ffffffaa;
     z-index: 2;
-    clip-path: ellipse(65px 75px at 55px 0); /* thinner crescent */
+  }
+
+  .moon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50px; /* Adjust for thin crescent */
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #00163a; /* background color to mask */
   }
 
   /* Cross */
@@ -49,7 +59,7 @@
 
   .horizontal {
     position: absolute;
-    top: 65px;
+    top: 65px; /* Raised */
     left: 50%;
     transform: translateX(-50%);
     width: 190px;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Night Sky with Long-Tailed Shooting Stars</title>
+<title>Ultra-Realistic Night Sky</title>
 <style>
   body, html {
     margin: 0;
@@ -14,7 +14,7 @@
     background: linear-gradient(to top, #0b0c2a, #1a1a3b);
   }
 
-  /* Stars */
+  /* Stars with glow */
   .star {
     position: absolute;
     width: 2px;
@@ -80,16 +80,16 @@
   @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
   @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
 
-  /* Shooting stars with long tail */
+  /* Shooting stars */
   .shooting-star {
     position: absolute;
-    width: 12px;   /* thick head */
-    height: 200px; /* long tail */
-    background: linear-gradient(to bottom, white 0%, rgba(255,255,255,0) 100%);
+    width: 8px;   /* thicker head */
+    height: 3px;  /* tail height */
+    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, white 100%);
     border-radius: 50%;
     opacity: 0;
     transform-origin: top left;
-    animation: shoot 4s linear forwards;
+    animation: shoot 3s linear forwards; /* slower, cinematic */
   }
 
   @keyframes shoot {
@@ -124,13 +124,13 @@
     document.body.appendChild(cloud);
   }
 
-  // Long-tailed shooting stars
+  // Shooting stars
   function createShootingStar(){
     const star=document.createElement('div');
     star.classList.add('shooting-star');
     star.style.top=Math.random()*200+'px';
     star.style.left=window.innerWidth+'px';
-    const duration=3 + Math.random()*1; // slower
+    const duration=2.5 + Math.random()*1; // slower
     star.style.animationDuration=duration+'s';
     document.body.appendChild(star);
     setTimeout(()=>{ star.remove(); }, duration*1000);

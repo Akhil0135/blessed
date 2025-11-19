@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Night Sky with Trajectory Message</title>
+<title>Night Sky with Carried Message</title>
 <style>
   body, html {
     margin: 0;
@@ -73,7 +73,7 @@
   @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
   @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
 
-  /* Shooting stars */
+  /* Random shooting stars */
   .shooting-star {
     position: absolute;
     width: 12px;
@@ -89,25 +89,40 @@
     100% { transform: translate(-100vw, 100vh) rotate(-45deg); opacity: 0; }
   }
 
-  /* Message letters */
-  .message-letter {
+  /* Carrier star */
+  .carrier {
     position: absolute;
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(circle, #ffffff 0%, #a0c4ff 80%);
+    border-radius: 50%;
+    box-shadow: 0 0 20px #ffffff, 0 0 30px #a0c4ff;
+  }
+
+  /* Message */
+  #centerMessage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-size: 2rem;
     color: #ffffff;
     text-shadow: 0 0 10px #ffffff, 0 0 20px #a0c4ff, 0 0 30px #ffffff;
     opacity: 0;
+    text-align: center;
     pointer-events: none;
+    transition: opacity 2s ease-in-out;
   }
 </style>
 </head>
 <body>
 
 <div class="moon"></div>
+<div id="centerMessage">The night whispers secrets to those who listen...</div>
 
 <script>
   // Stars
-  const starCount = 150;
-  for(let i=0;i<starCount;i++){
+  for(let i=0;i<150;i++){
     const star=document.createElement('div');
     star.classList.add('star');
     star.style.top=Math.random()*window.innerHeight+'px';
@@ -117,8 +132,7 @@
   }
 
   // Clouds
-  const cloudCount = 5;
-  for(let i=0;i<cloudCount;i++){
+  for(let i=0;i<5;i++){
     const cloud=document.createElement('div');
     cloud.classList.add('cloud');
     cloud.style.top=Math.random()*300+'px';
@@ -127,7 +141,7 @@
     document.body.appendChild(cloud);
   }
 
-  // Shooting stars
+  // Random shooting stars
   function createShootingStar(){
     const star=document.createElement('div');
     star.classList.add('shooting-star');
@@ -140,35 +154,29 @@
   }
   setInterval(createShootingStar, 4000);
 
-  // Message trajectory effect
-  const messageText = "The night whispers secrets to those who listen...";
-  const centerX = window.innerWidth/2;
-  const centerY = window.innerHeight/2 - 50;
-  const radiusX = 300; // horizontal curve
-  const radiusY = 100; // vertical curve
-  const letters = [];
+  // Carrier star animation
+  const carrier = document.createElement('div');
+  carrier.className = 'carrier';
+  document.body.appendChild(carrier);
 
-  messageText.split("").forEach((char, index) => {
-    const letter = document.createElement("div");
-    letter.className = "message-letter";
-    letter.innerText = char;
-    document.body.appendChild(letter);
-    letters.push(letter);
-
-    // Calculate curved path (sin wave)
-    const t = index / (messageText.length - 1);
-    const x = centerX - radiusX/2 + t * radiusX;
-    const y = centerY + Math.sin(t * Math.PI) * radiusY;
-
-    letter.style.left = x + "px";
-    letter.style.top = y + "px";
-
-    // Reveal each letter gradually
+  function animateCarrier() {
+    carrier.style.top = '-50px';
+    carrier.style.left = '-50px';
+    carrier.style.transition = 'transform 4s cubic-bezier(0.65, 0, 0.35, 1)';
+    
     setTimeout(() => {
-      letter.style.transition = "opacity 0.8s";
-      letter.style.opacity = 1;
-    }, 2000 + index*150); // stagger letters
-  });
+      carrier.style.transform = `translate(${window.innerWidth/2 - 7}px, ${window.innerHeight/2 - 7}px)`;
+    }, 100);
+
+    // Reveal the message after carrier reaches center
+    setTimeout(() => {
+      document.getElementById('centerMessage').style.opacity = 1;
+    }, 4100);
+  }
+
+  // Animate carrier star after 3 seconds
+  setTimeout(animateCarrier, 3000);
+
 </script>
 
 </body>

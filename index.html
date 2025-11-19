@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra-Realistic Night Sky</title>
+<title>Cinematic Night Sky with Message</title>
 <style>
   body, html {
     margin: 0;
@@ -12,20 +12,18 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(to top, #0b0c2a, #1a1a3b);
+    font-family: 'Segoe UI', sans-serif;
   }
 
-  /* Stars with glow */
+  /* Stars */
   .star {
     position: absolute;
-    width: 2px;
-    height: 2px;
-    background: white;
     border-radius: 50%;
+    background: white;
     opacity: 0.8;
     box-shadow: 0 0 6px rgba(255,255,255,0.7);
     animation: twinkle 2s infinite alternate;
   }
-
   @keyframes twinkle {
     0% { opacity: 0.3; transform: scale(1); }
     50% { opacity: 1; transform: scale(1.5); }
@@ -44,11 +42,10 @@
     box-shadow: 0 0 30px 10px #fffacd;
     animation: moveMoon 60s linear infinite;
   }
-
   @keyframes moveMoon {
-    0% { left: -150px; top: 50px; }
-    50% { left: 50%; top: 100px; }
-    100% { left: 100%; top: 50px; }
+    0% { left: -150px; top: 80px; }
+    50% { left: 50%; top: 120px; }
+    100% { left: 100%; top: 80px; }
   }
 
   /* Clouds */
@@ -56,51 +53,70 @@
     position: absolute;
     width: 250px;
     height: 100px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
     border-radius: 50%;
     filter: blur(20px);
     box-shadow: 0 0 30px rgba(255,255,255,0.05);
     animation: moveCloud linear infinite, morphCloud ease-in-out infinite alternate;
   }
-
-  .cloud::before,
-  .cloud::after {
+  .cloud::before, .cloud::after {
     content: '';
     position: absolute;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
     width: 150px;
     height: 80px;
     border-radius: 50%;
     filter: blur(20px);
   }
-
   .cloud::before { top: -30px; left: 50px; }
   .cloud::after { top: 20px; left: 100px; }
-
   @keyframes moveCloud { 0% { left: -300px; } 100% { left: 100%; } }
   @keyframes morphCloud { 0% { transform: scale(1,1); } 50% { transform: scale(1.1, 0.9); } 100% { transform: scale(1,1); } }
 
   /* Shooting stars */
   .shooting-star {
     position: absolute;
-    width: 8px;   /* thicker head */
-    height: 3px;  /* tail height */
-    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, white 100%);
+    width: 12px;
+    height: 4px;
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, white 100%);
     border-radius: 50%;
     opacity: 0;
     transform-origin: top left;
-    animation: shoot 3s linear forwards; /* slower, cinematic */
+    animation: shoot 3s linear forwards;
   }
-
   @keyframes shoot {
     0% { transform: translate(0,0) rotate(-45deg); opacity: 1; }
-    100% { transform: translate(-70vw, 70vh) rotate(-45deg); opacity: 0; }
+    100% { transform: translate(-100vw, 100vh) rotate(-45deg); opacity: 0; }
+  }
+
+  /* Night Sky Message */
+  .night-message {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: #ffffff;
+    text-shadow: 0 0 10px #ffffff, 0 0 20px #a0c4ff, 0 0 30px #ffffff;
+    letter-spacing: 2px;
+    opacity: 0;
+  }
+  .reveal {
+    animation: writeMessage 8s forwards;
+  }
+  @keyframes writeMessage {
+    0% { opacity: 0; }
+    20% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+    80% { opacity: 0.9; }
+    100% { opacity: 1; }
   }
 </style>
 </head>
 <body>
 
 <div class="moon"></div>
+<div class="night-message" id="nightMessage">The night whispers secrets to those who listen...</div>
 
 <script>
   // Stars
@@ -121,6 +137,7 @@
     cloud.classList.add('cloud');
     cloud.style.top=Math.random()*300+'px';
     cloud.style.animationDuration=(40 + Math.random()*40)+'s, '+(6 + Math.random()*4)+'s';
+    cloud.style.opacity = 0.05 + Math.random()*0.1;
     document.body.appendChild(cloud);
   }
 
@@ -130,13 +147,18 @@
     star.classList.add('shooting-star');
     star.style.top=Math.random()*200+'px';
     star.style.left=window.innerWidth+'px';
-    const duration=2.5 + Math.random()*1; // slower
+    const duration=2.5 + Math.random()*1;
     star.style.animationDuration=duration+'s';
     document.body.appendChild(star);
     setTimeout(()=>{ star.remove(); }, duration*1000);
   }
-
   setInterval(createShootingStar, 4000);
+
+  // Reveal Message along trajectory
+  const message = document.getElementById('nightMessage');
+  setTimeout(()=>{
+    message.classList.add('reveal');
+  }, 4000); // message appears after 4 seconds
 </script>
 
 </body>

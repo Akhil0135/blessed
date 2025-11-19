@@ -41,7 +41,7 @@ body, html {
   border-radius: 50%;
   top: 50px;
   left: -150px;
-  box-shadow: 0 0 30px 10px #fffacd;
+  box-shadow: 0 0 15px 5px #fffacd; /* reduced glow */
   z-index: 4;
   animation: moveMoon 60s linear infinite;
 }
@@ -51,7 +51,7 @@ body, html {
   100% { left: 100%; top: 50px; }
 }
 
-/* Aurora with slight waving effect */
+/* Aurora */
 .aurora {
   position: absolute;
   width: 300%;
@@ -74,12 +74,12 @@ body, html {
   100% { transform: rotate(0deg) translateY(0px); }
 }
 
-/* Original cinematic clouds */
+/* Clouds */
 .cloud {
   position: absolute;
   width: 250px;
   height: 100px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.08);
   border-radius: 50%;
   filter: blur(20px);
   box-shadow: 0 0 30px rgba(255,255,255,0.05);
@@ -88,7 +88,7 @@ body, html {
 .cloud::before, .cloud::after {
   content:'';
   position: absolute;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.08);
   width: 150px;
   height: 80px;
   border-radius: 50%;
@@ -144,10 +144,10 @@ for(let i=0;i<150;i++){
   document.body.appendChild(star);
 }
 
-// Clouds layers (original cinematic clouds restored)
+// Clouds with parallax depth and full visibility
 const cloudLayers = [
-  { count: 3, z:2, speed: 80, opacity:0.05 }, // behind aurora
-  { count: 3, z:5, speed: 50, opacity:0.08 }  // in front
+  { count: 3, z:2, speed: 80, opacity:0.08 }, // behind aurora
+  { count: 3, z:5, speed: 50, opacity:0.1 }  // in front
 ];
 
 cloudLayers.forEach(layer=>{
@@ -163,7 +163,7 @@ cloudLayers.forEach(layer=>{
   }
 });
 
-// Cloud move keyframes
+// Cloud keyframes
 const style = document.createElement('style');
 style.innerHTML = `
 @keyframes moveCloud {
@@ -217,11 +217,11 @@ function createShootingStar(){
   document.body.appendChild(star);
   setTimeout(()=>{ star.remove(); }, duration*1000);
 }
-// More frequent shooting stars
 setInterval(createShootingStar, 1200);
 setInterval(createShootingStar, 1800);
 setInterval(createShootingStar, 2400);
 setInterval(createShootingStar, 3000);
+
 </script>
 
 </body>

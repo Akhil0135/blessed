@@ -21,10 +21,13 @@
     right: 120px;
     width: 150px;
     height: 150px;
-    background: radial-gradient(circle, #ffffff 40%, #dcdcdc 70%, #b5b5b5 100%);
+    background: radial-gradient(circle, #ffffff 45%, #e6e6e6 70%, #bfbfbf 100%);
     border-radius: 50%;
     box-shadow: 0 0 60px #ffffffaa;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 50%, 38% 50%, 38% 0%);
+    /* Perfect crescent shape */
+    clip-path: path('M75 0
+        A75 75 0 1 0 75 150
+        A45 75 0 1 1 75 0 Z');
     z-index: 2;
   }
 

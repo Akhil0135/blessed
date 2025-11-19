@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night to Day with Animated Rainbow</title>
+<title>Cinematic Day Scene with Rainbow</title>
 <style>
   body {
     margin: 0;
@@ -107,22 +107,6 @@
     100% { transform: translateY(100vh); opacity: 0; }
   }
 
-  /* Animated semi-circle rainbow */
-  .rainbow {
-    position: absolute;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%) scaleY(0);
-    width: 90%;
-    height: 400px;
-    border-radius: 50%;
-    background: conic-gradient(red 0deg 51deg, orange 51deg 102deg, yellow 102deg 153deg, green 153deg 204deg, blue 204deg 255deg, indigo 255deg 306deg, violet 306deg 360deg);
-    opacity: 0;
-    z-index: 0;
-    transition: opacity 2s ease-in-out, transform 3s ease-out;
-    pointer-events: none;
-  }
-
   /* Click Button */
   .click-btn {
     position: absolute;
@@ -144,6 +128,16 @@
   @keyframes reveal {
     0% { opacity: 0; filter: blur(8px); transform: translate(-50%, -50%) scale(0.85); }
     100% { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
+  }
+
+  /* Rainbow animation */
+  .rainbow-path {
+    fill: none;
+    stroke-width: 20;
+    stroke-linecap: round;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    transition: stroke-dashoffset 4s ease-out;
   }
 </style>
 </head>
@@ -173,8 +167,16 @@
 <!-- Sun -->
 <div class="sun"></div>
 
-<!-- Rainbow -->
-<div class="rainbow"></div>
+<!-- SVG Rainbow -->
+<svg class="rainbow" width="100%" height="400px" style="position:absolute;top:50px;left:0;z-index:0;pointer-events:none;">
+  <path class="rainbow-path" d="M50,350 A400,400 0 0,1 950,350" stroke="red"/>
+  <path class="rainbow-path" d="M50,355 A395,395 0 0,1 950,355" stroke="orange"/>
+  <path class="rainbow-path" d="M50,360 A390,390 0 0,1 950,360" stroke="yellow"/>
+  <path class="rainbow-path" d="M50,365 A385,385 0 0,1 950,365" stroke="green"/>
+  <path class="rainbow-path" d="M50,370 A380,380 0 0,1 950,370" stroke="blue"/>
+  <path class="rainbow-path" d="M50,375 A375,375 0 0,1 950,375" stroke="indigo"/>
+  <path class="rainbow-path" d="M50,380 A370,370 0 0,1 950,380" stroke="violet"/>
+</svg>
 
 <script>
 // Generate stars
@@ -226,10 +228,13 @@ setTimeout(() => {
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
 
-    // Animate rainbow
-    const rainbow = document.querySelector('.rainbow');
-    rainbow.style.opacity = 0.8;
-    rainbow.style.transform = 'translateX(-50%) scaleY(1)';
+    // Animate rainbow forming
+    const paths = document.querySelectorAll('.rainbow-path');
+    paths.forEach((p, idx) => {
+      setTimeout(() => {
+        p.style.strokeDashoffset = 0;
+      }, idx * 300); // slight delay for each color for cinematic effect
+    });
 
     // Add rain
     for(let i=0; i<200; i++){

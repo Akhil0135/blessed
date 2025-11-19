@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Day Scene</title>
+<title>Cinematic Sunrise Scene</title>
 <style>
   body {
     margin: 0;
@@ -37,6 +37,10 @@
     z-index: 3;
   }
 
+  .vertical, .horizontal {
+    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
+  }
+
   .vertical {
     position: absolute;
     left: 50%;
@@ -44,8 +48,8 @@
     width: 32px;
     height: 260px;
     background: linear-gradient(to bottom, #f6e7a4, #d4a93f, #b88a2c);
-    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
     box-shadow: 0 0 15px #d4a93f55;
+    animation: pulseLight 3s infinite alternate;
   }
 
   .horizontal {
@@ -56,8 +60,13 @@
     width: 190px;
     height: 32px;
     background: linear-gradient(to right, #f6e7a4, #d4a93f, #b88a2c);
-    transition: background 3s ease-in-out, box-shadow 3s ease-in-out;
     box-shadow: 0 0 15px #d4a93f55;
+    animation: pulseLight 3s infinite alternate;
+  }
+
+  @keyframes pulseLight {
+    0% { box-shadow: 0 0 10px #d4a93f55; }
+    100% { box-shadow: 0 0 25px #d4a93f88; }
   }
 
   /* Stars */
@@ -79,7 +88,7 @@
     100% { opacity: 0.2; transform: scale(1); }
   }
 
-  /* Sun */
+  /* Sun with lens flare */
   .sun {
     position: absolute;
     top: 80px;
@@ -88,10 +97,24 @@
     height: 150px;
     border-radius: 50%;
     background: radial-gradient(circle, #FFD700 0%, #FFA500 70%);
-    box-shadow: 0 0 60px #FFD700aa, 0 0 150px #FFD70055;
+    box-shadow: 0 0 80px #FFD700aa, 0 0 200px #FFD70055;
     opacity: 0;
     z-index: 2;
     transition: opacity 2s ease-in-out, top 5s ease-in-out, box-shadow 3s ease-in-out;
+  }
+
+  .lens-flare {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+    top: 50px;
+    right: 50px;
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 2s ease-in-out;
   }
 
   /* Click Button */
@@ -145,6 +168,9 @@
 <!-- Sun -->
 <div class="sun"></div>
 
+<!-- Lens Flare -->
+<div class="lens-flare"></div>
+
 <script>
 // Generate stars
 for (let i = 0; i < 200; i++) {
@@ -182,17 +208,19 @@ setTimeout(() => {
     // Change background to cinematic day
     document.body.style.background = 'linear-gradient(to bottom, #87CEFA 0%, #ADD8E6 70%, #E0FFFF 100%)';
 
-    // Show sun with glow
+    // Show sun
     const sun = document.querySelector('.sun');
     sun.style.opacity = 1;
     sun.style.top = '50px';
-    sun.style.boxShadow = '0 0 80px #FFD700aa, 0 0 200px #FFD70055';
+    sun.style.boxShadow = '0 0 120px #FFD700aa, 0 0 300px #FFD70055';
+
+    // Show lens flare
+    const flare = document.querySelector('.lens-flare');
+    flare.style.opacity = 1;
 
     // Cross color for day with subtle glow
     document.querySelector('.vertical').style.background = 'linear-gradient(to bottom, #FF8C00, #FF6600)';
     document.querySelector('.horizontal').style.background = 'linear-gradient(to right, #FF8C00, #FF6600)';
-    document.querySelector('.vertical').style.boxShadow = '0 0 25px #FF8C0055';
-    document.querySelector('.horizontal').style.boxShadow = '0 0 25px #FF8C0055';
   });
 }, 3000);
 </script>

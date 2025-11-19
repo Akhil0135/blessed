@@ -14,15 +14,15 @@
     position: relative;
   }
 
-  /* Crescent Moon */
+  /* Perfect Crescent Moon */
   .moon {
     position: absolute;
     top: 80px;
     right: 120px;
     width: 150px;
     height: 150px;
+    background: white;
     border-radius: 50%;
-    background: radial-gradient(circle, #ffffff 45%, #e6e6e6 70%, #bfbfbf 100%);
     box-shadow: 0 0 60px #ffffffaa;
     z-index: 2;
   }
@@ -31,11 +31,11 @@
     content: '';
     position: absolute;
     top: 0;
-    left: 30px;
+    left: 40px; /* controls crescent thickness */
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background: #00163a;
+    background: #00163a; /* same as background */
   }
 
   /* Cross */
@@ -83,80 +83,3 @@
 
   @keyframes twinkle {
     0% { opacity: 0.2; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.5); }
-    100% { opacity: 0.2; transform: scale(1); }
-  }
-
-  /* Click Here Button */
-  .click-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 16px 34px;
-    font-size: 22px;
-    font-weight: bold;
-    background: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    opacity: 0;
-    animation: reveal 1.2s forwards;
-  }
-
-  @keyframes reveal {
-    0% {
-      opacity: 0;
-      filter: blur(8px);
-      transform: translate(-50%, -50%) scale(0.85);
-    }
-    100% {
-      opacity: 1;
-      filter: blur(0px);
-      transform: translate(-50%, -50%) scale(1);
-    }
-  }
-</style>
-</head>
-<body>
-
-<div class="moon"></div>
-
-<div class="cross">
-  <div class="vertical"></div>
-  <div class="horizontal"></div>
-</div>
-
-<script>
-// Generate non-overlapping stars
-for (let i = 0; i < 200; i++) {
-  const star = document.createElement('div');
-  star.classList.add('star');
-
-  let x = Math.random() * window.innerWidth;
-  let y = Math.random() * window.innerHeight;
-
-  // Avoid moon + cross zones
-  if ((x > window.innerWidth - 350 && y < 350) ||
-      (x > window.innerWidth/2 - 140 && x < window.innerWidth/2 + 140 && y < 330)) {
-    i--;
-    continue;
-  }
-
-  star.style.left = x + 'px';
-  star.style.top = y + 'px';
-  star.style.animationDelay = Math.random() * 2 + 's';
-  document.body.appendChild(star);
-}
-
-// Click button after 3 seconds
-setTimeout(() => {
-  const btn = document.createElement('button');
-  btn.className = 'click-btn';
-  btn.innerText = 'Click Here';
-  document.body.appendChild(btn);
-}, 3000);
-</script>
-
-</body>
-</html>

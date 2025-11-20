@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Day with Garden and Butterflies</title>
+<title>Cinematic Day with Garden and Animated Butterflies</title>
 <style>
   body, html {
     margin:0;
@@ -51,7 +51,7 @@
   .haze { position:absolute; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 80%); pointer-events:none; z-index:1; transition:opacity 4s ease; }
 
   /* Garden */
-  .garden { position:absolute; bottom:0; width:100%; height:500px; pointer-events:none; z-index:2; } /* height increased */
+  .garden { position:absolute; bottom:0; width:100%; height:700px; pointer-events:none; z-index:2; } /* Increased height */
   .flower { position:absolute; bottom:0; width:10px; height:10px; border-radius:50%; opacity:0; animation:growFlower 2s forwards; }
   @keyframes growFlower{0%{opacity:0; transform:scale(0);}100%{opacity:1; transform:scale(1);}}
   .tulip { background: linear-gradient(to top, #ff4a91, #ffb3c1); }
@@ -60,13 +60,14 @@
   @keyframes growGrass{0%{opacity:0; transform:scaleY(0);}100%{opacity:1; transform:scaleY(1);}}
 
   /* Butterflies */
-  .butterfly { position:absolute; width:20px; height:20px; background: linear-gradient(to right, #ff6eb4, #ffccff); border-radius:50%; opacity:0; animation:flyButterfly 8s infinite ease-in-out; transform-origin:center; }
+  .butterfly { position:absolute; width:20px; height:20px; background: linear-gradient(to right, #ff6eb4, #ffccff); border-radius:50%; opacity:0; animation:flyButterfly 10s infinite ease-in-out; transform-origin:center; }
   @keyframes flyButterfly {
     0%{transform:translate(0,0) rotate(0deg); opacity:1;}
-    25%{transform:translate(100px,-50px) rotate(20deg);}
-    50%{transform:translate(200px,20px) rotate(-20deg);}
-    75%{transform:translate(300px,-40px) rotate(10deg);}
-    100%{transform:translate(400px,0px) rotate(0deg);}
+    20%{transform:translate(50px,-30px) rotate(15deg);}
+    40%{transform:translate(100px,20px) rotate(-15deg);}
+    60%{transform:translate(150px,-40px) rotate(10deg);}
+    80%{transform:translate(200px,10px) rotate(-10deg);}
+    100%{transform:translate(250px,0px) rotate(0deg);}
   }
 </style>
 </head>
@@ -109,7 +110,6 @@
     cloudsArr.push(cloud);
   }
 
-  // Cloud parallax
   function animateClouds(){
     cloudsArr.forEach((c,i)=>{
       const floatY = Math.sin(Date.now()/5000 + i)*10;
@@ -204,7 +204,7 @@
     // Reduce haze
     haze.style.opacity=0.02;
 
-    // Create garden: grass, tulips, butterflies
+    // Create garden
     const flowerCount = 50;
     for(let i=0;i<flowerCount;i++){
       const flower = document.createElement('div');
@@ -222,14 +222,16 @@
       garden.appendChild(grass);
     }
 
-    // Add butterflies
+    // Create animated butterflies
     const butterflyCount = 10;
     for(let i=0;i<butterflyCount;i++){
       const butterfly = document.createElement('div');
       butterfly.className='butterfly';
       butterfly.style.left=Math.random()*window.innerWidth+'px';
-      butterfly.style.bottom=(50 + Math.random()*300)+'px';
+      butterfly.style.bottom=(50 + Math.random()*500)+'px'; // within garden height
       butterfly.style.animationDelay=(Math.random()*5)+'s';
+      butterfly.style.animationDuration=(5 + Math.random()*5)+'s'; // random speed
+      butterfly.style.transform=`scale(${0.7+Math.random()*0.6})`;
       garden.appendChild(butterfly);
     }
   });

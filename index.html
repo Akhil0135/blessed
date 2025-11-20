@@ -11,8 +11,8 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
-    /* Fully dark cinematic gradient, no blue */
-    background: linear-gradient(to top, #000000 0%, #080808 50%, #1a1a1a 100%);
+    /* Fully dark cinematic gradient, no blue at all */
+    background: linear-gradient(to top, #000000 0%, #0d0d0d 50%, #1a1a1a 100%);
     font-family: 'Cinzel', serif;
   }
 
@@ -23,7 +23,7 @@
     height: 2px;
     background: white;
     border-radius: 50%;
-    opacity: 0.6; /* less twinkle */
+    opacity: 0.6;
     box-shadow: 0 0 6px rgba(255,255,255,0.5);
     animation: twinkle 2s infinite alternate;
   }
@@ -33,15 +33,15 @@
     100% { opacity: 0.2; transform: scale(1); }
   }
 
-  /* Aurora */
+  /* Aurora (neutral tones, no blue) */
   .aurora {
     position: absolute;
     top: 0;
     width: 100%;
     height: 40vh;
-    background: radial-gradient(circle at 50% 20%, rgba(0,255,200,0.3), transparent),
-                radial-gradient(circle at 30% 10%, rgba(0,150,255,0.25), transparent),
-                radial-gradient(circle at 70% 5%, rgba(150,80,255,0.25), transparent);
+    background: radial-gradient(circle at 50% 20%, rgba(200,180,255,0.25), transparent),
+                radial-gradient(circle at 30% 10%, rgba(150,100,180,0.2), transparent),
+                radial-gradient(circle at 70% 5%, rgba(180,140,200,0.2), transparent);
     filter: blur(30px);
     animation: auroraMove 20s ease-in-out infinite alternate;
   }
@@ -79,7 +79,7 @@
   }
   @keyframes moonMove {
     0% { left: -150px; }
-    100% { left: 70%; } /* stop before end */
+    100% { left: 70%; } /* stop before edge */
   }
 
   /* Shooting stars */
@@ -179,7 +179,7 @@
     document.body.appendChild(cloud);
   }
 
-  /* Shooting stars - increased count from start */
+  /* Shooting stars */
   function createShootingStar(){
     const star=document.createElement('div');
     star.classList.add('shooting-star');
@@ -193,7 +193,7 @@
   for(let i=0;i<6;i++){ createShootingStar(); }
   setInterval(createShootingStar, 1200);
 
-  /* Message reveal letter by letter */
+  /* Message reveal */
   const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
   const messageDiv = document.getElementById("message");
   function revealMessage(){
@@ -207,18 +207,17 @@
     messageDiv.style.opacity = 1;
   }
 
-  /* Trigger message reveal & click button when moon reaches 70% of screen */
+  /* Trigger message reveal & button when moon reaches 70% */
   const moon=document.querySelector('.moon');
   const clickBtn=document.getElementById('clickBtn');
-  function checkMoon(){
+  const interval=setInterval(()=>{
     const rect=moon.getBoundingClientRect();
     if(rect.left > window.innerWidth*0.55){
       revealMessage();
       clickBtn.classList.add('reveal');
       clearInterval(interval);
     }
-  }
-  const interval=setInterval(checkMoon,200);
+  },200);
 
 </script>
 </body>

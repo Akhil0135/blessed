@@ -1,300 +1,170 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Cinematic Birthday Eve — Fixed & Final</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cinematic Night</title>
+
 <style>
-  :root {
-    --moon-size: 150px;
-    --gold: #f7e3a6;
-    --gold-strong: #ffd86b;
-  }
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: black;
+        font-family: 'Poppins', sans-serif;
+    }
 
-  html,body{
-    height:100%;
-    margin:0;
-    background: radial-gradient(circle at 50% 30%, #050508 0%, #000 55%, #000 100%);
-    font-family: "Playfair Display", Georgia, serif;
-    overflow:hidden;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-  }
+    /* ==== STARRY BACKGROUND (CINEMATIC) ==== */
+    .stars {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        overflow: hidden;
+    }
 
-  /* subtle vignette for cinematic look */
-  .vignette {
-    position:fixed; inset:0; pointer-events:none;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.6) 100%);
-    z-index:120;
-  }
+    .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        opacity: 0.6;
+        border-radius: 50%;
+        animation: twinkle 2.5s infinite ease-in-out;
+    }
 
-  /* stars (reduced, cinematic) */
-  .star { position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:0.85; box-shadow:0 0 6px rgba(255,255,255,0.7); }
-  .star.slow-tw{ animation: tw 3.4s ease-in-out infinite; }
-  .star.slow-tw-2{ animation: tw 5.2s ease-in-out infinite; }
+    @keyframes twinkle {
+        0% { opacity: 0.2; }
+        50% { opacity: 0.9; }
+        100% { opacity: 0.2; }
+    }
 
-  @keyframes tw { 0%{opacity:0.2}50%{opacity:1}100%{opacity:0.2} }
+    /* ==== SHOOTING STARS ==== */
+    .shooting-star {
+        position: absolute;
+        width: 3px;
+        height: 120px;
+        background: linear-gradient(to bottom, white, transparent);
+        opacity: 0.8;
+        transform: rotate(-45deg);
+        border-radius: 50%;
+        animation: shoot 1.8s linear infinite;
+    }
 
-  /* clouds (soft blurred) */
-  .cloud { position:absolute; width:420px; height:140px; background:rgba(255,255,255,0.05); border-radius:50%; filter:blur(26px); box-shadow:0 0 30px rgba(255,255,255,0.02); pointer-events:none; }
-  .cloud::before, .cloud::after { content:""; position:absolute; background:rgba(255,255,255,0.05); width:260px; height:110px; border-radius:50%; filter:blur(26px); }
-  .cloud::before{ left:60px; top:-40px } .cloud::after{ left:180px; top:10px }
+    @keyframes shoot {
+        0% { transform: translate(-200px, -200px) rotate(-45deg); opacity: 0; }
+        10% { opacity: 1; }
+        100% { transform: translate(800px, 800px) rotate(-45deg); opacity: 0; }
+    }
 
-  /* moon (CSS circle) */
-  .moon {
-    position:absolute;
-    width:var(--moon-size); height:var(--moon-size);
-    border-radius:50%;
-    background: radial-gradient(circle, #fffbe6 0%, #f0df9d 60%, #cfb26b 100%);
-    box-shadow:0 0 40px 8px rgba(255,240,200,0.35), inset -8px -6px 20px rgba(0,0,0,0.06);
-    top:70px; left:-260px; z-index:50; will-change:left,top,transform;
-  }
+    /* ==== MOON ==== */
+    .moon {
+        position: absolute;
+        top: 20%;
+        left: -150px;
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, #ffffff, #cfd0ff 60%, #7a7a7a 100%);
+        border-radius: 50%;
+        filter: brightness(1.2);
+        animation: moveMoon 25s linear forwards;
+        box-shadow: 0 0 50px #ffffffaa;
+    }
 
-  /* canvas sits behind UI elements */
-  #shootingCanvas { position: absolute; top:0; left:0; z-index:40; pointer-events:none; }
+    @keyframes moveMoon {
+        0% { left: -150px; }
+        100% { left: calc(100% - 250px); }
+    }
 
-  /* message area */
-  .messageWrap { position:absolute; left:50%; top:60%; transform:translate(-50%,-50%); z-index:80; text-align:center; max-width:88vw; }
-  .messageLine { font-size:34px; color:var(--gold); line-height:1.2; letter-spacing:0.6px; text-shadow: 0 0 10px rgba(255,240,200,0.18); }
-  .messageLine .letter { display:inline-block; opacity:0; transform:translateY(8px); filter:blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; color:var(--gold-strong); text-shadow: 0 0 14px rgba(255,220,140,0.85); }
-  .messageLine .letter.visible { opacity:1; transform:translateY(0); filter:blur(0); }
+    /* ==== CLOUDS (PARALLAX) ==== */
+    .cloud {
+        position: absolute;
+        top: 30%;
+        width: 450px;
+        height: 180px;
+        background: rgba(255,255,255,0.13);
+        filter: blur(35px);
+        border-radius: 50%;
+        animation: cloudsMove 60s linear infinite;
+    }
 
-  /* cinematic click button */
-  #clickBtn { position:absolute; left:50%; transform:translateX(-50%) translateY(20px); bottom:14vh; padding:12px 36px; border-radius:999px; border:1px solid rgba(255,255,255,0.16); background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06)); color:#fff; font-weight:600; cursor:pointer; z-index:130; opacity:0; pointer-events:none; transition:opacity 1.2s ease, transform 1.2s ease; box-shadow: 0 14px 40px rgba(0,0,0,0.6); }
-  #clickBtn.show { opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0); animation:btnFloat 3.6s ease-in-out infinite; }
-  @keyframes btnFloat { 0%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}100%{transform:translateX(-50%) translateY(0)} }
+    @keyframes cloudsMove {
+        from { left: -500px; }
+        to { left: 110%; }
+    }
 
-  /* responsive */
-  @media (max-width:640px){ .messageLine{font-size:20px} .moon{width:110px;height:110px} }
+    /* ==== MESSAGE ==== */
+    .message {
+        position: absolute;
+        bottom: 12%;
+        width: 100%;
+        text-align: center;
+        font-size: 28px;
+        color: #ffffffdd;
+        letter-spacing: 2px;
+        opacity: 0;
+    }
+
+    .show-letter {
+        opacity: 1;
+        transition: opacity 0.4s ease;
+    }
 </style>
 </head>
+
 <body>
-  <div class="vignette" aria-hidden="true"></div>
 
-  <!-- clouds container (will inject) -->
-  <div id="cloudRoot" aria-hidden="true"></div>
+<div class="stars"></div>
+<div class="moon"></div>
 
-  <!-- moon -->
-  <div id="moon" class="moon" aria-hidden="true"></div>
+<div class="cloud" style="top: 55%; animation-delay: 0s;"></div>
+<div class="cloud" style="top: 40%; animation-delay: 8s;"></div>
+<div class="cloud" style="top: 65%; animation-delay: 20s;"></div>
 
-  <!-- shooting stars canvas -->
-  <canvas id="shootingCanvas"></canvas>
-
-  <!-- message -->
-  <div class="messageWrap" aria-hidden="false">
-    <div id="line1" class="messageLine"></div>
-    <div style="height:12px"></div>
-    <div id="line2" class="messageLine"></div>
-  </div>
-
-  <!-- button -->
-  <button id="clickBtn" aria-hidden="true">Click Here</button>
+<div id="message" class="message"></div>
 
 <script>
-/* ---------- Config ---------- */
-const MOON_DURATION = 70000;          // ms total travel time
-const MOON_END_RATIO = 0.75;          // stop at 75% viewport
-const MESSAGE_LINES = [
-  "On this calm birthday eve so new,",
-  "God softly whispers, ‘My plans are made for you.’"
-];
+/* ==== GENERATE CINEMATIC STARS ==== */
+const starsContainer = document.querySelector('.stars');
+for (let i = 0; i < 150; i++) {
+    let star = document.createElement('div');
+    star.classList.add('star');
+    star.style.top = Math.random() * 100 + '%';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    starsContainer.appendChild(star);
+}
 
-/* ---------- Responsive helpers ---------- */
-function vw(n){ return n * (window.innerWidth / 100); }
-function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
-
-/* ---------- Stars (fewer, cinematic) ---------- */
-(function makeStars(){
-  const COUNT = 120; // reduced
-  for(let i=0;i<COUNT;i++){
-    const s = document.createElement('div');
-    s.className = 'star ' + (Math.random()>0.6 ? 'slow-tw-2' : 'slow-tw');
-    s.style.left = Math.random()*100 + 'vw';
-    s.style.top  = Math.random()*100 + 'vh';
-    const size = (Math.random()*1.8)+0.6;
-    s.style.width = s.style.height = size + 'px';
-    s.style.opacity = 0.45 + Math.random()*0.6;
+/* ==== SHOOTING STARS (INCREASED COUNT) ==== */
+for (let i = 0; i < 12; i++) {
+    let s = document.createElement('div');
+    s.classList.add('shooting-star');
+    s.style.top = Math.random() * 40 + '%';
+    s.style.left = Math.random() * 40 + '%';
+    s.style.animationDelay = Math.random() * 5 + 's';
     document.body.appendChild(s);
-  }
-})();
+}
 
-/* ---------- Clouds (parallax feel) ---------- */
-(function makeClouds(){
-  const root = document.getElementById('cloudRoot');
-  const layers = [
-    {count:2, topMin:10, topMax:80, durBase:120, opacity:0.35},
-    {count:3, topMin:80, topMax:220, durBase:90, opacity:0.7},
-    {count:2, topMin:180, topMax:320, durBase:60, opacity:1}
-  ];
-  layers.forEach(layer=>{
-    for(let i=0;i<layer.count;i++){
-      const c = document.createElement('div');
-      c.className = 'cloud';
-      c.style.top = (layer.topMin + Math.random()*(layer.topMax-layer.topMin)) + 'px';
-      c.style.opacity = layer.opacity;
-      const dur = layer.durBase + Math.random()*40;
-      c.style.animationDuration = dur + 's';
-      c.style.left = (-200 - Math.random()*800) + 'px';
-      root.appendChild(c);
+/* ==== MESSAGE REVEAL ==== */
+const msgText = "On this calm birthday eve so new, God softly whispers, ‘My plans are made for you.’";
+const msgContainer = document.getElementById("message");
+
+let index = 0;
+
+function revealText() {
+    if (index < msgText.length) {
+        const span = document.createElement("span");
+        span.textContent = msgText[index];
+        span.classList.add("show-letter");
+        msgContainer.appendChild(span);
+        index++;
+        setTimeout(revealText, 90);
     }
-  });
-  // dynamic keyframe to move across viewport
-  const s = document.createElement('style');
-  s.id = 'cloud-dyn';
-  s.innerHTML = `@keyframes cloudMove { 0%{transform:translateX(-700px)} 100%{transform:translateX(${window.innerWidth+300}px)} }`;
-  document.head.appendChild(s);
-})();
-
-/* ---------- Shooting stars (canvas) ---------- */
-const canvas = document.getElementById('shootingCanvas');
-const ctx = canvas.getContext('2d');
-function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-resizeCanvas();
-window.addEventListener('resize', ()=>{
-  resizeCanvas();
-  // update clouds keyframe
-  const s = document.getElementById('cloud-dyn');
-  if(s) s.innerHTML = `@keyframes cloudMove { 0%{transform:translateX(-700px)} 100%{transform:translateX(${window.innerWidth+300}px)} }`;
-});
-
-let shooting = [];
-function spawnShooting(){
-  // bias spawn near top-left to mid area for cinematic paths
-  const startX = canvas.width + (Math.random()*120);
-  const startY = 20 + Math.random()*260;
-  const len = 120 + Math.random()*160;
-  const speed = 6 + Math.random()*5;
-  const alpha = 0.6 + Math.random()*0.4;
-  shooting.push({ x: startX, y: startY, len, vx: -speed, vy: speed*0.9, alpha });
-}
-// higher frequency: multiple intervals create organic pattern
-setInterval(spawnShooting, 600);
-setInterval(spawnShooting, 1100);
-setInterval(spawnShooting, 1700);
-
-function drawShooting(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let i=shooting.length-1;i>=0;i--){
-    const s = shooting[i];
-    ctx.beginPath();
-    ctx.moveTo(s.x, s.y);
-    ctx.lineTo(s.x - s.len, s.y + s.len*0.6);
-    ctx.strokeStyle = `rgba(255,255,255,${s.alpha})`;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    // tail glow
-    ctx.beginPath();
-    ctx.moveTo(s.x - s.len*0.3, s.y + s.len*0.18);
-    ctx.lineTo(s.x - s.len, s.y + s.len*0.6);
-    ctx.strokeStyle = `rgba(255,255,255,${s.alpha*0.5})`;
-    ctx.lineWidth = 6;
-    ctx.stroke();
-
-    s.x += s.vx;
-    s.y += s.vy;
-
-    // remove when off-screen
-    if(s.y > canvas.height + 100 || s.x < -200) shooting.splice(i,1);
-  }
-  requestAnimationFrame(drawShooting);
-}
-drawShooting();
-
-/* ---------- Moon JS-driven movement (so we can track progress) ---------- */
-const moonEls = document.getElementById('moon');
-let moonStart = null;
-let moonStopped = false;
-
-function easeInOutCubic(t){ return t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
-
-function animateMoon(ts){
-  if(!moonStart) moonStart = ts;
-  const elapsed = ts - moonStart;
-  const prog = clamp(elapsed / MOON_DURATION, 0, 1);
-  const eased = easeInOutCubic(prog);
-
-  // compute left position: from -260px to viewport*MOON_END_RATIO
-  const startLeft = -260;
-  const targetLeft = window.innerWidth * MOON_END_RATIO;
-  const leftPx = startLeft + (targetLeft - startLeft) * eased;
-  // vertical gentle arc (optional)
-  const topStart = 70;
-  const topMid = 120;
-  const topEnd = 70;
-  let topPx;
-  if(eased <= 0.5) topPx = topStart + (topMid - topStart) * (eased/0.5);
-  else topPx = topMid + (topEnd - topMid) * ((eased-0.5)/0.5);
-
-  moonEls.style.left = leftPx + 'px';
-  moonEls.style.top  = topPx + 'px';
-  moonEls.style.transform = `scale(${1 + Math.sin(elapsed*0.0005)*0.003})`;
-
-  // update message reveal progress (letter-by-letter synced)
-  updateMessageByProgress(eased);
-
-  if(prog < 1){
-    requestAnimationFrame(animateMoon);
-  } else {
-    // finished exactly once
-    if(!moonStopped){
-      moonStopped = true;
-      onMoonFinished();
-    }
-  }
-}
-requestAnimationFrame(animateMoon);
-
-/* ---------- Message: prepare spans and reveal by moon progress ---------- */
-const line1 = document.getElementById('line1');
-const line2 = document.getElementById('line2');
-
-function prepareMessage(){
-  line1.innerHTML = ''; line2.innerHTML = '';
-  const [L1, L2] = MESSAGE_LINES;
-  for(const ch of L1){
-    const sp = document.createElement('span'); sp.className='letter'; sp.textContent = ch === ' ' ? '\u00A0' : ch; line1.appendChild(sp);
-  }
-  for(const ch of L2){
-    const sp = document.createElement('span'); sp.className='letter'; sp.textContent = ch === ' ' ? '\u00A0' : ch; line2.appendChild(sp);
-  }
-}
-prepareMessage();
-
-function updateMessageByProgress(eased){ 
-  // map eased (0..1) to number of letters to show
-  const letters = Array.from(document.querySelectorAll('.messageLine .letter'));
-  const total = letters.length;
-  const count = Math.round(clamp(eased,0,1) * total);
-  for(let i=0;i<total;i++){
-    if(i < count) letters[i].classList.add('visible');
-    else letters[i].classList.remove('visible');
-  }
 }
 
-/* ---------- on finish: show button & ensure message fully visible ---------- */
-function onMoonFinished(){
-  // fully reveal message
-  const letters = document.querySelectorAll('.messageLine .letter');
-  letters.forEach(l => l.classList.add('visible'));
-  // show button
-  const btn = document.getElementById('clickBtn');
-  btn.classList.add('show');
-}
-
-/* ---------- initial reveal small sync (in case we want small delay) ---------- */
-/* nothing here: message driven purely by moon progress */
-
-/* ---------- optional click handler (example) ---------- */
-document.getElementById('clickBtn').addEventListener('click', ()=>{
-  // example: small confirmation — you can customize
-  alert("Blessings! 🎂\n'On this calm birthday eve so new...' ");
-});
-
-/* ---------- ensure canvas & visuals respond on resize ---------- */
-window.addEventListener('resize', ()=> {
-  // update cloud keyframe already handled (we used dynamic rule)
-  // nothing else required; moon end position uses window.innerWidth when animating
-});
+setTimeout(() => {
+    revealText();
+}, 3000);
 </script>
+
 </body>
 </html>

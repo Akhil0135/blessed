@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night-to-Day with Trees</title>
+<title>Cinematic Night-to-Day with Real Trees</title>
 <style>
 body, html {
   margin:0; padding:0; width:100%; height:100%; overflow:hidden;
@@ -56,9 +56,16 @@ body, html {
 /* Haze */
 .haze { position:absolute; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 80%); pointer-events:none; z-index:1; transition:opacity 4s ease; }
 
-/* Trees */
-.tree { position:absolute; bottom:0; width:30px; height:120px; background:#4b2e12; border-radius:6px; }
-.tree::after { content:''; position:absolute; bottom:100%; left:-50px; width:130px; height:120px; background: radial-gradient(circle at 50% 50%, #228B22 0%, #006400 80%); border-radius:50%; }
+/* Realistic Trees */
+.tree { position:absolute; bottom:0; width:20px; background:#4b2e12; border-radius:4px; }
+.tree .branch { position:absolute; bottom:100%; width:6px; height:50px; background:#4b2e12; transform-origin:bottom; }
+.tree .branch:nth-child(1){ transform:rotate(-25deg); left:-4px; bottom:40px; }
+.tree .branch:nth-child(2){ transform:rotate(25deg); left:18px; bottom:60px; }
+.tree .leaves { position:absolute; width:0; height:0; }
+.tree .leaves div { position:absolute; width:30px; height:30px; background:radial-gradient(circle at 50% 50%, #228B22 0%, #006400 80%); border-radius:50%; }
+.tree .leaves div:nth-child(1){ left:-15px; top:-60px; }
+.tree .leaves div:nth-child(2){ left:5px; top:-80px; }
+.tree .leaves div:nth-child(3){ left:-10px; top:-100px; }
 </style>
 </head>
 <body>
@@ -168,11 +175,23 @@ clickBtn.addEventListener('click',()=>{
   });
   haze.style.opacity=0.02;
 
-  // Add trees along the bottom
-  for(let i=0;i<15;i++){
+  // Add realistic trees
+  for(let i=0;i<10;i++){
     const tree = document.createElement('div');
     tree.className='tree';
-    tree.style.left=(i*(window.innerWidth/15))+'px';
+    tree.style.left=(i*(window.innerWidth/10)+20)+'px';
+    tree.style.height=(120 + Math.random()*50)+'px';
+    
+    const branch1 = document.createElement('div'); branch1.className='branch';
+    const branch2 = document.createElement('div'); branch2.className='branch';
+    tree.appendChild(branch1); tree.appendChild(branch2);
+
+    const leaves = document.createElement('div'); leaves.className='leaves';
+    for(let j=0;j<3;j++){
+      const leaf = document.createElement('div'); leaves.appendChild(leaf);
+    }
+    tree.appendChild(leaves);
+
     treesContainer.appendChild(tree);
   }
 });

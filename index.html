@@ -16,7 +16,7 @@
   .star {
     position: absolute;
     width: 2px; height: 2px; background: white; border-radius: 50%;
-    opacity: 0.85; box-shadow: 0 0 6px rgba(255,255,255,0.8);
+    opacity: 0.85; box-shadow: 0 0 8px rgba(255,255,255,0.9);
     animation: twinkle 2.5s infinite alternate;
   }
 
@@ -25,17 +25,6 @@
     50% { opacity: 1; transform: scale(1.6); }
     100% { opacity: 0.2; transform: scale(1); }
   }
-
-  /* Aurora */
-  .aurora {
-    position: absolute; top:0; width:100%; height:40vh;
-    background: radial-gradient(circle at 50% 20%, rgba(0,255,200,0.3), transparent),
-                radial-gradient(circle at 30% 10%, rgba(0,150,255,0.25), transparent),
-                radial-gradient(circle at 70% 5%, rgba(150,80,255,0.25), transparent);
-    filter: blur(30px);
-    animation: auroraMove 20s ease-in-out infinite alternate;
-  }
-  @keyframes auroraMove {0%{transform:translateY(0) scale(1)}100%{transform:translateY(-20px) scale(1.1)}}
 
   /* Clouds */
   .cloud {
@@ -52,6 +41,7 @@
     border-radius:50%; top:80px; left:-120px;
     box-shadow:0 0 18px 4px rgba(255,255,200,0.4);
     animation: moonMove 40s linear forwards;
+    transition: opacity 3s ease;
   }
   @keyframes moonMove {0%{left:-150px}100%{left:calc(100% - 160px)}}
 
@@ -116,7 +106,6 @@
 </head>
 <body>
 
-<div class="aurora"></div>
 <div class="moon"></div>
 <div id="message"></div>
 <div id="clickBtn">Click Here</div>
@@ -161,12 +150,11 @@ const msg="On this calm birthday eve so new, God softly whispers, my plans are m
 const messageDiv=document.getElementById("message");
 
 function revealMessage(){
-  let delay=0;
   msg.split("").forEach((char,i)=>{
     const span=document.createElement('span');
     span.classList.add('letter');
     span.textContent=char===' ' ? '\u00A0':char;
-    span.style.animationDelay=(0.05*i)+'s'; // faster than before
+    span.style.animationDelay=(0.05*i)+'s';
     messageDiv.appendChild(span);
   });
   messageDiv.style.opacity=1;
@@ -189,20 +177,17 @@ const interval=setInterval(checkMoon,200);
 /* Click button handler to transition to day */
 clickBtn.addEventListener('click', ()=>{
   clickBtn.style.display='none';
-  // Hide stars and shooting stars
   stars.forEach(s=>s.remove());
   document.querySelectorAll('.shooting-star').forEach(s=>s.remove());
   messageDiv.style.opacity=0;
-  // Background transition to blue
   document.body.style.background='linear-gradient(to top, #87CEFA, #B0E0E6)';
-  // Clouds more visible and drift
   clouds.forEach(c=>{
     c.style.background='rgba(255,255,255,0.4)';
     c.style.animation='dayCloudMove 25s ease-in-out infinite';
   });
-  // Sun appear
   const sun=document.querySelector('.sun');
   sun.style.top='60px'; sun.style.opacity=1;
+  moon.style.opacity=0;
 });
 </script>
 </body>

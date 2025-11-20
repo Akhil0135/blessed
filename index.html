@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Day with Garden and Animated Butterflies</title>
+<title>Garden with Animated Butterflies</title>
 <style>
   body, html {
     margin:0;
@@ -51,23 +51,46 @@
   .haze { position:absolute; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 80%); pointer-events:none; z-index:1; transition:opacity 4s ease; }
 
   /* Garden */
-  .garden { position:absolute; bottom:0; width:100%; height:700px; pointer-events:none; z-index:2; } /* Increased height */
+  .garden { position:absolute; bottom:0; width:100%; height:700px; pointer-events:none; z-index:2; }
   .flower { position:absolute; bottom:0; width:10px; height:10px; border-radius:50%; opacity:0; animation:growFlower 2s forwards; }
   @keyframes growFlower{0%{opacity:0; transform:scale(0);}100%{opacity:1; transform:scale(1);}}
   .tulip { background: linear-gradient(to top, #ff4a91, #ffb3c1); }
-
   .grass { position:absolute; bottom:0; width:2px; height:20px; background: linear-gradient(to top, #2c8f2c, #7ee87e); border-radius:2px; opacity:0; animation:growGrass 2s forwards; }
   @keyframes growGrass{0%{opacity:0; transform:scaleY(0);}100%{opacity:1; transform:scaleY(1);}}
 
-  /* Butterflies */
-  .butterfly { position:absolute; width:20px; height:20px; background: linear-gradient(to right, #ff6eb4, #ffccff); border-radius:50%; opacity:0; animation:flyButterfly 10s infinite ease-in-out; transform-origin:center; }
-  @keyframes flyButterfly {
+  /* Butterfly shape and animation */
+  .butterfly {
+    position:absolute;
+    width:20px;
+    height:20px;
+    opacity:0;
+    transform-origin:center;
+    animation:fly 8s linear infinite;
+  }
+  .butterfly::before,
+  .butterfly::after {
+    content:'';
+    position:absolute;
+    width:12px;
+    height:20px;
+    top:0;
+    background: linear-gradient(45deg, #ff6eb4, #ffccff);
+    border-radius: 50% 50% 0 0;
+    transform-origin: bottom center;
+    animation:wingFlap 0.5s ease-in-out infinite alternate;
+  }
+  .butterfly::after {
+    right:0;
+    transform: rotateY(180deg);
+  }
+  @keyframes wingFlap {0%{transform:rotate(0deg);}100%{transform:rotate(30deg);}}
+  @keyframes fly {
     0%{transform:translate(0,0) rotate(0deg); opacity:1;}
-    20%{transform:translate(50px,-30px) rotate(15deg);}
-    40%{transform:translate(100px,20px) rotate(-15deg);}
-    60%{transform:translate(150px,-40px) rotate(10deg);}
-    80%{transform:translate(200px,10px) rotate(-10deg);}
-    100%{transform:translate(250px,0px) rotate(0deg);}
+    20%{transform:translate(60px,-30px) rotate(15deg);}
+    40%{transform:translate(120px,20px) rotate(-10deg);}
+    60%{transform:translate(180px,-40px) rotate(10deg);}
+    80%{transform:translate(240px,10px) rotate(-10deg);}
+    100%{transform:translate(300px,0px) rotate(0deg);}
   }
 </style>
 </head>
@@ -109,7 +132,6 @@
     document.body.appendChild(cloud);
     cloudsArr.push(cloud);
   }
-
   function animateClouds(){
     cloudsArr.forEach((c,i)=>{
       const floatY = Math.sin(Date.now()/5000 + i)*10;

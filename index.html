@@ -3,200 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Realistic Garden with Butterflies</title>
+<title>Lush Garden Scene</title>
 <style>
-  body, html {
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    font-family:'Cinzel', serif;
-    background:#000010;
-    transition: background 4s ease;
-  }
+body, html {
+  margin:0; padding:0; width:100%; height:100%; overflow:hidden;
+  font-family:'Cinzel', serif;
+  background:#000010;
+  transition: background 4s ease;
+}
 
-  /* Clouds */
-  .cloud { position:absolute; width:250px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%; filter:blur(30px); box-shadow:0 0 60px rgba(255,255,255,0.1); animation:moveCloud linear infinite; }
-  @keyframes moveCloud{0%{left:-300px;}100%{left:110%;}}
+/* Clouds */
+.cloud { position:absolute; width:250px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%; filter:blur(30px); box-shadow:0 0 60px rgba(255,255,255,0.1); animation:moveCloud linear infinite; }
+@keyframes moveCloud{0%{left:-300px;}100%{left:110%;}}
 
-  /* Moon */
-  .moon { position:absolute; width:140px; height:140px; background: radial-gradient(circle,#fffde6 0%,#f3e4b0 60%,#d9c180 100%); border-radius:50%; top:80px; left:-150px; box-shadow:0 0 50px 20px rgba(255,255,220,0.4); transition:opacity 2s ease; }
+/* Moon */
+.moon { position:absolute; width:140px; height:140px; background: radial-gradient(circle,#fffde6 0%,#f3e4b0 60%,#d9c180 100%); border-radius:50%; top:80px; left:-150px; box-shadow:0 0 50px 20px rgba(255,255,220,0.4); transition:opacity 2s ease; }
 
-  /* Shooting Stars */
-  .shooting-star { position:absolute; width:8px; height:3px; background:linear-gradient(0deg, rgba(255,255,255,0), #fff); border-radius:50%; transform-origin:top left; opacity:0; animation:shoot linear forwards; }
-  @keyframes shoot{0%{transform:translate(0,0) rotate(var(--angle,-45deg)); opacity:1;}100%{transform:translate(var(--dx,-80vw), var(--dy,80vh)) rotate(var(--angle,-45deg)); opacity:0;}}
+/* Birthday Message */
+#message { position:absolute; top:60%; width:100%; text-align:center; font-size:28px; color:#f9e9c9; opacity:0; letter-spacing:3px; text-shadow:2px 2px 12px rgba(0,0,0,0.7);}
+.letter { opacity:0; display:inline-block; animation:revealLetter 0.4s forwards; }
+@keyframes revealLetter{0%{opacity:0; transform:translateY(10px);}100%{opacity:1; transform:translateY(0);}}
 
-  /* Birthday Message */
-  #message { position:absolute; top:60%; width:100%; text-align:center; font-size:28px; color:#f9e9c9; opacity:0; letter-spacing:3px; text-shadow:2px 2px 12px rgba(0,0,0,0.7);}
-  .letter { opacity:0; display:inline-block; animation:revealLetter 0.4s forwards; }
-  @keyframes revealLetter{0%{opacity:0; transform:translateY(10px);}100%{opacity:1; transform:translateY(0);}}
+/* Click Button */
+#clickBtn { position:absolute; bottom:12vh; left:50%; transform:translateX(-50%); padding:14px 34px; font-size:20px; font-family:'Cinzel', serif; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.3); border-radius:40px; color:#fff; cursor:pointer; opacity:0; pointer-events:none; transition:opacity 1s ease, transform 0.5s ease; }
+#clickBtn.float{opacity:1; pointer-events:auto; animation:btnFloat 3s ease-in-out infinite;}
+@keyframes btnFloat{0%{transform:translateX(-50%) translateY(0px);}50%{transform:translateX(-50%) translateY(-6px);}100%{transform:translateX(-50%) translateY(0px);}}
 
-  /* Click Button */
-  #clickBtn { position:absolute; bottom:12vh; left:50%; transform:translateX(-50%); padding:14px 34px; font-size:20px; font-family:'Cinzel', serif; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.3); border-radius:40px; color:#fff; cursor:pointer; opacity:0; pointer-events:none; transition:opacity 1s ease, transform 0.5s ease; }
-  #clickBtn.float{opacity:1; pointer-events:auto; animation:btnFloat 3s ease-in-out infinite;}
-  @keyframes btnFloat{0%{transform:translateX(-50%) translateY(0px);}50%{transform:translateX(-50%) translateY(-6px);}100%{transform:translateX(-50%) translateY(0px);}}
+/* Sun */
+.sun { position:absolute; top:120%; left:50%; transform:translateX(-50%); width:150px; height:150px; background: radial-gradient(circle, #fff7c0 0%, #ffcc33 80%); border-radius:50%; opacity:0; box-shadow:0 0 100px 40px rgba(255,240,180,0.5),0 0 150px 80px rgba(255,220,120,0.2),0 0 250px 150px rgba(255,200,100,0.1); transition:top 4s ease, opacity 4s ease; z-index:2; }
 
-  /* Sun */
-  .sun { position:absolute; top:120%; left:50%; transform:translateX(-50%); width:150px; height:150px; background: radial-gradient(circle, #fff7c0 0%, #ffcc33 80%); border-radius:50%; opacity:0; box-shadow:0 0 100px 40px rgba(255,240,180,0.5),0 0 150px 80px rgba(255,220,120,0.2),0 0 250px 150px rgba(255,200,100,0.1); transition:top 4s ease, opacity 4s ease; z-index:2; }
+/* Day Sky */
+.day-sky { position:absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to top, #87ceeb 0%, #a0d8ff 50%, #d0f0ff 100%); opacity:0; transition:opacity 4s ease; z-index:0; }
 
-  /* Day Sky */
-  .day-sky { position:absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to top, #87ceeb 0%, #a0d8ff 50%, #d0f0ff 100%); opacity:0; transition:opacity 4s ease; z-index:0; }
+/* Haze */
+.haze { position:absolute; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 80%); pointer-events:none; z-index:1; transition:opacity 4s ease; }
 
-  /* Haze */
-  .haze { position:absolute; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 80%); pointer-events:none; z-index:1; transition:opacity 4s ease; }
+/* Garden */
+.garden { position:absolute; bottom:0; width:100%; height:900px; pointer-events:none; z-index:2; }
+.flower { position:absolute; bottom:0; width:12px; height:12px; border-radius:50%; opacity:0; animation:growFlower 2s forwards; }
+@keyframes growFlower{0%{opacity:0; transform:scale(0);}100%{opacity:1; transform:scale(1);}}
+.tulip { background: linear-gradient(to top, #ff4a91, #ffb3c1); }
+.grass { position:absolute; bottom:0; width:2px; height:25px; background: linear-gradient(to top, #2c8f2c, #7ee87e); border-radius:2px; opacity:0; animation:growGrass 2s forwards; }
+@keyframes growGrass{0%{opacity:0; transform:scaleY(0);}100%{opacity:1; transform:scaleY(1);}}
 
-  /* Garden */
-  .garden { position:absolute; bottom:0; width:100%; height:900px; pointer-events:none; z-index:2; }
-  .flower { position:absolute; bottom:0; width:12px; height:12px; border-radius:50%; opacity:0; animation:growFlower 2s forwards; }
-  @keyframes growFlower{0%{opacity:0; transform:scale(0);}100%{opacity:1; transform:scale(1);}}
-  .tulip { background: linear-gradient(to top, #ff4a91, #ffb3c1); }
-  .grass { position:absolute; bottom:0; width:2px; height:25px; background: linear-gradient(to top, #2c8f2c, #7ee87e); border-radius:2px; opacity:0; animation:growGrass 2s forwards; }
-  @keyframes growGrass{0%{opacity:0; transform:scaleY(0);}100%{opacity:1; transform:scaleY(1);}}
-
-  /* Realistic Butterflies */
-  .butterfly {
-    position:absolute;
-    width:50px;
-    height:auto;
-    background-size:contain;
-    background-repeat:no-repeat;
-    animation-timing-function: linear;
-  }
+/* Realistic Butterflies */
+.butterfly {
+  position:absolute;
+  width:50px;
+  height:auto;
+  background-size:contain;
+  background-repeat:no-repeat;
+  z-index:3;
+}
 </style>
 </head>
 <body>
 
-<div id="stars"></div>
 <div id="clouds"></div>
 <div class="moon"></div>
 <div class="haze"></div>
 <div class="day-sky"></div>
-
 <div id="message"></div>
 <button id="clickBtn">Click Here</button>
 <div class="sun"></div>
-
 <div class="garden" id="garden"></div>
 
 <script>
-  // Clouds
-  const cloudCount = 6;
-  const cloudsArr=[];
-  for(let i=0;i<cloudCount;i++){
-    const cloud=document.createElement('div');
-    cloud.className='cloud';
-    cloud.style.top=(50 + Math.random()*250)+'px';
-    cloud.style.animationDuration=(35 + Math.random()*40)+'s';
-    document.body.appendChild(cloud);
-    cloudsArr.push(cloud);
-  }
+const cloudsArr=[];
+for(let i=0;i<6;i++){
+  const cloud=document.createElement('div');
+  cloud.className='cloud';
+  cloud.style.top=(50 + Math.random()*250)+'px';
+  cloud.style.animationDuration=(35 + Math.random()*40)+'s';
+  document.body.appendChild(cloud);
+  cloudsArr.push(cloud);
+}
 
-  // Moon movement
-  const moon=document.querySelector('.moon');
-  let moonPos=-150;
-  const moonSpeed=window.innerWidth/600; 
-  let messageStarted=false;
-  const moonInterval=setInterval(()=>{
-    if(moonPos < window.innerWidth - 180){
-      moonPos += moonSpeed;
-      moon.style.left = moonPos+'px';
-      if(moonPos > 50 && !messageStarted){
-        messageStarted=true;
-        revealMessage();
-      }
-    } else {
-      clearInterval(moonInterval);
-      clickBtn.classList.add('float');
+// Moon movement
+const moon=document.querySelector('.moon');
+let moonPos=-150; const moonSpeed=window.innerWidth/600; let messageStarted=false;
+const moonInterval=setInterval(()=>{
+  if(moonPos < window.innerWidth - 180){
+    moonPos += moonSpeed;
+    moon.style.left = moonPos+'px';
+    if(moonPos > 50 && !messageStarted){
+      messageStarted=true;
+      revealMessage();
     }
-  },16);
+  } else { clearInterval(moonInterval); clickBtn.classList.add('float'); }
+},16);
 
-  // Birthday message
-  function revealMessage(){
-    const messageDiv = document.getElementById('message');
-    const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-    msg.split('').forEach((ch,i)=>{
-      const span=document.createElement('span');
-      span.className='letter';
-      span.textContent = ch===' ' ? '\u00A0':ch;
-      span.style.animationDelay = `${i*0.05}s`;
-      messageDiv.appendChild(span);
-    });
-    messageDiv.style.opacity=1;
-  }
-
-  // Click button & day transition
-  const clickBtn=document.getElementById('clickBtn');
-  const sun=document.querySelector('.sun');
-  const daySky=document.querySelector('.day-sky');
-  const haze=document.querySelector('.haze');
-  const garden=document.getElementById('garden');
-
-  clickBtn.addEventListener('click',()=>{
-    // Remove night elements
-    moon.style.opacity=0;
-    document.getElementById('message').style.opacity=0;
-    clickBtn.style.opacity=0;
-    clickBtn.style.pointerEvents='none';
-
-    // Show day sky
-    daySky.style.opacity=1;
-
-    // Sun rise
-    sun.style.top='80px';
-    sun.style.opacity=1;
-
-    // Brighten clouds
-    cloudsArr.forEach(c=>{
-      c.style.background='rgba(255,255,255,0.4)';
-      c.style.boxShadow='0 0 80px rgba(255,255,255,0.2)';
-    });
-
-    haze.style.opacity=0.02;
-
-    // Create garden: flowers and grass
-    const flowerCount = 80;
-    for(let i=0;i<flowerCount;i++){
-      const flower = document.createElement('div');
-      flower.className='flower tulip';
-      flower.style.left=Math.random()*window.innerWidth+'px';
-      flower.style.bottom='0px';
-      flower.style.animationDelay=(i*0.03)+'s';
-      garden.appendChild(flower);
-
-      const grass = document.createElement('div');
-      grass.className='grass';
-      grass.style.left=(Math.random()*window.innerWidth)+'px';
-      grass.style.bottom='0px';
-      grass.style.animationDelay=(i*0.02)+'s';
-      garden.appendChild(grass);
-    }
-
-    // Add realistic butterflies
-    const butterflyImages = ['butterfly1.png','butterfly2.png','butterfly3.png']; // your PNGs
-    const butterflyCount = 12;
-    for(let i=0;i<butterflyCount;i++){
-      const butterfly = document.createElement('div');
-      butterfly.className='butterfly';
-      butterfly.style.backgroundImage=`url(${butterflyImages[i%butterflyImages.length]})`;
-      butterfly.style.left=Math.random()*window.innerWidth+'px';
-      butterfly.style.bottom=(50 + Math.random()*700)+'px';
-      butterfly.style.animationName = `fly${i}`;
-      butterfly.style.animationDuration=(6 + Math.random()*6)+'s';
-      butterfly.style.animationIterationCount = 'infinite';
-      garden.appendChild(butterfly);
-
-      // Add random flight paths using JS
-      const dx = (Math.random()*400) - 200;
-      const dy = (Math.random()*300) - 150;
-      butterfly.animate([
-        { transform:`translate(0px,0px)` },
-        { transform:`translate(${dx}px, ${dy}px)` },
-        { transform:`translate(${dx/2}px, ${dy/2}px)` },
-        { transform:`translate(0px,0px)` }
-      ], { duration: 6000 + Math.random()*4000, iterations: Infinity, direction:'alternate', easing:'ease-in-out' });
-    }
+// Birthday message
+function revealMessage(){
+  const messageDiv = document.getElementById('message');
+  const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+  msg.split('').forEach((ch,i)=>{
+    const span=document.createElement('span');
+    span.className='letter';
+    span.textContent = ch===' ' ? '\u00A0':ch;
+    span.style.animationDelay = `${i*0.05}s`;
+    messageDiv.appendChild(span);
   });
+  messageDiv.style.opacity=1;
+}
+
+// Click button & day transition
+const clickBtn=document.getElementById('clickBtn');
+const sun=document.querySelector('.sun');
+const daySky=document.querySelector('.day-sky');
+const haze=document.querySelector('.haze');
+const garden=document.getElementById('garden');
+
+clickBtn.addEventListener('click',()=>{
+  moon.style.opacity=0;
+  document.getElementById('message').style.opacity=0;
+  clickBtn.style.opacity=0;
+  clickBtn.style.pointerEvents='none';
+
+  daySky.style.opacity=1;
+  sun.style.top='80px'; sun.style.opacity=1;
+
+  cloudsArr.forEach(c=>{
+    c.style.background='rgba(255,255,255,0.4)';
+    c.style.boxShadow='0 0 80px rgba(255,255,255,0.2)';
+  });
+  haze.style.opacity=0.02;
+
+  // Flowers and Grass
+  for(let i=0;i<100;i++){
+    const flower=document.createElement('div');
+    flower.className='flower tulip';
+    flower.style.left=Math.random()*window.innerWidth+'px';
+    flower.style.animationDelay=(i*0.02)+'s';
+    garden.appendChild(flower);
+
+    const grass=document.createElement('div');
+    grass.className='grass';
+    grass.style.left=Math.random()*window.innerWidth+'px';
+    grass.style.animationDelay=(i*0.015)+'s';
+    garden.appendChild(grass);
+  }
+
+  // Realistic butterflies
+  const butterflyImages = ['butterfly1.png','butterfly2.png','butterfly3.png']; // Replace with real PNGs
+  for(let i=0;i<12;i++){
+    const butterfly=document.createElement('div');
+    butterfly.className='butterfly';
+    butterfly.style.backgroundImage=`url(${butterflyImages[i%butterflyImages.length]})`;
+    butterfly.style.left=Math.random()*window.innerWidth+'px';
+    butterfly.style.bottom=(100 + Math.random()*700)+'px';
+    garden.appendChild(butterfly);
+
+    // Animate along random path
+    const dx = (Math.random()*400) - 200;
+    const dy = (Math.random()*300) - 150;
+    butterfly.animate([
+      { transform:`translate(0px,0px)` },
+      { transform:`translate(${dx}px,${dy}px)` },
+      { transform:`translate(${dx/2}px,${dy/2}px)` },
+      { transform:`translate(0px,0px)` }
+    ], { duration:6000+Math.random()*4000, iterations: Infinity, direction:'alternate', easing:'ease-in-out' });
+  }
+});
 </script>
 </body>
 </html>

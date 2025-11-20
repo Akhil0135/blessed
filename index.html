@@ -26,7 +26,6 @@
     opacity: 0.9;
     box-shadow: 0 0 8px rgba(255,255,255,0.9);
     animation: twinkle 2s infinite alternate;
-    transition: opacity 2s ease;
   }
 
   @keyframes twinkle {
@@ -195,16 +194,20 @@
 <div class="sun"></div>
 
 <script>
+  let night = true; // Track night/day
+
   /* Stars */
   const stars = [];
-  for(let i=0;i<200;i++){
-    const star = document.createElement('div');
-    star.className='star';
-    star.style.top=Math.random()*window.innerHeight+'px';
-    star.style.left=Math.random()*window.innerWidth+'px';
-    star.style.width = star.style.height = (Math.random()*2 + 1) + 'px';
-    document.body.appendChild(star);
-    stars.push(star);
+  if(night){
+    for(let i=0;i<200;i++){
+      const star = document.createElement('div');
+      star.className='star';
+      star.style.top=Math.random()*window.innerHeight+'px';
+      star.style.left=Math.random()*window.innerWidth+'px';
+      star.style.width = star.style.height = (Math.random()*2 + 1) + 'px';
+      document.body.appendChild(star);
+      stars.push(star);
+    }
   }
 
   /* Clouds */
@@ -221,6 +224,7 @@
   /* Shooting stars */
   let shootingInterval;
   function createShootingStar(){
+    if(!night) return; // Only during night
     const s = document.createElement('div');
     s.className='shooting-star';
     s.style.top=Math.random()*200+'px';
@@ -262,6 +266,7 @@
 
   /* Click Button functionality */
   clickBtn.addEventListener('click', ()=>{
+    night = false; // day time
     clickBtn.style.opacity = 0;
     clickBtn.style.pointerEvents = 'none';
 

@@ -1,4 +1,4 @@
-Here's a fully working, smooth version of the train animation using a simple red box instead of a GLB model. You can later replace the box with your own 3D train model.
+Here’s a fully self-contained HTML file that runs immediately when you double-click it, no server needed. The train is a red box moving along a curved track.
 
 ---
 
@@ -15,103 +15,87 @@ Here's a fully working, smooth version of the train animation using a simple red
   </style>
 </head>
 <body>
-  <script src="https://unpkg.com/three@0.181.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.181.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r181/three.min.js"></script>
+  <script>
+    // Scene, camera, renderer
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xaaaaaa);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 10, 30);
+
+    const renderer = new THREE.WebGLRenderer({ antialias:true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Controls (optional for orbit)
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set(0,2,0);
+    controls.update();
+
+    // Lights
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
+    hemiLight.position.set(0,50,0);
+    scene.add(hemiLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff,0.8);
+    dirLight.position.set(-10,20,10);
+    dirLight.castShadow = true;
+    scene.add(dirLight);
+
+    // Ground
+    const groundGeo = new THREE.PlaneGeometry(200,200);
+    const groundMat = new THREE.MeshStandardMaterial({color:0x888888});
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI/2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // Track curve
+    const trackCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-20,0,-20),
+      new THREE.Vector3(0,0,0),
+      new THREE.Vector3(20,0,20),
+      new THREE.Vector3(40,0,0),
+      new THREE.Vector3(60,0,-20),
+    ]);
+    const points = trackCurve.getPoints(200);
+    const trackGeo = new THREE.BufferGeometry().setFromPoints(points);
+    const trackMat = new THREE.LineBasicMaterial({color:0x000000});
+    const trackLine = new THREE.Line(trackGeo, trackMat);
+    scene.add(trackLine);
+
+    // Red box train
+    const trainGeo = new THREE.BoxGeometry(2,2,6);
+    const trainMat = new THREE.MeshStandardMaterial({color:0xff0000});
+    const train = new THREE.Mesh(trainGeo, trainMat);
+    train.castShadow = true;
+    scene.add(train);
+    train.position.copy(points[0]);
+
+    // Animation
+    let t = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      t += 0.0005;
+      if(t>1) t=0;
+      const pos = trackCurve.getPointAt(t);
+      train.position.copy(pos);
+
+      const tangent = trackCurve.getTangentAt(t).normalize();
+      train.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1), tangent);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r181/examples/js/controls/OrbitControls.js"></script>
 </body>
 </html>
-```
-
-### app.js
-```js
-// Scene, camera, renderer
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xaaaaaa);
-
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.set(0, 10, 30);
-
-const renderer = new THREE.WebGLRenderer({ antialias:true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.target.set(0,2,0);
-controls.update();
-
-// Lights
-const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
-hemiLight.position.set(0,50,0);
-scene.add(hemiLight);
-
-const dirLight = new THREE.DirectionalLight(0xffffff,0.8);
-dirLight.position.set(-10,20,10);
-dirLight.castShadow = true;
-scene.add(dirLight);
-
-// Ground
-const groundGeo = new THREE.PlaneGeometry(200,200);
-const groundMat = new THREE.MeshStandardMaterial({color:0x888888});
-const ground = new THREE.Mesh(groundGeo, groundMat);
-ground.rotation.x = -Math.PI/2;
-ground.receiveShadow = true;
-scene.add(ground);
-
-// Track curve
-const trackCurve = new THREE.CatmullRomCurve3([
-  new THREE.Vector3(-20,0,-20),
-  new THREE.Vector3(0,0,0),
-  new THREE.Vector3(20,0,20),
-  new THREE.Vector3(40,0,0),
-  new THREE.Vector3(60,0,-20),
-]);
-const points = trackCurve.getPoints(200);
-const trackGeo = new THREE.BufferGeometry().setFromPoints(points);
-const trackMat = new THREE.LineBasicMaterial({color:0x000000});
-const trackLine = new THREE.Line(trackGeo, trackMat);
-scene.add(trackLine);
-
-// Simple red box train
-const trainGeo = new THREE.BoxGeometry(2,2,6);
-const trainMat = new THREE.MeshStandardMaterial({color:0xff0000});
-const train = new THREE.Mesh(trainGeo, trainMat);
-train.castShadow = true;
-scene.add(train);
-train.position.copy(points[0]);
-
-// Animation
-let t = 0;
-function animate() {
-  requestAnimationFrame(animate);
-  t += 0.0005; // speed
-  if(t > 1) t = 0;
-  const pos = trackCurve.getPointAt(t);
-  train.position.copy(pos);
-
-  const tangent = trackCurve.getTangentAt(t).normalize();
-  const axis = new THREE.Vector3(0,1,0);
-  train.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1), tangent);
-
-  renderer.render(scene, camera);
-}
-animate();
-
-// Handle resize
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-```
-
-### README.md
-```markdown
-# Realistic Train Animation (Smooth Version)
-
-A fully working starter project using Three.js.
-
-## Usage
-1. Open `index.html` in browser (use Live Server or Python HTTP server for best results).
-2. The train is represented by a red box moving along a curved track.
-3. Later you can replace the red box with a realistic 3D GLB model.
-```

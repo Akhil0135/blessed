@@ -1,169 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cinematic Night</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cinematic Night Sky</title>
 <style>
-    body {
-        margin: 0;
-        overflow: hidden;
-        background: black;
-        font-family: 'Poppins', sans-serif;
-    }
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background: #03040a;
+    font-family: 'Cinzel', serif;
+  }
 
-    /* ==== STARRY BACKGROUND (CINEMATIC) ==== */
-    .stars {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: transparent;
-        overflow: hidden;
-    }
+  /* Stars */
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.55;
+    box-shadow: 0 0 4px rgba(255,255,255,0.7);
+    animation: twinkle 3s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.2; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0.3; }
+  }
 
-    .star {
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: white;
-        opacity: 0.6;
-        border-radius: 50%;
-        animation: twinkle 2.5s infinite ease-in-out;
-    }
+  /* Aurora */
+  .aurora {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 45vh;
+    background: radial-gradient(circle at 50% 20%, rgba(0,255,200,0.25), transparent),
+                radial-gradient(circle at 30% 10%, rgba(0,150,255,0.22), transparent),
+                radial-gradient(circle at 70% 5%, rgba(150,80,255,0.25), transparent);
+    filter: blur(32px);
+    animation: auroraMove 22s ease-in-out infinite alternate;
+  }
+  @keyframes auroraMove {
+    0% { transform: translateY(0px) scale(1); }
+    100% { transform: translateY(-35px) scale(1.1); }
+  }
 
-    @keyframes twinkle {
-        0% { opacity: 0.2; }
-        50% { opacity: 0.9; }
-        100% { opacity: 0.2; }
-    }
+  /* Clouds */
+  .cloud {
+    position: absolute;
+    width: 300px;
+    height: 120px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+    filter: blur(28px);
+    animation: moveCloud linear infinite;
+  }
+  @keyframes moveCloud {
+    0% { left: -350px; }
+    100% { left: 110%; }
+  }
 
-    /* ==== SHOOTING STARS ==== */
-    .shooting-star {
-        position: absolute;
-        width: 3px;
-        height: 120px;
-        background: linear-gradient(to bottom, white, transparent);
-        opacity: 0.8;
-        transform: rotate(-45deg);
-        border-radius: 50%;
-        animation: shoot 1.8s linear infinite;
-    }
+  /* Moon */
+  .moon {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);
+    border-radius: 50%;
+    top: 110px;
+    left: -160px;
+    box-shadow: 0 0 22px 5px rgba(255,255,200,0.35);
+    animation: moonMove 55s linear forwards;
+  }
+  @keyframes moonMove {
+    0% { left: -150px; }
+    100% { left: calc(100% - 210px); }
+  }
 
-    @keyframes shoot {
-        0% { transform: translate(-200px, -200px) rotate(-45deg); opacity: 0; }
-        10% { opacity: 1; }
-        100% { transform: translate(800px, 800px) rotate(-45deg); opacity: 0; }
-    }
+  /* Shooting Stars */
+  .shooting-star {
+    position: absolute;
+    width: 8px;
+    height: 3px;
+    background: linear-gradient(0deg, rgba(255,255,255,0), white);
+    border-radius: 50%;
+    opacity: 0;
+    transform-origin: top left;
+    animation: shoot linear forwards;
+  }
+  @keyframes shoot {
+    0% { transform: translate(0,0) rotate(-45deg); opacity: 1; }
+    100% { transform: translate(-75vw,75vh) rotate(-45deg); opacity: 0; }
+  }
 
-    /* ==== MOON ==== */
-    .moon {
-        position: absolute;
-        top: 20%;
-        left: -150px;
-        width: 140px;
-        height: 140px;
-        background: radial-gradient(circle, #ffffff, #cfd0ff 60%, #7a7a7a 100%);
-        border-radius: 50%;
-        filter: brightness(1.2);
-        animation: moveMoon 25s linear forwards;
-        box-shadow: 0 0 50px #ffffffaa;
-    }
+  /* Message */
+  #message {
+    position: absolute;
+    top: 63%;
+    width: 100%;
+    text-align: center;
+    font-size: 30px;
+    color: #f9e9c9;
+    opacity: 0;
+    letter-spacing: 2px;
+  }
+  .letter {
+    opacity: 0;
+    display: inline-block;
+    animation: revealLetter 0.55s forwards;
+  }
+  @keyframes revealLetter {
+    0% { opacity: 0; filter: blur(6px); transform: translateY(6px); }
+    100% { opacity: 1; filter: blur(0); transform: translateY(0); }
+  }
 
-    @keyframes moveMoon {
-        0% { left: -150px; }
-        100% { left: calc(100% - 250px); }
-    }
-
-    /* ==== CLOUDS (PARALLAX) ==== */
-    .cloud {
-        position: absolute;
-        top: 30%;
-        width: 450px;
-        height: 180px;
-        background: rgba(255,255,255,0.13);
-        filter: blur(35px);
-        border-radius: 50%;
-        animation: cloudsMove 60s linear infinite;
-    }
-
-    @keyframes cloudsMove {
-        from { left: -500px; }
-        to { left: 110%; }
-    }
-
-    /* ==== MESSAGE ==== */
-    .message {
-        position: absolute;
-        bottom: 12%;
-        width: 100%;
-        text-align: center;
-        font-size: 28px;
-        color: #ffffffdd;
-        letter-spacing: 2px;
-        opacity: 0;
-    }
-
-    .show-letter {
-        opacity: 1;
-        transition: opacity 0.4s ease;
-    }
+  /* Button */
+  #clickBtn {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 32px;
+    font-size: 22px;
+    border-radius: 40px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 0 12px rgba(255,255,255,0.3);
+    cursor: pointer;
+    opacity: 0;
+    transition: 1.2s ease;
+  }
 </style>
 </head>
-
 <body>
 
-<div class="stars"></div>
+<div class="aurora"></div>
 <div class="moon"></div>
-
-<div class="cloud" style="top: 55%; animation-delay: 0s;"></div>
-<div class="cloud" style="top: 40%; animation-delay: 8s;"></div>
-<div class="cloud" style="top: 65%; animation-delay: 20s;"></div>
-
-<div id="message" class="message"></div>
+<div id="message"></div>
+<button id="clickBtn">Click Here</button>
 
 <script>
-/* ==== GENERATE CINEMATIC STARS ==== */
-const starsContainer = document.querySelector('.stars');
-for (let i = 0; i < 150; i++) {
-    let star = document.createElement('div');
-    star.classList.add('star');
-    star.style.top = Math.random() * 100 + '%';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.animationDelay = Math.random() * 3 + 's';
-    starsContainer.appendChild(star);
-}
-
-/* ==== SHOOTING STARS (INCREASED COUNT) ==== */
-for (let i = 0; i < 12; i++) {
-    let s = document.createElement('div');
-    s.classList.add('shooting-star');
-    s.style.top = Math.random() * 40 + '%';
-    s.style.left = Math.random() * 40 + '%';
-    s.style.animationDelay = Math.random() * 5 + 's';
+  /* Stars */
+  for(let i=0;i<140;i++){
+    const s=document.createElement('div');
+    s.classList.add('star');
+    s.style.top=Math.random()*window.innerHeight+'px';
+    s.style.left=Math.random()*window.innerWidth+'px';
     document.body.appendChild(s);
-}
+  }
 
-/* ==== MESSAGE REVEAL ==== */
-const msgText = "On this calm birthday eve so new, God softly whispers, ‘My plans are made for you.’";
-const msgContainer = document.getElementById("message");
+  /* Clouds */
+  for(let i=0;i<6;i++){
+    const c=document.createElement('div');
+    c.classList.add('cloud');
+    c.style.top=(60 + Math.random()*260)+'px';
+    c.style.animationDuration=(38 + Math.random()*42)+'s';
+    document.body.appendChild(c);
+  }
 
-let index = 0;
+  /* Shooting Stars */
+  function shooting(){
+    const st=document.createElement('div');
+    st.classList.add('shooting-star');
+    st.style.top=Math.random()*200+'px';
+    st.style.left=window.innerWidth+'px';
+    const d=2 + Math.random()*1.4;
+    st.style.animationDuration=d+'s';
+    document.body.appendChild(st);
+    setTimeout(()=>st.remove(), d*1000);
+  }
+  setInterval(shooting, 1100);
 
-function revealText() {
-    if (index < msgText.length) {
-        const span = document.createElement("span");
-        span.textContent = msgText[index];
-        span.classList.add("show-letter");
-        msgContainer.appendChild(span);
-        index++;
-        setTimeout(revealText, 90);
+  /* Message */
+  const text = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+  const msgDiv = document.getElementById("message");
+
+  function reveal(){
+    text.split("").forEach((ch,i)=>{
+      const sp=document.createElement('span');
+      sp.classList.add('letter');
+      sp.textContent = ch === ' ' ? '\u00A0' : ch;
+      sp.style.animationDelay = (0.09 * i)+'s';
+      msgDiv.appendChild(sp);
+    });
+    msgDiv.style.opacity = 1;
+  }
+
+  /* Moon trigger */
+  const moon=document.querySelector('.moon');
+  const btn=document.getElementById('clickBtn');
+
+  const interval=setInterval(()=>{
+    const r=moon.getBoundingClientRect();
+    if(r.left > window.innerWidth*0.60){
+      reveal();
+      btn.style.opacity=1;
+      clearInterval(interval);
     }
-}
-
-setTimeout(() => {
-    revealText();
-}, 3000);
+  }, 180);
 </script>
 
 </body>

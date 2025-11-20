@@ -1,186 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cinematic Night to Day</title>
 <style>
   body, html {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top,#000 0%,#0a0a0a 100%);
-    font-family: 'Playfair Display', serif;
-    transition: background 2s ease;
+    margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%;
+    background: linear-gradient(to top, #000000, #0a0a0a);
+    font-family: 'Cinzel', serif;
+    transition: background 3s ease;
   }
 
   /* Stars */
   .star {
     position: absolute;
-    width: 2px;
-    height: 2px;
-    border-radius: 50%;
-    background: white;
-    opacity: 0.9;
-    box-shadow: 0 0 8px rgba(255,255,255,0.9);
-    animation: twinkle 2s infinite alternate;
+    width: 2px; height: 2px; background: white; border-radius: 50%;
+    opacity: 0.85; box-shadow: 0 0 6px rgba(255,255,255,0.8);
+    animation: twinkle 2.5s infinite alternate;
   }
 
   @keyframes twinkle {
-    0% { opacity: 0.3; transform: scale(1);}
-    50% { opacity: 1; transform: scale(1.5);}
-    100% { opacity: 0.3; transform: scale(1);}
+    0% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.6); }
+    100% { opacity: 0.2; transform: scale(1); }
   }
 
   /* Aurora */
   .aurora {
-    position: absolute;
-    top: 0;
-    width: 200%;
-    height: 40vh;
+    position: absolute; top:0; width:100%; height:40vh;
     background: radial-gradient(circle at 50% 20%, rgba(0,255,200,0.3), transparent),
                 radial-gradient(circle at 30% 10%, rgba(0,150,255,0.25), transparent),
                 radial-gradient(circle at 70% 5%, rgba(150,80,255,0.25), transparent);
     filter: blur(30px);
-    opacity: 0.3;
     animation: auroraMove 20s ease-in-out infinite alternate;
-    transition: opacity 2s ease;
   }
-
-  @keyframes auroraMove {
-    0% { transform: translateY(0px) scale(1); }
-    100% { transform: translateY(-20px) scale(1.1); }
-  }
+  @keyframes auroraMove {0%{transform:translateY(0) scale(1)}100%{transform:translateY(-20px) scale(1.1)}}
 
   /* Clouds */
   .cloud {
-    position: absolute;
-    width: 250px;
-    height: 100px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 50%;
-    filter: blur(25px);
+    position: absolute; width: 250px; height:100px;
+    background: rgba(255,255,255,0.07); border-radius:50%; filter: blur(25px);
     animation: moveCloud linear infinite;
-    transition: background 2s ease;
   }
-
-  @keyframes moveCloud {
-    0% { left: -300px; }
-    100% { left: 110%; }
-  }
+  @keyframes moveCloud {0%{left:-300px}100%{left:110%}}
 
   /* Moon */
   .moon {
-    position: absolute;
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);
-    border-radius: 50%;
-    top: 80px;
-    left: -120px;
-    box-shadow: 0 0 18px 4px rgba(255,255,200,0.4);
-    animation: moonMove 35s linear forwards; /* faster moon */
-    transition: opacity 2s ease;
+    position:absolute; width:140px; height:140px;
+    background: radial-gradient(circle,#fffde6 0%,#f3e4b0 60%,#d9c180 100%);
+    border-radius:50%; top:80px; left:-120px;
+    box-shadow:0 0 18px 4px rgba(255,255,200,0.4);
+    animation: moonMove 40s linear forwards;
   }
-
-  @keyframes moonMove {
-    0% { left: -150px; }
-    100% { left: 80%; }
-  }
+  @keyframes moonMove {0%{left:-150px}100%{left:calc(100% - 160px)}}
 
   /* Shooting stars */
   .shooting-star {
-    position: absolute;
-    width: 10px;
-    height: 2px;
+    position: absolute; width: 10px; height: 3px;
     background: linear-gradient(0deg, rgba(255,255,255,0), white);
-    border-radius: 50%;
-    opacity: 0;
-    transform-origin: top left;
-    animation: shoot 2s linear forwards;
-    transition: opacity 2s ease;
+    border-radius: 50%; opacity:0; transform-origin: top left;
   }
 
   @keyframes shoot {
-    0% { transform: translate(0,0) rotate(-45deg); opacity: 1; }
-    100% { transform: translate(-70vw,70vh) rotate(-45deg); opacity: 0; }
+    0% { transform: translate(0,0) rotate(-45deg); opacity:1; }
+    100% { transform: translate(-70vw,70vh) rotate(-45deg); opacity:0; }
   }
 
   /* Message */
   #message {
-    position: absolute;
-    top: 60%;
-    width: 100%;
-    text-align: center;
-    font-size: 28px;
-    color: #f9e9c9;
-    opacity: 0;
-    letter-spacing: 3px;
-    transition: opacity 2s ease;
+    position:absolute; top:60%; width:100%; text-align:center;
+    font-size:28px; color:#f9e9c9; letter-spacing:3px; opacity:0;
   }
-
   .letter {
-    opacity: 0;
-    display: inline-block;
-    animation: revealLetter 0.25s forwards; /* faster reveal */
+    opacity:0; display:inline-block;
+    animation: revealLetter 0.6s forwards;
   }
-
   @keyframes revealLetter {
-    0% { opacity: 0; filter: blur(6px); transform: translateY(5px); }
-    100% { opacity: 1; filter: blur(0); transform: translateY(0); }
+    0% { opacity:0; filter:blur(6px); transform:translateY(5px);}
+    100% { opacity:1; filter:blur(0); transform:translateY(0);}
   }
 
   /* Click Button */
   #clickBtn {
-    position: absolute;
-    bottom: 15vh;
-    left: 50%;
-    transform: translateX(-50%) scale(1.1);
-    padding: 14px 34px;
-    font-size: 20px;
-    font-family: 'Playfair Display', serif;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.45);
-    border-radius: 40px;
-    color: #fff;
-    backdrop-filter: blur(6px);
-    cursor: pointer;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 1.8s ease, transform 1.8s ease;
-    z-index: 200;
+    position:absolute; bottom:14vh; left:50%; transform:translateX(-50%) scale(1.1);
+    padding:14px 34px; font-size:20px; font-family:'Cinzel', serif;
+    background: rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.45);
+    border-radius:40px; color:#fff; backdrop-filter:blur(6px);
+    cursor:pointer; opacity:0; pointer-events:none; transition:opacity 1.8s ease, transform 1.8s ease;
+    z-index:200;
   }
-
   @keyframes btnFloat {
-    0%   { transform: translateX(-50%) translateY(0px) scale(1.08); }
-    50%  { transform: translateX(-50%) translateY(-6px) scale(1.12); }
-    100% { transform: translateX(-50%) translateY(0px) scale(1.08); }
+    0% { transform: translateX(-50%) translateY(0px) scale(1.08);}
+    50% { transform: translateX(-50%) translateY(-6px) scale(1.12);}
+    100% { transform: translateX(-50%) translateY(0px) scale(1.08);}
   }
-
-  #clickBtn.reveal {
-    opacity: 1;
-    pointer-events: auto;
-    animation: btnFloat 3.4s ease-in-out infinite;
-  }
+  #clickBtn.reveal { opacity:1; pointer-events:auto; animation: btnFloat 3.4s ease-in-out infinite; }
 
   /* Sun */
   .sun {
-    position: absolute;
-    width: 140px;
-    height: 140px;
-    top: -200px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: radial-gradient(circle, #FFCC33 0%, #FF9900 60%);
-    border-radius: 50%;
-    box-shadow: 0 0 20px 5px rgba(255,200,100,0.6);
-    transition: all 2s ease;
+    position:absolute; top:-200px; left:50%; transform:translateX(-50%);
+    width:140px; height:140px; background: radial-gradient(circle, #ffcc33 0%, #ff9900 60%);
+    border-radius:50%; box-shadow:0 0 60px 15px rgba(255,204,51,0.7); transition: top 3s ease, opacity 3s ease;
+    opacity:0;
   }
 
-  .sun.rise {
-    top: 80px;
+  /* Day cloud drift */
+  @keyframes dayCloudMove {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(15px); }
+    100% { transform: translateX(0); }
   }
 
 </style>
@@ -190,108 +119,91 @@
 <div class="aurora"></div>
 <div class="moon"></div>
 <div id="message"></div>
-<button id="clickBtn">Click Here</button>
+<div id="clickBtn">Click Here</div>
 <div class="sun"></div>
 
 <script>
-  let night = true; // Track night/day
+/* Stars */
+const starCount=160; let stars=[];
+for(let i=0;i<starCount;i++){
+  const star=document.createElement('div');
+  star.classList.add('star');
+  star.style.top=Math.random()*window.innerHeight+'px';
+  star.style.left=Math.random()*window.innerWidth+'px';
+  document.body.appendChild(star); stars.push(star);
+}
 
-  /* Stars */
-  const stars = [];
-  if(night){
-    for(let i=0;i<200;i++){
-      const star = document.createElement('div');
-      star.className='star';
-      star.style.top=Math.random()*window.innerHeight+'px';
-      star.style.left=Math.random()*window.innerWidth+'px';
-      star.style.width = star.style.height = (Math.random()*2 + 1) + 'px';
-      document.body.appendChild(star);
-      stars.push(star);
-    }
-  }
+/* Clouds */
+const cloudCount=6; let clouds=[];
+for(let i=0;i<cloudCount;i++){
+  const cloud=document.createElement('div');
+  cloud.classList.add('cloud');
+  cloud.style.top=(50+Math.random()*250)+'px';
+  cloud.style.animationDuration=(35+Math.random()*40)+'s';
+  document.body.appendChild(cloud); clouds.push(cloud);
+}
 
-  /* Clouds */
-  const clouds = [];
-  for(let i=0;i<6;i++){
-    const cloud = document.createElement('div');
-    cloud.className='cloud';
-    cloud.style.top=(50 + Math.random()*250)+'px';
-    cloud.style.animationDuration=(35 + Math.random()*40)+'s';
-    document.body.appendChild(cloud);
-    clouds.push(cloud);
-  }
+/* Shooting stars */
+function createShootingStar(){
+  const star=document.createElement('div');
+  star.classList.add('shooting-star');
+  star.style.top=Math.random()*200+'px';
+  star.style.left=window.innerWidth+'px';
+  const duration=2 + Math.random()*1.3;
+  star.style.animation=`shoot ${duration}s linear forwards`;
+  document.body.appendChild(star);
+  setTimeout(()=>{ star.remove(); }, duration*1000);
+}
+setInterval(createShootingStar, 1200);
 
-  /* Shooting stars */
-  let shootingInterval;
-  function createShootingStar(){
-    if(!night) return; // Only during night
-    const s = document.createElement('div');
-    s.className='shooting-star';
-    s.style.top=Math.random()*200+'px';
-    s.style.left=window.innerWidth+'px';
-    const dur=2 + Math.random()*1.3;
-    s.style.animationDuration = dur+'s';
-    document.body.appendChild(s);
-    setTimeout(()=>{ s.remove(); }, dur*1000);
-  }
-  shootingInterval = setInterval(createShootingStar, 800);
+/* Message reveal */
+const msg="On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+const messageDiv=document.getElementById("message");
 
-  /* Message reveal */
-  const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-  const messageDiv = document.getElementById('message');
-  function revealMessage(){
-    msg.split("").forEach((char,i)=>{
-      const span=document.createElement('span');
-      span.className='letter';
-      span.textContent = char === ' ' ? '\u00A0' : char;
-      span.style.animationDelay = (0.15 * i)+'s';
-      messageDiv.appendChild(span);
-    });
-    messageDiv.style.opacity = 1;
-  }
-
-  /* Moon movement & button trigger */
-  const moon = document.querySelector('.moon');
-  const clickBtn = document.getElementById('clickBtn');
-  const sun = document.querySelector('.sun');
-
-  const interval = setInterval(()=>{
-    const rect = moon.getBoundingClientRect();
-    if(rect.left > window.innerWidth*0.7){
-      clickBtn.classList.add('reveal');
-      clearInterval(interval);
-      setTimeout(revealMessage, 2000); // message reveal after 2s
-    }
-  }, 50);
-
-  /* Click Button functionality */
-  clickBtn.addEventListener('click', ()=>{
-    night = false; // day time
-    clickBtn.style.opacity = 0;
-    clickBtn.style.pointerEvents = 'none';
-
-    clearInterval(shootingInterval);
-
-    // Remove shooting stars immediately
-    document.querySelectorAll('.shooting-star').forEach(s => s.remove());
-
-    // Remove stars
-    stars.forEach(s => s.remove());
-
-    // Fade out aurora, moon, message
-    document.querySelector('.aurora').style.opacity=0;
-    moon.style.opacity=0;
-    messageDiv.style.opacity=0;
-
-    // Clouds lighten
-    clouds.forEach(c => c.style.background='rgba(255,255,255,0.3)');
-
-    // Background day
-    document.body.style.background='linear-gradient(to top,#87CEEB 0%,#B0CFFB 100%)';
-
-    // Sun rises
-    sun.classList.add('rise');
+function revealMessage(){
+  let delay=0;
+  msg.split("").forEach((char,i)=>{
+    const span=document.createElement('span');
+    span.classList.add('letter');
+    span.textContent=char===' ' ? '\u00A0':char;
+    span.style.animationDelay=(0.05*i)+'s'; // faster than before
+    messageDiv.appendChild(span);
   });
+  messageDiv.style.opacity=1;
+}
+
+/* Moon movement and click button */
+const moon=document.querySelector('.moon');
+const clickBtn=document.getElementById('clickBtn');
+
+function checkMoon(){
+  const rect=moon.getBoundingClientRect();
+  if(rect.left > window.innerWidth*0.8){
+    clickBtn.classList.add('reveal');
+    revealMessage();
+    clearInterval(interval);
+  }
+}
+const interval=setInterval(checkMoon,200);
+
+/* Click button handler to transition to day */
+clickBtn.addEventListener('click', ()=>{
+  clickBtn.style.display='none';
+  // Hide stars and shooting stars
+  stars.forEach(s=>s.remove());
+  document.querySelectorAll('.shooting-star').forEach(s=>s.remove());
+  messageDiv.style.opacity=0;
+  // Background transition to blue
+  document.body.style.background='linear-gradient(to top, #87CEFA, #B0E0E6)';
+  // Clouds more visible and drift
+  clouds.forEach(c=>{
+    c.style.background='rgba(255,255,255,0.4)';
+    c.style.animation='dayCloudMove 25s ease-in-out infinite';
+  });
+  // Sun appear
+  const sun=document.querySelector('.sun');
+  sun.style.top='60px'; sun.style.opacity=1;
+});
 </script>
 </body>
 </html>

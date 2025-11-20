@@ -82,7 +82,7 @@
     top: 80px;
     left: -120px;
     box-shadow: 0 0 18px 4px rgba(255,255,200,0.4);
-    animation: moonMove 40s linear forwards; /* faster moon */
+    animation: moonMove 35s linear forwards; /* faster moon */
     transition: opacity 2s ease;
   }
 
@@ -125,7 +125,7 @@
   .letter {
     opacity: 0;
     display: inline-block;
-    animation: revealLetter 0.4s forwards; /* slightly faster */
+    animation: revealLetter 0.25s forwards; /* faster reveal */
   }
 
   @keyframes revealLetter {
@@ -230,7 +230,7 @@
     document.body.appendChild(s);
     setTimeout(()=>{ s.remove(); }, dur*1000);
   }
-  shootingInterval = setInterval(createShootingStar, 800); // more shooting stars
+  shootingInterval = setInterval(createShootingStar, 800);
 
   /* Message reveal */
   const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
@@ -240,7 +240,7 @@
       const span=document.createElement('span');
       span.className='letter';
       span.textContent = char === ' ' ? '\u00A0' : char;
-      span.style.animationDelay = (0.25 * i)+'s'; // slightly faster
+      span.style.animationDelay = (0.15 * i)+'s'; // increased speed
       messageDiv.appendChild(span);
     });
     messageDiv.style.opacity = 1;
@@ -256,7 +256,8 @@
     if(rect.left > window.innerWidth*0.7){
       clickBtn.classList.add('reveal');
       clearInterval(interval);
-      revealMessage();
+      // reveal message after 2 seconds delay
+      setTimeout(revealMessage, 2000);
     }
   }, 50);
 
@@ -287,7 +288,6 @@
     // Sun rises
     sun.classList.add('rise');
   });
-
 </script>
 </body>
 </html>

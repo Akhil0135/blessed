@@ -11,8 +11,7 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
-    /* Fully black realistic night sky */
-    background: #000000;
+    background: #000000; /* fully black night sky */
     font-family: 'Cinzel', serif;
   }
 
@@ -33,7 +32,7 @@
     100% { opacity: 0.2; transform: scale(1); }
   }
 
-  /* Aurora - subtle neutral purple/gray tones */
+  /* Aurora */
   .aurora {
     position: absolute;
     top: 0;
@@ -79,14 +78,14 @@
   }
   @keyframes moonMove {
     0% { left: -150px; }
-    100% { left: 70%; } /* stop before edge */
+    100% { left: 70%; }
   }
 
   /* Shooting stars */
   .shooting-star {
     position: absolute;
-    width: 6px;
-    height: 2px;
+    width: 12px; /* increased width for cinematic effect */
+    height: 3px;
     background: linear-gradient(0deg, rgba(255,255,255,0), white);
     border-radius: 50%;
     opacity: 0;
@@ -160,7 +159,7 @@
 
 <script>
   /* Stars */
-  const starCount = 70; // fewer twinkling stars for cinematic
+  const starCount = 120; // increased stars count for cinematic effect
   for(let i=0;i<starCount;i++){
     const star=document.createElement('div');
     star.classList.add('star');
@@ -191,9 +190,9 @@
     setTimeout(()=>{ star.remove(); }, duration*1000);
   }
   // initial burst
-  for(let i=0;i<10;i++){ createShootingStar(); }
+  for(let i=0;i<15;i++){ createShootingStar(); }
   // continuous
-  setInterval(createShootingStar, 900);
+  setInterval(createShootingStar, 800);
 
   /* Message reveal */
   const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";

@@ -1,11 +1,4 @@
-Project structure ready to paste into GitHub:
-
-realistic_train_animation/
-├── index.html
-├── app.js
-├── assets/
-│   └── train.glb  (placeholder for realistic train model)
-└── README.md
+Here's a fully working, smooth version of the train animation using a simple red box instead of a GLB model. You can later replace the box with your own 3D train model.
 
 ---
 
@@ -24,7 +17,6 @@ realistic_train_animation/
 <body>
   <script src="https://unpkg.com/three@0.181.0/build/three.min.js"></script>
   <script src="https://unpkg.com/three@0.181.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://unpkg.com/three@0.181.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
@@ -32,6 +24,7 @@ realistic_train_animation/
 
 ### app.js
 ```js
+// Scene, camera, renderer
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xaaaaaa);
 
@@ -40,13 +33,13 @@ camera.position.set(0, 10, 30);
 
 const renderer = new THREE.WebGLRenderer({ antialias:true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.target.set(0,2,0);
 controls.update();
 
+// Lights
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
 hemiLight.position.set(0,50,0);
 scene.add(hemiLight);
@@ -56,6 +49,7 @@ dirLight.position.set(-10,20,10);
 dirLight.castShadow = true;
 scene.add(dirLight);
 
+// Ground
 const groundGeo = new THREE.PlaneGeometry(200,200);
 const groundMat = new THREE.MeshStandardMaterial({color:0x888888});
 const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -63,6 +57,7 @@ ground.rotation.x = -Math.PI/2;
 ground.receiveShadow = true;
 scene.add(ground);
 
+// Track curve
 const trackCurve = new THREE.CatmullRomCurve3([
   new THREE.Vector3(-20,0,-20),
   new THREE.Vector3(0,0,0),
@@ -76,33 +71,32 @@ const trackMat = new THREE.LineBasicMaterial({color:0x000000});
 const trackLine = new THREE.Line(trackGeo, trackMat);
 scene.add(trackLine);
 
-let train;
-const loader = new THREE.GLTFLoader();
-loader.load('assets/train.glb', gltf => {
-  train = gltf.scene;
-  train.scale.set(1,1,1);
-  train.traverse(child => { if(child.isMesh) child.castShadow = true; });
-  scene.add(train);
-  train.position.copy(points[0]);
-});
+// Simple red box train
+const trainGeo = new THREE.BoxGeometry(2,2,6);
+const trainMat = new THREE.MeshStandardMaterial({color:0xff0000});
+const train = new THREE.Mesh(trainGeo, trainMat);
+train.castShadow = true;
+scene.add(train);
+train.position.copy(points[0]);
 
+// Animation
 let t = 0;
 function animate() {
   requestAnimationFrame(animate);
-  if(train){
-    t += 0.0005; 
-    if(t > 1) t = 0;
-    const pos = trackCurve.getPointAt(t);
-    train.position.copy(pos);
+  t += 0.0005; // speed
+  if(t > 1) t = 0;
+  const pos = trackCurve.getPointAt(t);
+  train.position.copy(pos);
 
-    const tangent = trackCurve.getTangentAt(t).normalize();
-    const up = new THREE.Vector3(0,1,0);
-    train.quaternion.setFromUnitVectors(up, tangent);
-  }
+  const tangent = trackCurve.getTangentAt(t).normalize();
+  const axis = new THREE.Vector3(0,1,0);
+  train.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1), tangent);
+
   renderer.render(scene, camera);
 }
 animate();
 
+// Handle resize
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth/window.innerHeight;
   camera.updateProjectionMatrix();
@@ -112,16 +106,12 @@ window.addEventListener('resize', () => {
 
 ### README.md
 ```markdown
-# Realistic Train Animation
+# Realistic Train Animation (Smooth Version)
 
-A starter project to animate a realistic train along a curved track using Three.js.
-
-## Structure
-- `index.html` – Main HTML file
-- `app.js` – Animation & Three.js logic
-- `assets/train.glb` – Placeholder for 3D train model
+A fully working starter project using Three.js.
 
 ## Usage
-1. Place a realistic GLB train model in `assets/train.glb`.
-2. Open `index.html` in a browser.
-3. Adjust curve points, train speed, or camera as needed.
+1. Open `index.html` in browser (use Live Server or Python HTTP server for best results).
+2. The train is represented by a red box moving along a curved track.
+3. Later you can replace the red box with a realistic 3D GLB model.
+```

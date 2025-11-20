@@ -175,8 +175,8 @@
 <div class="sun"></div>
 
 <script>
-  // Stars
-  const starCount = 180;
+  // Stars (night only)
+  const starCount = 200;
   const stars = [];
   for(let i=0;i<starCount;i++){
     const star=document.createElement('div');
@@ -260,7 +260,8 @@
 
     document.querySelector('.aurora').style.opacity=0;
     moon.style.opacity=0;
-    stars.forEach(s => s.style.opacity=0); // stars disappear
+
+    stars.forEach(s => s.style.opacity=0); // stars disappear at day
     messageDiv.style.opacity=0;
 
     clouds.forEach(c => c.style.background='rgba(255,255,255,0.3)');

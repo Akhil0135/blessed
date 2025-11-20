@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night to Day</title>
+<title>Cinematic Night to Day with Sparkles on Letters</title>
 <style>
   body, html {
     margin:0;
@@ -91,11 +91,32 @@
   .letter {
     opacity:0;
     display:inline-block;
+    position:relative;
     animation:revealLetter 0.5s forwards;
   }
   @keyframes revealLetter{
     0%{opacity:0; transform:translateY(10px);}
     100%{opacity:1; transform:translateY(0);}
+  }
+
+  /* Sparkle on letter */
+  .letter::after {
+    content:'';
+    position:absolute;
+    width:6px;
+    height:6px;
+    background: radial-gradient(circle,#fff,#fff0);
+    border-radius:50%;
+    top:0;
+    left:50%;
+    transform:translateX(-50%) scale(0);
+    opacity:0;
+    animation:letterSparkle 0.5s forwards;
+  }
+  @keyframes letterSparkle{
+    0%{opacity:1; transform:translateX(-50%) scale(0);}
+    50%{opacity:1; transform:translateX(-50%) scale(1.3);}
+    100%{opacity:0; transform:translateX(-50%) scale(0);}
   }
 
   /* Click Button */
@@ -195,7 +216,6 @@
   const messageDiv=document.getElementById('message');
 
   function revealMessage(){
-    let delay=0;
     msg.split('').forEach((ch,i)=>{
       const span=document.createElement('span');
       span.className='letter';
@@ -208,14 +228,13 @@
   // Moon movement
   const moon=document.querySelector('.moon');
   let moonPos=-150;
-  const moonSpeed=2; // faster
+  const moonSpeed=4; // faster
   const moonInterval=setInterval(()=>{
     if(moonPos < window.innerWidth - 180){
       moonPos += moonSpeed;
       moon.style.left = moonPos+'px';
     } else {
       clearInterval(moonInterval);
-      // Show click button when moon is about to reach end
       clickBtn.classList.add('float');
     }
   },16);

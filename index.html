@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lush Garden Scene</title>
+<title>Cinematic Night-to-Day Garden</title>
 <style>
 body, html {
   margin:0; padding:0; width:100%; height:100%; overflow:hidden;
@@ -12,12 +12,30 @@ body, html {
   transition: background 4s ease;
 }
 
+/* Stars */
+.star {
+  position:absolute;
+  width:2px; height:2px; border-radius:50%;
+  background:#fff; opacity:0.5;
+  box-shadow:0 0 6px rgba(255,255,255,0.9);
+  animation:twinkle 2.5s infinite alternate;
+}
+@keyframes twinkle{
+  0%{opacity:0.2; transform:scale(1);}
+  50%{opacity:0.95; transform:scale(1.5);}
+  100%{opacity:0.2; transform:scale(1);}
+}
+
 /* Clouds */
 .cloud { position:absolute; width:250px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%; filter:blur(30px); box-shadow:0 0 60px rgba(255,255,255,0.1); animation:moveCloud linear infinite; }
 @keyframes moveCloud{0%{left:-300px;}100%{left:110%;}}
 
 /* Moon */
 .moon { position:absolute; width:140px; height:140px; background: radial-gradient(circle,#fffde6 0%,#f3e4b0 60%,#d9c180 100%); border-radius:50%; top:80px; left:-150px; box-shadow:0 0 50px 20px rgba(255,255,220,0.4); transition:opacity 2s ease; }
+
+/* Shooting Stars */
+.shooting-star { position:absolute; width:8px; height:3px; background:linear-gradient(0deg, rgba(255,255,255,0), #fff); border-radius:50%; transform-origin:top left; opacity:0; animation:shoot linear forwards; }
+@keyframes shoot{0%{transform:translate(0,0) rotate(var(--angle,-45deg)); opacity:1;}100%{transform:translate(var(--dx,-80vw), var(--dy,80vh)) rotate(var(--angle,-45deg)); opacity:0;}}
 
 /* Birthday Message */
 #message { position:absolute; top:60%; width:100%; text-align:center; font-size:28px; color:#f9e9c9; opacity:0; letter-spacing:3px; text-shadow:2px 2px 12px rgba(0,0,0,0.7);}
@@ -47,18 +65,12 @@ body, html {
 @keyframes growGrass{0%{opacity:0; transform:scaleY(0);}100%{opacity:1; transform:scaleY(1);}}
 
 /* Realistic Butterflies */
-.butterfly {
-  position:absolute;
-  width:50px;
-  height:auto;
-  background-size:contain;
-  background-repeat:no-repeat;
-  z-index:3;
-}
+.butterfly { position:absolute; width:50px; height:auto; background-size:contain; background-repeat:no-repeat; z-index:3; }
 </style>
 </head>
 <body>
 
+<div id="stars"></div>
 <div id="clouds"></div>
 <div class="moon"></div>
 <div class="haze"></div>
@@ -69,8 +81,22 @@ body, html {
 <div class="garden" id="garden"></div>
 
 <script>
+// Stars
+const starCount = 180;
+const starsArr = [];
+for(let i=0;i<starCount;i++){
+  const star=document.createElement('div');
+  star.className='star';
+  star.style.top=Math.random()*window.innerHeight+'px';
+  star.style.left=Math.random()*window.innerWidth+'px';
+  document.body.appendChild(star);
+  starsArr.push(star);
+}
+
+// Clouds
+const cloudCount = 6;
 const cloudsArr=[];
-for(let i=0;i<6;i++){
+for(let i=0;i<cloudCount;i++){
   const cloud=document.createElement('div');
   cloud.className='cloud';
   cloud.style.top=(50 + Math.random()*250)+'px';
@@ -78,6 +104,21 @@ for(let i=0;i<6;i++){
   document.body.appendChild(cloud);
   cloudsArr.push(cloud);
 }
+
+// Shooting stars
+function createShootingStar(){
+  const star=document.createElement('div');
+  star.className='shooting-star';
+  star.style.top=Math.random()*200+'px';
+  star.style.left=window.innerWidth+'px';
+  const duration=2 + Math.random()*1.5;
+  star.style.setProperty('--dx', '-80vw');
+  star.style.setProperty('--dy', '80vh');
+  star.style.animationDuration=duration+'s';
+  document.body.appendChild(star);
+  setTimeout(()=>{ star.remove(); }, duration*1000);
+}
+const shootingInterval = setInterval(createShootingStar,1200);
 
 // Moon movement
 const moon=document.querySelector('.moon');
@@ -115,11 +156,16 @@ const haze=document.querySelector('.haze');
 const garden=document.getElementById('garden');
 
 clickBtn.addEventListener('click',()=>{
+  // Remove night elements
   moon.style.opacity=0;
+  starsArr.forEach(s=>s.remove());
+  clearInterval(shootingInterval);
+  document.querySelectorAll('.shooting-star').forEach(s=>s.remove());
   document.getElementById('message').style.opacity=0;
   clickBtn.style.opacity=0;
   clickBtn.style.pointerEvents='none';
 
+  // Show day sky
   daySky.style.opacity=1;
   sun.style.top='80px'; sun.style.opacity=1;
 
@@ -129,23 +175,23 @@ clickBtn.addEventListener('click',()=>{
   });
   haze.style.opacity=0.02;
 
-  // Flowers and Grass
+  // Create garden: flowers and grass
   for(let i=0;i<100;i++){
-    const flower=document.createElement('div');
+    const flower = document.createElement('div');
     flower.className='flower tulip';
     flower.style.left=Math.random()*window.innerWidth+'px';
     flower.style.animationDelay=(i*0.02)+'s';
     garden.appendChild(flower);
 
-    const grass=document.createElement('div');
+    const grass = document.createElement('div');
     grass.className='grass';
     grass.style.left=Math.random()*window.innerWidth+'px';
     grass.style.animationDelay=(i*0.015)+'s';
     garden.appendChild(grass);
   }
 
-  // Realistic butterflies
-  const butterflyImages = ['butterfly1.png','butterfly2.png','butterfly3.png']; // Replace with real PNGs
+  // Add realistic butterflies
+  const butterflyImages = ['butterfly1.png','butterfly2.png','butterfly3.png']; // Add your PNGs
   for(let i=0;i<12;i++){
     const butterfly=document.createElement('div');
     butterfly.className='butterfly';
@@ -154,7 +200,6 @@ clickBtn.addEventListener('click',()=>{
     butterfly.style.bottom=(100 + Math.random()*700)+'px';
     garden.appendChild(butterfly);
 
-    // Animate along random path
     const dx = (Math.random()*400) - 200;
     const dy = (Math.random()*300) - 150;
     butterfly.animate([

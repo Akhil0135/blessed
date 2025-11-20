@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Scene</title>
+<title>Cinematic Night Scene with Spaceship</title>
 <style>
   body, html {
     margin:0;
@@ -75,6 +75,58 @@
   @keyframes shoot{
     0%{transform:translate(0,0) rotate(-45deg); opacity:1;}
     100%{transform:translate(-80vw,80vh) rotate(-45deg); opacity:0;}
+  }
+
+  /* Spaceship */
+  .spaceship {
+    position:absolute;
+    width:60px;
+    height:120px;
+    left:10%;
+    top:30%;
+    transform:translate(-50%,-50%);
+    animation:fly 20s linear infinite;
+    z-index:50;
+  }
+  @keyframes fly {
+    0%{left: -10%; top: 25%;}
+    50%{left: 60%; top: 35%;}
+    100%{left: 110%; top: 30%;}
+  }
+  .ship-body {
+    width:60px;
+    height:100px;
+    background:linear-gradient(to top, #555, #aaa);
+    border-radius:30px 30px 10px 10px;
+    position:relative;
+    margin:0 auto;
+    box-shadow:0 0 8px rgba(255,255,255,0.3);
+  }
+  .ship-window {
+    width:20px;
+    height:20px;
+    background:#33ccff;
+    border-radius:50%;
+    position:absolute;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    box-shadow:0 0 12px #33ccff;
+  }
+  .ship-flame {
+    width:10px;
+    height:20px;
+    background:linear-gradient(to top, orange, yellow);
+    position:absolute;
+    bottom:-20px;
+    left:50%;
+    transform:translateX(-50%) rotate(180deg);
+    border-radius:50%;
+    animation:flame 0.3s ease-in-out infinite alternate;
+  }
+  @keyframes flame {
+    0% { transform:translateX(-50%) rotate(180deg) scaleY(1); opacity:0.7; }
+    100% { transform:translateX(-50%) rotate(180deg) scaleY(1.4); opacity:1; }
   }
 
   /* Message */
@@ -149,6 +201,13 @@
 <div id="stars"></div>
 <div id="clouds"></div>
 <div class="moon"></div>
+
+<!-- Cinematic Spaceship -->
+<div class="spaceship">
+  <div class="ship-body"></div>
+  <div class="ship-window"></div>
+  <div class="ship-flame"></div>
+</div>
 
 <div id="message"></div>
 <button id="clickBtn">Click Here</button>

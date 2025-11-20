@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Scene with Spaceship</title>
+<title>Cinematic Night Scene</title>
 <style>
   body, html {
     margin:0;
@@ -23,24 +23,25 @@
     height:2px;
     background:#fff;
     border-radius:50%;
-    opacity:0.6;
-    box-shadow:0 0 4px rgba(255,255,255,0.8);
+    opacity:0.5;
+    box-shadow:0 0 6px rgba(255,255,255,0.9);
     animation:twinkle 2.5s infinite alternate;
   }
   @keyframes twinkle{
     0%{opacity:0.2; transform:scale(1);}
-    50%{opacity:0.9; transform:scale(1.4);}
+    50%{opacity:0.95; transform:scale(1.5);}
     100%{opacity:0.2; transform:scale(1);}
   }
 
-  /* Clouds */
+  /* Clouds with glow */
   .cloud {
     position:absolute;
     width:250px;
     height:100px;
-    background:rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.05);
     border-radius:50%;
-    filter:blur(25px);
+    filter:blur(30px);
+    box-shadow:0 0 60px rgba(255,255,255,0.1);
     animation:moveCloud linear infinite;
   }
   @keyframes moveCloud{
@@ -48,7 +49,7 @@
     100%{left:110%;}
   }
 
-  /* Moon */
+  /* Moon with cinematic glow */
   .moon {
     position:absolute;
     width:140px;
@@ -57,7 +58,7 @@
     border-radius:50%;
     top:80px;
     left:-150px;
-    box-shadow:0 0 30px 5px rgba(255,255,220,0.4);
+    box-shadow:0 0 50px 20px rgba(255,255,220,0.4);
     transition:opacity 2s ease;
   }
 
@@ -77,58 +78,6 @@
     100%{transform:translate(-80vw,80vh) rotate(-45deg); opacity:0;}
   }
 
-  /* Spaceship */
-  .spaceship {
-    position:absolute;
-    width:60px;
-    height:120px;
-    left:10%;
-    top:30%;
-    transform:translate(-50%,-50%);
-    animation:fly 20s linear infinite;
-    z-index:50;
-  }
-  @keyframes fly {
-    0%{left: -10%; top: 25%;}
-    50%{left: 60%; top: 35%;}
-    100%{left: 110%; top: 30%;}
-  }
-  .ship-body {
-    width:60px;
-    height:100px;
-    background:linear-gradient(to top, #555, #aaa);
-    border-radius:30px 30px 10px 10px;
-    position:relative;
-    margin:0 auto;
-    box-shadow:0 0 8px rgba(255,255,255,0.3);
-  }
-  .ship-window {
-    width:20px;
-    height:20px;
-    background:#33ccff;
-    border-radius:50%;
-    position:absolute;
-    top:20px;
-    left:50%;
-    transform:translateX(-50%);
-    box-shadow:0 0 12px #33ccff;
-  }
-  .ship-flame {
-    width:10px;
-    height:20px;
-    background:linear-gradient(to top, orange, yellow);
-    position:absolute;
-    bottom:-20px;
-    left:50%;
-    transform:translateX(-50%) rotate(180deg);
-    border-radius:50%;
-    animation:flame 0.3s ease-in-out infinite alternate;
-  }
-  @keyframes flame {
-    0% { transform:translateX(-50%) rotate(180deg) scaleY(1); opacity:0.7; }
-    100% { transform:translateX(-50%) rotate(180deg) scaleY(1.4); opacity:1; }
-  }
-
   /* Message */
   #message {
     position:absolute;
@@ -139,7 +88,7 @@
     color:#f9e9c9;
     opacity:0;
     letter-spacing:3px;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+    text-shadow: 2px 2px 12px rgba(0,0,0,0.7);
   }
   .letter {
     opacity:0;
@@ -194,6 +143,18 @@
     box-shadow:0 0 60px #ffde7a;
     transition:top 4s ease, opacity 4s ease;
   }
+
+  /* Haze overlay for cinematic depth */
+  .haze {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 80%);
+    pointer-events:none;
+    z-index:1;
+  }
 </style>
 </head>
 <body>
@@ -201,13 +162,7 @@
 <div id="stars"></div>
 <div id="clouds"></div>
 <div class="moon"></div>
-
-<!-- Cinematic Spaceship -->
-<div class="spaceship">
-  <div class="ship-body"></div>
-  <div class="ship-window"></div>
-  <div class="ship-flame"></div>
-</div>
+<div class="haze"></div>
 
 <div id="message"></div>
 <button id="clickBtn">Click Here</button>

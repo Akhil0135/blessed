@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night to Day with Sparkle Line Reveal</title>
+<title>Cinematic Night with Spaceship</title>
 <style>
   body, html {
     margin:0;
@@ -12,7 +12,7 @@
     height:100%;
     overflow:hidden;
     font-family:'Cinzel', serif;
-    background: #000; /* Night background */
+    background:#000; /* Night background */
     transition: background 4s ease;
   }
 
@@ -77,28 +77,41 @@
     100%{transform:translate(-70vw,70vh) rotate(-45deg); opacity:0;}
   }
 
-  /* Sparkle Line */
-  .sparkle {
+  /* Spaceship */
+  .spaceship {
     position:absolute;
-    width:6px;
-    height:6px;
-    background: radial-gradient(circle,#fff,#fff0);
-    border-radius:50%;
+    width:80px;
+    height:80px;
+    left:50%;
     top:50%;
-    transform:translateY(-50%) scale(0);
-    opacity:0;
-    animation:moveSparkle 2s linear forwards;
+    transform:translate(-50%,-50%);
+    background:#666;
+    border-radius:50% 50% 50% 50% / 40% 40% 60% 60%;
+    box-shadow:0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(0,200,255,0.3) inset;
+    animation:float 2s ease-in-out infinite;
   }
-  @keyframes moveSparkle{
-    0%{opacity:1; transform:translateY(-50%) scale(0);}
-    50%{opacity:1; transform:translateY(-50%) scale(1.2);}
-    100%{opacity:0; transform:translateY(-50%) scale(0);}
+  .spaceship::before {
+    content:'';
+    position:absolute;
+    bottom:-15px;
+    left:50%;
+    transform:translateX(-50%);
+    width:20px;
+    height:15px;
+    background:orange;
+    border-radius:50%;
+    box-shadow:0 0 15px rgba(255,165,0,0.8);
+  }
+  @keyframes float{
+    0%{transform:translate(-50%,-50%) translateY(0);}
+    50%{transform:translate(-50%,-50%) translateY(-10px);}
+    100%{transform:translate(-50%,-50%) translateY(0);}
   }
 
   /* Message */
   #message {
     position:absolute;
-    top:60%;
+    top:65%;
     width:100%;
     text-align:center;
     font-size:28px;
@@ -158,7 +171,6 @@
     opacity:0;
     transition:top 4s ease, opacity 4s ease;
   }
-
 </style>
 </head>
 <body>
@@ -166,13 +178,13 @@
 <div id="stars"></div>
 <div id="clouds"></div>
 <div class="moon"></div>
-<div id="sparkleLine"></div>
+<div class="spaceship"></div>
 <div id="message"></div>
 <button id="clickBtn">Click Here</button>
 <div class="sun"></div>
 
 <script>
-  // Create stars
+  // Stars
   const starCount = 180;
   const starsArr = [];
   for(let i=0;i<starCount;i++){
@@ -184,7 +196,7 @@
     starsArr.push(star);
   }
 
-  // Create clouds
+  // Clouds
   const cloudCount = 6;
   const cloudsArr=[];
   for(let i=0;i<cloudCount;i++){
@@ -209,31 +221,8 @@
   }
   const shootingInterval = setInterval(createShootingStar,1200);
 
-  // Sparkle line
-  function createSparkleLine(callback){
-    const sparkleCount = 60;
-    const messageDiv = document.getElementById('message');
-    const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-    const sparkleLine = [];
-    for(let i=0;i<sparkleCount;i++){
-      const s = document.createElement('div');
-      s.className='sparkle';
-      s.style.left = `${(i/(sparkleCount-1))*100}%`;
-      document.body.appendChild(s);
-      sparkleLine.push(s);
-      s.style.animationDelay = `${i*0.03}s`;
-    }
-    // Animate reveal along the line
-    sparkleLine.forEach((s,i)=>{
-      setTimeout(()=>{
-        s.style.transform='translateY(-50%) scale(1.2)';
-        s.style.opacity='1';
-        if(i===sparkleLine.length-1) callback();
-      }, i*30);
-    });
-  }
-
-  function revealMessageAlongLine(){
+  // Message reveal
+  function revealMessage(){
     const messageDiv = document.getElementById('message');
     const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
     msg.split('').forEach((ch,i)=>{
@@ -249,52 +238,50 @@
   // Moon movement
   const moon=document.querySelector('.moon');
   let moonPos=-150;
-  const moonSpeed=5; // faster
+  const moonSpeed=6;
+  let messageStarted=false;
   const moonInterval=setInterval(()=>{
     if(moonPos < window.innerWidth - 180){
       moonPos += moonSpeed;
       moon.style.left = moonPos+'px';
       if(moonPos > 50 && !messageStarted){
         messageStarted=true;
-        createSparkleLine(revealMessageAlongLine);
+        revealMessage();
       }
     } else {
       clearInterval(moonInterval);
       clickBtn.classList.add('float');
     }
   },16);
-  let messageStarted=false;
 
-  // Click button logic
+  // Click button
   const clickBtn=document.getElementById('clickBtn');
   const sun=document.querySelector('.sun');
+  const spaceship=document.querySelector('.spaceship');
 
   clickBtn.addEventListener('click',()=>{
-    // Hide moon
+    // Hide moon and stars
     moon.style.opacity=0;
-
-    // Remove stars
     starsArr.forEach(s=>s.remove());
     clearInterval(shootingInterval);
     document.querySelectorAll('.shooting-star').forEach(s=>s.remove());
-    document.querySelectorAll('.sparkle').forEach(s=>s.remove());
 
-    // Hide message and button
+    // Hide message, spaceship and button
     document.getElementById('message').style.opacity=0;
+    spaceship.style.opacity=0;
     clickBtn.style.opacity=0;
     clickBtn.style.pointerEvents='none';
 
-    // Transition to day
+    // Day transition
     document.body.style.background='linear-gradient(to top, #87ceeb, #a0d8ff, #d0f0ff)';
     sun.style.top='50px';
     sun.style.opacity=1;
 
-    // Increase cloud visibility
+    // Clouds visibility
     cloudsArr.forEach(c=>{
       c.style.background='rgba(255,255,255,0.3)';
     });
   });
 </script>
-
 </body>
 </html>

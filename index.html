@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Scene</title>
+<title>Cinematic Night-to-Day Scene</title>
 <style>
   body, html {
     margin:0;
@@ -12,7 +12,7 @@
     height:100%;
     overflow:hidden;
     font-family:'Cinzel', serif;
-    background:#000010; /* Deep night */
+    background:#000010;
     transition: background 4s ease;
   }
 
@@ -33,7 +33,7 @@
     100%{opacity:0.2; transform:scale(1);}
   }
 
-  /* Clouds with glow */
+  /* Clouds */
   .cloud {
     position:absolute;
     width:250px;
@@ -43,13 +43,14 @@
     filter:blur(30px);
     box-shadow:0 0 60px rgba(255,255,255,0.1);
     animation:moveCloud linear infinite;
+    transition: background 4s ease, box-shadow 4s ease;
   }
   @keyframes moveCloud{
     0%{left:-300px;}
     100%{left:110%;}
   }
 
-  /* Moon with cinematic glow */
+  /* Moon */
   .moon {
     position:absolute;
     width:140px;
@@ -78,7 +79,7 @@
     100%{transform:translate(var(--dx,-80vw), var(--dy,80vh)) rotate(var(--angle,-45deg)); opacity:0;}
   }
 
-  /* Message */
+  /* Birthday Message */
   #message {
     position:absolute;
     top:65%;
@@ -129,7 +130,7 @@
     100%{transform:translateX(-50%) translateY(0px);}
   }
 
-  /* Sun */
+  /* Sun with realistic glow */
   .sun {
     position:absolute;
     top:120%;
@@ -137,14 +138,28 @@
     transform:translateX(-50%);
     width:150px;
     height:150px;
-    background: radial-gradient(circle,#ffb347 0%,#ffcc33 80%);
+    background: radial-gradient(circle, #fffbba 0%, #ffcc33 80%);
     border-radius:50%;
     opacity:0;
-    box-shadow:0 0 60px #ffde7a;
+    box-shadow:0 0 100px 40px rgba(255,240,180,0.5),0 0 150px 80px rgba(255,220,120,0.2);
     transition:top 4s ease, opacity 4s ease;
+    z-index:2;
   }
 
-  /* Haze overlay for cinematic depth */
+  /* Realistic Sky Gradient for Day */
+  .day-sky {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: linear-gradient(to top, #87ceeb 0%, #a0d8ff 50%, #d0f0ff 100%);
+    opacity:0;
+    transition:opacity 4s ease;
+    z-index:0;
+  }
+
+  /* Haze overlay */
   .haze {
     position:absolute;
     top:0;
@@ -154,6 +169,7 @@
     background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 80%);
     pointer-events:none;
     z-index:1;
+    transition:opacity 4s ease;
   }
 </style>
 </head>
@@ -163,6 +179,7 @@
 <div id="clouds"></div>
 <div class="moon"></div>
 <div class="haze"></div>
+<div class="day-sky"></div>
 
 <div id="message"></div>
 <button id="clickBtn">Click Here</button>
@@ -199,12 +216,10 @@
     star.className='shooting-star';
     star.style.top=Math.random()*200+'px';
     star.style.left=Math.random()*window.innerWidth+'px';
-
-    const angle = -20 - Math.random()*50; // random diagonal
+    const angle = -20 - Math.random()*50;
     const dx = -Math.random()*window.innerWidth*0.7;
     const dy = Math.random()*window.innerHeight*0.7;
     const duration = 1.5 + Math.random()*1.5;
-
     star.style.setProperty('--angle', angle+'deg');
     star.style.setProperty('--dx', dx+'px');
     star.style.setProperty('--dy', dy+'px');
@@ -247,31 +262,37 @@
     }
   },16);
 
-  // Click button
+  // Click button & day transition
   const clickBtn=document.getElementById('clickBtn');
   const sun=document.querySelector('.sun');
+  const daySky=document.querySelector('.day-sky');
+  const haze=document.querySelector('.haze');
 
   clickBtn.addEventListener('click',()=>{
-    // Hide moon and stars
+    // Hide night elements
     moon.style.opacity=0;
     starsArr.forEach(s=>s.remove());
     clearInterval(shootingInterval);
     document.querySelectorAll('.shooting-star').forEach(s=>s.remove());
-
-    // Hide message and button
     document.getElementById('message').style.opacity=0;
     clickBtn.style.opacity=0;
     clickBtn.style.pointerEvents='none';
 
-    // Day transition
-    document.body.style.background='linear-gradient(to top, #87ceeb, #a0d8ff, #d0f0ff)';
-    sun.style.top='50px';
+    // Show day sky
+    daySky.style.opacity=1;
+
+    // Sun rise
+    sun.style.top='80px';
     sun.style.opacity=1;
 
-    // Clouds visibility
+    // Brighten clouds
     cloudsArr.forEach(c=>{
-      c.style.background='rgba(255,255,255,0.3)';
+      c.style.background='rgba(255,255,255,0.4)';
+      c.style.boxShadow='0 0 80px rgba(255,255,255,0.2)';
     });
+
+    // Reduce haze for day
+    haze.style.opacity=0.05;
   });
 </script>
 </body>

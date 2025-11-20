@@ -26,6 +26,7 @@
     opacity: 0.6;
     box-shadow: 0 0 6px rgba(255,255,255,0.7);
     animation: twinkle 3s infinite alternate;
+    transition: opacity 3s ease;
   }
 
   @keyframes twinkle {
@@ -254,7 +255,7 @@
 
     document.querySelector('.aurora').style.opacity=0;
     moon.style.opacity=0;
-    stars.forEach(s => s.style.opacity=0);
+    stars.forEach(s => s.style.opacity=0); // stars disappear
     messageDiv.style.opacity=0;
 
     clouds.forEach(c => c.style.background='rgba(255,255,255,0.3)');

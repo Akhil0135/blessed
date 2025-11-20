@@ -23,16 +23,16 @@
     height: 2px;
     border-radius: 50%;
     background: white;
-    opacity: 0.8;
-    box-shadow: 0 0 6px rgba(255,255,255,0.8);
+    opacity: 0.9;
+    box-shadow: 0 0 8px rgba(255,255,255,0.9);
     animation: twinkle 2s infinite alternate;
     transition: opacity 2s ease;
   }
 
   @keyframes twinkle {
-    0% { opacity: 0.2; transform: scale(1);}
-    50% { opacity: 1; transform: scale(1.4);}
-    100% { opacity: 0.2; transform: scale(1);}
+    0% { opacity: 0.3; transform: scale(1);}
+    50% { opacity: 1; transform: scale(1.5);}
+    100% { opacity: 0.3; transform: scale(1);}
   }
 
   /* Aurora */
@@ -82,7 +82,7 @@
     top: 80px;
     left: -120px;
     box-shadow: 0 0 18px 4px rgba(255,255,200,0.4);
-    animation: moonMove 50s linear forwards;
+    animation: moonMove 40s linear forwards; /* faster moon */
     transition: opacity 2s ease;
   }
 
@@ -94,13 +94,13 @@
   /* Shooting stars */
   .shooting-star {
     position: absolute;
-    width: 8px;
+    width: 10px;
     height: 2px;
     background: linear-gradient(0deg, rgba(255,255,255,0), white);
     border-radius: 50%;
     opacity: 0;
     transform-origin: top left;
-    animation: shoot 2.5s linear forwards;
+    animation: shoot 2s linear forwards;
     transition: opacity 2s ease;
   }
 
@@ -125,7 +125,7 @@
   .letter {
     opacity: 0;
     display: inline-block;
-    animation: revealLetter 0.6s forwards;
+    animation: revealLetter 0.4s forwards; /* slightly faster */
   }
 
   @keyframes revealLetter {
@@ -230,18 +230,17 @@
     document.body.appendChild(s);
     setTimeout(()=>{ s.remove(); }, dur*1000);
   }
-  shootingInterval = setInterval(createShootingStar, 1200);
+  shootingInterval = setInterval(createShootingStar, 800); // more shooting stars
 
   /* Message reveal */
   const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
   const messageDiv = document.getElementById('message');
   function revealMessage(){
-    let delay = 0;
     msg.split("").forEach((char,i)=>{
       const span=document.createElement('span');
       span.className='letter';
       span.textContent = char === ' ' ? '\u00A0' : char;
-      span.style.animationDelay = (0.5 * i)+'s'; // slower reveal
+      span.style.animationDelay = (0.25 * i)+'s'; // slightly faster
       messageDiv.appendChild(span);
     });
     messageDiv.style.opacity = 1;
@@ -251,7 +250,6 @@
   const moon = document.querySelector('.moon');
   const clickBtn = document.getElementById('clickBtn');
   const sun = document.querySelector('.sun');
-  const messageLetters = document.querySelectorAll('.letter');
 
   const interval = setInterval(()=>{
     const rect = moon.getBoundingClientRect();
@@ -260,7 +258,7 @@
       clearInterval(interval);
       revealMessage();
     }
-  }, 100);
+  }, 50);
 
   /* Click Button functionality */
   clickBtn.addEventListener('click', ()=>{

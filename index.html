@@ -11,8 +11,8 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
-    /* Fully dark cinematic gradient, no blue at all */
-    background: linear-gradient(to top, #000000 0%, #0d0d0d 50%, #1a1a1a 100%);
+    /* Fully black realistic night sky */
+    background: #000000;
     font-family: 'Cinzel', serif;
   }
 
@@ -23,7 +23,7 @@
     height: 2px;
     background: white;
     border-radius: 50%;
-    opacity: 0.6;
+    opacity: 0.5;
     box-shadow: 0 0 6px rgba(255,255,255,0.5);
     animation: twinkle 2s infinite alternate;
   }
@@ -33,15 +33,15 @@
     100% { opacity: 0.2; transform: scale(1); }
   }
 
-  /* Aurora (neutral tones, no blue) */
+  /* Aurora - subtle neutral purple/gray tones */
   .aurora {
     position: absolute;
     top: 0;
     width: 100%;
     height: 40vh;
-    background: radial-gradient(circle at 50% 20%, rgba(200,180,255,0.25), transparent),
-                radial-gradient(circle at 30% 10%, rgba(150,100,180,0.2), transparent),
-                radial-gradient(circle at 70% 5%, rgba(180,140,200,0.2), transparent);
+    background: radial-gradient(circle at 50% 20%, rgba(180,140,200,0.2), transparent),
+                radial-gradient(circle at 30% 10%, rgba(150,120,170,0.15), transparent),
+                radial-gradient(circle at 70% 5%, rgba(160,100,180,0.15), transparent);
     filter: blur(30px);
     animation: auroraMove 20s ease-in-out infinite alternate;
   }
@@ -55,7 +55,7 @@
     position: absolute;
     width: 250px;
     height: 100px;
-    background: rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.05);
     border-radius: 50%;
     filter: blur(25px);
     animation: moveCloud linear infinite;
@@ -160,7 +160,7 @@
 
 <script>
   /* Stars */
-  const starCount = 100;
+  const starCount = 70; // fewer twinkling stars for cinematic
   for(let i=0;i<starCount;i++){
     const star=document.createElement('div');
     star.classList.add('star');
@@ -190,8 +190,10 @@
     document.body.appendChild(star);
     setTimeout(()=>{ star.remove(); }, duration*1000);
   }
-  for(let i=0;i<6;i++){ createShootingStar(); }
-  setInterval(createShootingStar, 1200);
+  // initial burst
+  for(let i=0;i<10;i++){ createShootingStar(); }
+  // continuous
+  setInterval(createShootingStar, 900);
 
   /* Message reveal */
   const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night with Spaceship</title>
+<title>Cinematic Night to Day</title>
 <style>
   body, html {
     margin:0;
@@ -11,41 +11,39 @@
     width:100%;
     height:100%;
     overflow:hidden;
-    font-family:'Cinzel', serif;
-    background:#000; /* Night background */
-    transition: background 4s ease;
+    font-family: 'Cinzel', serif;
+    background: linear-gradient(to top, #000000, #0d0d0d 50%, #1a1a1a);
+    transition: background 3s ease;
   }
 
   /* Stars */
   .star {
-    position:absolute;
-    width:2px;
-    height:2px;
-    background:#fff;
-    border-radius:50%;
-    opacity:0.85;
-    box-shadow:0 0 6px rgba(255,255,255,0.8);
-    animation:twinkle 2.5s infinite alternate;
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.8;
+    box-shadow: 0 0 8px rgba(255,255,255,0.9);
+    animation: twinkle 2s infinite alternate;
   }
-  @keyframes twinkle{
-    0%{opacity:0.3; transform:scale(1);}
-    50%{opacity:1; transform:scale(1.5);}
-    100%{opacity:0.3; transform:scale(1);}
+  @keyframes twinkle {
+    0% { opacity:0.3; transform:scale(1);}
+    50% { opacity:1; transform:scale(1.5);}
+    100% { opacity:0.3; transform:scale(1);}
   }
 
   /* Clouds */
   .cloud {
-    position:absolute;
-    width:250px;
-    height:100px;
-    background:rgba(255,255,255,0.07);
+    position: absolute;
+    width: 250px;
+    height: 100px;
+    background: rgba(255,255,255,0.07);
     border-radius:50%;
-    filter:blur(20px);
-    animation:moveCloud linear infinite;
+    filter: blur(25px);
+    animation: moveCloud linear infinite;
   }
-  @keyframes moveCloud{
-    0%{left:-300px;}
-    100%{left:110%;}
+  @keyframes moveCloud {
+    0% { left:-300px;}
+    100% { left:110%;}
   }
 
   /* Moon */
@@ -57,104 +55,83 @@
     border-radius:50%;
     top:80px;
     left:-150px;
-    box-shadow:0 0 18px 4px rgba(255,255,200,0.5);
-    transition:opacity 2s ease;
+    box-shadow:0 0 18px 4px rgba(255,255,200,0.4);
+    animation: moonMove 40s linear forwards;
+  }
+  @keyframes moonMove {
+    0% { left:-150px; }
+    100% { left:80%; }
   }
 
-  /* Shooting Stars */
+  /* Shooting stars */
   .shooting-star {
     position:absolute;
     width:8px;
     height:3px;
-    background:linear-gradient(0deg, rgba(255,255,255,0), #fff);
+    background: linear-gradient(0deg, rgba(255,255,255,0), white);
     border-radius:50%;
-    transform-origin:top left;
-    opacity:0;
-    animation:shoot 2.5s linear forwards;
-  }
-  @keyframes shoot{
-    0%{transform:translate(0,0) rotate(-45deg); opacity:1;}
-    100%{transform:translate(-70vw,70vh) rotate(-45deg); opacity:0;}
+    transform-origin: top left;
   }
 
   /* Spaceship */
   .spaceship {
     position:absolute;
     width:120px;
-    left:50%;
     top:50%;
-    transform:translate(-50%,-50%);
-    animation:float 2s ease-in-out infinite;
-    z-index:100;
-  }
-  @keyframes float{
-    0%{transform:translate(-50%,-50%) translateY(0);}
-    50%{transform:translate(-50%,-50%) translateY(-12px);}
-    100%{transform:translate(-50%,-50%) translateY(0);}
+    left:50%;
+    transform: translate(-50%,-50%);
+    z-index:50;
+    opacity:1;
+    transition: opacity 2s ease;
   }
 
   /* Message */
   #message {
     position:absolute;
-    top:65%;
     width:100%;
     text-align:center;
     font-size:28px;
     color:#f9e9c9;
+    top:65%;
     opacity:0;
-    letter-spacing:3px;
   }
   .letter {
     opacity:0;
     display:inline-block;
-    animation:revealLetter 0.4s forwards;
+    transform: translateY(15px);
+    animation: revealLetter 0.5s forwards;
   }
-  @keyframes revealLetter{
-    0%{opacity:0; transform:translateY(10px);}
-    100%{opacity:1; transform:translateY(0);}
+  @keyframes revealLetter {
+    0% { opacity:0; transform: translateY(15px); }
+    100% { opacity:1; transform: translateY(0); }
   }
 
-  /* Click Button */
+  /* Click button */
   #clickBtn {
     position:absolute;
-    bottom:12vh;
+    bottom:15vh;
     left:50%;
-    transform:translateX(-50%);
-    padding:14px 34px;
+    transform: translateX(-50%);
+    padding:12px 30px;
     font-size:20px;
-    font-family:'Cinzel', serif;
-    background:rgba(255,255,255,0.12);
-    border:1px solid rgba(255,255,255,0.45);
+    font-family: 'Cinzel', serif;
+    background: rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.4);
     border-radius:40px;
     color:#fff;
     cursor:pointer;
+    z-index:200;
     opacity:0;
     pointer-events:none;
-    transition:opacity 1s ease, transform 0.5s ease;
+    transition: opacity 1.8s ease;
   }
-  #clickBtn.float{
-    opacity:1;
-    pointer-events:auto;
-    animation:btnFloat 3s ease-in-out infinite;
+  #clickBtn.float {
+    animation: btnFloat 3s ease-in-out infinite;
   }
-  @keyframes btnFloat{
-    0%{transform:translateX(-50%) translateY(0px);}
-    50%{transform:translateX(-50%) translateY(-8px);}
-    100%{transform:translateX(-50%) translateY(0px);}
-  }
-
-  /* Sun */
-  .sun {
-    position:absolute;
-    top:-100px;
-    left:50%;
-    transform:translateX(-50%);
-    width:150px;
-    height:150px;
-    background: radial-gradient(circle,#ffb347 0%,#ffcc33 80%);
-    border-radius:50%;
-    opacity:0;
-    transition:top 4s ease, opacity 4s ease;
+  @keyframes btnFloat {
+    0% { transform: translateX(-50%) translateY(0) scale(1.05);}
+    50% { transform: translateX(-50%) translateY(-6px) scale(1.1);}
+    100% { transform: translateX(-50%) translateY(0) scale(1.05);}
   }
 </style>
 </head>
@@ -163,34 +140,34 @@
 <div id="stars"></div>
 <div id="clouds"></div>
 <div class="moon"></div>
-<img src="https://i.imgur.com/OY4aVf9.png" alt="spaceship" class="spaceship"> <!-- Real spaceship -->
+<img class="spaceship" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAABkCAYAAABYo+5IAAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABwESAAMAAAABAAEAAIdpAAQAAAABAAAAJgAAAAAAAABQZXV1MTkAAAJiSURBVHgB7dpLrB1RFIfx7gYHFQ3VxUqAyhYHSKKK0t7KnEYYWJ4U6WrHSx2tYiIYpBkkFhcNh+fgvZE0RHIoDAwGPqO/17m82m/2a5u7N5r1+zTfuec+Z7v5vD+cltB+Kj1+KyPR0+qgMfufN2cL4K2qKj9I0F+1koXv7frj4jYvVej3k8V+YH1TVQflG1+Sj7TyaqplPP79oXYKNcQF+fRz+NkxV7df6+kGj4sd17zI5+cfx8ZP87w4Gn8gXeZXuX+DyfgucW4fW8FsVbqR+RHyaxUQY0wIxbWo5uCUUqzZr1CNgf4nkgYtTxeiNx4a4jT3J9PA7J/5Go3qcnr7b8K9pZfhwthpYj0f1t+G0kZn28p3H9bg0Wufh4z+Dx1hW09+q+4wB3Pb3nYt+m4tRrW7h8xV0iB0gXgCuvC7wxy6kP2jV5Fj7Hc44iNN5y7/gXvQW2+zNoySTVZ0iB0gXgCW1vkuY+H0b9K6viy9I6qD4R8n77b8KJhnHzF83yPkzxB70m1Qn1VP8Q7p+T8wH7K1w6ZV7Q2xFvy2EawxvQF6BZxy4K8z5K4j1sdbnhpT7SvQKvIu+HzCtwG6BbQe0vIj5h6/H6R7zB7Jr3XvJ+Zz1mHk3sbnL0/8nBz+Gq7i9/1n6PtZ+cAZ4JQdAtYV73Cz0i+cfvE3QCH7P+b2l53iHw6xA5eWvPyGw9wFehF1nB1oZ3J/0jdf0K0xQnEJ1U6HeZkI3G2N5hZkI3L6NF6yTfqP91IHuSdxLAAJvPKb7B6Qp4+G1m+3i2h/3I9w0+7u+d/45/x8+Q+Y8QnH/3v7uC36bL9yI+v9V7CQA4cH78nTn1v0mX0J+xzXgXj0z8jv8hvZy6Hz+uPmzquMwhsCQAtI0Qq1Gjk+SDWZbDD2CP7XY6lWTtLROgAAAABJRU5ErkJggg==">
+
 <div id="message"></div>
 <button id="clickBtn">Click Here</button>
-<div class="sun"></div>
 
 <script>
-  // Stars
-  const starCount = 180;
-  const starsArr = [];
+  // Stars for night
+  const starCount=180;
+  const stars=[];
   for(let i=0;i<starCount;i++){
-    const star=document.createElement('div');
-    star.className='star';
-    star.style.top=Math.random()*window.innerHeight+'px';
-    star.style.left=Math.random()*window.innerWidth+'px';
-    document.body.appendChild(star);
-    starsArr.push(star);
+    const s=document.createElement('div');
+    s.className='star';
+    const size=Math.random()*2+1;
+    s.style.width=s.style.height=size+'px';
+    s.style.top=Math.random()*window.innerHeight+'px';
+    s.style.left=Math.random()*window.innerWidth+'px';
+    document.body.appendChild(s);
+    stars.push(s);
   }
 
   // Clouds
-  const cloudCount = 6;
-  const cloudsArr=[];
+  const cloudCount=8;
   for(let i=0;i<cloudCount;i++){
-    const cloud=document.createElement('div');
-    cloud.className='cloud';
-    cloud.style.top=(50 + Math.random()*250)+'px';
-    cloud.style.animationDuration=(35 + Math.random()*40)+'s';
-    document.body.appendChild(cloud);
-    cloudsArr.push(cloud);
+    const c=document.createElement('div');
+    c.className='cloud';
+    c.style.top=(50+Math.random()*250)+'px';
+    c.style.animationDuration=(35+Math.random()*40)+'s';
+    document.body.appendChild(c);
   }
 
   // Shooting stars
@@ -199,73 +176,54 @@
     star.className='shooting-star';
     star.style.top=Math.random()*200+'px';
     star.style.left=window.innerWidth+'px';
-    const duration=2 + Math.random()*1.5;
-    star.style.animationDuration=duration+'s';
+    const dur=1.2+Math.random()*0.8;
+    star.style.animationDuration=dur+'s';
     document.body.appendChild(star);
-    setTimeout(()=>{ star.remove(); }, duration*1000);
+    setTimeout(()=>{ star.remove(); }, dur*1000);
   }
-  const shootingInterval = setInterval(createShootingStar,1200);
+  setInterval(createShootingStar, 1200);
 
   // Message reveal
+  const msg="On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+  const messageDiv=document.getElementById("message");
   function revealMessage(){
-    const messageDiv = document.getElementById('message');
-    const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-    msg.split('').forEach((ch,i)=>{
+    let delay=0;
+    msg.split("").forEach((char,i)=>{
       const span=document.createElement('span');
       span.className='letter';
-      span.textContent = ch===' ' ? '\u00A0':ch;
-      span.style.animationDelay = `${i*0.05}s`;
+      span.textContent=char===' '?' ':char;
+      span.style.animationDelay=(0.05*i)+'s';
       messageDiv.appendChild(span);
     });
     messageDiv.style.opacity=1;
   }
 
-  // Moon movement
-  const moon=document.querySelector('.moon');
-  let moonPos=-150;
-  const moonSpeed=8; // Faster moon
-  let messageStarted=false;
-  const moonInterval=setInterval(()=>{
-    if(moonPos < window.innerWidth - 180){
-      moonPos += moonSpeed;
-      moon.style.left = moonPos+'px';
-      if(moonPos > 50 && !messageStarted){
-        messageStarted=true;
-        revealMessage();
-      }
-    } else {
-      clearInterval(moonInterval);
-      clickBtn.classList.add('float');
-    }
-  },16);
-
-  // Click button
+  // Click button reveal
   const clickBtn=document.getElementById('clickBtn');
-  const sun=document.querySelector('.sun');
+  const moon=document.querySelector('.moon');
   const spaceship=document.querySelector('.spaceship');
 
-  clickBtn.addEventListener('click',()=>{
-    // Hide moon and stars
-    moon.style.opacity=0;
-    starsArr.forEach(s=>s.remove());
-    clearInterval(shootingInterval);
-    document.querySelectorAll('.shooting-star').forEach(s=>s.remove());
+  function checkMoon(){
+    const rect=moon.getBoundingClientRect();
+    if(rect.left > window.innerWidth*0.75){
+      clickBtn.style.opacity=1;
+      clickBtn.classList.add('float');
+      revealMessage();
+      clearInterval(interval);
+    }
+  }
+  const interval=setInterval(checkMoon, 200);
 
-    // Hide message, spaceship and button
-    document.getElementById('message').style.opacity=0;
+  // Click button action
+  clickBtn.addEventListener('click',()=>{
+    // Day transition
+    document.body.style.background="linear-gradient(to top,#87ceeb,#a0d8ff 50%,#c0e4ff)";
+    // Remove stars
+    stars.forEach(s=>s.remove());
+    // Remove moon and spaceship
+    moon.style.opacity=0;
     spaceship.style.opacity=0;
     clickBtn.style.opacity=0;
-    clickBtn.style.pointerEvents='none';
-
-    // Day transition
-    document.body.style.background='linear-gradient(to top, #87ceeb, #a0d8ff, #d0f0ff)';
-    sun.style.top='50px';
-    sun.style.opacity=1;
-
-    // Clouds visibility
-    cloudsArr.forEach(c=>{
-      c.style.background='rgba(255,255,255,0.3)';
-    });
   });
 </script>
 </body>

@@ -43,7 +43,7 @@
     filter:blur(30px);
     box-shadow:0 0 60px rgba(255,255,255,0.1);
     animation:moveCloud linear infinite;
-    transition: background 4s ease, box-shadow 4s ease;
+    transition: background 4s ease, box-shadow 4s ease, transform 4s ease;
   }
   @keyframes moveCloud{
     0%{left:-300px;}
@@ -130,7 +130,7 @@
     100%{transform:translateX(-50%) translateY(0px);}
   }
 
-  /* Sun with realistic glow */
+  /* Sun with glow & rays */
   .sun {
     position:absolute;
     top:120%;
@@ -138,15 +138,18 @@
     transform:translateX(-50%);
     width:150px;
     height:150px;
-    background: radial-gradient(circle, #fffbba 0%, #ffcc33 80%);
+    background: radial-gradient(circle, #fff7c0 0%, #ffcc33 80%);
     border-radius:50%;
     opacity:0;
-    box-shadow:0 0 100px 40px rgba(255,240,180,0.5),0 0 150px 80px rgba(255,220,120,0.2);
+    box-shadow:
+      0 0 100px 40px rgba(255,240,180,0.5),
+      0 0 150px 80px rgba(255,220,120,0.2),
+      0 0 250px 150px rgba(255,200,100,0.1);
     transition:top 4s ease, opacity 4s ease;
     z-index:2;
   }
 
-  /* Realistic Sky Gradient for Day */
+  /* Day Sky */
   .day-sky {
     position:absolute;
     top:0;
@@ -159,7 +162,7 @@
     z-index:0;
   }
 
-  /* Haze overlay */
+  /* Haze */
   .haze {
     position:absolute;
     top:0;
@@ -170,6 +173,12 @@
     pointer-events:none;
     z-index:1;
     transition:opacity 4s ease;
+  }
+
+  /* Cloud color gradient for realistic sunlight */
+  .day-cloud {
+    background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.6), rgba(255,255,255,0.3) 70%);
+    box-shadow:0 0 100px rgba(255,255,255,0.3);
   }
 </style>
 </head>
@@ -210,6 +219,16 @@
     cloudsArr.push(cloud);
   }
 
+  // Cloud parallax movement (subtle vertical float)
+  function animateClouds(){
+    cloudsArr.forEach((c,i)=>{
+      const floatY = Math.sin(Date.now()/5000 + i)*10;
+      c.style.transform = `translateY(${floatY}px)`;
+    });
+    requestAnimationFrame(animateClouds);
+  }
+  animateClouds();
+
   // Shooting stars
   function createShootingStar(){
     const star=document.createElement('div');
@@ -229,7 +248,7 @@
   }
   const shootingInterval = setInterval(createShootingStar,1200);
 
-  // Message reveal
+  // Birthday message
   function revealMessage(){
     const messageDiv = document.getElementById('message');
     const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
@@ -269,7 +288,7 @@
   const haze=document.querySelector('.haze');
 
   clickBtn.addEventListener('click',()=>{
-    // Hide night elements
+    // Remove night elements
     moon.style.opacity=0;
     starsArr.forEach(s=>s.remove());
     clearInterval(shootingInterval);
@@ -285,14 +304,13 @@
     sun.style.top='80px';
     sun.style.opacity=1;
 
-    // Brighten clouds
+    // Clouds brighter with sunlight reflection
     cloudsArr.forEach(c=>{
-      c.style.background='rgba(255,255,255,0.4)';
-      c.style.boxShadow='0 0 80px rgba(255,255,255,0.2)';
+      c.classList.add('day-cloud');
     });
 
-    // Reduce haze for day
-    haze.style.opacity=0.05;
+    // Reduce haze
+    haze.style.opacity=0.02;
   });
 </script>
 </body>

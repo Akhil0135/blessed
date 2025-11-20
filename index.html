@@ -1,270 +1,127 @@
+Project structure ready to paste into GitHub:
+
+realistic_train_animation/
+├── index.html
+├── app.js
+├── assets/
+│   └── train.glb  (placeholder for realistic train model)
+└── README.md
+
+---
+
+### index.html
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Scene</title>
-<style>
-  body, html {
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    font-family:'Cinzel', serif;
-    background:#000010; /* Deep night */
-    transition: background 4s ease;
-  }
-
-  /* Stars */
-  .star {
-    position:absolute;
-    width:2px;
-    height:2px;
-    background:#fff;
-    border-radius:50%;
-    opacity:0.5;
-    box-shadow:0 0 6px rgba(255,255,255,0.9);
-    animation:twinkle 2.5s infinite alternate;
-  }
-  @keyframes twinkle{
-    0%{opacity:0.2; transform:scale(1);}
-    50%{opacity:0.95; transform:scale(1.5);}
-    100%{opacity:0.2; transform:scale(1);}
-  }
-
-  /* Clouds with glow */
-  .cloud {
-    position:absolute;
-    width:250px;
-    height:100px;
-    background:rgba(255,255,255,0.05);
-    border-radius:50%;
-    filter:blur(30px);
-    box-shadow:0 0 60px rgba(255,255,255,0.1);
-    animation:moveCloud linear infinite;
-  }
-  @keyframes moveCloud{
-    0%{left:-300px;}
-    100%{left:110%;}
-  }
-
-  /* Moon with cinematic glow */
-  .moon {
-    position:absolute;
-    width:140px;
-    height:140px;
-    background: radial-gradient(circle,#fffde6 0%,#f3e4b0 60%,#d9c180 100%);
-    border-radius:50%;
-    top:80px;
-    left:-150px;
-    box-shadow:0 0 50px 20px rgba(255,255,220,0.4);
-    transition:opacity 2s ease;
-  }
-
-  /* Shooting Stars */
-  .shooting-star {
-    position:absolute;
-    width:8px;
-    height:3px;
-    background:linear-gradient(0deg, rgba(255,255,255,0), #fff);
-    border-radius:50%;
-    transform-origin:top left;
-    opacity:0;
-    animation:shoot 2.5s linear forwards;
-  }
-  @keyframes shoot{
-    0%{transform:translate(0,0) rotate(-45deg); opacity:1;}
-    100%{transform:translate(-80vw,80vh) rotate(-45deg); opacity:0;}
-  }
-
-  /* Message */
-  #message {
-    position:absolute;
-    top:65%;
-    width:100%;
-    text-align:center;
-    font-size:28px;
-    color:#f9e9c9;
-    opacity:0;
-    letter-spacing:3px;
-    text-shadow: 2px 2px 12px rgba(0,0,0,0.7);
-  }
-  .letter {
-    opacity:0;
-    display:inline-block;
-    animation:revealLetter 0.4s forwards;
-  }
-  @keyframes revealLetter{
-    0%{opacity:0; transform:translateY(10px);}
-    100%{opacity:1; transform:translateY(0);}
-  }
-
-  /* Click Button */
-  #clickBtn {
-    position:absolute;
-    bottom:12vh;
-    left:50%;
-    transform:translateX(-50%);
-    padding:14px 34px;
-    font-size:20px;
-    font-family:'Cinzel', serif;
-    background:rgba(255,255,255,0.12);
-    border:1px solid rgba(255,255,255,0.3);
-    border-radius:40px;
-    color:#fff;
-    cursor:pointer;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 1s ease, transform 0.5s ease;
-  }
-  #clickBtn.float{
-    opacity:1;
-    pointer-events:auto;
-    animation:btnFloat 3s ease-in-out infinite;
-  }
-  @keyframes btnFloat{
-    0%{transform:translateX(-50%) translateY(0px);}
-    50%{transform:translateX(-50%) translateY(-6px);}
-    100%{transform:translateX(-50%) translateY(0px);}
-  }
-
-  /* Sun */
-  .sun {
-    position:absolute;
-    top:-100px;
-    left:50%;
-    transform:translateX(-50%);
-    width:150px;
-    height:150px;
-    background: radial-gradient(circle,#ffb347 0%,#ffcc33 80%);
-    border-radius:50%;
-    opacity:0;
-    box-shadow:0 0 60px #ffde7a;
-    transition:top 4s ease, opacity 4s ease;
-  }
-
-  /* Haze overlay for cinematic depth */
-  .haze {
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 80%);
-    pointer-events:none;
-    z-index:1;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Realistic Train Animation</title>
+  <style>
+    body { margin:0; overflow:hidden; }
+    canvas { display:block; }
+  </style>
 </head>
 <body>
-
-<div id="stars"></div>
-<div id="clouds"></div>
-<div class="moon"></div>
-<div class="haze"></div>
-
-<div id="message"></div>
-<button id="clickBtn">Click Here</button>
-<div class="sun"></div>
-
-<script>
-  // Stars
-  const starCount = 180;
-  const starsArr = [];
-  for(let i=0;i<starCount;i++){
-    const star=document.createElement('div');
-    star.className='star';
-    star.style.top=Math.random()*window.innerHeight+'px';
-    star.style.left=Math.random()*window.innerWidth+'px';
-    document.body.appendChild(star);
-    starsArr.push(star);
-  }
-
-  // Clouds
-  const cloudCount = 6;
-  const cloudsArr=[];
-  for(let i=0;i<cloudCount;i++){
-    const cloud=document.createElement('div');
-    cloud.className='cloud';
-    cloud.style.top=(50 + Math.random()*250)+'px';
-    cloud.style.animationDuration=(35 + Math.random()*40)+'s';
-    document.body.appendChild(cloud);
-    cloudsArr.push(cloud);
-  }
-
-  // Shooting stars
-  function createShootingStar(){
-    const star=document.createElement('div');
-    star.className='shooting-star';
-    star.style.top=Math.random()*200+'px';
-    star.style.left=window.innerWidth+'px';
-    const duration=2 + Math.random()*1.5;
-    star.style.animationDuration=duration+'s';
-    document.body.appendChild(star);
-    setTimeout(()=>{ star.remove(); }, duration*1000);
-  }
-  const shootingInterval = setInterval(createShootingStar,1200);
-
-  // Message reveal
-  function revealMessage(){
-    const messageDiv = document.getElementById('message');
-    const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-    msg.split('').forEach((ch,i)=>{
-      const span=document.createElement('span');
-      span.className='letter';
-      span.textContent = ch===' ' ? '\u00A0':ch;
-      span.style.animationDelay = `${i*0.05}s`;
-      messageDiv.appendChild(span);
-    });
-    messageDiv.style.opacity=1;
-  }
-
-  // Moon movement
-  const moon=document.querySelector('.moon');
-  let moonPos=-150;
-  const moonSpeed=6; 
-  let messageStarted=false;
-  const moonInterval=setInterval(()=>{
-    if(moonPos < window.innerWidth - 180){
-      moonPos += moonSpeed;
-      moon.style.left = moonPos+'px';
-      if(moonPos > 50 && !messageStarted){
-        messageStarted=true;
-        revealMessage();
-      }
-    } else {
-      clearInterval(moonInterval);
-      clickBtn.classList.add('float');
-    }
-  },16);
-
-  // Click button
-  const clickBtn=document.getElementById('clickBtn');
-  const sun=document.querySelector('.sun');
-
-  clickBtn.addEventListener('click',()=>{
-    // Hide moon and stars
-    moon.style.opacity=0;
-    starsArr.forEach(s=>s.remove());
-    clearInterval(shootingInterval);
-    document.querySelectorAll('.shooting-star').forEach(s=>s.remove());
-
-    // Hide message and button
-    document.getElementById('message').style.opacity=0;
-    clickBtn.style.opacity=0;
-    clickBtn.style.pointerEvents='none';
-
-    // Day transition
-    document.body.style.background='linear-gradient(to top, #87ceeb, #a0d8ff, #d0f0ff)';
-    sun.style.top='50px';
-    sun.style.opacity=1;
-
-    // Clouds visibility
-    cloudsArr.forEach(c=>{
-      c.style.background='rgba(255,255,255,0.3)';
-    });
-  });
-</script>
+  <script src="https://unpkg.com/three@0.181.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.181.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.181.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
+```
+
+### app.js
+```js
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xaaaaaa);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0, 10, 30);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0,2,0);
+controls.update();
+
+const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
+hemiLight.position.set(0,50,0);
+scene.add(hemiLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff,0.8);
+dirLight.position.set(-10,20,10);
+dirLight.castShadow = true;
+scene.add(dirLight);
+
+const groundGeo = new THREE.PlaneGeometry(200,200);
+const groundMat = new THREE.MeshStandardMaterial({color:0x888888});
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI/2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const trackCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-20,0,-20),
+  new THREE.Vector3(0,0,0),
+  new THREE.Vector3(20,0,20),
+  new THREE.Vector3(40,0,0),
+  new THREE.Vector3(60,0,-20),
+]);
+const points = trackCurve.getPoints(200);
+const trackGeo = new THREE.BufferGeometry().setFromPoints(points);
+const trackMat = new THREE.LineBasicMaterial({color:0x000000});
+const trackLine = new THREE.Line(trackGeo, trackMat);
+scene.add(trackLine);
+
+let train;
+const loader = new THREE.GLTFLoader();
+loader.load('assets/train.glb', gltf => {
+  train = gltf.scene;
+  train.scale.set(1,1,1);
+  train.traverse(child => { if(child.isMesh) child.castShadow = true; });
+  scene.add(train);
+  train.position.copy(points[0]);
+});
+
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  if(train){
+    t += 0.0005; 
+    if(t > 1) t = 0;
+    const pos = trackCurve.getPointAt(t);
+    train.position.copy(pos);
+
+    const tangent = trackCurve.getTangentAt(t).normalize();
+    const up = new THREE.Vector3(0,1,0);
+    train.quaternion.setFromUnitVectors(up, tangent);
+  }
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+```
+
+### README.md
+```markdown
+# Realistic Train Animation
+
+A starter project to animate a realistic train along a curved track using Three.js.
+
+## Structure
+- `index.html` – Main HTML file
+- `app.js` – Animation & Three.js logic
+- `assets/train.glb` – Placeholder for 3D train model
+
+## Usage
+1. Place a realistic GLB train model in `assets/train.glb`.
+2. Open `index.html` in a browser.
+3. Adjust curve points, train speed, or camera as needed.

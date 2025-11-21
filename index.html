@@ -108,6 +108,40 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 }
 #clickBtn:active{ transform:translateX(-50%) scale(0.96); }
 
+/* ---------- CHRISTIAN CROSS ---------- */
+#cross{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%) scale(0);
+  width:40px;
+  height:100px;
+  background:#fff;
+  z-index:1001;
+  border-radius:4px;
+  opacity:0;
+  box-shadow: 0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.3);
+}
+#cross::before{
+  content:"";
+  position:absolute;
+  left:-30px;
+  top:35px;
+  width:100px;
+  height:30px;
+  background:#fff;
+  border-radius:4px;
+}
+
+/* ---------- Cross Animation ---------- */
+.showCross{
+  animation:crossReveal 2s forwards;
+}
+@keyframes crossReveal{
+  0%{opacity:0; transform:translate(-50%,-50%) scale(0);}
+  60%{opacity:1; transform:translate(-50%,-50%) scale(1.2);}
+  100%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+}
 </style>
 </head>
 <body>
@@ -128,6 +162,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 <div id="message"></div>
 
 <button id="clickBtn">CLICK HERE</button>
+<div id="cross"></div>
 
 <script>
 // ====== Stars ======
@@ -172,6 +207,8 @@ const moon=document.getElementById('moon');
 const messageEl=document.getElementById('message');
 const sun=document.getElementById('sun'); 
 const sunRings=document.getElementById('sunRings');
+const clickBtn=document.getElementById('clickBtn');
+const cross=document.getElementById('cross');
 
 const text="On this calm birthday eve so new, God softly whispers, my plans are made for you.";
 messageEl.innerHTML='';
@@ -184,85 +221,12 @@ text.split('').forEach((ch)=>{
   messageEl.appendChild(span);
 });
 
-let progress = 0;
-let isDragging = false;
-let startX;
-let dayLocked = false;
-
-moon.addEventListener('pointerdown', e=>{
-  if(dayLocked) return;
-  isDragging=true;
-  startX=e.clientX;
+// ====== Click button reveals cross ======
+clickBtn.addEventListener('click',()=>{
+  clickBtn.style.display='none';
+  cross.classList.add('showCross');
 });
-document.addEventListener('pointermove', e=>{
-  if(!isDragging || dayLocked) return;
-  let dx=e.clientX - startX;
-  startX=e.clientX;
-  progress += dx/window.innerWidth;
-  progress=Math.min(Math.max(progress,0),1);
-  if(progress >= 1) dayLocked = true;
-  updateScene(progress);
-});
-document.addEventListener('pointerup', e=>{isDragging=false;});
 
-// ====== Particles ======
-const particlesContainer=document.getElementById('particles');
-for(let i=0;i<60;i++){
-  const p=document.createElement('div'); p.className='particle';
-  resetParticle(p,true); particlesContainer.appendChild(p);
-}
-function resetParticle(p,initial=false){
-  const scale=0.4+Math.random()*0.9;
-  p.style.left=(Math.random()*100)+'%'; p.style.bottom=(initial?Math.random()*-60:0)+'px';
-  p.style.width=(2+Math.random()*4)+'px'; p.style.height=p.style.width;
-  p.style.opacity=(0.2+Math.random()*0.9); p.style.transform=`scale(${scale})`;
-  const dur=8000+Math.random()*14000;
-  p.animate([{transform:`translateY(0) scale(${scale})`,opacity:p.style.opacity},{transform:`translateY(-140vh) scale(${scale*0.6})`,opacity:0}],{duration:dur,iterations:1,easing:'linear'}).onfinish=()=>resetParticle(p);
-}
-
-// ====== Update Scene & Message ======
-const clickBtn = document.getElementById('clickBtn');
-function updateMessage(progress){
-  const letters=document.querySelectorAll('.letter');
-  const count=Math.floor(progress*letters.length);
-  letters.forEach((l,i)=>{
-    if(i<count){ l.style.opacity='1'; l.style.transform='translateY(0)'; }
-    else{ l.style.opacity='0'; l.style.transform='translateY(8px)'; }
-  });
-  if(count >= letters.length){ clickBtn.style.display = 'block'; }
-}
-function updateScene(progress){
-  moon.style.transform=`rotate(${progress*360}deg)`;
-  moon.style.opacity=1-progress;
-  document.querySelectorAll('.star').forEach((s,i)=>{
-    const fade=Math.max(0, 0.5*(1-progress)-Math.random()*0.05);
-    s.style.opacity=fade;
-    s.style.animation=fade<0.05 ? 'none' : 'twinkle 2.6s infinite alternate';
-  });
-  document.querySelectorAll('.shooting-star').forEach(s=>{ s.style.opacity = Math.max(0, 1-progress - Math.random()*0.1); });
-  sun.style.top=(-220 + 280*progress)+'px';
-  sun.style.opacity=progress;
-  sunRings.style.opacity=progress;
-  document.getElementById('godrays').style.opacity = progress;
-  document.getElementById('lowFog').style.opacity = 0.7*(1-progress) + 0.25*progress;
-  const skyTop = 135 + 71*progress; 
-  const skyBottom = 208 + 47*progress;
-  document.body.style.background = `linear-gradient(to top, rgb(${skyTop},${skyTop+30},${skyTop+50}), rgb(${skyBottom},${skyBottom+30},${skyBottom+50}))`;
-  document.querySelectorAll('.cloud-blob').forEach(c=>{
-    const ox=Math.sin(progress*12 + parseFloat(c.style.left)/30)*4;
-    const oy=Math.cos(progress*12 + parseFloat(c.style.top)/20)*2;
-    c.style.background=`radial-gradient(circle at ${35+ox}% ${35+oy}%, rgba(255,255,255,${0.98-progress*0.7}) 0%, rgba(255,255,255,${0.86-progress*0.7}) 25%, rgba(255,255,255,${0.6-progress*0.5}) 50%, rgba(255,200,255,${0.15-progress*0.15}) 80%, rgba(255,255,255,0) 100%)`;
-  });
-  updateMessage(progress);
-}
-
-// ====== Scene Animation ======
-(function animateScene(){
-  const t=performance.now()/1000;
-  document.getElementById('cloudLayer').style.transform=`translateY(${Math.sin(t/18)*6}px)`;
-  document.querySelector('.grade').style.opacity=0.96+Math.sin(t/6)*0.02;
-  requestAnimationFrame(animateScene);
-})();
 </script>
 </body>
 </html>

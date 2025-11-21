@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cinematic Night → Day Ultra</title>
+<title>Cinematic Ultra Scene</title>
 <style>
 html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
 :root{
@@ -25,6 +25,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 
 /* ---------- Moon ---------- */
 .moon{position:absolute;width:150px;height:150px;border-radius:50%;top:60px;left:-180px;background:radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);box-shadow:0 0 120px rgba(255,245,200,0.55);z-index:6;transition:opacity .8s linear;}
+.moon-flare{position:absolute;width:250px;height:250px;border-radius:50%;top:-50px;left:-50px;background:radial-gradient(circle, rgba(255,245,200,0.15), rgba(255,245,200,0) 70%);filter:blur(50px);pointer-events:none;z-index:5;}
 
 /* ---------- Clouds ---------- */
 .cloud-layer{position:absolute;top:0;left:-20%;width:140%;height:60%;pointer-events:none;z-index:5;mix-blend-mode:screen;}
@@ -61,9 +62,8 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 </style>
 </head>
 <body>
-
 <div id="stars"></div>
-<div class="moon" id="moon"></div>
+<div class="moon" id="moon"><div class="moon-flare"></div></div>
 <div class="cloud-layer" id="cloudLayer">
   <div class="cloud-group back" id="cloudBack"></div>
   <div class="cloud-group mid" id="cloudMid"></div>
@@ -80,10 +80,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 <button id="clickBtn">Click Here</button>
 
 <script>
-// ---------- Utils ----------
-const rnd=(a,b)=>a+Math.random()*(b-a);
-
-// ---------- Stars ----------
+// ====== Stars ======
 const starsEl=document.getElementById('stars');
 for(let i=0;i<300;i++){
   const s=document.createElement('div'); s.className='star';
@@ -92,19 +89,19 @@ for(let i=0;i<300;i++){
   starsEl.appendChild(s);
 }
 
-// ---------- Shooting Stars ----------
+// ====== Shooting Stars ======
 function spawnShooting(){
   const s=document.createElement('div'); s.className='shooting-star';
-  const top=rnd(5,40); s.style.top=top+'vh'; s.style.left='110%';
+  s.style.top=(5+Math.random()*40)+'vh'; s.style.left='110%';
   s.style.transform=`rotate(${ -20 - Math.random()*40 }deg)`; s.style.opacity='1';
   document.body.appendChild(s);
-  const dur=rnd(900,1600);
+  const dur=900+Math.random()*700;
   s.animate([{transform:`translateX(0) translateY(0)`,opacity:1},{transform:`translateX(-120vw) translateY(80vh)`,opacity:0}],{duration:dur,easing:'cubic-bezier(.2,.6,.2,1)'});
   setTimeout(()=>s.remove(),dur+50);
 }
 let shootingInterval=setInterval(spawnShooting,800 + Math.random()*1000);
 
-// ---------- Clouds ----------
+// ====== Clouds ======
 function makeCloudBlob(container,leftPct,topPct,w,h,opacity=1){
   const b=document.createElement('div'); b.className='cloud-blob';
   b.style.left=leftPct+'%'; b.style.top=topPct+'%';
@@ -114,15 +111,14 @@ function makeCloudBlob(container,leftPct,topPct,w,h,opacity=1){
 function populateClouds(){
   const back=document.getElementById('cloudBack'), mid=document.getElementById('cloudMid'), front=document.getElementById('cloudFront');
   [back,mid,front].forEach(el=>el.innerHTML='');
-  for(let i=0;i<5;i++) makeCloudBlob(back,rnd(-40,120),rnd(-5,40),rnd(700,1200),rnd(260,420),rnd(0.35,0.7));
-  for(let i=0;i<10;i++) makeCloudBlob(mid,rnd(-30,120),rnd(5,50),rnd(380,760),rnd(160,260),rnd(0.45,0.9));
-  for(let i=0;i<15;i++) makeCloudBlob(front,rnd(-10,120),rnd(12,65),rnd(160,440),rnd(90,180),rnd(0.5,1));
+  for(let i=0;i<5;i++) makeCloudBlob(back,Math.random()*160-40,Math.random()*45-5,700+Math.random()*500,260+Math.random()*160,Math.random()*0.35+0.35);
+  for(let i=0;i<10;i++) makeCloudBlob(mid,Math.random()*150-30,Math.random()*45+5,380+Math.random()*380,160+Math.random()*100,Math.random()*0.45+0.45);
+  for(let i=0;i<15;i++) makeCloudBlob(front,Math.random()*130-10,Math.random()*53+12,160+Math.random()*280,90+Math.random()*90,Math.random()*0.5+0.5);
 }
 populateClouds();
 
-// ---------- Moon + Message + Button ----------
-const moon=document.getElementById('moon'); let moonX=-200;
-const moonSpeed=Math.max(window.innerWidth/800,4); let messageShown=false;
+// ====== Moon & Message ======
+const moon=document.getElementById('moon'); let moonX=-200; let messageShown=false;
 const messageEl=document.getElementById('message'); const clickBtn=document.getElementById('clickBtn');
 function revealMessage(){
   if(messageEl.dataset.revealed) return; messageEl.dataset.revealed='1';
@@ -134,27 +130,27 @@ function revealMessage(){
 }
 let moonAnim=setInterval(()=>{
   if(moonX<window.innerWidth-180){
-    moonX+=moonSpeed; moon.style.left=moonX+'px';
+    moonX+=Math.max(window.innerWidth/800,4); moon.style.left=moonX+'px';
     if(moonX>60 && !messageShown){messageShown=true; revealMessage();}
   }else clearInterval(moonAnim);
 },16);
 
-// ---------- Particles ----------
+// ====== Particles ======
 const particlesContainer=document.getElementById('particles');
 for(let i=0;i<60;i++){
   const p=document.createElement('div'); p.className='particle';
   resetParticle(p,true); particlesContainer.appendChild(p);
 }
 function resetParticle(p,initial=false){
-  const left=rnd(0,100), bottom=rnd(-20,100), scale=rnd(.4,1.3);
-  p.style.left=left+'%'; p.style.bottom=bottom+'px';
+  const scale=0.4+Math.random()*0.9;
+  p.style.left=(Math.random()*100)+'%'; p.style.bottom=(initial?Math.random()*-60:0)+'px';
   p.style.width=(2+Math.random()*4)+'px'; p.style.height=p.style.width;
-  p.style.opacity=(0.2+Math.random()*0.9); p.style.transform=`translateY(${initial?rnd(0,-60):0}px) scale(${scale})`;
-  const dur=rnd(8000,22000);
-  p.animate([{transform:`translateY(${rnd(0,20)}px) scale(${scale})`,opacity:p.style.opacity},{transform:`translateY(-140vh) scale(${scale*0.6})`,opacity:0}],{duration:dur,iterations:1,easing:'linear'}).onfinish=()=>resetParticle(p);
+  p.style.opacity=(0.2+Math.random()*0.9); p.style.transform=`scale(${scale})`;
+  const dur=8000+Math.random()*14000;
+  p.animate([{transform:`translateY(0) scale(${scale})`,opacity:p.style.opacity},{transform:`translateY(-140vh) scale(${scale*0.6})`,opacity:0}],{duration:dur,iterations:1,easing:'linear'}).onfinish=()=>resetParticle(p);
 }
 
-// ---------- Click Button Day Transition ----------
+// ====== Click Button & Day Transition ======
 clickBtn.addEventListener('click',()=>{
   clickBtn.style.opacity='0'; clickBtn.style.pointerEvents='none';
   document.querySelectorAll('.star').forEach(s=>{s.animate([{opacity:s.style.opacity||1},{opacity:0}],{duration:1200,fill:'forwards'});setTimeout(()=>s.remove(),1300);});
@@ -168,12 +164,11 @@ clickBtn.addEventListener('click',()=>{
   messageEl.animate([{opacity:1},{opacity:0}],{duration:900,fill:'forwards'}); setTimeout(()=>messageEl.style.opacity='0',900);
 });
 
-// ---------- Animate Clouds & Glow ----------
+// ====== Scene Animation ======
 (function animateScene(){
   const t=performance.now()/1000;
   document.getElementById('cloudLayer').style.transform=`translateY(${Math.sin(t/18)*6}px)`;
   document.querySelector('.grade').style.opacity=0.96+Math.sin(t/6)*0.02;
-  // Cloud highlights
   document.querySelectorAll('.cloud-blob').forEach(c=>{
     const ox=Math.sin(t/12 + parseFloat(c.style.left)/30)*4;
     const oy=Math.cos(t/12 + parseFloat(c.style.top)/20)*2;

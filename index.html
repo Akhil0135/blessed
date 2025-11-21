@@ -22,7 +22,7 @@
     height:100%;
     top:0;
     left:0;
-    pointerEvents:none;
+    pointer-events:none; /* FIXED: CSS property must be hyphenated */
     overflow:hidden;
   }
 
@@ -31,14 +31,14 @@
     width:600px;
     height:300px;
     background:radial-gradient(circle at 40% 40%, rgba(255,255,255,0.25), rgba(255,255,255,0.04) 60%, transparent 100%);
-    filter:blur(35px) brightness(1.2);
+    filter: blur(35px) brightness(1.2); /* spaces between filters */
     opacity:0.45;
     border-radius:50%;
     animation:cloudDrift linear infinite;
   }
 
-  .cloud.xl { width:900px; height:420px; opacity:0.35; filter:blur(45px); }
-  .cloud.sm { width:450px; height:220px; opacity:0.5; filter:blur(30px); }
+  .cloud.xl { width:900px; height:420px; opacity:0.35; filter: blur(45px); }
+  .cloud.sm { width:450px; height:220px; opacity:0.5; filter: blur(30px); }
 
   @keyframes cloudDrift {
     0% { transform:translateX(-900px); }
@@ -53,10 +53,11 @@
     top:0;
     left:0;
     background:rgba(0,0,0,0.25);
-    filter:blur(60px);
+    filter: blur(60px);
     opacity:0.15;
     border-radius:50%;
     animation:shadowDrift linear infinite;
+    pointer-events:none;
   }
 
   @keyframes shadowDrift {
@@ -65,6 +66,7 @@
   }
 
   /* STARS */
+  #stars { position:absolute; inset:0; pointer-events:none; }
   .star {
     position:absolute;
     width:2px;
@@ -93,6 +95,7 @@
     top:90px;
     left:-200px;
     transition:opacity 2s ease;
+    pointer-events:none;
   }
 
   /* MESSAGE */
@@ -105,6 +108,7 @@
     color:#f3dfc7;
     text-shadow:2px 2px 15px black;
     opacity:0;
+    pointer-events:none;
   }
 
   .letter {
@@ -148,25 +152,29 @@
 <div class="cloud-layer" id="cloudLayer"></div>
 <div class="cloud-layer" id="cloudShadows"></div>
 
-<div class="moon"></div>
+<div class="moon" id="moon"></div>
 <div id="message"></div>
 <button id="clickBtn">Click Here</button>
 
 <script>
 /* STAR GENERATION */
+const starsContainer = document.getElementById('stars');
 for(let i=0;i<180;i++){
   const s=document.createElement('div');
   s.className='star';
-  s.style.top=Math.random()*window.innerHeight+'px';
-  s.style.left=Math.random()*window.innerWidth+'px';
-  document.getElementById('stars').appendChild(s);
+  s.style.top=Math.random()*100 + '%';
+  s.style.left=Math.random()*100 + '%';
+  s.style.opacity = (0.2 + Math.random()*0.9).toString();
+  s.style.transform = `scale(${0.6 + Math.random()*1.4})`;
+  starsContainer.appendChild(s);
 }
 
 /* CLOUD GENERATION */
 function createCloud(type){
   const c=document.createElement('div');
   c.className='cloud ' + type;
-  c.style.top = 50 + Math.random()*250 + 'px';
+  // random vertical placement within upper half for cinematic layering
+  c.style.top = (20 + Math.random()*35) + '%';
   c.style.animationDuration = (70 + Math.random()*60) + 's';
   document.getElementById('cloudLayer').appendChild(c);
 }
@@ -178,7 +186,7 @@ for(let i=0;i<4;i++) createCloud('sm');
 function createShadow(){
   const c=document.createElement('div');
   c.className='cloud-shadow';
-  c.style.top = 100 + Math.random()*220 + 'px';
+  c.style.top = (30 + Math.random()*40) + '%';
   c.style.animationDuration = (90 + Math.random()*70) + 's';
   document.getElementById('cloudShadows').appendChild(c);
 }
@@ -192,7 +200,7 @@ function revealMessage(){
   m.innerHTML='';
   msg.split('').forEach((ch,i)=>{
     const span=document.createElement('span');
-    span.textContent = ch===' ' ? ' ' : ch;
+    span.textContent = ch===' ' ? '\u00A0' : ch;
     span.className='letter';
     span.style.animationDelay = (i*0.05)+'s';
     m.appendChild(span);
@@ -201,10 +209,12 @@ function revealMessage(){
 }
 
 /* MOON EASING MOVEMENT */
-const moon=document.querySelector('.moon');
-let moonX=-200;
-let t=0;
-const moonStop = window.innerWidth*0.75;
+const moon = document.getElementById('moon');
+let moonX = -200;
+let t = 0;
+const moonStop = window.innerWidth * 0.75;
+const clickBtn = document.getElementById('clickBtn'); // FIXED: define button element reference
+let revealed = false;
 
 function easeOutCubic(x){ return 1 - Math.pow(1-x,3); }
 
@@ -212,20 +222,37 @@ function animateMoon(){
   if(t < 1){
     t += 0.0035;
     const eased = easeOutCubic(t);
-    moonX = -200 + (moonStop + 200) * eased;
+    moonX = -200 + ( (moonStop + 200) * eased );
     moon.style.left = moonX + 'px';
 
-    if(moonX > 60 && !revealed){ revealed=true; revealMessage(); }
+    if(moonX > 60 && !revealed){
+      revealed=true;
+      revealMessage();
+    }
 
     requestAnimationFrame(animateMoon);
   } else {
-    clickBtn.style.opacity=1;
-    clickBtn.style.pointer-events='auto';
+    // show button and enable pointer events correctly via JS camelCase
+    clickBtn.style.opacity = '1';
+    clickBtn.style.pointerEvents = 'auto'; // FIXED: correct JS property
   }
 }
 
-let revealed=false;
 animateMoon();
+
+/* Optional: clicking the button can trigger a simple day transition (example) */
+clickBtn.addEventListener('click', () => {
+  // Simple daytime visual change: fade out stars & lift background
+  document.querySelectorAll('.star').forEach(s => s.style.opacity = '0');
+  moon.style.opacity = '0';
+  // bring clouds forward faster for daytime feel
+  document.querySelectorAll('.cloud').forEach(c => c.style.filter = 'blur(8px) brightness(1.05)');
+  // hide message
+  document.getElementById('message').style.opacity = '0';
+  // keep button usable or hide as desired
+  clickBtn.style.pointerEvents = 'none';
+  clickBtn.style.opacity = '0.6';
+});
 </script>
 </body>
 </html>

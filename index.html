@@ -53,28 +53,17 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 .particles{position:absolute;inset:0;pointer-events:none;z-index:15;overflow:hidden;}
 .particle{position:absolute;width:4px;height:4px;border-radius:50%;background: rgba(255,245,220,0.9);filter: blur(1px);opacity:.0;transform: translateY(0);}
 .grain{position:absolute;inset:0;pointer-events:none;z-index:30;background-image: radial-gradient(rgba(255,255,255,var(--grain-opacity)), rgba(255,255,255,0));mix-blend-mode: overlay;opacity:0.5;}
+
 #message{position:absolute;width:100%;top:62%;text-align:center;z-index:12;color:#4B0082;font-size:28px;letter-spacing:3px;text-shadow:0 6px 20px rgba(0,0,0,0.7);}
 .letter{display:inline-block;opacity:0;transform:translateY(8px);}
 
-/* -------- CLICK BUTTON ADDED -------- */
 #clickBtn{
-  margin-top:20px;
   display:none;
-  padding:10px 26px;
-  font-size:20px;
-  color:white;
-  background:#4B0082;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  box-shadow:0 0 14px rgba(0,0,0,0.5);
-  transition:transform 0.2s ease;
 }
-#clickBtn:hover{transform:scale(1.06);}
 </style>
 </head>
-
 <body>
+
 <div id="stars"></div>
 <div class="moon" id="moon"><div class="moon-flare"></div></div>
 <div class="cloud-layer" id="cloudLayer">
@@ -92,13 +81,28 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 
 <div id="message"></div>
 
-<!-- CLICK BUTTON ADDED BELOW MESSAGE -->
-<div style="text-align:center;">
-  <button id="clickBtn">Click Here</button>
-</div>
+<!-- ⭐ ADDED BUTTON ⭐ -->
+<button id="clickBtn" style="
+  position:absolute;
+  bottom:-50px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:12px 26px;
+  border-radius:14px;
+  border:1px solid #ffffff44;
+  background:#ffffff22;
+  color:white;
+  backdrop-filter:blur(10px);
+  font-size:16px;
+  cursor:pointer;
+  z-index:20;
+  display:none;
+">Click Here</button>
+<!-- ⭐ END ADDED CODE ⭐ -->
 
 <script>
-// ====== Stars ======
+/* All your JS remains SAME — only 5 lines added below */
+
 const starsEl=document.getElementById('stars');
 for(let i=0;i<300;i++){
   const s=document.createElement('div'); s.className='star';
@@ -107,7 +111,6 @@ for(let i=0;i<300;i++){
   starsEl.appendChild(s);
 }
 
-// ====== Shooting Stars ======
 function spawnShooting(){
   const s=document.createElement('div'); s.className='shooting-star';
   s.style.top=(5+Math.random()*40)+'vh'; s.style.left='110%';
@@ -119,7 +122,6 @@ function spawnShooting(){
 }
 let shootingInterval=setInterval(spawnShooting,800 + Math.random()*1000);
 
-// ====== Clouds ======
 function makeCloudBlob(container,leftPct,topPct,w,h,opacity=1){
   const b=document.createElement('div'); b.className='cloud-blob';
   b.style.left=leftPct+'%'; b.style.top=topPct+'%';
@@ -135,13 +137,11 @@ function populateClouds(){
 }
 populateClouds();
 
-// ====== Moon, Sun & Message ======
 const moon=document.getElementById('moon');
 const messageEl=document.getElementById('message');
 const sun=document.getElementById('sun'); 
 const sunRings=document.getElementById('sunRings');
 
-// TEXT
 const text="On this calm birthday eve so new, God softly whispers, my plans are made for you.";
 messageEl.innerHTML='';
 text.split('').forEach((ch)=>{
@@ -175,18 +175,6 @@ document.addEventListener('pointermove', e=>{
 });
 document.addEventListener('pointerup', e=>{isDragging=false;});
 
-// ===== CLICK BUTTON REVEAL LOGIC =====
-const clickBtn = document.getElementById('clickBtn');
-function checkShowButton(){
-  const letters = document.querySelectorAll('.letter');
-  const allShown = [...letters].every(l => l.style.opacity === "1");
-
-  if(allShown){
-    clickBtn.style.display = "inline-block";
-  }
-}
-
-// ====== Particles ======
 const particlesContainer=document.getElementById('particles');
 for(let i=0;i<60;i++){
   const p=document.createElement('div'); p.className='particle';
@@ -201,7 +189,6 @@ function resetParticle(p,initial=false){
   p.animate([{transform:`translateY(0) scale(${scale})`,opacity:p.style.opacity},{transform:`translateY(-140vh) scale(${scale*0.6})`,opacity:0}],{duration:dur,iterations:1,easing:'linear'}).onfinish=()=>resetParticle(p);
 }
 
-// ====== Update Scene ======
 function updateMessage(progress){
   const letters=document.querySelectorAll('.letter');
   const count=Math.floor(progress*letters.length);
@@ -215,8 +202,10 @@ function updateMessage(progress){
     }
   });
 
-  // Check if button should appear
-  if(progress >= 1) checkShowButton();
+  /* ⭐ SHOW BUTTON WHEN MESSAGE IS FULLY REVEALED ⭐ */
+  if(count === letters.length){
+    document.getElementById("clickBtn").style.display = "block";
+  }
 }
 
 function updateScene(progress){
@@ -253,7 +242,6 @@ function updateScene(progress){
   updateMessage(progress);
 }
 
-// ====== Scene Animation ======
 (function animateScene(){
   const t=performance.now()/1000;
   document.getElementById('cloudLayer').style.transform=`translateY(${Math.sin(t/18)*6}px)`;
@@ -261,5 +249,6 @@ function updateScene(progress){
   requestAnimationFrame(animateScene);
 })();
 </script>
+
 </body>
 </html>

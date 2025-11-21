@@ -53,11 +53,27 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 .particles{position:absolute;inset:0;pointer-events:none;z-index:15;overflow:hidden;}
 .particle{position:absolute;width:4px;height:4px;border-radius:50%;background: rgba(255,245,220,0.9);filter: blur(1px);opacity:.0;transform: translateY(0);}
 .grain{position:absolute;inset:0;pointer-events:none;z-index:30;background-image: radial-gradient(rgba(255,255,255,var(--grain-opacity)), rgba(255,255,255,0));mix-blend-mode: overlay;opacity:0.5;}
-#message{position:absolute;width:100%;top:62%;text-align:center;z-index:12;color:#4B0082; /* Dark violet */ font-size:28px;letter-spacing:3px;text-shadow:0 6px 20px rgba(0,0,0,0.7);}
+#message{position:absolute;width:100%;top:62%;text-align:center;z-index:12;color:#4B0082;font-size:28px;letter-spacing:3px;text-shadow:0 6px 20px rgba(0,0,0,0.7);}
 .letter{display:inline-block;opacity:0;transform:translateY(8px);}
-#clickBtn{display:none;}
+
+/* -------- CLICK BUTTON ADDED -------- */
+#clickBtn{
+  margin-top:20px;
+  display:none;
+  padding:10px 26px;
+  font-size:20px;
+  color:white;
+  background:#4B0082;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  box-shadow:0 0 14px rgba(0,0,0,0.5);
+  transition:transform 0.2s ease;
+}
+#clickBtn:hover{transform:scale(1.06);}
 </style>
 </head>
+
 <body>
 <div id="stars"></div>
 <div class="moon" id="moon"><div class="moon-flare"></div></div>
@@ -73,7 +89,13 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 <div class="grade"></div>
 <div class="vignette"></div>
 <div class="grain"></div>
+
 <div id="message"></div>
+
+<!-- CLICK BUTTON ADDED BELOW MESSAGE -->
+<div style="text-align:center;">
+  <button id="clickBtn">Click Here</button>
+</div>
 
 <script>
 // ====== Stars ======
@@ -119,6 +141,7 @@ const messageEl=document.getElementById('message');
 const sun=document.getElementById('sun'); 
 const sunRings=document.getElementById('sunRings');
 
+// TEXT
 const text="On this calm birthday eve so new, God softly whispers, my plans are made for you.";
 messageEl.innerHTML='';
 text.split('').forEach((ch)=>{
@@ -147,10 +170,21 @@ document.addEventListener('pointermove', e=>{
   progress += dx/window.innerWidth;
   progress=Math.min(Math.max(progress,0),1);
 
-  if(progress >= 1) dayLocked = true; // lock day
+  if(progress >= 1) dayLocked = true;
   updateScene(progress);
 });
 document.addEventListener('pointerup', e=>{isDragging=false;});
+
+// ===== CLICK BUTTON REVEAL LOGIC =====
+const clickBtn = document.getElementById('clickBtn');
+function checkShowButton(){
+  const letters = document.querySelectorAll('.letter');
+  const allShown = [...letters].every(l => l.style.opacity === "1");
+
+  if(allShown){
+    clickBtn.style.display = "inline-block";
+  }
+}
 
 // ====== Particles ======
 const particlesContainer=document.getElementById('particles');
@@ -180,6 +214,9 @@ function updateMessage(progress){
       l.style.transform='translateY(8px)';
     }
   });
+
+  // Check if button should appear
+  if(progress >= 1) checkShowButton();
 }
 
 function updateScene(progress){

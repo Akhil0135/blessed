@@ -1,364 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Cartoon-Network Style — Saree Girl (Tom-&-Jerry Vibe)</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cinematic Night → Day</title>
 <style>
-  /* ---------- Reset ---------- */
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;background:#071225;font-family:Inter,system-ui,Arial,sans-serif;overflow:hidden}
-
-  /* ---------- Cinematic Bars ---------- */
-  .bar{position:fixed;left:0;width:100%;height:9%;background:#000;z-index:120}
-  .bar.top{top:0} .bar.bottom{bottom:0}
-
-  /* ---------- Scene ---------- */
-  .stage{position:relative;width:100%;height:100vh;overflow:hidden;display:block;}
-  .sky{position:absolute;inset:0 0 35% 0;background:linear-gradient(#0e2a4a,#0a2438 60%, #052427);z-index:1}
-  .horizon{position:absolute;left:0;right:0;bottom:20%;height:24%;background:linear-gradient(180deg,#0e3a24,#052014);z-index:4;filter:drop-shadow(0 -12px 18px rgba(0,0,0,0.4));}
-  .midground{position:absolute;left:0;right:0;bottom:26%;height:30%;z-index:3;pointer-events:none}
-  .foreground{position:absolute;left:0;right:0;bottom:0;height:28%;z-index:8}
-
-  /* simple parallax motion via background-size/position animation */
-  .midground::before{
-    content:"";position:absolute;left:-10%;top:0;width:220%;height:100%;
-    background:
-      radial-gradient(120px 70px at 8% 40%, #0f4b2f 10%, transparent 40%),
-      radial-gradient(120px 70px at 28% 45%, #0b4727 10%, transparent 40%),
-      radial-gradient(120px 70px at 48% 42%, #0f4b2f 10%, transparent 40%),
-      radial-gradient(120px 70px at 68% 44%, #0b4526 10%, transparent 40%);
-    background-repeat:repeat-x; background-size: 360px 100%;
-    opacity:0.96; filter:blur(1px); animation: midMove 20s linear infinite;
+  html,body{
+    height:100%; margin:0; overflow:hidden;
+    font-family:"Cinzel",serif; background:#000010;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
-  @keyframes midMove{0%{transform:translateX(0)}100%{transform:translateX(-28%)}}
-
-  .foreground::before{
-    content:"";position:absolute;left:-8%;top:0;width:210%;height:100%;
-    background:
-      radial-gradient(60px 36px at 6% 40%, #0b3d23 15%, transparent 40%),
-      radial-gradient(50px 30px at 18% 38%, #0d3f24 15%, transparent 40%),
-      radial-gradient(70px 40px at 40% 44%, #0b3a20 15%, transparent 40%);
-    background-repeat:repeat-x;background-size:260px 100%;
-    animation: foreMove 14s linear infinite;
-  }
-  @keyframes foreMove{0%{transform:translateX(0)}100%{transform:translateX(-42%)}}
-
-  /* ---------- Letterbox + vignette ---------- */
-  .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 40% at 52% 30%, rgba(255,255,255,0.02), rgba(0,0,0,0.6) 55%);z-index:110}
-
-  /* ---------- Stage center area (where action happens) ---------- */
-  .arena{position:absolute;left:0;right:0;top:6%;bottom:9%;display:flex;align-items:flex-end;justify-content:center;z-index:20;pointer-events:none;}
-
-  /* ---------- Walk path container (girl moves across) ---------- */
-  .path{position:relative;width:100%;height:100%;pointer-events:none;}
-  .walker{position:absolute;bottom:8%;left:-14%;width:300px;height:420px;transform-origin:center bottom;z-index:60;
-          animation: walkerTravel 10.5s linear infinite;}
-  @keyframes walkerTravel{
-    0%{left:-18%; transform:scale(0.9)}
-    8%{left:6%; transform:scale(1)}
-    48%{left:52%; transform:scale(1.08)}
-    92%{left:108%; transform:scale(0.92)}
-    100%{left:118%; transform:scale(0.9)}
+  :root{
+    --sky-night:#000010;
+    --sky-day-top:#87ceeb;
+    --sky-day-mid:#a0d8ff;
+    --sky-day-bottom:#d0f0ff;
+    --sun-color:#ffcf6b;
+    --grain-opacity:0.03;
   }
 
-  /* ---------- Cartoon timing - squash & stretch helper ---------- */
-  .squash{transform-origin:center bottom; animation: squashAnim 0.28s ease-in-out both;}
-  @keyframes squashAnim{
-    0%{transform:scaleY(1) scaleX(1)}
-    30%{transform:scaleY(.8) scaleX(1.18)}
-    60%{transform:scaleY(1.06) scaleX(.95)}
-    100%{transform:scaleY(1) scaleX(1)}
+  /* ---------- Stars ---------- */
+  #stars { position:absolute; inset:0; pointer-events:none; z-index:2; }
+  .star{
+    position:absolute; width:2px; height:2px; border-radius:50%;
+    background:#fff; box-shadow:0 0 6px rgba(255,255,255,0.9);
+    opacity:0.5; animation:twinkle 2.6s infinite alternate;
+  }
+  @keyframes twinkle{
+    0%{opacity:0.15; transform:scale(1);}
+    50%{opacity:0.95; transform:scale(1.6);}
+    100%{opacity:0.15; transform:scale(1);}
+  }
+  .shooting-star{
+    position:absolute; width:10px; height:3px; border-radius:8px;
+    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 100%);
+    filter:blur(1px); transform-origin:left top; opacity:0;
   }
 
-  /* ---------- Girl SVG parts movement ---------- */
-  .anime-walk .leg, .anime-walk .arm{transform-origin:50% 10%}
-  .anime-walk .leg.left{animation:leftLeg 0.8s ease-in-out infinite}
-  .anime-walk .leg.right{animation:rightLeg 0.8s ease-in-out infinite}
-  .anime-walk .arm.left{animation:leftArm 0.8s ease-in-out infinite}
-  .anime-walk .arm.right{animation:rightArm 0.8s ease-in-out infinite}
-
-  @keyframes leftLeg{0%{transform:rotate(10deg)}50%{transform:rotate(-30deg) translateY(6px)}100%{transform:rotate(10deg)}}
-  @keyframes rightLeg{0%{transform:rotate(-10deg)}50%{transform:rotate(36deg) translateY(6px)}100%{transform:rotate(-10deg)}}
-  @keyframes leftArm{0%{transform:rotate(-22deg)}50%{transform:rotate(14deg)}100%{transform:rotate(-22deg)}}
-  @keyframes rightArm{0%{transform:rotate(16deg)}50%{transform:rotate(-18deg)}100%{transform:rotate(16deg)}}
-
-  /* saree pallu subtle flow */
-  .pallu{transform-origin:20% 20%;animation:palluFlow 1.6s ease-in-out infinite}
-  @keyframes palluFlow{0%{transform:translateX(0) rotate(2deg)}50%{transform:translateX(-8px) rotate(-6deg)}100%{transform:translateX(0) rotate(2deg)}}
-
-  /* head tilt / blink */
-  .head{animation: headBob 3.6s ease-in-out infinite}
-  @keyframes headBob{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
-  .eye-lid{transform-origin:center; animation:blink 5.8s steps(1) infinite}
-  @keyframes blink{0%,96%{transform:scaleY(1)}98%{transform:scaleY(0.06)}100%{transform:scaleY(1)}}
-
-  /* ---------- Mouse (tease) ---------- */
-  .mouse{position:absolute;width:64px;height:48px;left:-6%;bottom:6%;z-index:80;transform-origin:center bottom}
-  .mouse svg{width:100%;height:100%}
-  .mouse-run{animation:mouseRun 2.6s cubic-bezier(.35,0,.65,1) infinite}
-  @keyframes mouseRun{
-    0%{transform:translateX(0) scale(1)}
-    30%{transform:translateX(120vw) scale(1.05)}
-    32%{transform:translateX(120vw) scale(1.05)}
-    100%{transform:translateX(120vw) scale(1.05)}
+  /* ---------- Moon ---------- */
+  .moon{
+    position:absolute; width:150px; height:150px; border-radius:50%;
+    top:60px; left:-180px;
+    background: radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);
+    box-shadow:0 0 80px rgba(255,245,200,0.45); z-index:6;
+    transition:opacity .8s linear;
   }
 
-  /* mouse pop - quick scale */
-  .pop{animation:popAnim .28s ease-in-out both}
-  @keyframes popAnim{0%{transform:scale(.9)}30%{transform:scale(1.18)}100%{transform:scale(1)}}
-
-  /* shock/stylized exclamation */
-  .boom{position:absolute;left:50%;top:10%;transform:translateX(-50%);z-index:160;opacity:0;animation:boomIn .6s ease-out forwards}
-  @keyframes boomIn{0%{opacity:0;transform:translateY(-6px) scale(.6)}60%{opacity:1;transform:translateY(0) scale(1.1)}100%{opacity:0;transform:translateY(-12px) scale(.9)}}
-
-  /* ---------- Soundless comedic timing: girl react animations ---------- */
-  .react-startle{animation: startle 0.5s ease-in-out both}
-  @keyframes startle{
-    0%{transform:translateY(0)}
-    20%{transform:translateY(-14px) rotate(-6deg) scaleY(.96)}
-    50%{transform:translateY(4px) rotate(6deg) scaleY(1.04)}
-    100%{transform:translateY(0) rotate(0) scaleY(1)}
+  /* ---------- Clouds ---------- */
+  .cloud-layer{ position:absolute; top:0; left:-20%; width:140%; height:60%; pointer-events:none; z-index:5; mix-blend-mode:screen; }
+  .cloud-group{ position:absolute; width:100%; height:100%; transform-origin:center; filter: blur(10px) saturate(1.05); opacity:0.9; }
+  .cloud-group.back{ filter:blur(22px) contrast(.9); opacity:.55; animation:driftBack 180s linear infinite; }
+  .cloud-group.mid{ filter:blur(12px) contrast(1); opacity:.75; animation:driftMid 120s linear infinite; }
+  .cloud-group.front{ filter:blur(6px) contrast(1.05); opacity:.95; animation:driftFront 80s linear infinite; }
+  @keyframes driftBack { from{ transform:translateX(-8%);} to{ transform:translateX(8%);} }
+  @keyframes driftMid  { from{ transform:translateX(-12%);} to{ transform:translateX(12%);} }
+  @keyframes driftFront{ from{ transform:translateX(-18%);} to{ transform:translateX(18%);} }
+  .cloud-blob{
+    position:absolute; background:radial-gradient(circle at 35% 35%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.86) 25%, rgba(255,255,255,0.6) 50%, rgba(200,200,200,0.15) 80%, rgba(255,255,255,0) 100%);
+    border-radius:50%; filter: blur(10px); opacity:0.95; mix-blend-mode:screen;
   }
 
-  /* ---------- Stylized outlines & flat colors ---------- */
-  .stroke{stroke:#121217; stroke-width:3; stroke-linejoin:round; stroke-linecap:round; fill:none}
-  /* responsive */
-  @media (max-width:720px){
-    .walker{width:200px;height:300px}
-    .bar{height:7%}
+  /* ---------- Godrays ---------- */
+  .godrays {
+    position:absolute; inset:0; pointer-events:none; z-index:7;
+    background: repeating-linear-gradient(75deg, rgba(255,244,210,0.08) 0px, rgba(255,244,210,0.02) 120px, rgba(255,244,210,0) 240px);
+    mix-blend-mode:screen; opacity:0; transition:opacity 2.6s ease; filter: blur(6px) contrast(1.1);
   }
+
+  /* ---------- Fog ---------- */
+  .low-fog{
+    position:absolute; bottom:0; left:0; width:100%; height:40%; pointer-events:none;
+    background: radial-gradient(circle at 50% 95%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.45) 30%, rgba(255,255,255,0) 100%);
+    filter: blur(48px); opacity:0.7; z-index:4; animation:fogFloat 45s ease-in-out infinite; transition:opacity 2.5s ease;
+  }
+  @keyframes fogFloat { 0%,100%{ transform: translateX(0);} 50%{ transform: translateX(4%);} }
+
+  /* ---------- Sun ---------- */
+  .sun{
+    position:absolute; left:50%; transform:translateX(-50%); top:-220px;
+    width:220px; height:220px; border-radius:50%; pointer-events:none; z-index:8;
+    transition: top 3.2s ease, opacity 3s ease, box-shadow 3s ease; opacity:0;
+    background: radial-gradient(circle at 35% 35%, rgba(255,250,220,1) 0%, rgba(255,210,120,1) 45%, rgba(255,170,60,0.9) 100%);
+    box-shadow:0 0 140px 48px rgba(255,220,120,0.12),0 0 320px 120px rgba(255,200,80,0.07);
+  }
+  .sun-rings{
+    position:absolute; inset:-30% -30% auto -30%; height:300%; border-radius:50%;
+    pointer-events:none; filter: blur(30px); opacity:0; transition: opacity 3s ease; mix-blend-mode: screen;
+    background: radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,230,140,0.08), rgba(255,200,80,0));
+  }
+
+  /* ---------- Grade, vignette, particles ---------- */
+  .grade{position:absolute; inset:0; pointer-events:none; z-index:20; mix-blend-mode: soft-light; background: linear-gradient(180deg, rgba(255,240,220,0.06), rgba(30,40,70,0.15)); opacity:1; transition:opacity 2s ease;}
+  .vignette{position:absolute; inset:0; pointer-events:none; z-index:25; background: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.18) 100%); mix-blend-mode:multiply;}
+  .particles{position:absolute; inset:0; pointer-events:none; z-index:15; overflow:hidden;}
+  .particle{position:absolute; width:4px; height:4px; border-radius:50%; background: rgba(255,245,220,0.9); filter: blur(1px); opacity:.0; transform: translateY(0);}
+
+  /* ---------- Message & button ---------- */
+  #message{position:absolute; width:100%; top:62%; text-align:center; z-index:12; color:#fff3da; font-size:28px; letter-spacing:3px; text-shadow:0 6px 20px rgba(0,0,0,0.7); opacity:0; transition:opacity .6s ease;}
+  .letter{ display:inline-block; opacity:0; transform: translateY(8px); animation:reveal .45s forwards;}
+  @keyframes reveal{ to{opacity:1; transform:translateY(0);} }
+
+  #clickBtn{position:absolute; left:50%; bottom:10vh; transform:translateX(-50%);
+    z-index:13; padding:14px 34px; border-radius:40px;
+    background: rgba(255,255,255,0.12); color:#fff;
+    border:1px solid rgba(255,255,255,0.18); cursor:pointer;
+    font-family:'Cinzel', serif; font-size:20px; opacity:0; pointer-events:none; transition:opacity 1s ease, transform .4s ease;
+  }
+  #clickBtn.float{ opacity:1; pointer-events:auto; animation:btnFloat 3s ease-in-out infinite;}
+  @keyframes btnFloat{0%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-6px);}100%{transform:translateX(-50%) translateY(0);} }
+
+  /* ---------- Utility day transition ---------- */
+  .day{ background: linear-gradient(to top, var(--sky-day-mid), var(--sky-day-top)); transition: background 3.2s ease; }
 </style>
 </head>
 <body>
 
-  <div class="bar top"></div>
-  <div class="bar bottom"></div>
-
-  <div class="stage" id="stage">
-    <div class="sky"></div>
-    <div class="midground"></div>
-    <div class="horizon"></div>
-    <div class="foreground"></div>
-    <div class="vignette"></div>
-
-    <div class="arena">
-      <div class="path" id="path">
-        <!-- Walker (girl) -->
-        <div class="walker anime-walk" id="girl">
-          <!-- SVG Girl — clean, bold, CN-style -->
-          <svg viewBox="0 0 220 380" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cartoon saree girl">
-            <defs>
-              <linearGradient id="skin" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0" stop-color="#ffddc0"/>
-                <stop offset="1" stop-color="#ffc1a0"/>
-              </linearGradient>
-              <linearGradient id="s1" x1="0" x2="1"><stop offset="0" stop-color="#ff5d9e"/><stop offset="1" stop-color="#a4289b"/></linearGradient>
-            </defs>
-
-            <!-- stylized shadow -->
-            <ellipse cx="110" cy="338" rx="68" ry="18" fill="rgba(0,0,0,0.45)"/>
-
-            <!-- lower body group -->
-            <g id="lower" transform="translate(0,80)">
-              <!-- left leg -->
-              <g class="leg left" transform="translate(58,160)">
-                <rect x="0" y="0" width="22" height="92" rx="10" fill="url(#skin)"/>
-                <ellipse cx="11" cy="92" rx="12" ry="6" fill="#231815"/>
-              </g>
-
-              <!-- right leg -->
-              <g class="leg right" transform="translate(120,156)">
-                <rect x="0" y="0" width="22" height="96" rx="10" fill="url(#skin)"/>
-                <ellipse cx="11" cy="94" rx="12" ry="6" fill="#231815"/>
-              </g>
-
-              <!-- saree skirt -->
-              <g class="saree-main" transform="translate(18,42)">
-                <path d="M12 34 C22 120 50 200 98 220 C136 236 172 222 204 150 C218 120 210 72 182 50 C158 30 98 36 12 34 Z"
-                      fill="url(#s1)" stroke="#0e0810" stroke-width="2"/>
-                <!-- pallu -->
-                <path class="pallu" d="M118 28 C158 12 210 30 218 6 C226 -20 198 -14 172 6 C146 26 126 28 118 28 Z"
-                      fill="#ffd0e0" stroke="#0e0810" stroke-width="1.6" opacity="0.95"/>
-                <!-- border -->
-                <path d="M22 120 C86 118 132 126 188 98" fill="none" stroke="rgba(255,240,240,0.08)" stroke-width="6" stroke-linecap="round"/>
-              </g>
-            </g>
-
-            <!-- upper body -->
-            <g id="upper" transform="translate(0,0)">
-              <!-- torso -->
-              <rect x="82" y="82" rx="14" ry="14" width="56" height="76" fill="#d93b76" stroke="#0f0710" stroke-width="2"/>
-              <!-- left arm -->
-              <g class="arm left" transform="translate(50,92)">
-                <rect x="0" y="0" width="18" height="66" rx="8" fill="url(#skin)"/>
-              </g>
-              <!-- right arm -->
-              <g class="arm right" transform="translate(150,92)">
-                <rect x="0" y="0" width="18" height="62" rx="8" fill="url(#skin)"/>
-              </g>
-
-              <!-- neck -->
-              <rect x="102" y="62" width="16" height="18" rx="6" fill="url(#skin)"/>
-
-              <!-- head group -->
-              <g transform="translate(48,-2)">
-                <!-- hair back -->
-                <path class="hair" d="M54 20 C34 -6 8 6 6 46 C4 84 26 98 54 96 C80 94 108 76 110 42 C112 10 90 12 54 20 Z"
-                      fill="#181019" stroke="#0d0a0c" stroke-width="1.8"/>
-                <!-- face -->
-                <ellipse cx="86" cy="64" rx="34" ry="38" fill="url(#skin)" stroke="#0f0710" stroke-width="1.6"/>
-                <!-- bangs -->
-                <path class="hair" d="M62 40 C74 28 106 34 112 48 C118 60 106 74 86 74 C66 74 58 60 62 40 Z" fill="#251519" stroke="#0d0a0c" stroke-width="1.2"/>
-                <!-- eyes -->
-                <g transform="translate(62,52)">
-                  <g class="eye-left">
-                    <ellipse class="eye" cx="6" cy="8" rx="6.6" ry="5.4" fill="#fff" />
-                    <ellipse cx="6.2" cy="8" rx="3.4" ry="2.8" fill="#020202"/>
-                    <rect class="eye-lid" x="-6" y="-8" width="28" height="16" fill="#ffddc0"/>
-                  </g>
-                  <g class="eye-right" transform="translate(28,0)">
-                    <ellipse class="eye" cx="6" cy="8" rx="6.6" ry="5.4" fill="#fff" />
-                    <ellipse cx="6.2" cy="8" rx="3.4" ry="2.8" fill="#020202"/>
-                    <rect class="eye-lid" x="-6" y="-8" width="28" height="16" fill="#ffddc0"/>
-                  </g>
-                </g>
-                <!-- blush -->
-                <ellipse class="cheek" cx="68" cy="78" rx="6" ry="3.6" fill="#ff9fb9" opacity="0.92"/>
-                <ellipse class="cheek" cx="100" cy="78" rx="6" ry="3.6" fill="#ff9fb9" opacity="0.92"/>
-                <!-- mouth -->
-                <path d="M82 86 Q88 90 96 86" stroke="#8b2b3b" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-                <!-- bindi -->
-                <circle cx="88" cy="66" r="2.4" fill="#b20e2a"/>
-              </g>
-            </g>
-          </svg>
-        </div>
-
-        <!-- Mouse: cartoon runner that teases the girl -->
-        <div class="mouse" id="mouse">
-          <svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <!-- body -->
-            <g transform="translate(0,10)">
-              <ellipse cx="36" cy="36" rx="28" ry="18" fill="#c9c9c9" stroke="#111" stroke-width="2"/>
-              <!-- head -->
-              <ellipse cx="68" cy="28" rx="18" ry="14" fill="#c9c9c9" stroke="#111" stroke-width="2"/>
-              <!-- ear -->
-              <ellipse cx="80" cy="14" rx="6" ry="6" fill="#f8d2d5" stroke="#111" stroke-width="1.3"/>
-              <!-- eye -->
-              <circle cx="74" cy="26" r="3.2" fill="#111"/>
-              <!-- tail -->
-              <path d="M12 40 C2 28, 6 10, 30 6" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>
-              <!-- small foot -->
-              <ellipse cx="26" cy="58" rx="8" ry="4" fill="#111"/>
-            </g>
-          </svg>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- transient exclamation -->
-    <div id="ex" style="position:absolute;left:50%;top:18%;transform:translateX(-50%);z-index:170;pointer-events:none"></div>
-
-  </div>
+<div id="stars"></div>
+<div class="moon" id="moon"></div>
+<div class="cloud-layer" id="cloudLayer">
+  <div class="cloud-group back" id="cloudBack"></div>
+  <div class="cloud-group mid" id="cloudMid"></div>
+  <div class="cloud-group front" id="cloudFront"></div>
+</div>
+<div class="godrays" id="godrays"></div>
+<div class="low-fog" id="lowFog"></div>
+<div class="sun" id="sun"><div class="sun-rings" id="sunRings"></div></div>
+<div class="particles" id="particles"></div>
+<div class="grade"></div>
+<div class="vignette"></div>
+<div id="message"></div>
+<button id="clickBtn">Click Here</button>
 
 <script>
-  // ---------- Cartoon controller ----------
-  (function(){
-    const mouse = document.getElementById('mouse');
-    const girl = document.getElementById('girl');
-    const ex = document.getElementById('ex');
-    const stage = document.getElementById('stage');
+const rnd=(a,b)=>a+Math.random()*(b-a);
 
-    // initial place mouse slightly left under stage
-    resetMouse();
+// Stars
+const starsEl=document.getElementById('stars');
+for(let i=0;i<220;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.left=rnd(0,100)+'%';
+  s.style.top=rnd(0,100)+'%';
+  s.style.opacity=rnd(0.15,0.95);
+  s.style.transform=`scale(${rnd(0.6,1.6)})`;
+  starsEl.appendChild(s);
+}
 
-    // timeline: every X seconds, mouse runs across, teases, and girl reacts
-    const cycle = 10.5 * 1000; // match walker travel cycle
-    let next = 1500; // initial delay before first run
+// Shooting stars
+function spawnShooting(){
+  const s=document.createElement('div');
+  s.className='shooting-star';
+  s.style.top=rnd(5,35)+'vh';
+  s.style.left='110%';
+  const angle=-20-rnd(0,40);
+  s.style.transform=`rotate(${angle}deg)`;
+  s.style.opacity='1';
+  document.body.appendChild(s);
+  const duration=rnd(900,1600);
+  s.animate([{ transform: `translateX(0) translateY(0) rotate(${angle}deg)`, opacity:1 },
+             { transform: `translateX(-120vw) translateY(80vh) rotate(${angle}deg)`, opacity:0 }],
+             {duration, easing:'cubic-bezier(.2,.6,.2,1)'});
+  setTimeout(()=>s.remove(),duration+50);
+}
+function scheduleShooting(){
+  spawnShooting();
+  setTimeout(scheduleShooting,rnd(1200,2500));
+}
+scheduleShooting();
 
-    function resetMouse(){
-      mouse.style.left = '-8%';
-      mouse.style.bottom = '6%';
-      mouse.classList.remove('mouse-run','pop');
-      mouse.style.opacity = 1;
-      // small random vertical offset for variety
-      mouse.style.transform = 'translateY(' + (Math.random()*8 - 4) + 'px)';
-    }
+// Moon arc movement
+const moon=document.getElementById('moon');
+let moonX=-200;
+const moonSpeed=Math.max(window.innerWidth/800,4);
+let messageShown=false;
+const messageEl=document.getElementById('message');
 
-    // mouse run sequence
-    function mouseRunSequence(){
-      // 1) pop (appears quickly)
-      mouse.classList.add('pop');
-      setTimeout(()=>mouse.classList.remove('pop'), 300);
+function revealMessage(){
+  if(messageEl.dataset.revealed)return;
+  messageEl.dataset.revealed='1';
+  const text="On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+  messageEl.innerHTML='';
+  text.split('').forEach((ch,i)=>{
+    const span=document.createElement('span');
+    span.className='letter';
+    span.style.animationDelay=(i*0.045)+'s';
+    span.textContent=ch===' '?'\u00A0':ch;
+    messageEl.appendChild(span);
+  });
+  messageEl.style.opacity='1';
+}
 
-      // 2) quick tease: run across stage fast
-      // place at near-left of screen and animate translate with CSS transform
-      mouse.style.left = (-8 + Math.random()*6) + '%';
-      mouse.classList.add('mouse-run');
+// Clouds
+function makeCloudBlob(container,leftPct,topPct,w,h,opacity=1){
+  const b=document.createElement('div');
+  b.className='cloud-blob';
+  b.style.left=leftPct+'%';
+  b.style.top=topPct+'%';
+  b.style.width=w+'px';
+  b.style.height=h+'px';
+  b.style.opacity=opacity;
+  container.appendChild(b);
+}
+function populateClouds(){
+  const back=document.getElementById('cloudBack');
+  const mid=document.getElementById('cloudMid');
+  const front=document.getElementById('cloudFront');
+  [back,mid,front].forEach(el=>el.innerHTML='');
+  for(let i=0;i<5;i++) makeCloudBlob(back,rnd(-40,120),rnd(-5,40),rnd(700,1200),rnd(260,420),rnd(0.35,0.7));
+  for(let i=0;i<10;i++) makeCloudBlob(mid,rnd(-30,120),rnd(5,50),rnd(380,760),rnd(160,260),rnd(0.45,0.9));
+  for(let i=0;i<12;i++) makeCloudBlob(front,rnd(-10,120),rnd(12,65),rnd(160,440),rnd(90,180),rnd(0.5,1));
+}
+populateClouds();
 
-      // schedule tease moments: when mouse passes near girl, trigger reactions
-      // compute approximate times: mouseRun duration ~2.6s (see CSS)
-      setTimeout(()=>{ // mouse near girl -> girl startled
-        // 1) flash exclamation
-        showExclamation();
-        // 2) make girl do a comedic startle (squash+rotate)
-        girl.classList.add('react-startle');
-        // temporary squash for cartoon pop
-        girl.classList.add('squash');
-        setTimeout(()=>{ girl.classList.remove('react-startle'); }, 520);
-        setTimeout(()=>{ girl.classList.remove('squash'); }, 300);
-      }, 900 + Math.random()*350);
+// Particles
+const particlesContainer=document.getElementById('particles');
+for(let i=0;i<60;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  resetParticle(p,true);
+  particlesContainer.appendChild(p);
+}
+function resetParticle(p,initial=false){
+  const left=rnd(0,100);
+  const bottom=rnd(-20,100);
+  const scale=rnd(.4,1.3);
+  p.style.left=left+'%';
+  p.style.bottom=bottom+'px';
+  p.style.width=(2+Math.random()*4)+'px';
+  p.style.height=p.style.width;
+  p.style.opacity=(0.2+Math.random()*0.9);
+  p.style.transform=`translateY(${initial?rnd(0,-60):0}px) scale(${scale})`;
+  const dur=rnd(8000,22000);
+  p.animate([{ transform: `translateY(${rnd(0,20)}px) scale(${scale})`, opacity: p.style.opacity },
+             { transform: `translateY(-140vh) scale(${scale*0.6})`, opacity:0 }], {duration:dur,iterations:1,easing:'linear'}).onfinish=()=>resetParticle(p);
+}
 
-      // after run finishes, reset mouse position and hide (prepare next run)
-      setTimeout(()=>{
-        mouse.classList.remove('mouse-run');
-        resetMouse();
-      }, 2800);
-    }
+// Button and day transition
+const clickBtn=document.getElementById('clickBtn');
+const sun=document.getElementById('sun');
+const sunRings=document.getElementById('sunRings');
+const godrays=document.getElementById('godrays');
+const cloudShadow=document.getElementById('cloudShadow');
+const lowFog=document.getElementById('lowFog');
+let day=false;
 
-    // show exclamation graphic
-    function showExclamation(){
-      const el = document.createElement('div');
-      el.className = 'boom';
-      el.style.left = (50 + (Math.random()*18 - 8)) + '%';
-      el.style.top = (12 + Math.random()*6) + '%';
-      el.innerHTML = '<svg width="86" height="54" viewBox="0 0 86 54" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 44 L26 8 L58 6 L78 36 L46 46 L8 44 Z" fill="#ffd36a"/><text x="44" y="32" font-size="22" text-anchor="middle" fill="#5b1200" font-weight="700">!</text></g></svg>';
-      ex.appendChild(el);
-      // remove after the animation time
-      setTimeout(()=>{ ex.removeChild(el); }, 800);
-    }
+clickBtn.addEventListener('click',()=>{
+  if(day) return;
+  day=true;
 
-    // main loop
-    function schedule(){
-      setTimeout(()=>{
-        mouseRunSequence();
-        // schedule next
-        next = cycle * 0.9 + Math.random()*2000 - 500;
-        schedule();
-      }, next);
-      // ensure next becomes cycle for subsequent runs
-      next = cycle;
-    }
+  // fade out stars
+  document.querySelectorAll('.star').forEach(s=>{
+    s.animate([{opacity:s.style.opacity||1},{opacity:0}],{duration:1200,fill:'forwards'});
+    setTimeout(()=>s.remove(),1300);
+  });
 
-    // start after small delay
-    setTimeout(schedule, 900);
+  // Moon fade
+  moon.animate([{opacity:1},{opacity:0}],{duration:900,fill:'forwards'});
 
-    // small accessibility: click on mouse to trigger immediate run
-    mouse.addEventListener('click', ()=>{ mouseRunSequence(); });
+  // Sky gradient
+  document.body.animate([{background:'var(--sky-night)'},
+                         {background:'linear-gradient(to top, var(--sky-day-mid), var(--sky-day-top))'}],{duration:5000,fill:'forwards'});
 
-    // responsive tweak: reduce walker travel speed on small screens
-    function adapt(){
-      if(window.innerWidth < 720){
-        document.querySelector('.walker').style.animation = 'walkerTravel 13s linear infinite';
-      } else {
-        document.querySelector('.walker').style.animation = 'walkerTravel 10.5s linear infinite';
-      }
-    }
-    adapt(); window.addEventListener('resize', adapt);
+  // Sun rise
+  sun.style.top='60px';
+  sun.style.opacity='1';
+  sunRings.style.opacity='1';
 
-  })();
+  // Godrays
+  godrays.style.opacity='1';
+  godrays.animate([{opacity:0},{opacity:1}],{duration:2000,fill:'forwards'});
+
+  // Fog and shadow
+  lowFog.animate([{opacity:0.85},{opacity:0.25}],{duration:3000,fill:'forwards'});
+  cloudShadow?.animate([{opacity:0.45},{opacity:0.14}],{duration:3400,fill:'forwards'});
+
+  // Message fade out
+  messageEl.animate([{opacity:1},{opacity:0}],{duration:900,fill:'forwards'});
+  setTimeout(()=>messageEl.style.opacity='0',900);
+
+  // particles color shift
+  document.querySelectorAll('.particle').forEach(p=>{
+    p.animate([{background:'rgba(255,245,220,0.75)'},{background:'rgba(255,210,140,0.9)'}],{duration:2800,fill:'forwards'});
+  });
+
+  document.querySelector('.grade').animate([{opacity:0.9},{opacity:1}],{duration:2000,fill:'forwards'});
+});
+
+// Moon animation loop
+let moonAnim=setInterval(()=>{
+  if(moonX<window.innerWidth+200){
+    moonX+=moonSpeed;
+    moon.style.left=moonX+'px';
+    moon.style.top=(80+Math.sin((moonX/window.innerWidth)*Math.PI)*80)+'px';
+    if(moonX>60 && !messageShown){ revealMessage(); messageShown=true; clickBtn.classList.add('float'); }
+  }
+},30);
+
 </script>
 </body>
 </html>

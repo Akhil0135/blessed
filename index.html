@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Cinematic Night Scene</title>
+<title>Ultimate Cinematic Night</title>
+
 <style>
   body, html {
     margin:0;
@@ -15,106 +16,96 @@
     font-family:'Cinzel', serif;
   }
 
-  /* --- CINEMATIC CLOUDS (ULTIMATE) --- */
-  .cloud-layer {
-    position:absolute;
-    width:100%;
-    height:100%;
-    top:0;
-    left:0;
-    pointer-events:none; /* FIXED: CSS property must be hyphenated */
-    overflow:hidden;
-  }
-
-  .cloud {
-    position:absolute;
-    width:600px;
-    height:300px;
-    background:radial-gradient(circle at 40% 40%, rgba(255,255,255,0.25), rgba(255,255,255,0.04) 60%, transparent 100%);
-    filter: blur(35px) brightness(1.2); /* spaces between filters */
-    opacity:0.45;
-    border-radius:50%;
-    animation:cloudDrift linear infinite;
-  }
-
-  .cloud.xl { width:900px; height:420px; opacity:0.35; filter: blur(45px); }
-  .cloud.sm { width:450px; height:220px; opacity:0.5; filter: blur(30px); }
-
-  @keyframes cloudDrift {
-    0% { transform:translateX(-900px); }
-    100% { transform:translateX(110%); }
-  }
-
-  /* CLOUD SHADOW LAYERS */
-  .cloud-shadow {
-    position:absolute;
-    width:600px;
-    height:300px;
-    top:0;
-    left:0;
-    background:rgba(0,0,0,0.25);
-    filter: blur(60px);
-    opacity:0.15;
-    border-radius:50%;
-    animation:shadowDrift linear infinite;
-    pointer-events:none;
-  }
-
-  @keyframes shadowDrift {
-    0% { transform:translateX(-400px); }
-    100% { transform:translateX(120%); }
-  }
-
-  /* STARS */
-  #stars { position:absolute; inset:0; pointer-events:none; }
+  /* -------- STARS -------- */
   .star {
     position:absolute;
     width:2px;
     height:2px;
     background:#fff;
     border-radius:50%;
-    box-shadow:0 0 8px #ffffff;
-    opacity:0.6;
+    opacity:0.7;
+    box-shadow:0 0 8px rgba(255,255,255,1);
     animation:twinkle 3s infinite ease-in-out;
   }
-
   @keyframes twinkle {
-    0% { opacity:0.2; transform:scale(1); }
-    50% { opacity:1; transform:scale(1.6); }
-    100% { opacity:0.2; transform:scale(1); }
+    0% { opacity:0.2; transform:scale(1);}
+    50% { opacity:1; transform:scale(1.6);}
+    100% { opacity:0.2; transform:scale(1);}
   }
 
-  /* MOON */
+  /* -------- SHOOTING STARS -------- */
+  .shooting-star {
+    position:absolute;
+    width:6px;
+    height:2px;
+    background:linear-gradient(90deg, rgba(255,255,255,0), #fff);
+    border-radius:3px;
+    opacity:0;
+    transform:rotate(-45deg);
+    animation:shoot 1.8s linear forwards;
+  }
+  @keyframes shoot {
+    0% { opacity:1; transform:translate(0,0) rotate(-45deg); }
+    100% { opacity:0; transform:translate(-70vw,70vh) rotate(-45deg); }
+  }
+
+  /* -------- CINEMATIC CLOUDS -------- */
+  .cloud-layer {
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    overflow:hidden;
+  }
+
+  .cloud {
+    position:absolute;
+    width:650px;
+    height:300px;
+    background:radial-gradient(circle at 40% 40%, rgba(255,255,255,0.28), rgba(255,255,255,0.05) 60%, transparent 100%);
+    filter:blur(40px) brightness(1.25);
+    opacity:0.45;
+    border-radius:50%;
+    animation:cloudDrift linear infinite;
+  }
+
+  .cloud.xl { width:950px; height:420px; filter:blur(55px); opacity:0.33; }
+  .cloud.sm { width:420px; height:200px; filter:blur(30px); opacity:0.55; }
+
+  @keyframes cloudDrift {
+    0% { transform:translateX(-900px); }
+    100% { transform:translateX(110%); }
+  }
+
+  /* -------- MOON -------- */
   .moon {
     position:absolute;
     width:160px;
     height:160px;
-    border-radius:50%;
-    background:radial-gradient(circle, #fffdf0 0%, #f8e9b5 50%, #ddc690 100%);
-    box-shadow:0 0 80px 40px rgba(255,240,200,0.4);
     top:90px;
     left:-200px;
+    border-radius:50%;
+    background:radial-gradient(circle, #fffdf5 0%, #f4e8b6 50%, #d9c387 100%);
+    box-shadow:0 0 90px 40px rgba(255,240,210,0.45);
     transition:opacity 2s ease;
-    pointer-events:none;
   }
 
-  /* MESSAGE */
+  /* -------- MESSAGE -------- */
   #message {
     position:absolute;
-    top:65%;
     width:100%;
-    font-size:30px;
+    top:65%;
     text-align:center;
-    color:#f3dfc7;
+    font-size:30px;
+    color:#f5e7d0;
     text-shadow:2px 2px 15px black;
     opacity:0;
-    pointer-events:none;
   }
 
   .letter {
     opacity:0;
     display:inline-block;
-    animation:letterReveal 0.4s forwards cubic-bezier(.17,.67,.2,1.65);
+    animation:letterReveal 0.45s forwards cubic-bezier(.17,.67,.2,1.7);
   }
 
   @keyframes letterReveal {
@@ -122,137 +113,112 @@
     100% { opacity:1; transform:translateY(0) scale(1); }
   }
 
-  /* BUTTON */
+  /* -------- BUTTON -------- */
   #clickBtn {
     position:absolute;
     bottom:12vh;
     left:50%;
     transform:translateX(-50%);
     padding:15px 40px;
-    border-radius:40px;
+    font-size:20px;
     background:rgba(255,255,255,0.1);
-    color:white;
     border:1px solid rgba(255,255,255,0.35);
+    border-radius:40px;
+    color:white;
     opacity:0;
     pointer-events:none;
-    font-size:20px;
+  }
+
+  #clickBtn.float {
     animation:btnFloat 3s infinite ease-in-out;
+    opacity:1;
+    pointer-events:auto;
   }
 
   @keyframes btnFloat {
-    0% { transform:translateX(-50%) translateY(0); }
-    50% { transform:translateX(-50%) translateY(-7px); }
+    0%   { transform:translateX(-50%) translateY(0); }
+    50%  { transform:translateX(-50%) translateY(-7px); }
     100% { transform:translateX(-50%) translateY(0); }
   }
+
 </style>
 </head>
 <body>
 
 <div id="stars"></div>
 <div class="cloud-layer" id="cloudLayer"></div>
-<div class="cloud-layer" id="cloudShadows"></div>
-
-<div class="moon" id="moon"></div>
+<div class="moon"></div>
 <div id="message"></div>
 <button id="clickBtn">Click Here</button>
 
 <script>
-/* STAR GENERATION */
-const starsContainer = document.getElementById('stars');
+/* -------------------- STARS ----------------------- */
 for(let i=0;i<180;i++){
   const s=document.createElement('div');
   s.className='star';
-  s.style.top=Math.random()*100 + '%';
-  s.style.left=Math.random()*100 + '%';
-  s.style.opacity = (0.2 + Math.random()*0.9).toString();
-  s.style.transform = `scale(${0.6 + Math.random()*1.4})`;
-  starsContainer.appendChild(s);
+  s.style.top=Math.random()*window.innerHeight+'px';
+  s.style.left=Math.random()*window.innerWidth+'px';
+  document.getElementById('stars').appendChild(s);
 }
 
-/* CLOUD GENERATION */
-function createCloud(type){
+/* -------------------- SHOOTING STARS ----------------------- */
+setInterval(()=>{
+  const s=document.createElement('div');
+  s.className='shooting-star';
+  s.style.top = (50 + Math.random()*200) + 'px';
+  s.style.left = window.innerWidth + 'px';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),1800);
+},1200);
+
+/* -------------------- CLOUDS ----------------------- */
+function makeCloud(type){
   const c=document.createElement('div');
-  c.className='cloud ' + type;
-  // random vertical placement within upper half for cinematic layering
-  c.style.top = (20 + Math.random()*35) + '%';
-  c.style.animationDuration = (70 + Math.random()*60) + 's';
+  c.className='cloud '+type;
+  c.style.top = (40 + Math.random()*260) + 'px';
+  c.style.animationDuration = (70 + Math.random()*55) + 's';
   document.getElementById('cloudLayer').appendChild(c);
 }
+for(let i=0;i<6;i++) makeCloud('xl');
+for(let i=0;i<4;i++) makeCloud('sm');
 
-for(let i=0;i<6;i++) createCloud('xl');
-for(let i=0;i<4;i++) createCloud('sm');
-
-/* SHADOW CLOUDS */
-function createShadow(){
-  const c=document.createElement('div');
-  c.className='cloud-shadow';
-  c.style.top = (30 + Math.random()*40) + '%';
-  c.style.animationDuration = (90 + Math.random()*70) + 's';
-  document.getElementById('cloudShadows').appendChild(c);
-}
-
-for(let i=0;i<5;i++) createShadow();
-
-/* MESSAGE */
+/* -------------------- MESSAGE ----------------------- */
 function revealMessage(){
   const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-  const m = document.getElementById('message');
-  m.innerHTML='';
-  msg.split('').forEach((ch,i)=>{
-    const span=document.createElement('span');
-    span.textContent = ch===' ' ? '\u00A0' : ch;
-    span.className='letter';
-    span.style.animationDelay = (i*0.05)+'s';
+  const m=document.getElementById("message");
+  m.innerHTML="";
+  msg.split("").forEach((ch,i)=>{
+    const span=document.createElement("span");
+    span.className="letter";
+    span.textContent = ch===" " ? "\u00A0" : ch;
+    span.style.animationDelay = `${i*0.05}s`;
     m.appendChild(span);
   });
   m.style.opacity=1;
 }
 
-/* MOON EASING MOVEMENT */
-const moon = document.getElementById('moon');
-let moonX = -200;
-let t = 0;
-const moonStop = window.innerWidth * 0.75;
-const clickBtn = document.getElementById('clickBtn'); // FIXED: define button element reference
-let revealed = false;
+/* -------------------- MOON MOVEMENT ----------------------- */
+const moon=document.querySelector('.moon');
+let moonPos=-200;
+let messageStarted=false;
+const stopPoint = window.innerWidth * 0.78;
 
-function easeOutCubic(x){ return 1 - Math.pow(1-x,3); }
+const moonInterval = setInterval(()=>{
+  if(moonPos < stopPoint){
+    moonPos += 4.8;  // CINEMATIC SPEED
+    moon.style.left = moonPos + "px";
 
-function animateMoon(){
-  if(t < 1){
-    t += 0.0035;
-    const eased = easeOutCubic(t);
-    moonX = -200 + ( (moonStop + 200) * eased );
-    moon.style.left = moonX + 'px';
-
-    if(moonX > 60 && !revealed){
-      revealed=true;
+    if(moonPos > 60 && !messageStarted){
+      messageStarted=true;
       revealMessage();
     }
-
-    requestAnimationFrame(animateMoon);
-  } else {
-    // show button and enable pointer events correctly via JS camelCase
-    clickBtn.style.opacity = '1';
-    clickBtn.style.pointerEvents = 'auto'; // FIXED: correct JS property
+  } 
+  else {
+    clearInterval(moonInterval);
+    clickBtn.classList.add("float");
   }
-}
-
-animateMoon();
-
-/* Optional: clicking the button can trigger a simple day transition (example) */
-clickBtn.addEventListener('click', () => {
-  // Simple daytime visual change: fade out stars & lift background
-  document.querySelectorAll('.star').forEach(s => s.style.opacity = '0');
-  moon.style.opacity = '0';
-  // bring clouds forward faster for daytime feel
-  document.querySelectorAll('.cloud').forEach(c => c.style.filter = 'blur(8px) brightness(1.05)');
-  // hide message
-  document.getElementById('message').style.opacity = '0';
-  // keep button usable or hide as desired
-  clickBtn.style.pointerEvents = 'none';
-  clickBtn.style.opacity = '0.6';
-});
+},16);
 </script>
+
 </body>
 </html>

@@ -54,17 +54,20 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 .particle{position:absolute;width:4px;height:4px;border-radius:50%;background: rgba(255,245,220,0.9);filter: blur(1px);opacity:.0;transform: translateY(0);}
 .grain{position:absolute;inset:0;pointer-events:none;z-index:30;background-image: radial-gradient(rgba(255,255,255,var(--grain-opacity)), rgba(255,255,255,0));mix-blend-mode: overlay;opacity:0.5;}
 
-/* ---------- MESSAGE (SOLID VIOLET, SHARP) ---------- */
+/* ---------- MESSAGE (ROYAL DARK VIOLET, CINEMATIC) ---------- */
 #message{
   position:absolute;
   width:100%;
   top:62%;
   text-align:center;
   z-index:1000;
-  color:#c678ff;  /* solid violet */
+  color:#4B0082;  /* Royal Dark Violet */
   font-size:28px;
   letter-spacing:3px;
-  text-shadow:0 6px 20px rgba(0,0,0,0.45);
+  text-shadow:
+     0 2px 6px rgba(75,0,130,0.4),
+     0 4px 12px rgba(75,0,130,0.3),
+     0 8px 24px rgba(75,0,130,0.25);
   padding:6px 10px;
   transform: translateZ(0);
   -webkit-font-smoothing: antialiased;
@@ -73,7 +76,12 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
   backface-visibility: hidden;
   will-change: opacity, transform;
 }
-.letter{display:inline-block;opacity:0;transform:translateY(8px);transition:opacity 0.15s ease, transform 0.15s ease;}
+.letter{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity 0.15s ease, transform 0.15s ease;
+}
 
 /* ---------- CLICK BUTTON ---------- */
 #clickBtn{
@@ -113,6 +121,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 <div class="vignette"></div>
 <div class="grain"></div>
 <div id="message"></div>
+
 <button id="clickBtn">CLICK HERE</button>
 
 <script>

@@ -40,7 +40,6 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 
 /* ---------- Godrays & Fog ---------- */
 .godrays{position:absolute;inset:0;pointer-events:none;z-index:7;background:repeating-linear-gradient(75deg, rgba(255,244,210,0.08) 0px, rgba(255,244,210,0.02) 120px, rgba(255,244,210,0) 240px);mix-blend-mode:screen;opacity:0;transition:opacity 2.6s ease;filter: blur(6px) contrast(1.1);}
-
 .low-fog{position:absolute;bottom:0;left:0;width:100%;height:40%;pointer-events:none;background: radial-gradient(circle at 50% 95%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.45) 30%, rgba(255,255,255,0) 100%);filter: blur(48px);opacity:0.7;z-index:4;animation:fogFloat 45s ease-in-out infinite;transition:opacity 2.5s ease;}
 @keyframes fogFloat{0%,100%{transform:translateX(0);}50%{transform:translateX(4%);}}
 
@@ -48,20 +47,20 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 .sun{position:absolute;left:50%;transform:translateX(-50%);top:-220px;width:220px;height:220px;border-radius:50%;pointer-events:none;z-index:8;transition:top 3.2s ease, opacity 3s ease, box-shadow 3s ease;opacity:0;background:radial-gradient(circle at 35% 35%, rgba(255,250,220,1) 0%, rgba(255,210,120,1) 45%, rgba(255,170,60,0.9) 100%);box-shadow:0 0 140px 48px rgba(255,220,120,0.12),0 0 320px 120px rgba(255,200,80,0);}
 .sun-rings{position:absolute;inset:-30% -30% auto -30%;height:300%;border-radius:50%;pointer-events:none;filter:blur(30px);opacity:0;transition:opacity 3s ease;mix-blend-mode:screen;background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,230,140,0.08), rgba(255,200,80,0));}
 
-/* ---------- Overlay, particles ---------- */
+/* ---------- Overlay, particles, message ---------- */
 .grade{position:absolute;inset:0;pointer-events:none;z-index:20;mix-blend-mode: soft-light;background: linear-gradient(180deg, rgba(255,240,220,0.06), rgba(30,40,70,0.15));opacity:1;transition:opacity 2s ease;}
 .vignette{position:absolute;inset:0;pointer-events:none;z-index:25;background: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.18) 100%);mix-blend-mode:multiply;}
 .particles{position:absolute;inset:0;pointer-events:none;z-index:15;overflow:hidden;}
 .particle{position:absolute;width:4px;height:4px;border-radius:50%;background: rgba(255,245,220,0.9);filter: blur(1px);opacity:.0;transform: translateY(0);}
 .grain{position:absolute;inset:0;pointer-events:none;z-index:30;background-image: radial-gradient(rgba(255,255,255,var(--grain-opacity)), rgba(255,255,255,0));mix-blend-mode: overlay;opacity:0.5;}
 
-/* ---------- MESSAGE (VIOLET GRADIENT TEXT, FULLY VISIBLE & SHARP) ---------- */
+/* ---------- MESSAGE (VIOLET GRADIENT TEXT, SHARP) ---------- */
 #message{
   position:absolute;
   width:100%;
   top:62%;
   text-align:center;
-  z-index:100; /* highest to be on top */
+  z-index:1000; /* above everything */
   background: linear-gradient(135deg, #9b30ff, #c678ff, #ffffff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -71,11 +70,13 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
   letter-spacing:3px;
   text-shadow:0 6px 20px rgba(0,0,0,0.45);
   padding:6px 10px;
-  
+
+  transform: translateZ(0);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  backface-visibility: visible;
-  mix-blend-mode: normal; /* prevent overlay blur */
+  mix-blend-mode: normal;
+  backface-visibility: hidden;
+  will-change: opacity, transform;
 }
 .letter{display:inline-block;opacity:0;transform:translateY(8px);transition:opacity 0.15s ease, transform 0.15s ease;}
 
@@ -98,6 +99,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
   z-index:30;
 }
 #clickBtn:active{ transform:translateX(-50%) scale(0.96); }
+
 </style>
 </head>
 <body>
@@ -116,6 +118,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 <div class="vignette"></div>
 <div class="grain"></div>
 <div id="message"></div>
+
 <button id="clickBtn">CLICK HERE</button>
 
 <script>
@@ -189,7 +192,7 @@ document.addEventListener('pointermove', e=>{
   startX=e.clientX;
   progress += dx/window.innerWidth;
   progress=Math.min(Math.max(progress,0),1);
-  if(progress >= 1) dayLocked = true; 
+  if(progress >= 1) dayLocked = true;
   updateScene(progress);
 });
 document.addEventListener('pointerup', e=>{isDragging=false;});
@@ -211,56 +214,37 @@ function resetParticle(p,initial=false){
 
 // ====== Update Scene & Message ======
 const clickBtn = document.getElementById('clickBtn');
-
 function updateMessage(progress){
   const letters=document.querySelectorAll('.letter');
   const count=Math.floor(progress*letters.length);
   letters.forEach((l,i)=>{
-    if(i<count){
-      l.style.opacity='1';
-      l.style.transform='translateY(0)';
-    } else {
-      l.style.opacity='0';
-      l.style.transform='translateY(8px)';
-    }
+    if(i<count){ l.style.opacity='1'; l.style.transform='translateY(0)'; }
+    else{ l.style.opacity='0'; l.style.transform='translateY(8px)'; }
   });
-
-  if(count >= letters.length){
-    clickBtn.style.display = 'block';
-  }
+  if(count >= letters.length){ clickBtn.style.display = 'block'; }
 }
-
 function updateScene(progress){
   moon.style.transform=`rotate(${progress*360}deg)`;
   moon.style.opacity=1-progress;
-
   document.querySelectorAll('.star').forEach((s,i)=>{
     const fade=Math.max(0, 0.5*(1-progress)-Math.random()*0.05);
     s.style.opacity=fade;
     s.style.animation=fade<0.05 ? 'none' : 'twinkle 2.6s infinite alternate';
   });
-
-  document.querySelectorAll('.shooting-star').forEach(s=>{
-    s.style.opacity = Math.max(0, 1-progress - Math.random()*0.1);
-  });
-
+  document.querySelectorAll('.shooting-star').forEach(s=>{ s.style.opacity = Math.max(0, 1-progress - Math.random()*0.1); });
   sun.style.top=(-220 + 280*progress)+'px';
   sun.style.opacity=progress;
   sunRings.style.opacity=progress;
-
   document.getElementById('godrays').style.opacity = progress;
   document.getElementById('lowFog').style.opacity = 0.7*(1-progress) + 0.25*progress;
-
   const skyTop = 135 + 71*progress; 
   const skyBottom = 208 + 47*progress;
   document.body.style.background = `linear-gradient(to top, rgb(${skyTop},${skyTop+30},${skyTop+50}), rgb(${skyBottom},${skyBottom+30},${skyBottom+50}))`;
-
   document.querySelectorAll('.cloud-blob').forEach(c=>{
     const ox=Math.sin(progress*12 + parseFloat(c.style.left)/30)*4;
     const oy=Math.cos(progress*12 + parseFloat(c.style.top)/20)*2;
     c.style.background=`radial-gradient(circle at ${35+ox}% ${35+oy}%, rgba(255,255,255,${0.98-progress*0.7}) 0%, rgba(255,255,255,${0.86-progress*0.7}) 25%, rgba(255,255,255,${0.6-progress*0.5}) 50%, rgba(255,200,255,${0.15-progress*0.15}) 80%, rgba(255,255,255,0) 100%)`;
   });
-
   updateMessage(progress);
 }
 

@@ -1,524 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ultimate Cinematic Night → Day</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Cinematic Night Scene</title>
 <style>
-  /* ---------- Reset & base ---------- */
-  html,body{
-    height:100%;
+  body, html {
     margin:0;
-    background:#000010;
-    font-family: "Cinzel", serif;
-    overflow:hidden;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-  }
-  :root{
-    --sky-night:#000010;
-    --sky-day-top:#87ceeb;
-    --sky-day-mid:#a0d8ff;
-    --sky-day-bottom:#d0f0ff;
-    --sun-color:#ffcf6b;
-    --grain-opacity:0.03;
-  }
-
-  /* ---------- Stars & shooting ---------- */
-  #stars { position:absolute; inset:0; pointer-events:none; z-index:2; }
-  .star{
-    position:absolute;
-    width:2px; height:2px; border-radius:50%;
-    background:#fff; box-shadow:0 0 6px rgba(255,255,255,0.9);
-    opacity:0.5;
-    animation:twinkle 2.6s infinite alternate;
-    transform-origin:center;
-  }
-  @keyframes twinkle{
-    0%{opacity:0.15; transform:scale(1);}
-    50%{opacity:0.95; transform:scale(1.6);}
-    100%{opacity:0.15; transform:scale(1);}
-  }
-  .shooting-star{
-    position:absolute;
-    width:10px; height:3px; border-radius:8px;
-    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 100%);
-    filter:blur(1px);
-    transform-origin: left top;
-    opacity:0;
-  }
-
-  /* ---------- Moon ---------- */
-  .moon{
-    position:absolute;
-    width:150px; height:150px; border-radius:50%;
-    top:60px; left:-180px;
-    background: radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);
-    box-shadow:0 0 80px rgba(255,245,200,0.45);
-    z-index:6;
-    transition:opacity .8s linear;
-  }
-
-  /* ---------- Cinematic volumetric clouds (3 layers made from gradients) ---------- */
-  .cloud-layer{
-    position:absolute;
-    top:0;
-    left:-20%;
-    width:140%;
-    height:60%;
-    pointer-events:none;
-    z-index:5;
-    mix-blend-mode:screen;
-  }
-
-  /* We'll create multiple pseudo-cloud groups inside via JS for variety */
-  .cloud-group{
-    position:absolute;
-    left:0; top:0;
-    width:100%; height:100%;
-    transform-origin:center;
-    filter: blur(12px) saturate(1.05);
-    opacity:0.9;
-  }
-
-  /* different depths -> different blur/opacity/animation */
-  .cloud-group.back{ filter:blur(22px) contrast(.9); opacity:.55; animation:driftBack 180s linear infinite; }
-  .cloud-group.mid{ filter:blur(12px) contrast(1); opacity:.75; animation:driftMid 120s linear infinite; }
-  .cloud-group.front{ filter:blur(6px) contrast(1.05); opacity:.95; animation:driftFront 80s linear infinite; }
-
-  @keyframes driftBack { from{ transform:translateX(-8%);} to{ transform:translateX(8%);} }
-  @keyframes driftMid  { from{ transform:translateX(-12%);} to{ transform:translateX(12%);} }
-  @keyframes driftFront{ from{ transform:translateX(-18%);} to{ transform:translateX(18%);} }
-
-  /* each individual soft cloud blob */
-  .cloud-blob{
-    position:absolute;
-    background:
-      radial-gradient(circle at 35% 35%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.86) 25%, rgba(255,255,255,0.6) 50%, rgba(200,200,200,0.15) 80%, rgba(255,255,255,0) 100%);
-    border-radius:50%;
-    filter: blur(10px);
-    opacity:0.95;
-    mix-blend-mode:screen;
-  }
-
-  /* ---------- Godrays (soft volumetric light beams) ---------- */
-  .godrays {
-    position:absolute; inset:0; pointer-events:none; z-index:7;
-    background: repeating-linear-gradient(75deg,
-      rgba(255,244,210,0.08) 0px,
-      rgba(255,244,210,0.02) 120px,
-      rgba(255,244,210,0) 240px
-    );
-    mix-blend-mode:screen;
-    opacity:0; /* will intensify on sunrise */
-    transition:opacity 2.6s ease;
-    transform: translateZ(0);
-    filter: blur(6px) contrast(1.1);
-  }
-
-  /* ---------- Fog / low haze near ground ---------- */
-  .low-fog {
-    position:absolute;
-    bottom:0;
-    left:0;
+    padding:0;
     width:100%;
-    height:40%;
-    pointer-events:none;
-    background: radial-gradient( circle at 50% 95%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.45) 30%, rgba(255,255,255,0) 100% );
-    filter: blur(48px);
-    opacity:0.7;
-    z-index:4;
-    animation:fogFloat 45s ease-in-out infinite;
-    transition:opacity 2.5s ease;
-  }
-  @keyframes fogFloat {
-    0%,100%{ transform: translateX(0);}
-    50%{ transform: translateX(4%);}
+    height:100%;
+    overflow:hidden;
+    background:#000008;
+    font-family:'Cinzel', serif;
   }
 
-  /* ---------- Sun (bloom + subtle rays) ---------- */
-  .sun {
+  /* --- CINEMATIC CLOUDS (ULTIMATE) --- */
+  .cloud-layer {
     position:absolute;
-    left:50%;
-    transform:translateX(-50%);
-    top:-220px;
-    width:220px;
-    height:220px;
-    border-radius:50%;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
     pointer-events:none;
-    z-index:8;
-    transition: top 3.2s ease, opacity 3s ease, box-shadow 3s ease;
-    opacity:0;
-    background: radial-gradient(circle at 35% 35%, rgba(255,250,220,1) 0%, rgba(255,210,120,1) 45%, rgba(255,170,60,0.9) 100%);
-    box-shadow:
-      0 0 140px 48px rgba(255,220,120,0.12),
-      0 0 320px 120px rgba(255,200,80,0.07);
-  }
-  .sun-rings {
-    position:absolute;
-    inset: -30% -30% auto -30%;
-    height: 300%;
-    border-radius:50%;
-    pointer-events:none;
-    filter: blur(30px);
-    opacity:0;
-    transition: opacity 3s ease;
-    mix-blend-mode: screen;
-    background: radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,230,140,0.08), rgba(255,200,80,0));
+    overflow:hidden;
   }
 
-  /* ---------- Color grading / cinematic overlay ---------- */
-  .grade {
-    position:absolute; inset:0; pointer-events:none; z-index:20;
-    mix-blend-mode: soft-light;
-    background: linear-gradient(180deg, rgba(255,240,220,0.06), rgba(30,40,70,0.15));
-    opacity:1;
+  .cloud {
+    position:absolute;
+    width:600px;
+    height:300px;
+    background:radial-gradient(circle at 40% 40%, rgba(255,255,255,0.25), rgba(255,255,255,0.04) 60%, transparent 100%);
+    filter:blur(35px) brightness(1.2);
+    opacity:0.45;
+    border-radius:50%;
+    animation:cloudDrift linear infinite;
+  }
+
+  .cloud.xl { width:900px; height:420px; opacity:0.35; filter:blur(45px); }
+  .cloud.sm { width:450px; height:220px; opacity:0.5; filter:blur(30px); }
+
+  @keyframes cloudDrift {
+    0% { transform:translateX(-900px); }
+    100% { transform:translateX(110%); }
+  }
+
+  /* CLOUD SHADOW LAYERS */
+  .cloud-shadow {
+    position:absolute;
+    width:600px;
+    height:300px;
+    top:0;
+    left:0;
+    background:rgba(0,0,0,0.25);
+    filter:blur(60px);
+    opacity:0.15;
+    border-radius:50%;
+    animation:shadowDrift linear infinite;
+  }
+
+  @keyframes shadowDrift {
+    0% { transform:translateX(-400px); }
+    100% { transform:translateX(120%); }
+  }
+
+  /* STARS */
+  .star {
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:#fff;
+    border-radius:50%;
+    box-shadow:0 0 8px #ffffff;
+    opacity:0.6;
+    animation:twinkle 3s infinite ease-in-out;
+  }
+
+  @keyframes twinkle {
+    0% { opacity:0.2; transform:scale(1); }
+    50% { opacity:1; transform:scale(1.6); }
+    100% { opacity:0.2; transform:scale(1); }
+  }
+
+  /* MOON */
+  .moon {
+    position:absolute;
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    background:radial-gradient(circle, #fffdf0 0%, #f8e9b5 50%, #ddc690 100%);
+    box-shadow:0 0 80px 40px rgba(255,240,200,0.4);
+    top:90px;
+    left:-200px;
     transition:opacity 2s ease;
   }
 
-  /* cinematic vignette */
-  .vignette {
-    position:absolute; inset:0; pointer-events:none; z-index:25;
-    background: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.18) 100%);
-    mix-blend-mode:multiply;
-  }
-
-  /* film particles (floating dust) */
-  .particles { position:absolute; inset:0; pointer-events:none; z-index:15; overflow:hidden; }
-  .particle {
-    position:absolute; width:4px; height:4px; border-radius:50%;
-    background: rgba(255,245,220,0.9);
-    filter: blur(1px);
-    opacity:.0;
-    transform: translateY(0);
-  }
-
-  /* subtle film grain */
-  .grain {
-    position:absolute; inset:0; pointer-events:none; z-index:30;
-    background-image: radial-gradient(rgba(255,255,255,var(--grain-opacity)), rgba(255,255,255,0));
-    mix-blend-mode: overlay;
-    opacity:0.5;
-    pointer-events:none;
-  }
-
-  /* ---------- Message + button ---------- */
+  /* MESSAGE */
   #message {
-    position:absolute; width:100%; top:62%; text-align:center; z-index:12;
-    color:#fff3da; font-size:28px; letter-spacing:3px;
-    text-shadow:0 6px 20px rgba(0,0,0,0.7);
-    opacity:0; transition:opacity .6s ease;
+    position:absolute;
+    top:65%;
+    width:100%;
+    font-size:30px;
+    text-align:center;
+    color:#f3dfc7;
+    text-shadow:2px 2px 15px black;
+    opacity:0;
   }
-  .letter{ display:inline-block; opacity:0; transform: translateY(8px); animation:reveal .45s forwards; }
-  @keyframes reveal{ to{opacity:1; transform:translateY(0);} }
 
+  .letter {
+    opacity:0;
+    display:inline-block;
+    animation:letterReveal 0.4s forwards cubic-bezier(.17,.67,.2,1.65);
+  }
+
+  @keyframes letterReveal {
+    0% { opacity:0; transform:translateY(20px) scale(0.8); }
+    100% { opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  /* BUTTON */
   #clickBtn {
-    position:absolute; left:50%; bottom:10vh; transform:translateX(-50%);
-    z-index:13;
-    padding:14px 34px; border-radius:40px;
-    background: rgba(255,255,255,0.12); color:#fff;
-    border:1px solid rgba(255,255,255,0.18); cursor:pointer;
-    font-family:'Cinzel', serif; font-size:20px;
-    opacity:0; pointer-events:none; transition:opacity 1s ease, transform .4s ease;
-  }
-  #clickBtn.float { opacity:1; pointer-events:auto; animation:btnFloat 3s ease-in-out infinite; }
-  @keyframes btnFloat {0%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-6px);}100%{transform:translateX(-50%) translateY(0);} }
-
-  /* ---------- utility for dark->day transition ---------- */
-  .day {
-    background: linear-gradient(to top, var(--sky-day-mid), var(--sky-day-top));
-    transition: background 3.2s ease;
+    position:absolute;
+    bottom:12vh;
+    left:50%;
+    transform:translateX(-50%);
+    padding:15px 40px;
+    border-radius:40px;
+    background:rgba(255,255,255,0.1);
+    color:white;
+    border:1px solid rgba(255,255,255,0.35);
+    opacity:0;
+    pointer-events:none;
+    font-size:20px;
+    animation:btnFloat 3s infinite ease-in-out;
   }
 
-  /* responsive tweak */
-  @media (max-width:600px){ #message{font-size:18px;} .sun{width:150px;height:150px;} }
+  @keyframes btnFloat {
+    0% { transform:translateX(-50%) translateY(0); }
+    50% { transform:translateX(-50%) translateY(-7px); }
+    100% { transform:translateX(-50%) translateY(0); }
+  }
 </style>
 </head>
 <body>
 
-  <!-- Stars -->
-  <div id="stars"></div>
+<div id="stars"></div>
+<div class="cloud-layer" id="cloudLayer"></div>
+<div class="cloud-layer" id="cloudShadows"></div>
 
-  <!-- Moon -->
-  <div class="moon" id="moon"></div>
-
-  <!-- Cloud layers container -->
-  <div class="cloud-layer" id="cloudLayer">
-    <div class="cloud-group back" id="cloudBack"></div>
-    <div class="cloud-group mid" id="cloudMid"></div>
-    <div class="cloud-group front" id="cloudFront"></div>
-  </div>
-
-  <!-- Godrays & fog -->
-  <div class="godrays" id="godrays"></div>
-  <div class="low-fog" id="lowFog"></div>
-
-  <!-- Sun and rings -->
-  <div class="sun" id="sun">
-    <div class="sun-rings" id="sunRings"></div>
-  </div>
-
-  <!-- particles + grade + shadow -->
-  <div class="particles" id="particles"></div>
-  <div class="grade"></div>
-  <div class="cloud-shadow" id="cloudShadow" style="position:absolute; inset:0; pointer-events:none; z-index:9; mix-blend-mode:multiply; opacity:0.0; background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.22), rgba(0,0,0,0) 55%); filter: blur(28px);"></div>
-  <div class="vignette"></div>
-  <div class="grain"></div>
-
-  <!-- message and button -->
-  <div id="message"></div>
-  <button id="clickBtn">Click Here</button>
+<div class="moon"></div>
+<div id="message"></div>
+<button id="clickBtn">Click Here</button>
 
 <script>
-/* -------------------- Setup scene elements -------------------- */
-
-// Utility random
-const rnd = (a,b)=> a + Math.random()*(b-a);
-
-// Stars
-const starsEl = document.getElementById('stars');
-const stars = [];
-for(let i=0;i<220;i++){
-  const s = document.createElement('div');
-  s.className = 'star';
-  s.style.left = (Math.random()*100)+'%';
-  s.style.top  = (Math.random()*100)+'%';
-  s.style.opacity = (0.15 + Math.random()*0.85).toString();
-  s.style.transform = `scale(${0.6 + Math.random()*1.6})`;
-  starsEl.appendChild(s);
-  stars.push(s);
+/* STAR GENERATION */
+for(let i=0;i<180;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.top=Math.random()*window.innerHeight+'px';
+  s.style.left=Math.random()*window.innerWidth+'px';
+  document.getElementById('stars').appendChild(s);
 }
 
-// shooting stars (occasional)
-function spawnShooting(){
-  const s = document.createElement('div');
-  s.className = 'shooting-star';
-  const top = rnd(5,35); // percent
-  s.style.top = top + 'vh';
-  s.style.left= '110%';
-  s.style.transform = `rotate(${ -20 - Math.random()*40 }deg)`;
-  s.style.opacity = '1';
-  document.body.appendChild(s);
-  const duration = rnd(900,1600);
-  s.animate([
-    { transform: `translateX(0) translateY(0) rotate(${ -20 - Math.random()*40 }deg)`, opacity:1 },
-    { transform: `translateX(-120vw) translateY(80vh) rotate(${ -20 - Math.random()*40 }deg)`, opacity:0 }
-  ], { duration, easing:'cubic-bezier(.2,.6,.2,1)' });
-  setTimeout(()=> s.remove(), duration+50);
+/* CLOUD GENERATION */
+function createCloud(type){
+  const c=document.createElement('div');
+  c.className='cloud ' + type;
+  c.style.top = 50 + Math.random()*250 + 'px';
+  c.style.animationDuration = (70 + Math.random()*60) + 's';
+  document.getElementById('cloudLayer').appendChild(c);
 }
-let shootingInterval = setInterval(spawnShooting, 1200 + Math.random()*1200);
 
-// Moon movement
-const moon = document.getElementById('moon');
-let moonX = -200;
-const moonSpeed = Math.max(window.innerWidth / 800, 4);
-let messageShown = false;
-const messageEl = document.getElementById('message');
+for(let i=0;i<6;i++) createCloud('xl');
+for(let i=0;i<4;i++) createCloud('sm');
 
+/* SHADOW CLOUDS */
+function createShadow(){
+  const c=document.createElement('div');
+  c.className='cloud-shadow';
+  c.style.top = 100 + Math.random()*220 + 'px';
+  c.style.animationDuration = (90 + Math.random()*70) + 's';
+  document.getElementById('cloudShadows').appendChild(c);
+}
+
+for(let i=0;i<5;i++) createShadow();
+
+/* MESSAGE */
 function revealMessage(){
-  if(messageEl.dataset.revealed) return;
-  messageEl.dataset.revealed = '1';
-  const text = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-  messageEl.innerHTML = '';
-  text.split('').forEach((ch,i)=>{
-    const span = document.createElement('span');
-    span.className = 'letter';
-    span.style.animationDelay = (i*0.045) + 's';
-    span.textContent = ch === ' ' ? '\u00A0' : ch;
-    messageEl.appendChild(span);
+  const msg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+  const m = document.getElementById('message');
+  m.innerHTML='';
+  msg.split('').forEach((ch,i)=>{
+    const span=document.createElement('span');
+    span.textContent = ch===' ' ? '\u00A0' : ch;
+    span.className='letter';
+    span.style.animationDelay = (i*0.05)+'s';
+    m.appendChild(span);
   });
-  messageEl.style.opacity = '1';
+  m.style.opacity=1;
 }
 
-// cloud generation (pure CSS gradients + blobs)
-function makeCloudBlob(container, leftPct, topPct, w, h, opacity=1, colorShift=0){
-  const b = document.createElement('div');
-  b.className = 'cloud-blob';
-  b.style.left = leftPct+'%';
-  b.style.top  = topPct+'%';
-  b.style.width = w+'px';
-  b.style.height= h+'px';
-  b.style.opacity = opacity;
-  // subtle color shift by controlling background's lightness via CSS variable if wanted
-  container.appendChild(b);
-  return b;
-}
+/* MOON EASING MOVEMENT */
+const moon=document.querySelector('.moon');
+let moonX=-200;
+let t=0;
+const moonStop = window.innerWidth*0.75;
 
-// populate each cloud group with a pattern of blobs
-function populateClouds(){
-  const back = document.getElementById('cloudBack');
-  const mid  = document.getElementById('cloudMid');
-  const front= document.getElementById('cloudFront');
-  [back,mid,front].forEach(el => el.innerHTML=''); // clear
+function easeOutCubic(x){ return 1 - Math.pow(1-x,3); }
 
-  // back: big soft masses
-  for(let i=0;i<5;i++){
-    makeCloudBlob(back, rnd(-40,120), rnd(-5,40), rnd(700,1200), rnd(260,420), rnd(0.35,0.7));
-  }
-  // mid: medium layers
-  for(let i=0;i<10;i++){
-    makeCloudBlob(mid, rnd(-30,120), rnd(5,50), rnd(380,760), rnd(160,260), rnd(0.45,0.9));
-  }
-  // front: finer, brighter puffs
-  for(let i=0;i<12;i++){
-    makeCloudBlob(front, rnd(-10,120), rnd(12,65), rnd(160,440), rnd(90,180), rnd(0.5,1));
-  }
-}
-populateClouds();
-
-// Godrays control
-const godrays = document.getElementById('godrays');
-const sun = document.getElementById('sun');
-const sunRings = document.getElementById('sunRings');
-const cloudShadow = document.getElementById('cloudShadow');
-const lowFog = document.getElementById('lowFog');
-const clickBtn = document.getElementById('clickBtn');
-
-// Particles (floating dust)
-const particlesContainer = document.getElementById('particles');
-const particleCount = 60;
-for(let i=0;i<particleCount;i++){
-  const p = document.createElement('div');
-  p.className='particle';
-  resetParticle(p, true);
-  particlesContainer.appendChild(p);
-}
-function resetParticle(p, initial=false){
-  const left = rnd(0,100);
-  const bottom = rnd(-20,100);
-  const scale = rnd(.4,1.3);
-  p.style.left = left + '%';
-  p.style.bottom = bottom + 'px';
-  p.style.width = (2 + Math.random()*4) + 'px';
-  p.style.height = p.style.width;
-  p.style.opacity = (0.2 + Math.random()*0.9);
-  p.style.transform = `translateY(${ initial ? rnd(0, -60):0 }px) scale(${scale})`;
-  const dur = rnd(8000, 22000);
-  p.animate([
-    { transform: `translateY(${rnd(0,20)}px) scale(${scale})`, opacity: p.style.opacity },
-    { transform: `translateY(-140vh) scale(${scale*0.6})`, opacity: 0 }
-  ], { duration: dur, iterations: 1, easing:'linear' }).onfinish = ()=> resetParticle(p);
-}
-
-// show button when moon finished
-function showButton(){
-  clickBtn.classList.add('float');
-  clickBtn.style.opacity = '1';
-}
-
-// animate moon across sky and trigger message/button
-let moonAnim = setInterval(()=>{
-  if(moonX < window.innerWidth + 200){
-    moonX += moonSpeed;
+function animateMoon(){
+  if(t < 1){
+    t += 0.0035;
+    const eased = easeOutCubic(t);
+    moonX = -200 + (moonStop + 200) * eased;
     moon.style.left = moonX + 'px';
-    if(moonX > 60 && !messageShown){
-      messageShown = true;
-      revealMessage();
-    }
+
+    if(moonX > 60 && !revealed){ revealed=true; revealMessage(); }
+
+    requestAnimationFrame(animateMoon);
   } else {
-    clearInterval(moonAnim);
-    showButton();
+    clickBtn.style.opacity=1;
+    clickBtn.style.pointer-events='auto';
   }
-}, 16);
+}
 
-// adapt for resize to keep elements sensible
-window.addEventListener('resize', ()=> {
-  // repopulate clouds for new width/height ratio
-  populateClouds();
-});
-
-// ---------- DAY TRANSITION (Click) ---------- //
-let day = false;
-clickBtn.addEventListener('click', ()=> {
-  if(day) return;
-  day = true;
-
-  // fade out stars, shooting stars stop
-  document.querySelectorAll('.star').forEach(s=>{
-    s.animate([{opacity: s.style.opacity||1},{opacity:0}],{duration:1200,fill:'forwards'});
-    setTimeout(()=> s.remove(), 1300);
-  });
-  clearInterval(shootingInterval);
-
-  // Moon fade
-  moon.animate([{opacity:1},{opacity:0}],{duration:900,fill:'forwards'});
-
-  // Sky -> day color
-  document.documentElement.style.setProperty('--sky-day-top','#87ceeb');
-  document.documentElement.style.setProperty('--sky-day-mid','#a0d8ff');
-  document.documentElement.style.setProperty('--sky-day-bottom','#d0f0ff');
-  document.body.animate([{background:'var(--sky-night)'},{background:'linear-gradient(to top, var(--sky-day-mid), var(--sky-day-top))'}], {duration: 2000, fill:'forwards'});
-
-  // Sun rises
-  sun.style.top = '60px';
-  sun.style.opacity = '1';
-  sunRings.style.opacity = '1';
-
-  // Intensify godrays
-  godrays.style.opacity = '1';
-  godrays.animate([{opacity:0},{opacity:1}],{duration:2000,fill:'forwards'});
-
-  // Shadow softens and drifts
-  cloudShadow.animate([{opacity:0.45},{opacity:0.14}],{duration:3400,fill:'forwards'});
-  cloudShadow.style.opacity = '0.14';
-
-  // Fog reduces
-  lowFog.animate([{opacity:0.85},{opacity:0.25}],{duration:3000, fill:'forwards'});
-  lowFog.style.opacity = '0.25';
-
-  // Message subtle fade out
-  messageEl.animate([{opacity:1},{opacity:0}],{duration:900,fill:'forwards'});
-  setTimeout(()=> messageEl.style.opacity = '0', 900);
-
-  // particles color shift
-  document.querySelectorAll('.particle').forEach((p,i)=>{
-    p.animate([{background:'rgba(255,245,220,0.75)'},{background:'rgba(255,210,140,0.9)'}],{duration:2800,fill:'forwards'});
-  });
-
-  // cinematic grade lighten slightly
-  document.querySelector('.grade').animate([{opacity:0.9},{opacity:1}],{duration:2000,fill:'forwards'});
-});
-
-// ---------- Reveal button when ready (use existing click area) ----------
-// Initially, button invisible until moon passes; show transition text for guidance.
-clickBtn.addEventListener('mouseenter', ()=> clickBtn.style.transform = 'translateX(-50%) translateY(-4px)');
-clickBtn.addEventListener('mouseleave', ()=> clickBtn.style.transform = 'translateX(-50%) translateY(0)');
-
-// show default on first load (button appears only after moon finishes)
-clickBtn.style.opacity = '0';
-
-// ---------- Kick off some ambient motion (subtle parallax) ---------- //
-(function animateScene(){
-  const t = performance.now() / 1000;
-  // gentle parallax: move cloud-layer slightly with a sin wave
-  const cloudLayer = document.getElementById('cloudLayer');
-  cloudLayer.style.transform = `translateY(${Math.sin(t/18)*6}px)`;
-  // subtle grade breathing
-  document.querySelector('.grade').style.opacity = 0.96 + Math.sin(t/6)*0.02;
-  requestAnimationFrame(animateScene);
-})();
-
-// ---------- Create initial button + set it hidden; will be shown by showButton() ---------- //
-clickBtn.classList.remove('float');
-clickBtn.style.opacity = '0';
-document.body.appendChild(clickBtn); // already in DOM, safe
-
-// ------------ helper: create initial tiny UI show ------------- //
-// show small hint to wait for moon
-setTimeout(()=> {
-  // ensure button area exists
-  clickBtn.style.opacity = '0';
-}, 800);
-
-// -------------- Add some initial stars to DOM properly -------------- //
-/* (stars already appended earlier) */
-
-// -------------- Create an initial small burst of shooting stars on load -------------- //
-for(let i=0;i<3;i++) setTimeout(spawnShooting, 400 + i*420);
-
-// -------------- Expose clickBtn to global in case user wants keyboard trigger -------------- //
-window.triggerDay = ()=> clickBtn.click();
-
+let revealed=false;
+animateMoon();
 </script>
 </body>
 </html>

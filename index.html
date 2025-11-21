@@ -22,7 +22,7 @@
     height:100%;
     top:0;
     left:0;
-    pointer-events:none;
+    pointerEvents:none;
     overflow:hidden;
   }
 
@@ -192,7 +192,7 @@ function revealMessage(){
   m.innerHTML='';
   msg.split('').forEach((ch,i)=>{
     const span=document.createElement('span');
-    span.textContent = ch===' ' ? '\u00A0' : ch;
+    span.textContent = ch===' ' ? ' ' : ch;
     span.className='letter';
     span.style.animationDelay = (i*0.05)+'s';
     m.appendChild(span);

@@ -1,120 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Saree Girl Walk</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cinematic Saree Walk — Pure SVG + CSS</title>
 <style>
-  /* --- Reset --- */
-  * {margin:0; padding:0; box-sizing:border-box;}
+  /* Reset */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
 
-  body, html {
-    width:100%;
-    height:100%;
+  body{
+    background:#070812;
+    font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
     overflow:hidden;
-    background:#000;
-    font-family: 'Georgia', serif;
   }
 
-  /* --- Cinematic Background --- */
-  .scene {
+  /* Letterbox cinematic bars */
+  .bar{position:fixed;left:0;width:100%;height:9%;background:#000;z-index:40}
+  .bar.top{top:0} .bar.bottom{bottom:0}
+
+  /* Scene container */
+  .scene{
+    position:relative;
     width:100%;
     height:100vh;
-    background: linear-gradient(#0a0f1d, #12203a, #1b324d);
-    position: relative;
     overflow:hidden;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    background: linear-gradient(180deg,#081022 0%, #0c1b33 45%, #082018 100%);
   }
 
-  /* --- Cinematic Fog --- */
-  .fog {
-    position:absolute;
-    width:200%;
-    height:100%;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15), transparent 60%);
-    animation: fogMove 20s linear infinite;
+  /* Parallax layers */
+  .layer{position:absolute;left:0;right:0;bottom:0;pointer-events:none}
+  .far-trees{height:48%;bottom:36%; background:transparent; transform:translateZ(-2px); opacity:0.65}
+  .mid-trees{height:55%;bottom:20%; opacity:0.8}
+  .foreground{height:36%;bottom:0}
+
+  /* animate tree movement (subtle) */
+  @keyframes slowSlide { from{transform:translateX(0)} to{transform:translateX(-18%)}}
+  @keyframes slowSlideBack { from{transform:translateX(0)} to{transform:translateX(-30%)}}
+
+  .far-trees svg, .mid-trees svg { width:200%; height:100%; display:block; }
+  .far-trees .inner { animation: slowSlide 38s linear infinite; transform-origin:0 50% }
+  .mid-trees .inner { animation: slowSlideBack 28s linear infinite; transform-origin:0 50% }
+
+  /* Fog */
+  .fog{
+    position:absolute;left:-25%;width:150%;height:60%;bottom:28%;
+    background: radial-gradient(40% 60% at 50% 40%, rgba(255,255,255,0.06), rgba(255,255,255,0.00) 45%);
+    filter:blur(18px); animation: fogMove 22s linear infinite; z-index:6;
   }
-  @keyframes fogMove {
-    0% {transform: translateX(-20%);}
-    100% {transform: translateX(20%);}
+  @keyframes fogMove { 0%{transform:translateX(-5%)} 50%{transform:translateX(5%)} 100%{transform:translateX(-5%)} }
+
+  /* Ground and subtle vignette */
+  .ground{
+    position:absolute; left:0; right:0; bottom:0; height:26%;
+    background: linear-gradient(180deg,#07230f,#05120a 60%);
+    box-shadow: inset 0 40px 60px rgba(0,0,0,0.55);
+    z-index:20;
   }
 
-  /* --- Ground --- */
-  .ground {
-    position: absolute;
-    bottom:0;
-    width:100%;
-    height:30%;
-    background: linear-gradient(#0d2617, #06140c);
+  /* Path (slightly reflective) */
+  .path {
+    position:absolute; left:0; right:0; bottom:11%; height:10%;
+    z-index:21; pointer-events:none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0) 60%);
+    filter: blur(0.6px);
+    opacity:0.9;
   }
 
-  /* --- Trees Parallax --- */
-  .trees {
-    position:absolute;
-    bottom:10%;
-    width:200%;
-    height:40%;
-    background:url('https://i.imgur.com/Qvx5Qp5.png') repeat-x;
-    background-size:contain;
-    animation: treeMove 18s linear infinite;
-    opacity:0.7;
+  /* Girl container and walking motion across screen */
+  .walker-wrap{
+    position:absolute; left:8%; bottom:12%;
+    width:260px; height:420px; z-index:30;
+    animation: walkAcross 12s linear infinite;
+    transform-origin:left center;
+    filter: drop-shadow(0 18px 26px rgba(0,0,0,0.6));
   }
-  @keyframes treeMove {
-    0% {transform: translateX(0);}
-    100% {transform: translateX(-50%);}
-  }
-
-  /* --- Girl Walking (SVG shape) --- */
-  .girl {
-    position:absolute;
-    bottom:18%;
-    left:20%;
-    transform: translateY(0);
-    animation: girlWalk 1.8s steps(6) infinite,
-               girlFloat 4s ease-in-out infinite alternate;
+  @keyframes walkAcross {
+    0%{ left: -18% ; transform: scale(0.95) }
+    8%{ left: 6%  ; transform: scale(1) }
+    50%{ left: 52% ; transform: scale(1.05) }
+    92%{ left: 110% ; transform: scale(0.95) }
+    100%{ left: 118% ; transform: scale(0.9) }
   }
 
-  @keyframes girlFloat {
-    0% {transform: translateY(0);}
-    100% {transform: translateY(-5px);}
+  /* subtle vertical bobbing */
+  .walker{ animation: floaty 3.6s ease-in-out infinite; transform-origin:center bottom }
+  @keyframes floaty { 0%{transform:translateY(0)} 100%{transform:translateY(-6px)} }
+
+  /* Walk cycle for limbs */
+  .leg, .arm {
+    transform-origin: 50% 10%;
+    animation-timing-function: linear;
+  }
+  .leg.left { animation: leftLeg 0.9s ease-in-out infinite; }
+  .leg.right { animation: rightLeg 0.9s ease-in-out infinite; }
+  .arm.left { animation: leftArm 0.9s ease-in-out infinite; }
+  .arm.right { animation: rightArm 0.9s ease-in-out infinite; }
+
+  @keyframes leftLeg {
+    0%{ transform: rotate(18deg) translateY(0) }
+    50%{ transform: rotate(-22deg) translateY(4px) }
+    100%{ transform: rotate(18deg) translateY(0) }
+  }
+  @keyframes rightLeg {
+    0%{ transform: rotate(-18deg) translateY(0) }
+    50%{ transform: rotate(26deg) translateY(4px) }
+    100%{ transform: rotate(-18deg) translateY(0) }
+  }
+  @keyframes leftArm {
+    0%{ transform: rotate(-18deg) translateY(0) }
+    50%{ transform: rotate(12deg) translateY(2px) }
+    100%{ transform: rotate(-18deg) translateY(0) }
+  }
+  @keyframes rightArm {
+    0%{ transform: rotate(14deg) translateY(0) }
+    50%{ transform: rotate(-18deg) translateY(2px) }
+    100%{ transform: rotate(14deg) translateY(0) }
   }
 
-  /* walk cycle */
-  @keyframes girlWalk {
-    0% {background-position: 0 0;}
-    100% {background-position: -900px 0;}
+  /* Saree drape sway (path transform) */
+  .saree { animation: sareeWave 1.8s ease-in-out infinite; transform-origin:center top }
+  @keyframes sareeWave {
+    0%{ transform: translateX(0) }
+    50%{ transform: translateX(-6px) }
+    100%{ transform: translateX(0) }
   }
 
-  .girl {
-    width:150px;
-    height:300px;
-    background-image:url('https://i.imgur.com/mXzL6Qh.png'); /* Saree-walk sprite */
-    background-size:900px 300px;
-  }
+  /* hair sway */
+  .hair { animation: hairFlow 2.2s ease-in-out infinite }
+  @keyframes hairFlow { 0%{ transform: translateX(0) } 50%{ transform:translateX(-3px) } 100%{ transform:translateX(0) } }
 
-  /* Cinematic letterboxing (black bars) */
-  .bars {
-    position: fixed;
-    left:0; width:100%;
-    height:12%;
-    background:black;
-    z-index: 99;
+  /* small sparkle highlights occasionally */
+  .sparkle { position:absolute; width:6px; height:6px; border-radius:50%; background:rgba(255,230,190,0.05); box-shadow:0 0 24px 8px rgba(255,200,140,0.02); left:12%; top:8%; filter:blur(1px); animation: blink 6s linear infinite }
+  @keyframes blink { 0%{opacity:0} 8%{opacity:1} 14%{opacity:0} 100%{opacity:0} }
+
+  /* Responsive scaling */
+  @media (max-width:720px){
+    .walker-wrap{ width:180px; height:300px; bottom:10% }
+    .bar{height:7%}
   }
-  .bar-top {top:0;}
-  .bar-bottom {bottom:0;}
 </style>
 </head>
-
 <body>
-<div class="bars bar-top"></div>
-<div class="bars bar-bottom"></div>
 
-<div class="scene">
-  <div class="fog"></div>
-  <div class="trees"></div>
-  <div class="girl"></div>
-  <div class="ground"></div>
-</div>
+  <!-- Letterbox -->
+  <div class="bar top"></div>
+  <div class="bar bottom"></div>
+
+  <div class="scene" role="img" aria-label="Cinematic scene of a girl in a saree walking through a garden">
+    <!-- Far trees (SVG repeated wide area) -->
+    <div class="layer far-trees" aria-hidden="true">
+      <svg class="inner" viewBox="0 0 2000 400" preserveAspectRatio="xMidYMin slice">
+        <defs>
+          <linearGradient id="ft" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#10241a"/><stop offset="1" stop-color="#041210"/>
+          </linearGradient>
+        </defs>
+        <!-- A row of silhouette trees -->
+        <g fill="url(#ft)">
+          <rect x="0" y="240" width="2000" height="160" />
+          <!-- simple treetops -->
+          <g transform="translate(40,220)">
+            <ellipse cx="50" cy="30" rx="46" ry="30"/>
+            <ellipse cx="160" cy="20" rx="56" ry="36"/>
+            <ellipse cx="300" cy="28" rx="42" ry="26"/>
+            <ellipse cx="430" cy="22" rx="68" ry="38"/>
+            <ellipse cx="600" cy="34" rx="52" ry="32"/>
+            <ellipse cx="780" cy="26" rx="44" ry="28"/>
+            <ellipse cx="950" cy="18" rx="62" ry="36"/>
+            <ellipse cx="1150" cy="30" rx="48" ry="30"/>
+            <ellipse cx="1350" cy="20" rx="56" ry="34"/>
+            <ellipse cx="1550" cy="28" rx="42" ry="24"/>
+            <ellipse cx="1750" cy="22" rx="68" ry="40"/>
+            <ellipse cx="1900" cy="30" rx="58" ry="32"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Mid trees -->
+    <div class="layer mid-trees" aria-hidden="true">
+      <svg class="inner" viewBox="0 0 2000 500" preserveAspectRatio="xMidYMin slice">
+        <defs>
+          <linearGradient id="mt" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#163623"/><stop offset="1" stop-color="#07130a"/>
+          </linearGradient>
+        </defs>
+        <g fill="url(#mt)">
+          <rect x="0" y="260" width="2000" height="240"/>
+          <g transform="translate(20,250)">
+            <ellipse cx="40" cy="34" rx="38" ry="24"/>
+            <ellipse cx="130" cy="20" rx="48" ry="30"/>
+            <ellipse cx="230" cy="28" rx="60" ry="36"/>
+            <ellipse cx="360" cy="22" rx="48" ry="32"/>
+            <ellipse cx="520" cy="30" rx="58" ry="36"/>
+            <ellipse cx="700" cy="26" rx="46" ry="28"/>
+            <ellipse cx="880" cy="18" rx="54" ry="32"/>
+            <ellipse cx="1080" cy="30" rx="50" ry="30"/>
+            <ellipse cx="1280" cy="20" rx="62" ry="36"/>
+            <ellipse cx="1500" cy="28" rx="46" ry="26"/>
+            <ellipse cx="1720" cy="22" rx="68" ry="38"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Fog -->
+    <div class="fog" aria-hidden="true"></div>
+
+    <!-- Walker group -->
+    <div class="walker-wrap" role="group" aria-label="Girl walking">
+      <div class="walker" style="width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center">
+        <!-- SVG Girl -->
+        <svg viewBox="0 0 160 260" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="false">
+          <defs>
+            <linearGradient id="skin" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f6d7c8"/><stop offset="1" stop-color="#f0bfa4"/></linearGradient>
+            <linearGradient id="sareeG" x1="0" x2="1"><stop offset="0" stop-color="#8b1e3f"/><stop offset="1" stop-color="#d23c5b"/></linearGradient>
+            <linearGradient id="sareePallu" x1="0" x2="1"><stop offset="0" stop-color="#c83b5a"/><stop offset="1" stop-color="#ff6b7b"/></linearGradient>
+            <linearGradient id="hairg" x1="0" x2="0"><stop offset="0" stop-color="#0e0a08"/><stop offset="1" stop-color="#22120b"/></linearGradient>
+            <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000" flood-opacity="0.45"/></filter>
+          </defs>
+
+          <!-- shadow on ground -->
+          <ellipse cx="80" cy="230" rx="44" ry="11" fill="rgba(0,0,0,0.45)" filter="url(#softShadow)"/>
+
+          <!-- legs & skirt group -->
+          <g transform="translate(0,0)" style="mix-blend-mode:normal">
+            <!-- left leg -->
+            <g class="leg left" style="transform-origin:49% 82%">
+              <rect x="58" y="160" width="12" height="58" rx="6" fill="url(#skin)"/>
+              <ellipse cx="64" cy="222" rx="10" ry="6" fill="#2f1f14"/>
+            </g>
+
+            <!-- right leg -->
+            <g class="leg right" style="transform-origin:69% 82%">
+              <rect x="82" y="155" width="12" height="63" rx="6" fill="#2a170f"/>
+              <ellipse cx="88" cy="220" rx="10" ry="6" fill="#2f1f14"/>
+            </g>
+
+            <!-- saree body -->
+            <g class="saree" transform="translate(0,0)">
+              <path d="M36 132 C46 120, 70 120, 92 136 C100 144, 118 160, 120 196 L48 196 C44 176, 36 148, 36 132 Z"
+                    fill="url(#sareeG)" opacity="0.98"/>
+              <!-- pallu flowing -->
+              <path d="M92 136 C120 128, 160 110, 140 80 C126 58, 100 72, 88 92"
+                    fill="none" stroke="url(#sareePallu)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+              <!-- ornate border -->
+              <path d="M40 152 C62 148, 86 150, 106 162" fill="none" stroke="rgba(255,210,210,0.08)" stroke-width="6" stroke-linecap="round"/>
+            </g>
+
+            <!-- torso -->
+            <rect x="62" y="106" width="36" height="34" rx="6" fill="#7c182f" />
+
+            <!-- arms -->
+            <g class="arm left" style="transform-origin:31% 46%">
+              <rect x="42" y="108" width="12" height="44" rx="6" fill="#f6d7c8"/>
+            </g>
+            <g class="arm right" style="transform-origin:85% 46%">
+              <rect x="106" y="108" width="12" height="44" rx="6" fill="#f6d7c8"/>
+            </g>
+
+            <!-- neck -->
+            <rect x="74" y="92" width="12" height="14" rx="4" fill="url(#skin)" />
+
+            <!-- head -->
+            <g transform="translate(0,0)">
+              <circle cx="80" cy="74" r="22" fill="url(#skin)" />
+              <!-- hair -->
+              <path class="hair" d="M56 66 C46 72, 46 92, 66 102 C76 106, 88 106, 96 102 C116 92, 116 72, 106 66 C94 58, 66 54,56 66 Z"
+                    fill="url(#hairg)" />
+              <!-- face details (simple eyes) -->
+              <circle cx="73" cy="72" r="1.4" fill="#1b120c"/>
+              <circle cx="88" cy="72" r="1.4" fill="#1b120c"/>
+              <path d="M74 82 C78 86, 82 86, 86 82" stroke="#8a3a39" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+              <!-- bindi -->
+              <circle cx="80" cy="72" r="1.2" fill="#b80a2a"/>
+            </g>
+
+            <!-- small jewelry -->
+            <circle cx="100" cy="112" r="2.2" fill="#ffd08a" opacity="0.95"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Ground and path -->
+    <div class="ground" aria-hidden="true"></div>
+    <div class="path" aria-hidden="true"></div>
+
+    <!-- Foreground grass silhouette -->
+    <div class="layer foreground" aria-hidden="true">
+      <svg viewBox="0 0 2000 200" preserveAspectRatio="xMidYMax slice" style="width:200%;height:100%">
+        <g fill="#04140a" opacity="0.95">
+          <rect x="0" y="0" width="2000" height="200"/>
+          <!-- decorative blades -->
+          <g transform="translate(0,30)" fill="#062412" opacity="0.9">
+            <!-- repeat blades across -->
+            <path d="M20 160 C28 130, 44 120, 64 96 C76 84, 100 68, 120 74 C136 80, 148 104, 164 128 L20 160Z"/>
+            <path d="M160 160 C168 132, 184 118, 204 98 C216 88, 240 72, 260 78 C276 84, 288 106, 304 126 L160 160Z" transform="translate(170,0)"/>
+            <path d="M20 160 C28 130, 44 120, 64 96 C76 84, 100 68, 120 74 C136 80, 148 104, 164 128 L20 160Z" transform="translate(340,0)"/>
+            <path d="M20 160 C28 130, 44 120, 64 96 C76 84, 100 68, 120 74 C136 80, 148 104, 164 128 L20 160Z" transform="translate(680,0)"/>
+            <path d="M20 160 C28 130, 44 120, 64 96 C76 84, 100 68, 120 74 C136 80, 148 104, 164 128 L20 160Z" transform="translate(1040,0)"/>
+            <path d="M20 160 C28 130, 44 120, 64 96 C76 84, 100 68, 120 74 C136 80, 148 104, 164 128 L20 160Z" transform="translate(1400,0)"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- tiny soft sparkle -->
+    <div class="sparkle" aria-hidden="true"></div>
+  </div>
 
 </body>
 </html>

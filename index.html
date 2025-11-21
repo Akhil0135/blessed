@@ -1,200 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Night Scene</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ultimate Cinematic Night → Day</title>
 <style>
-body, html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000010;
-  font-family:'Cinzel', serif;
-}
-#stars {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 6px rgba(255,255,255,0.9);
-  opacity: 0.5;
-  animation: twinkle 2.6s infinite alternate;
-}
-@keyframes twinkle {
-  0% {opacity:0.15;}
-  50% {opacity:0.95;}
-  100% {opacity:0.15;}
-}
-.shooting-star {
-  position: absolute;
-  width: 10px;
-  height: 3px;
-  border-radius: 8px;
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 100%);
-  filter: blur(1px);
-  opacity: 0;
-  transform-origin: left top;
-}
-.moon {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  top: 60px;
-  left: -180px;
-  background: radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);
-  box-shadow: 0 0 80px rgba(255,245,200,0.45);
-  z-index: 6;
-}
-.cloud-layer {
-  position: absolute;
-  top: 0;
-  left: -20%;
-  width: 140%;
-  height: 60%;
-  pointer-events: none;
-  z-index: 5;
-}
-.cloud-group {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0.9;
-}
-.cloud-group.back { filter: blur(22px) contrast(.9); opacity:0.55; animation: driftBack 180s linear infinite; }
-.cloud-group.mid { filter: blur(12px) contrast(1); opacity:0.75; animation: driftMid 120s linear infinite; }
-.cloud-group.front { filter: blur(6px) contrast(1.05); opacity:0.95; animation: driftFront 80s linear infinite; }
-@keyframes driftBack { from{transform:translateX(-8%);} to{transform:translateX(8%);} }
-@keyframes driftMid { from{transform:translateX(-12%);} to{transform:translateX(12%);} }
-@keyframes driftFront { from{transform:translateX(-18%);} to{transform:translateX(18%);} }
-.cloud-blob {
-  position: absolute;
-  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.86) 25%, rgba(255,255,255,0.6) 50%, rgba(200,200,200,0.15) 80%, rgba(255,255,255,0) 100%);
-  border-radius: 50%;
-  filter: blur(10px);
-  opacity: 0.95;
-  mix-blend-mode: screen;
-}
-.low-fog {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 40%;
-  pointer-events: none;
-  background: radial-gradient(circle at 50% 95%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.45) 30%, rgba(255,255,255,0) 100%);
-  filter: blur(48px);
-  opacity: 0.7;
-  z-index: 4;
-  animation: fogFloat 45s ease-in-out infinite;
-}
-@keyframes fogFloat {0%,100%{transform:translateX(0);}50%{transform:translateX(4%);}}
-#message {
-  position: absolute;
-  width: 100%;
-  top: 62%;
-  text-align: center;
-  z-index: 12;
-  color: #fff3da;
-  font-size: 28px;
-  letter-spacing: 3px;
-  text-shadow: 0 6px 20px rgba(0,0,0,0.7);
-  opacity: 0;
-}
-.letter { display:inline-block; opacity:0; transform:translateY(8px); animation: reveal .45s forwards; }
-@keyframes reveal { to{opacity:1; transform:translateY(0);} }
-#clickBtn {
-  position: absolute;
-  left: 50%;
-  bottom: 10vh;
-  transform: translateX(-50%);
-  z-index: 13;
-  padding: 14px 34px;
-  border-radius: 40px;
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.18);
-  cursor: pointer;
-  font-size: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 1s ease;
-}
-#clickBtn.float { opacity: 1; pointer-events: auto; animation: btnFloat 3s ease-in-out infinite; }
-@keyframes btnFloat {0%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-6px);}100%{transform:translateX(-50%) translateY(0);}}
+  html,body{
+    height:100%;
+    margin:0;
+    background:#000010;
+    font-family: "Cinzel", serif;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  :root{
+    --sky-night:#000010;
+    --sky-day-top:#87ceeb;
+    --sky-day-mid:#a0d8ff;
+    --sky-day-bottom:#d0f0ff;
+    --sun-color:#ffcf6b;
+    --grain-opacity:0.03;
+  }
+
+  /* Stars & shooting */
+  #stars { position:absolute; inset:0; pointer-events:none; z-index:2; }
+  .star{
+    position:absolute;
+    width:2px; height:2px; border-radius:50%;
+    background:#fff; box-shadow:0 0 6px rgba(255,255,255,0.9);
+    opacity:0.5;
+    animation:twinkle 2.6s infinite alternate;
+    transform-origin:center;
+  }
+  @keyframes twinkle{
+    0%{opacity:0.15; transform:scale(1);}
+    50%{opacity:0.95; transform:scale(1.6);}
+    100%{opacity:0.15; transform:scale(1);}
+  }
+  .shooting-star{
+    position:absolute;
+    width:10px; height:3px; border-radius:8px;
+    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 100%);
+    filter:blur(1px);
+    transform-origin: left top;
+    opacity:0;
+  }
+
+  /* Moon */
+  .moon{
+    position:absolute;
+    width:150px; height:150px; border-radius:50%;
+    top:60px; left:-180px;
+    background: radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);
+    box-shadow:0 0 80px rgba(255,245,200,0.45);
+    z-index:6;
+    transition:opacity .8s linear;
+  }
+
+  /* Cloud layers */
+  .cloud-layer{
+    position:absolute;
+    top:0;
+    left:-20%;
+    width:140%;
+    height:60%;
+    pointer-events:none;
+    z-index:5;
+    mix-blend-mode:screen;
+  }
+  .cloud-group{
+    position:absolute;
+    left:0; top:0;
+    width:100%; height:100%;
+    transform-origin:center;
+    filter: blur(12px) saturate(1.05);
+    opacity:0.9;
+  }
+  .cloud-group.back{ filter:blur(22px) contrast(.9); opacity:.55; animation:driftBack 180s linear infinite; }
+  .cloud-group.mid{ filter:blur(12px) contrast(1); opacity:.75; animation:driftMid 120s linear infinite; }
+  .cloud-group.front{ filter:blur(6px) contrast(1.05); opacity:.95; animation:driftFront 80s linear infinite; }
+  @keyframes driftBack { from{ transform:translateX(-8%);} to{ transform:translateX(8%);} }
+  @keyframes driftMid  { from{ transform:translateX(-12%);} to{ transform:translateX(12%);} }
+  @keyframes driftFront{ from{ transform:translateX(-18%);} to{ transform:translateX(18%);} }
+  .cloud-blob{
+    position:absolute;
+    background:
+      radial-gradient(circle at 35% 35%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.86) 25%, rgba(255,255,255,0.6) 50%, rgba(200,200,200,0.15) 80%, rgba(255,255,255,0) 100%);
+    border-radius:50%;
+    filter: blur(10px);
+    opacity:0.95;
+    mix-blend-mode:screen;
+  }
+
+  /* Godrays & fog */
+  .godrays {
+    position:absolute; inset:0; pointer-events:none; z-index:7;
+    background: repeating-linear-gradient(75deg,
+      rgba(255,244,210,0.08) 0px,
+      rgba(255,244,210,0.02) 120px,
+      rgba(255,244,210,0) 240px
+    );
+    mix-blend-mode:screen;
+    opacity:0;
+    transition:opacity 2.6s ease;
+    filter: blur(6px) contrast(1.1);
+  }
+  .low-fog {
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:40%;
+    pointer-events:none;
+    background: radial-gradient( circle at 50% 95%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.45) 30%, rgba(255,255,255,0) 100% );
+    filter: blur(48px);
+    opacity:0.7;
+    z-index:4;
+    animation:fogFloat 45s ease-in-out infinite;
+    transition:opacity 2.5s ease;
+  }
+  @keyframes fogFloat {
+    0%,100%{ transform: translateX(0);}
+    50%{ transform: translateX(4%);}
+  }
+
+  /* Sun & rings */
+  .sun {
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    top:-220px;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:8;
+    transition: top 3.2s ease, opacity 3s ease, box-shadow 3s ease;
+    opacity:0;
+    background: radial-gradient(circle at 35% 35%, rgba(255,250,220,1) 0%, rgba(255,210,120,1) 45%, rgba(255,170,60,0.9) 100%);
+    box-shadow:
+      0 0 140px 48px rgba(255,220,120,0.12),
+      0 0 320px 120px rgba(255,200,80,0.07);
+  }
+  .sun-rings {
+    position:absolute;
+    inset: -30% -30% auto -30%;
+    height: 300%;
+    border-radius:50%;
+    pointer-events:none;
+    filter: blur(30px);
+    opacity:0;
+    transition: opacity 3s ease;
+    mix-blend-mode: screen;
+    background: radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,230,140,0.08), rgba(255,200,80,0));
+  }
+
+  /* Cinematic overlay & message */
+  .grade {
+    position:absolute; inset:0; pointer-events:none; z-index:20;
+    mix-blend-mode: soft-light;
+    background: linear-gradient(180deg, rgba(255,240,220,0.06), rgba(30,40,70,0.15));
+    opacity:1;
+    transition:opacity 2s ease;
+  }
+  .vignette {
+    position:absolute; inset:0; pointer-events:none; z-index:25;
+    background: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.18) 100%);
+    mix-blend-mode:multiply;
+  }
+  .particles { position:absolute; inset:0; pointer-events:none; z-index:15; overflow:hidden; }
+  .particle {
+    position:absolute; width:4px; height:4px; border-radius:50%;
+    background: rgba(255,245,220,0.9);
+    filter: blur(1px);
+    opacity:.0;
+    transform: translateY(0);
+  }
+  .grain {
+    position:absolute; inset:0; pointer-events:none; z-index:30;
+    background-image: radial-gradient(rgba(255,255,255,var(--grain-opacity)), rgba(255,255,255,0));
+    mix-blend-mode: overlay;
+    opacity:0.5;
+  }
+  #message {
+    position:absolute; width:100%; top:62%; text-align:center; z-index:12;
+    color:#fff3da; font-size:28px; letter-spacing:3px;
+    text-shadow:0 6px 20px rgba(0,0,0,0.7);
+    opacity:0; transition:opacity .6s ease;
+  }
+  .letter{ display:inline-block; opacity:0; transform: translateY(8px); animation:reveal .45s forwards; }
+  @keyframes reveal{ to{opacity:1; transform:translateY(0);} }
+  #clickBtn {
+    position:absolute; left:50%; bottom:10vh; transform:translateX(-50%);
+    z-index:13;
+    padding:14px 34px; border-radius:40px;
+    background: rgba(255,255,255,0.12); color:#fff;
+    border:1px solid rgba(255,255,255,0.18); cursor:pointer;
+    font-family:'Cinzel', serif; font-size:20px;
+    opacity:0; pointer-events:none; transition:opacity 1s ease, transform .4s ease;
+  }
+  #clickBtn.float { opacity:1; pointer-events:auto; animation:btnFloat 3s ease-in-out infinite; }
+  @keyframes btnFloat {0%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-6px);}100%{transform:translateX(-50%) translateY(0);} }
 </style>
 </head>
 <body>
-<div id="stars"></div>
-<div class="moon" id="moon"></div>
-<div class="cloud-layer" id="cloudLayer">
-  <div class="cloud-group back" id="cloudBack"></div>
-  <div class="cloud-group mid" id="cloudMid"></div>
-  <div class="cloud-group front" id="cloudFront"></div>
-</div>
-<div class="low-fog" id="lowFog"></div>
-<div id="message"></div>
-<button id="clickBtn">Click Here</button>
+  <div id="stars"></div>
+  <div class="moon" id="moon"></div>
+  <div class="cloud-layer" id="cloudLayer">
+    <div class="cloud-group back" id="cloudBack"></div>
+    <div class="cloud-group mid" id="cloudMid"></div>
+    <div class="cloud-group front" id="cloudFront"></div>
+  </div>
+  <div class="godrays" id="godrays"></div>
+  <div class="low-fog" id="lowFog"></div>
+  <div class="sun" id="sun">
+    <div class="sun-rings" id="sunRings"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+  <div class="grade"></div>
+  <div class="vignette"></div>
+  <div class="grain"></div>
+  <div id="message"></div>
+  <button id="clickBtn">Click Here</button>
 
 <script>
+const rnd=(a,b)=>a+Math.random()*(b-a);
 // Stars
-const starsEl = document.getElementById('stars');
-for(let i=0;i<150;i++){
-  const s = document.createElement('div');
+const starsEl=document.getElementById('stars');
+for(let i=0;i<220;i++){
+  const s=document.createElement('div');
   s.className='star';
   s.style.left=(Math.random()*100)+'%';
   s.style.top=(Math.random()*100)+'%';
+  s.style.opacity=(0.15+Math.random()*0.85).toString();
+  s.style.transform=`scale(${0.6+Math.random()*1.6})`;
   starsEl.appendChild(s);
 }
 
 // Shooting stars
 function spawnShooting(){
-  const s = document.createElement('div');
+  const s=document.createElement('div');
   s.className='shooting-star';
-  const top = Math.random()*35+5;
+  const top=rnd(5,35);
   s.style.top=top+'vh';
   s.style.left='110%';
-  const angle = -20 - Math.random()*40;
-  s.style.transform = `rotate(${angle}deg)`;
+  s.style.transform=`rotate(${ -20 - Math.random()*40 }deg)`;
+  s.style.opacity='1';
   document.body.appendChild(s);
-  s.animate([{transform: `translateX(0) translateY(0)`},{transform: `translateX(-120vw) translateY(80vh)`}],{duration:900+Math.random()*700,easing:'cubic-bezier(.2,.6,.2,1)'}).onfinish=()=>s.remove();
+  const duration=rnd(900,1600);
+  s.animate([
+    { transform: `translateX(0) translateY(0) rotate(${ -20 - Math.random()*40 }deg)`, opacity:1 },
+    { transform: `translateX(-120vw) translateY(80vh) rotate(${ -20 - Math.random()*40 }deg)`, opacity:0 }
+  ], { duration, easing:'cubic-bezier(.2,.6,.2,1)' });
+  setTimeout(()=> s.remove(), duration+50);
 }
-let shootingInterval=setInterval(spawnShooting,1500);
+let shootingInterval=setInterval(spawnShooting, 1200 + Math.random()*1200);
 
 // Moon animation
-const moon = document.getElementById('moon');
-let moonX=-180;
-const moonSpeed=4;
-const messageEl = document.getElementById('message');
-const clickBtn = document.getElementById('clickBtn');
+const moon=document.getElementById('moon');
+let moonX=-200;
+const moonSpeed=Math.max(window.innerWidth/800,4);
 let messageShown=false;
+const messageEl=document.getElementById('message');
+const clickBtn=document.getElementById('clickBtn');
+function revealMessage(){
+  if(messageEl.dataset.revealed) return;
+  messageEl.dataset.revealed='1';
+  const text="On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+  messageEl.innerHTML='';
+  text.split('').forEach((ch,i)=>{
+    const span=document.createElement('span');
+    span.className='letter';
+    span.style.animationDelay=(i*0.045)+'s';
+    span.textContent=ch===' '?'\u00A0':ch;
+    messageEl.appendChild(span);
+  });
+  messageEl.style.opacity='1';
+  setTimeout(()=>{clickBtn.classList.add('float');},3000);
+}
 let moonAnim=setInterval(()=>{
-  if(moonX<window.innerWidth-120){
+  if(moonX<window.innerWidth-180){
     moonX+=moonSpeed;
     moon.style.left=moonX+'px';
     if(moonX>60 && !messageShown){
       messageShown=true;
-      const text="Happy Birthday! Wishing you joy and light.";
-      messageEl.innerHTML='';
-      text.split('').forEach((ch,i)=>{
-        const span=document.createElement('span');
-        span.className='letter';
-        span.style.animationDelay=(i*0.045)+'s';
-        span.textContent=ch;
-        messageEl.appendChild(span);
-      });
-      messageEl.style.opacity='1';
-      setTimeout(()=>{clickBtn.classList.add('float');},3000);
+      revealMessage();
     }
-  } else clearInterval(moonAnim);
+  }else clearInterval(moonAnim);
 },16);
 
 // Click button hides

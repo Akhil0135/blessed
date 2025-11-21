@@ -54,7 +54,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 .particle{position:absolute;width:4px;height:4px;border-radius:50%;background: rgba(255,245,220,0.9);filter: blur(1px);opacity:.0;transform: translateY(0);}
 .grain{position:absolute;inset:0;pointer-events:none;z-index:30;background-image: radial-gradient(rgba(255,255,255,var(--grain-opacity)), rgba(255,255,255,0));mix-blend-mode: overlay;opacity:0.5;}
 
-/* ---------- MESSAGE (ROYAL DARK VIOLET, CINEMATIC) ---------- */
+/* ---------- MESSAGE (ROYAL DARK VIOLET, CINEMATIC + GLOW) ---------- */
 #message{
   position:absolute;
   width:100%;
@@ -81,6 +81,11 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
   opacity:0;
   transform:translateY(8px);
   transition:opacity 0.15s ease, transform 0.15s ease;
+  animation: shimmer 2.5s infinite;
+}
+@keyframes shimmer{
+  0%,100%{ text-shadow: 0 2px 6px rgba(75,0,130,0.4), 0 4px 12px rgba(75,0,130,0.3), 0 8px 24px rgba(75,0,130,0.25);}
+  50%{ text-shadow: 0 2px 10px rgba(148,0,211,0.6), 0 4px 20px rgba(148,0,211,0.5), 0 12px 40px rgba(148,0,211,0.4);}
 }
 
 /* ---------- CLICK BUTTON ---------- */

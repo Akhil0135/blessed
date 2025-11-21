@@ -25,7 +25,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 .shooting-star{position:absolute;width:12px;height:3px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 100%);filter:blur(1.5px);transform-origin:left top;opacity:0;}
 
 /* ---------- Moon & Sun ---------- */
-.moon{position:absolute;width:150px;height:150px;border-radius:50%;top:60px;left:-180px;background:radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);box-shadow:0 0 120px rgba(255,245,200,0.55);z-index:6;cursor:pointer;transition:background 3s ease, box-shadow 3s ease;}
+.moon{position:absolute;width:150px;height:150px;border-radius:50%;top:60px;left:0px;background:radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);box-shadow:0 0 120px rgba(255,245,200,0.55);z-index:6;cursor:pointer;transition:background 3s ease, box-shadow 3s ease;}
 .moon-flare{position:absolute;width:250px;height:250px;border-radius:50%;top:-50px;left:-50px;background:radial-gradient(circle, rgba(255,245,200,0.15), rgba(255,245,200,0) 70%);filter:blur(50px);pointer-events:none;z-index:5;}
 .sun{position:absolute;left:50%;transform:translateX(-50%);top:-220px;width:220px;height:220px;border-radius:50%;pointer-events:none;z-index:8;opacity:0;background:radial-gradient(circle at 35% 35%, rgba(255,250,220,1) 0%, rgba(255,210,120,1) 45%, rgba(255,170,60,0.9) 100%);box-shadow:0 0 140px 48px rgba(255,220,120,0.12),0 0 320px 120px rgba(255,200,80,0);}
 .sun-rings{position:absolute;inset:-30% -30% auto -30%;height:300%;border-radius:50%;pointer-events:none;filter:blur(30px);opacity:0;transition:opacity 3s ease;mix-blend-mode:screen;background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,230,140,0.08), rgba(255,200,80,0));}
@@ -138,35 +138,53 @@ moon.addEventListener('click',()=>{
   // Reveal message
   const text="On this calm birthday eve so new, God softly whispers, my plans are made for you.";
   messageEl.innerHTML='';
-  text.split('').forEach((ch,i)=>{const span=document.createElement('span'); span.className='letter'; span.style.animationDelay=(i*0.045)+'s'; span.textContent=ch===' '?'\u00A0':ch; messageEl.appendChild(span);});
+  text.split('').forEach((ch,i)=>{
+    const span=document.createElement('span'); 
+    span.className='letter'; 
+    span.style.animationDelay=(i*0.045)+'s'; 
+    span.textContent=ch===' '?'\u00A0':ch; 
+    messageEl.appendChild(span);
+  });
   messageEl.style.opacity='1';
   
-  // Animate moon rolling & background
-  const moonAnim = moon.animate([
-    {transform:'translateX(0px) rotate(0deg)'},
-    {transform:`translateX(${window.innerWidth+200}px) rotate(1080deg)`}
-  ],{duration:4000,easing:'ease-in-out',fill:'forwards'});
+  const moonStartX = -180; 
+  const moonEndX = window.innerWidth - 100; 
+  const totalSteps = 60;
+  let step = 0;
   
-  // Transition background night->day
-  document.body.animate([{background:'var(--sky-night)'},{background:'linear-gradient(to top, var(--sky-day-mid), var(--sky-day-top))'}],
-  {duration:4000,fill:'forwards'});
-  
-  // Stars fade out
-  document.querySelectorAll('.star').forEach(s=>{s.animate([{opacity: s.style.opacity},{opacity:0}],{duration:3500,fill:'forwards'}); setTimeout(()=>s.remove(),3600);});
-  
-  // Moon morphs into sun gradually
-  let step=0;
-  const interval=setInterval(()=>{
+  const interval = setInterval(()=>{
     step++;
-    const mix=Math.min(step/60,1); // 60 steps ~ 4s
-    moon.style.background=`radial-gradient(circle, rgba(255,255,230,${1-mix}) 0%, rgba(243,228,176,${1-mix}) 60%, rgba(217,193,128,${1-mix}) 100%)`;
-    moon.style.boxShadow=`0 0 ${120 + 40*mix}px rgba(255,245,200,${0.55*(1-mix)})`;
-    const sun=document.getElementById('sun'); sun.style.opacity=mix; sun.style.top=`${-220 + 280*mix}px`;
-    const sunRings=document.getElementById('sunRings'); sunRings.style.opacity=mix;
-    document.getElementById('godrays').style.opacity=mix;
-    document.getElementById('lowFog').style.opacity=0.85*(1-mix)+0.25*mix;
-    if(step>=60) clearInterval(interval);
+    const mix = Math.min(step/totalSteps,1); 
+
+    // Move moon across screen
+    const currentX = moonStartX + (moonEndX - moonStartX) * mix;
+    const currentRot = 1080 * mix; 
+    moon.style.transform = `translateX(${currentX}px) rotate(${currentRot}deg)`;
+    
+    // Morph moon into sun
+    moon.style.background = `radial-gradient(circle, rgba(255,255,230,${1-mix}) 0%, rgba(243,228,176,${1-mix}) 60%, rgba(217,193,128,${1-mix}) 100%)`;
+    moon.style.boxShadow = `0 0 ${120 + 40*mix}px rgba(255,245,200,${0.55*(1-mix)})`;
+    
+    const sun = document.getElementById('sun'); 
+    sun.style.opacity = mix; 
+    sun.style.top = `${-220 + 280*mix}px`;
+    document.getElementById('sunRings').style.opacity = mix;
+    document.getElementById('godrays').style.opacity = mix;
+    document.getElementById('lowFog').style.opacity = 0.85*(1-mix)+0.25*mix;
+
+    // Background transition
+    document.body.style.background = `linear-gradient(to top, 
+      rgba(160,216,255,${mix}) 0%, 
+      rgba(135,206,235,${mix}) 100%)`;
+
+    if(step>=totalSteps) clearInterval(interval);
   },66);
+
+  // Fade stars
+  document.querySelectorAll('.star').forEach(s=>{
+    s.animate([{opacity: s.style.opacity},{opacity:0}],{duration:3500,fill:'forwards'});
+    setTimeout(()=>s.remove(),3600);
+  });
 });
   
 // ====== Scene Animation ======

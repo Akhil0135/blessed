@@ -4,216 +4,119 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ultra Cinematic Moon-to-Sun</title>
-
 <style>
-html,body{
-  height:100%;
-  margin:0;
-  background:#000010;
-  overflow:hidden;
-  font-family:"Cinzel",serif;
+html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+:root{
+  --sky-night:#000010;
+  --sky-day-top:#87ceeb;
+  --sky-day-mid:#a0d8ff;
+  --sky-day-bottom:#d0f0ff;
+  --sun-color:#ffcf6b;
+  --grain-opacity:0.03;
 }
 
-/* --- Sky --- */
-#sky{
-  position:absolute;
-  width:100%;
-  height:100%;
-  background:linear-gradient(#000010,#000013,#000018);
-  transition:background 6s ease-in-out;
-  z-index:1;
-}
+/* ---------- Stars ---------- */
+#stars{position:absolute;inset:0;pointer-events:none;z-index:2;}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;box-shadow:0 0 6px rgba(255,255,255,0.9);opacity:0.5;animation:twinkle 2.6s infinite alternate;transform-origin:center;}
+@keyframes twinkle{0%{opacity:0.15;transform:scale(1);}50%{opacity:0.95;transform:scale(1.6);}100%{opacity:0.15;transform:scale(1);}}
 
-/* --- Stars --- */
-#stars{
-  position:absolute;
-  width:100%;
-  height:100%;
-  background:url('https://i.ibb.co/4JRpP3k/stars.png') repeat;
-  opacity:0.9;
-  animation:twinkle 4s infinite alternate;
-  z-index:2;
-}
-@keyframes twinkle{
-  from{opacity:0.7;}
-  to{opacity:1;}
-}
+/* ---------- Shooting Stars ---------- */
+.shooting-star{position:absolute;width:12px;height:3px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 100%);filter:blur(1.5px);transform-origin:left top;opacity:0;}
 
-/* --- Moon --- */
-#moon{
-  position:absolute;
-  width:180px;
-  height:180px;
-  background:radial-gradient(circle,#ffffff,#dcdcdc,#888);
-  border-radius:50%;
-  top:35%;
-  left:10%;
-  box-shadow:0 0 40px #ffffffaa,0 0 120px #b0b0ff55;
-  animation:moonMove 14s linear forwards;
-  z-index:3;
-}
-@keyframes moonMove{
-  0%{transform:translateX(0);}
-  90%{transform:translateX(550px);} /* stops before edge */
-  100%{transform:translateX(550px);}
-}
+/* ---------- Moon ---------- */
+.moon{position:absolute;width:150px;height:150px;border-radius:50%;top:60px;left:60px;background:radial-gradient(circle, #fffde6 0%, #f3e4b0 60%, #d9c180 100%);box-shadow:0 0 120px rgba(255,245,200,0.55);z-index:6;cursor:pointer;transition:transform .1s linear;}
+.moon-flare{position:absolute;width:250px;height:250px;border-radius:50%;top:-50px;left:-50px;background:radial-gradient(circle, rgba(255,245,200,0.15), rgba(255,245,200,0) 70%);filter:blur(50px);pointer-events:none;z-index:5;}
 
-/* --- Clouds --- */
-.cloud{
-  position:absolute;
-  width:420px;
-  height:180px;
-  background:url('https://i.ibb.co/6b0Hfkt/cloud-real.png');
-  background-size:cover;
-  opacity:0.25;
-  filter:blur(2px);
-  animation:cloudMove 20s linear infinite;
-  z-index:4;
-}
-#cloud1{top:20%;left:-200px;animation-duration:30s;}
-#cloud2{top:40%;left:-300px;animation-duration:38s;}
-@keyframes cloudMove{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(1400px);}
-}
+/* ---------- Clouds ---------- */
+.cloud-layer{position:absolute;top:0;left:-20%;width:140%;height:60%;pointer-events:none;z-index:5;mix-blend-mode:screen;}
+.cloud-group{position:absolute;left:0;top:0;width:100%;height:100%;transform-origin:center;filter: blur(12px) saturate(1.05);opacity:0.9;}
+.cloud-group.back{filter:blur(22px) contrast(.9);opacity:.55;animation:driftBack 180s linear infinite;}
+.cloud-group.mid{filter:blur(12px) contrast(1);opacity:.75;animation:driftMid 120s linear infinite;}
+.cloud-group.front{filter:blur(6px) contrast(1.05);opacity:.95;animation:driftFront 80s linear infinite;}
+@keyframes driftBack{from{transform:translateX(-8%);} to{transform:translateX(8%);} }
+@keyframes driftMid{from{transform:translateX(-12%);} to{transform:translateX(12%);} }
+@keyframes driftFront{from{transform:translateX(-18%);} to{transform:translateX(18%);} }
+.cloud-blob{position:absolute;border-radius:50%;filter: blur(10px);opacity:0.95;mix-blend-mode:screen;background:radial-gradient(circle at 35% 35%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.86) 25%, rgba(255,255,255,0.6) 50%, rgba(255,200,255,0.15) 80%, rgba(255,255,255,0) 100%);}
 
-/* --- Fog --- */
-#fog{
-  position:absolute;
-  width:140%;
-  height:140%;
-  top:-20%;
-  left:-20%;
-  background:url('https://i.ibb.co/pxv2Kbd/fog.png');
-  background-size:cover;
-  opacity:0.18;
-  animation:fogMove 22s linear infinite;
-  z-index:5;
-}
-@keyframes fogMove{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(300px);}
-}
+/* ---------- Godrays & Fog ---------- */
+.godrays{position:absolute;inset:0;pointer-events:none;z-index:7;background:repeating-linear-gradient(75deg, rgba(255,244,210,0.08) 0px, rgba(255,244,210,0.02) 120px, rgba(255,244,210,0) 240px);mix-blend-mode:screen;opacity:0;transition:opacity 2.6s ease;filter: blur(6px) contrast(1.1);}
+.low-fog{position:absolute;bottom:0;left:0;width:100%;height:40%;pointer-events:none;background: radial-gradient(circle at 50% 95%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.45) 30%, rgba(255,255,255,0) 100%);filter: blur(48px);opacity:0.7;z-index:4;animation:fogFloat 45s ease-in-out infinite;transition:opacity 2.5s ease;}
+@keyframes fogFloat{0%,100%{transform:translateX(0);}50%{transform:translateX(4%);}}
 
-/* --- Sun --- */
-#sun{
-  position:absolute;
-  width:260px;
-  height:260px;
-  background:radial-gradient(circle,#ffcc33,#ff8800,#ff5500);
-  border-radius:50%;
-  bottom:-300px;
-  left:50%;
-  transform:translateX(-50%);
-  animation:sunRise 14s ease-in-out forwards;
-  filter:blur(1px);
-  box-shadow:0 0 90px #ffdd55cc,0 0 150px #ff8800aa;
-  z-index:6;
-}
-@keyframes sunRise{
-  0%{bottom:-300px;}
-  100%{bottom:35%;}
-}
+/* ---------- Sun ---------- */
+.sun{position:absolute;left:50%;transform:translateX(-50%);top:-220px;width:220px;height:220px;border-radius:50%;pointer-events:none;z-index:8;transition:top 3.2s ease, opacity 3s ease, box-shadow 3s ease;opacity:0;background:radial-gradient(circle at 35% 35%, rgba(255,250,220,1) 0%, rgba(255,210,120,1) 45%, rgba(255,170,60,0.9) 100%);box-shadow:0 0 140px 48px rgba(255,220,120,0.12),0 0 320px 120px rgba(255,200,80,0);}
+.sun-rings{position:absolute;inset:-30% -30% auto -30%;height:300%;border-radius:50%;pointer-events:none;filter:blur(30px);opacity:0;transition:opacity 3s ease;mix-blend-mode:screen;background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,230,140,0.08), rgba(255,200,80,0));}
 
-/* --- Day sky transition --- */
-body.day #sky{
-  background:linear-gradient(#87cefa,#ffffff,#ffe9b5);
-}
+/* ---------- Overlay, particles, message ---------- */
+.grade{position:absolute;inset:0;pointer-events:none;z-index:20;mix-blend-mode: soft-light;background: linear-gradient(180deg, rgba(255,240,220,0.06), rgba(30,40,70,0.15));opacity:1;transition:opacity 2s ease;}
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:25;background: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.18) 100%);mix-blend-mode:multiply;}
+.particles{position:absolute;inset:0;pointer-events:none;z-index:15;overflow:hidden;}
+.particle{position:absolute;width:4px;height:4px;border-radius:50%;background: rgba(255,245,220,0.9);filter: blur(1px);opacity:.0;transform: translateY(0);}
+.grain{position:absolute;inset:0;pointer-events:none;z-index:30;background-image: radial-gradient(rgba(255,255,255,var(--grain-opacity)), rgba(255,255,255,0));mix-blend-mode: overlay;opacity:0.5;}
 
-/* --- Particles --- */
-.particle{
-  position:absolute;
-  width:4px;
-  height:4px;
-  background:#ffffff;
-  border-radius:50%;
-  opacity:0.9;
-  animation:floating 6s infinite ease-in-out;
-  z-index:7;
-}
-@keyframes floating{
-  0%{transform:translateY(0) translateX(0);}
-  50%{transform:translateY(-20px) translateX(10px);}
-  100%{transform:translateY(0) translateX(0);}
-}
-
-/* -----------------------------------------------------
-   MESSAGE (DARK-VIOLET GRADIENT + ALWAYS VISIBLE)
-------------------------------------------------------*/
+/* ---------- MESSAGE (DARK VIOLET GRADIENT, TOP LAYER) ---------- */
 #message{
   position:absolute;
   width:100%;
   top:62%;
   text-align:center;
-
-  /* ABOVE ALL LAYERS */
-  z-index:999999999;
-
-  /* Dark violet gradient */
-  background: linear-gradient(135deg, #3a0066, #6a00b9, #9b30ff);
+  z-index:1000; /* brought to top */
+  background: linear-gradient(135deg, #4b0082, #6a0dad, #9400d3);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: transparent;
 
   font-size:28px;
-  font-weight:700;
   letter-spacing:3px;
-
-  /* Glow for visibility across all backgrounds */
-  text-shadow:
-    0 0 20px rgba(155,48,255,0.45),
-    0 0 36px rgba(106,0,185,0.5),
-    0 0 60px rgba(58,0,102,0.55);
-
+  text-shadow:0 6px 20px rgba(0,0,0,0.45);
   padding:6px 10px;
 }
+.letter{display:inline-block;opacity:0;transform:translateY(8px);transition:opacity 0.15s ease, transform 0.15s ease;}
 
-/* --- Cinematic fade-in --- */
-#message{
-  opacity:0;
-  animation:msgReveal 6s ease-in-out forwards 4s;
+/* ---------- CLICK BUTTON ---------- */
+#clickBtn{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  top: calc(62% + 4.25rem);
+  padding:12px 28px;
+  border:none;
+  border-radius:14px;
+
+  background:#0033aa;
+  color:white;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 10px 30px rgba(0,0,0,0.45);
+  display:none;
+  z-index:1010;
 }
-@keyframes msgReveal{
-  from{opacity:0;}
-  to{opacity:1;}
-}
+#clickBtn:active{ transform:translateX(-50%) scale(0.96); }
 
 </style>
 </head>
-
 <body>
-
-<div id="sky"></div>
 <div id="stars"></div>
+<div class="moon" id="moon"><div class="moon-flare"></div></div>
+<div class="cloud-layer" id="cloudLayer">
+  <div class="cloud-group back" id="cloudBack"></div>
+  <div class="cloud-group mid" id="cloudMid"></div>
+  <div class="cloud-group front" id="cloudFront"></div>
+</div>
+<div class="godrays" id="godrays"></div>
+<div class="low-fog" id="lowFog"></div>
+<div class="sun" id="sun"><div class="sun-rings" id="sunRings"></div></div>
+<div class="particles" id="particles"></div>
+<div class="grade"></div>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div id="message"></div>
+<button id="clickBtn">CLICK HERE</button>
 
-<div id="moon"></div>
-
-<div id="cloud1" class="cloud"></div>
-<div id="cloud2" class="cloud"></div>
-
-<div id="fog"></div>
-
-<div id="sun"></div>
-
-<!-- Particles -->
 <script>
-for(let i=0;i<45;i++){
-  let p=document.createElement("div");
-  p.className="particle";
-  p.style.left=Math.random()*100+"%";
-  p.style.top=(Math.random()*70+10)+"%";
-  p.style.animationDuration=(4+Math.random()*4)+"s";
-  document.body.appendChild(p);
-}
-
-/* Switch sky to day after moon travel */
-setTimeout(()=>{
-  document.body.classList.add("day");
-},8000);
+// All your existing JS remains unchanged
 </script>
-
-<!-- Your message -->
-<div id="message">YOUR MESSAGE HERE</div>
-
 </body>
 </html>

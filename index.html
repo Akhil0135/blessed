@@ -3,186 +3,130 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Anime Saree Girl — Cinematic Walk</title>
+<title>Cartoon-Network Style — Saree Girl (Tom-&-Jerry Vibe)</title>
 <style>
-  :root{
-    --scene-h:100vh;
-    --girl-scale:1;
-    --walk-duration:10s;
-    --petal-count:18;
-  }
-
+  /* ---------- Reset ---------- */
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;background:#071026;font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system}
-  body{overflow:hidden;color:#fff}
+  html,body{height:100%;background:#071225;font-family:Inter,system-ui,Arial,sans-serif;overflow:hidden}
 
-  /* letterbox cinematic bars */
-  .bar{position:fixed;left:0;width:100%;height:10%;background:#000;z-index:110}
+  /* ---------- Cinematic Bars ---------- */
+  .bar{position:fixed;left:0;width:100%;height:9%;background:#000;z-index:120}
   .bar.top{top:0} .bar.bottom{bottom:0}
 
-  /* main scene */
-  .stage{
-    position:relative;
-    width:100%;
-    height:var(--scene-h);
-    overflow:hidden;
-    perspective:1200px;
-  }
+  /* ---------- Scene ---------- */
+  .stage{position:relative;width:100%;height:100vh;overflow:hidden;display:block;}
+  .sky{position:absolute;inset:0 0 35% 0;background:linear-gradient(#0e2a4a,#0a2438 60%, #052427);z-index:1}
+  .horizon{position:absolute;left:0;right:0;bottom:20%;height:24%;background:linear-gradient(180deg,#0e3a24,#052014);z-index:4;filter:drop-shadow(0 -12px 18px rgba(0,0,0,0.4));}
+  .midground{position:absolute;left:0;right:0;bottom:26%;height:30%;z-index:3;pointer-events:none}
+  .foreground{position:absolute;left:0;right:0;bottom:0;height:28%;z-index:8}
 
-  /* subtle vignette */
-  .vignette{
-    position:absolute;inset:0;
-    background:radial-gradient(60% 40% at 50% 40%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 60%);
-    pointer-events:none; z-index:100;
-  }
-
-  /* parallax layers */
-  .layer{position:absolute;left:0;right:0;bottom:0;pointer-events:none}
-  .sky{
-    height:60%; top:0;
-    background:linear-gradient(180deg,#09203b 0%, #0f2943 50%, #16323a 100%);
-    z-index:1;
-    transform-origin:center;
-  }
-
-  .hills{
-    height:36%; bottom:16%;
+  /* simple parallax motion via background-size/position animation */
+  .midground::before{
+    content:"";position:absolute;left:-10%;top:0;width:220%;height:100%;
     background:
-      radial-gradient(1200px 220px at 10% 40%, rgba(10,40,25,0.75), transparent 25%),
-      radial-gradient(1200px 220px at 60% 40%, rgba(9,35,20,0.8), transparent 25%),
-      linear-gradient(180deg,#0b2a17,#07140a);
-    transform: translateZ(-60px) scale(1.05);
-    z-index:2;
-    animation: hillsMove 24s linear infinite;
+      radial-gradient(120px 70px at 8% 40%, #0f4b2f 10%, transparent 40%),
+      radial-gradient(120px 70px at 28% 45%, #0b4727 10%, transparent 40%),
+      radial-gradient(120px 70px at 48% 42%, #0f4b2f 10%, transparent 40%),
+      radial-gradient(120px 70px at 68% 44%, #0b4526 10%, transparent 40%);
+    background-repeat:repeat-x; background-size: 360px 100%;
+    opacity:0.96; filter:blur(1px); animation: midMove 20s linear infinite;
   }
-  @keyframes hillsMove{0%{transform:translateX(0) translateZ(-60px)}100%{transform:translateX(-12%) translateZ(-60px)}}
+  @keyframes midMove{0%{transform:translateX(0)}100%{transform:translateX(-28%)}}
 
-  .trees-mid{
-    height:28%; bottom:14%;
-    z-index:3; opacity:0.92;
+  .foreground::before{
+    content:"";position:absolute;left:-8%;top:0;width:210%;height:100%;
     background:
-      radial-gradient(60px 30px at 8% 30%, #0e3b26 5%, transparent 40%),
-      radial-gradient(60px 30px at 18% 25%, #123f28 5%, transparent 40%),
-      radial-gradient(60px 30px at 36% 27%, #0d3a22 5%, transparent 40%),
-      linear-gradient(180deg, rgba(6,20,12,0.9), rgba(2,8,5,0.95));
-    background-size: 220px 100%, 220px 100%, 220px 100%, 100% 100%;
-    background-repeat:repeat-x;
-    transform-origin:center;
-    animation: midTrees 18s linear infinite;
-    filter: blur(0.8px);
+      radial-gradient(60px 36px at 6% 40%, #0b3d23 15%, transparent 40%),
+      radial-gradient(50px 30px at 18% 38%, #0d3f24 15%, transparent 40%),
+      radial-gradient(70px 40px at 40% 44%, #0b3a20 15%, transparent 40%);
+    background-repeat:repeat-x;background-size:260px 100%;
+    animation: foreMove 14s linear infinite;
   }
-  @keyframes midTrees{0%{background-position:0 0,0 0,0 0,0 0}100%{background-position:-40% 0,-30% 0,-55% 0,0 0}}
+  @keyframes foreMove{0%{transform:translateX(0)}100%{transform:translateX(-42%)}}
 
-  .bushes{
-    height:18%; bottom:6%;
-    z-index:6; opacity:1;
-    background:
-      radial-gradient(120px 60px at 6% 30%, #123d24 15%, transparent 40%),
-      radial-gradient(120px 60px at 26% 28%, #0f3a22 15%, transparent 40%),
-      linear-gradient(180deg,#0b3a1f,#062012);
-    background-repeat:repeat-x;
-    background-size: 360px 100%,360px 100%,100% 100%;
-    animation: bushMove 14s linear infinite;
-    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.5));
-  }
-  @keyframes bushMove{0%{background-position:0 0,0 0,0 0}100%{background-position:-35% 0,-50% 0,0 0}}
+  /* ---------- Letterbox + vignette ---------- */
+  .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 40% at 52% 30%, rgba(255,255,255,0.02), rgba(0,0,0,0.6) 55%);z-index:110}
 
-  /* ground path */
-  .ground{
-    position:absolute;left:0;right:0;bottom:0;height:14%;z-index:8;
-    background:linear-gradient(180deg,#08311b,#01200f 70%);
-    box-shadow: inset 0 40px 70px rgba(0,0,0,0.6);
-  }
-  .ground::after{
-    content:""; position:absolute; left:50%; transform:translateX(-50%);
-    bottom:10%; width:70%; height:28%; border-radius:999px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-    filter: blur(6px);
-    z-index:9; pointer-events:none;
+  /* ---------- Stage center area (where action happens) ---------- */
+  .arena{position:absolute;left:0;right:0;top:6%;bottom:9%;display:flex;align-items:flex-end;justify-content:center;z-index:20;pointer-events:none;}
+
+  /* ---------- Walk path container (girl moves across) ---------- */
+  .path{position:relative;width:100%;height:100%;pointer-events:none;}
+  .walker{position:absolute;bottom:8%;left:-14%;width:300px;height:420px;transform-origin:center bottom;z-index:60;
+          animation: walkerTravel 10.5s linear infinite;}
+  @keyframes walkerTravel{
+    0%{left:-18%; transform:scale(0.9)}
+    8%{left:6%; transform:scale(1)}
+    48%{left:52%; transform:scale(1.08)}
+    92%{left:108%; transform:scale(0.92)}
+    100%{left:118%; transform:scale(0.9)}
   }
 
-  /* camera container: pans / zooms slightly */
-  .camera{
-    position:absolute; inset:0; z-index:20; transform-origin:center;
-    animation: cameraPush 14s ease-in-out infinite;
-    display:flex; align-items:flex-end; justify-content:center;
-    pointer-events:none;
-  }
-  @keyframes cameraPush{
-    0% { transform: translateY(0) scale(1); }
-    30% { transform: translateY(-3%) scale(1.02); }
-    60% { transform: translateY(-6%) scale(1.04); }
-    100% { transform: translateY(0) scale(1); }
+  /* ---------- Cartoon timing - squash & stretch helper ---------- */
+  .squash{transform-origin:center bottom; animation: squashAnim 0.28s ease-in-out both;}
+  @keyframes squashAnim{
+    0%{transform:scaleY(1) scaleX(1)}
+    30%{transform:scaleY(.8) scaleX(1.18)}
+    60%{transform:scaleY(1.06) scaleX(.95)}
+    100%{transform:scaleY(1) scaleX(1)}
   }
 
-  /* cinematic vignette top glow */
-  .rim{ position:absolute; inset:0; pointer-events:none; z-index:120;
-        background: linear-gradient(180deg, rgba(255,200,150,0.02), transparent 12%); mix-blend-mode:screen; opacity:0.85;}
+  /* ---------- Girl SVG parts movement ---------- */
+  .anime-walk .leg, .anime-walk .arm{transform-origin:50% 10%}
+  .anime-walk .leg.left{animation:leftLeg 0.8s ease-in-out infinite}
+  .anime-walk .leg.right{animation:rightLeg 0.8s ease-in-out infinite}
+  .anime-walk .arm.left{animation:leftArm 0.8s ease-in-out infinite}
+  .anime-walk .arm.right{animation:rightArm 0.8s ease-in-out infinite}
 
-  /* walker container - moves left to right across stage */
-  .walker-path{ position:relative; width:100%; height:100%; display:flex; align-items:flex-end; pointer-events:none; }
-  .walker{
-    width:260px; height:420px; margin-bottom:9%;
-    transform-origin:center bottom;
-    animation: walkerMove var(--walk-duration) linear infinite;
-    z-index:50;
-    filter: drop-shadow(0 22px 28px rgba(0,0,0,0.6));
-  }
-  @keyframes walkerMove{
-    0% {transform: translateX(-18vw) scale(0.92)}
-    10% {transform: translateX(6vw) scale(1)}
-    50% {transform: translateX(46vw) scale(1.06)}
-    90% {transform: translateX(110vw) scale(0.94)}
-    100% {transform: translateX(120vw) scale(0.9)}
-  }
+  @keyframes leftLeg{0%{transform:rotate(10deg)}50%{transform:rotate(-30deg) translateY(6px)}100%{transform:rotate(10deg)}}
+  @keyframes rightLeg{0%{transform:rotate(-10deg)}50%{transform:rotate(36deg) translateY(6px)}100%{transform:rotate(-10deg)}}
+  @keyframes leftArm{0%{transform:rotate(-22deg)}50%{transform:rotate(14deg)}100%{transform:rotate(-22deg)}}
+  @keyframes rightArm{0%{transform:rotate(16deg)}50%{transform:rotate(-18deg)}100%{transform:rotate(16deg)}}
 
-  /* subtle floating bob */
-  .anime-float{ animation: floaty 3.6s ease-in-out infinite; transform-origin:center bottom }
-  @keyframes floaty{ 0%{transform:translateY(0)} 100%{transform:translateY(-8px)} }
+  /* saree pallu subtle flow */
+  .pallu{transform-origin:20% 20%;animation:palluFlow 1.6s ease-in-out infinite}
+  @keyframes palluFlow{0%{transform:translateX(0) rotate(2deg)}50%{transform:translateX(-8px) rotate(-6deg)}100%{transform:translateX(0) rotate(2deg)}}
 
-  /* anime-face styling */
-  svg .eye { transition: transform .25s; transform-origin:center; }
-  svg .cheek { opacity:0.9 }
+  /* head tilt / blink */
+  .head{animation: headBob 3.6s ease-in-out infinite}
+  @keyframes headBob{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+  .eye-lid{transform-origin:center; animation:blink 5.8s steps(1) infinite}
+  @keyframes blink{0%,96%{transform:scaleY(1)}98%{transform:scaleY(0.06)}100%{transform:scaleY(1)}}
 
-  /* limbs walk timing */
-  .leg-l, .arm-l { animation-duration:0.86s; animation-timing-function:ease-in-out; animation-iteration-count:infinite }
-  .leg-r, .arm-r { animation-duration:0.86s; animation-timing-function:ease-in-out; animation-iteration-count:infinite }
-  .leg-l { animation-name: legLeft; }
-  .leg-r { animation-name: legRight; }
-  .arm-l { animation-name: armLeft; }
-  .arm-r { animation-name: armRight; }
-
-  @keyframes legLeft{ 0%{transform:rotate(12deg) translateY(0)} 50%{transform:rotate(-24deg) translateY(6px)} 100%{transform:rotate(12deg) translateY(0)} }
-  @keyframes legRight{ 0%{transform:rotate(-12deg) translateY(0)} 50%{transform:rotate(28deg) translateY(6px)} 100%{transform:rotate(-12deg) translateY(0)} }
-  @keyframes armLeft{ 0%{transform:rotate(-18deg)} 50%{transform:rotate(12deg)} 100%{transform:rotate(-18deg)} }
-  @keyframes armRight{ 0%{transform:rotate(14deg)} 50%{transform:rotate(-18deg)} 100%{transform:rotate(14deg)} }
-
-  /* saree pallu flow */
-  .pallu { animation: palluFlow 1.6s ease-in-out infinite; transform-origin: 18% 18% }
-  @keyframes palluFlow{ 0%{transform:translateX(0) rotate(2deg)} 50%{transform:translateX(-8px) rotate(-4deg)} 100%{transform:translateX(0) rotate(2deg)} }
-
-  /* hair sway */
-  .hair { animation: hairSway 2.2s ease-in-out infinite }
-  @keyframes hairSway{ 0%{transform:translateX(0)} 50%{transform:translateX(-4px)} 100%{transform:translateX(0)} }
-
-  /* skirt skirt shadow */
-  .underskirt{ filter: blur(0.6px); opacity:0.98 }
-
-  /* petals */
-  .petal{
-    position:absolute; width:18px; height:18px; border-radius:6px; background:linear-gradient(180deg,#ffd9e1,#ff7fb1);
-    transform-origin:center; pointer-events:none; z-index:140;
-    will-change: transform, opacity;
-    opacity:0;
+  /* ---------- Mouse (tease) ---------- */
+  .mouse{position:absolute;width:64px;height:48px;left:-6%;bottom:6%;z-index:80;transform-origin:center bottom}
+  .mouse svg{width:100%;height:100%}
+  .mouse-run{animation:mouseRun 2.6s cubic-bezier(.35,0,.65,1) infinite}
+  @keyframes mouseRun{
+    0%{transform:translateX(0) scale(1)}
+    30%{transform:translateX(120vw) scale(1.05)}
+    32%{transform:translateX(120vw) scale(1.05)}
+    100%{transform:translateX(120vw) scale(1.05)}
   }
 
-  /* small bloom glints */
-  .glint{ position:absolute; width:6px; height:6px; border-radius:50%; background:rgba(255,235,210,0.06); box-shadow:0 0 18px 6px rgba(255,210,170,0.02); left:10%; top:6%; filter: blur(1px); z-index:140 }
+  /* mouse pop - quick scale */
+  .pop{animation:popAnim .28s ease-in-out both}
+  @keyframes popAnim{0%{transform:scale(.9)}30%{transform:scale(1.18)}100%{transform:scale(1)}}
 
-  /* responsiveness */
+  /* shock/stylized exclamation */
+  .boom{position:absolute;left:50%;top:10%;transform:translateX(-50%);z-index:160;opacity:0;animation:boomIn .6s ease-out forwards}
+  @keyframes boomIn{0%{opacity:0;transform:translateY(-6px) scale(.6)}60%{opacity:1;transform:translateY(0) scale(1.1)}100%{opacity:0;transform:translateY(-12px) scale(.9)}}
+
+  /* ---------- Soundless comedic timing: girl react animations ---------- */
+  .react-startle{animation: startle 0.5s ease-in-out both}
+  @keyframes startle{
+    0%{transform:translateY(0)}
+    20%{transform:translateY(-14px) rotate(-6deg) scaleY(.96)}
+    50%{transform:translateY(4px) rotate(6deg) scaleY(1.04)}
+    100%{transform:translateY(0) rotate(0) scaleY(1)}
+  }
+
+  /* ---------- Stylized outlines & flat colors ---------- */
+  .stroke{stroke:#121217; stroke-width:3; stroke-linejoin:round; stroke-linecap:round; fill:none}
+  /* responsive */
   @media (max-width:720px){
-    .walker { width:180px; height:300px; margin-bottom:8% }
-    .bar{height:8%}
+    .walker{width:200px;height:300px}
+    .bar{height:7%}
   }
 </style>
 </head>
@@ -192,189 +136,229 @@
   <div class="bar bottom"></div>
 
   <div class="stage" id="stage">
+    <div class="sky"></div>
+    <div class="midground"></div>
+    <div class="horizon"></div>
+    <div class="foreground"></div>
     <div class="vignette"></div>
 
-    <!-- Layers -->
-    <div class="layer sky" aria-hidden="true"></div>
-    <div class="layer hills" aria-hidden="true"></div>
-    <div class="layer trees-mid" aria-hidden="true"></div>
-    <div class="layer bushes" aria-hidden="true"></div>
-    <div class="layer ground" aria-hidden="true"></div>
-
-    <!-- camera wrapper -->
-    <div class="camera">
-      <div class="walker-path" aria-hidden="false" role="img" aria-label="Anime style girl in saree walking in garden">
-        <!-- walker: SVG anime-style girl -->
-        <div class="walker anime-float" id="walker">
-          <svg viewBox="0 0 220 380" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="graphics-document">
+    <div class="arena">
+      <div class="path" id="path">
+        <!-- Walker (girl) -->
+        <div class="walker anime-walk" id="girl">
+          <!-- SVG Girl — clean, bold, CN-style -->
+          <svg viewBox="0 0 220 380" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cartoon saree girl">
             <defs>
-              <linearGradient id="skinG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffd9c4"/><stop offset="1" stop-color="#ffc29c"/></linearGradient>
-              <linearGradient id="hairG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1b0f0b"/><stop offset="1" stop-color="#3b2020"/></linearGradient>
-              <linearGradient id="saree1" x1="0" x2="1"><stop offset="0" stop-color="#7b2a8f"/><stop offset="1" stop-color="#ff4fa1"/></linearGradient>
-              <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <linearGradient id="skin" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#ffddc0"/>
+                <stop offset="1" stop-color="#ffc1a0"/>
+              </linearGradient>
+              <linearGradient id="s1" x1="0" x2="1"><stop offset="0" stop-color="#ff5d9e"/><stop offset="1" stop-color="#a4289b"/></linearGradient>
             </defs>
 
-            <!-- shadow -->
-            <ellipse cx="110" cy="340" rx="64" ry="18" fill="rgba(0,0,0,0.46)" />
+            <!-- stylized shadow -->
+            <ellipse cx="110" cy="338" rx="68" ry="18" fill="rgba(0,0,0,0.45)"/>
 
             <!-- lower body group -->
-            <g id="lower" transform="translate(10,80)">
+            <g id="lower" transform="translate(0,80)">
               <!-- left leg -->
-              <g class="leg-l" transform="translate(56,160)">
-                <rect x="0" y="0" width="20" height="90" rx="10" fill="url(#skinG)"/>
-                <ellipse cx="10" cy="88" rx="12" ry="6" fill="#2a1b13"/>
+              <g class="leg left" transform="translate(58,160)">
+                <rect x="0" y="0" width="22" height="92" rx="10" fill="url(#skin)"/>
+                <ellipse cx="11" cy="92" rx="12" ry="6" fill="#231815"/>
               </g>
 
               <!-- right leg -->
-              <g class="leg-r" transform="translate(110,155)">
-                <rect x="0" y="0" width="20" height="95" rx="10" fill="url(#skinG)"/>
-                <ellipse cx="10" cy="92" rx="12" ry="6" fill="#2a1b13"/>
+              <g class="leg right" transform="translate(120,156)">
+                <rect x="0" y="0" width="22" height="96" rx="10" fill="url(#skin)"/>
+                <ellipse cx="11" cy="94" rx="12" ry="6" fill="#231815"/>
               </g>
 
-              <!-- underskirt -->
-              <g class="underskirt" transform="translate(28,58)">
-                <path d="M0 0 Q48 120 96 120 Q144 120 192 0 L0 0 Z" fill="#2b1128" opacity="0.14"/>
-              </g>
-
-              <!-- saree main -->
-              <g class="saree-main" transform="translate(8,28)">
-                <path d="M22 36 C10 120 34 190 80 210 C116 225 152 212 186 148 C200 120 192 70 166 46 C142 28 92 34 22 36 Z"
-                      fill="url(#saree1)" opacity="0.98"/>
-                <!-- pallu flowing -->
-                <path class="pallu" d="M120 36 C160 18 210 30 220 10 C230 -14 200 -10 176 8 C150 26 130 28 120 36 Z"
-                      fill="#ff7fb1" opacity="0.96" transform-origin="120 36"/>
-                <!-- decorative border -->
-                <path d="M28 110 C90 110 124 118 180 88" fill="none" stroke="rgba(255,230,230,0.08)" stroke-width="6" stroke-linecap="round"/>
+              <!-- saree skirt -->
+              <g class="saree-main" transform="translate(18,42)">
+                <path d="M12 34 C22 120 50 200 98 220 C136 236 172 222 204 150 C218 120 210 72 182 50 C158 30 98 36 12 34 Z"
+                      fill="url(#s1)" stroke="#0e0810" stroke-width="2"/>
+                <!-- pallu -->
+                <path class="pallu" d="M118 28 C158 12 210 30 218 6 C226 -20 198 -14 172 6 C146 26 126 28 118 28 Z"
+                      fill="#ffd0e0" stroke="#0e0810" stroke-width="1.6" opacity="0.95"/>
+                <!-- border -->
+                <path d="M22 120 C86 118 132 126 188 98" fill="none" stroke="rgba(255,240,240,0.08)" stroke-width="6" stroke-linecap="round"/>
               </g>
             </g>
 
             <!-- upper body -->
-            <g id="upper" transform="translate(10,0)">
+            <g id="upper" transform="translate(0,0)">
               <!-- torso -->
-              <rect x="80" y="78" rx="16" ry="16" width="60" height="72" fill="#be2b6a" />
-              <!-- arms -->
-              <g class="arm-l" transform="translate(40,90)">
-                <rect x="0" y="0" width="18" height="68" rx="8" fill="url(#skinG)"/>
+              <rect x="82" y="82" rx="14" ry="14" width="56" height="76" fill="#d93b76" stroke="#0f0710" stroke-width="2"/>
+              <!-- left arm -->
+              <g class="arm left" transform="translate(50,92)">
+                <rect x="0" y="0" width="18" height="66" rx="8" fill="url(#skin)"/>
               </g>
-              <g class="arm-r" transform="translate(142,92)">
-                <rect x="0" y="0" width="18" height="64" rx="8" fill="url(#skinG)"/>
+              <!-- right arm -->
+              <g class="arm right" transform="translate(150,92)">
+                <rect x="0" y="0" width="18" height="62" rx="8" fill="url(#skin)"/>
               </g>
 
               <!-- neck -->
-              <rect x="102" y="62" width="16" height="18" rx="6" fill="url(#skinG)"/>
+              <rect x="102" y="62" width="16" height="18" rx="6" fill="url(#skin)"/>
 
               <!-- head group -->
-              <g transform="translate(56,0)">
+              <g transform="translate(48,-2)">
                 <!-- hair back -->
-                <path class="hair" d="M54 20 C34 -6 8 6 6 46 C4 84 26 98 54 96 C80 94 108 76 110 42 C112 10 90 12 54 20 Z" fill="url(#hairG)"/>
+                <path class="hair" d="M54 20 C34 -6 8 6 6 46 C4 84 26 98 54 96 C80 94 108 76 110 42 C112 10 90 12 54 20 Z"
+                      fill="#181019" stroke="#0d0a0c" stroke-width="1.8"/>
                 <!-- face -->
-                <ellipse cx="86" cy="64" rx="34" ry="38" fill="url(#skinG)"/>
+                <ellipse cx="86" cy="64" rx="34" ry="38" fill="url(#skin)" stroke="#0f0710" stroke-width="1.6"/>
                 <!-- bangs -->
-                <path class="hair" d="M62 40 C74 28 106 34 112 48 C118 60 106 74 86 74 C66 74 58 60 62 40 Z" fill="#2b1511"/>
-                <!-- eyes - anime style -->
+                <path class="hair" d="M62 40 C74 28 106 34 112 48 C118 60 106 74 86 74 C66 74 58 60 62 40 Z" fill="#251519" stroke="#0d0a0c" stroke-width="1.2"/>
+                <!-- eyes -->
                 <g transform="translate(62,52)">
-                  <ellipse class="eye" cx="6" cy="8" rx="6.6" ry="5.4" fill="#ffffff" />
-                  <ellipse class="eye" cx="34" cy="8" rx="6.6" ry="5.4" fill="#ffffff" />
-                  <circle cx="8" cy="8" r="2.6" fill="#1b0d0a"/>
-                  <circle cx="36" cy="8" r="2.6" fill="#1b0d0a"/>
-                  <circle cx="10" cy="6" r="1.2" fill="#fff"/>
-                  <circle cx="38" cy="6" r="1.2" fill="#fff"/>
+                  <g class="eye-left">
+                    <ellipse class="eye" cx="6" cy="8" rx="6.6" ry="5.4" fill="#fff" />
+                    <ellipse cx="6.2" cy="8" rx="3.4" ry="2.8" fill="#020202"/>
+                    <rect class="eye-lid" x="-6" y="-8" width="28" height="16" fill="#ffddc0"/>
+                  </g>
+                  <g class="eye-right" transform="translate(28,0)">
+                    <ellipse class="eye" cx="6" cy="8" rx="6.6" ry="5.4" fill="#fff" />
+                    <ellipse cx="6.2" cy="8" rx="3.4" ry="2.8" fill="#020202"/>
+                    <rect class="eye-lid" x="-6" y="-8" width="28" height="16" fill="#ffddc0"/>
+                  </g>
                 </g>
                 <!-- blush -->
-                <ellipse class="cheek" cx="68" cy="78" rx="6" ry="3.6" fill="#ffb6c6" opacity="0.9"/>
-                <ellipse class="cheek" cx="100" cy="78" rx="6" ry="3.6" fill="#ffb6c6" opacity="0.9"/>
+                <ellipse class="cheek" cx="68" cy="78" rx="6" ry="3.6" fill="#ff9fb9" opacity="0.92"/>
+                <ellipse class="cheek" cx="100" cy="78" rx="6" ry="3.6" fill="#ff9fb9" opacity="0.92"/>
                 <!-- mouth -->
                 <path d="M82 86 Q88 90 96 86" stroke="#8b2b3b" stroke-width="1.6" stroke-linecap="round" fill="none"/>
                 <!-- bindi -->
-                <circle cx="88" cy="66" r="2.2" fill="#b20e2a"/>
+                <circle cx="88" cy="66" r="2.4" fill="#b20e2a"/>
               </g>
             </g>
-
           </svg>
         </div>
+
+        <!-- Mouse: cartoon runner that teases the girl -->
+        <div class="mouse" id="mouse">
+          <svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- body -->
+            <g transform="translate(0,10)">
+              <ellipse cx="36" cy="36" rx="28" ry="18" fill="#c9c9c9" stroke="#111" stroke-width="2"/>
+              <!-- head -->
+              <ellipse cx="68" cy="28" rx="18" ry="14" fill="#c9c9c9" stroke="#111" stroke-width="2"/>
+              <!-- ear -->
+              <ellipse cx="80" cy="14" rx="6" ry="6" fill="#f8d2d5" stroke="#111" stroke-width="1.3"/>
+              <!-- eye -->
+              <circle cx="74" cy="26" r="3.2" fill="#111"/>
+              <!-- tail -->
+              <path d="M12 40 C2 28, 6 10, 30 6" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+              <!-- small foot -->
+              <ellipse cx="26" cy="58" rx="8" ry="4" fill="#111"/>
+            </g>
+          </svg>
+        </div>
+
       </div>
     </div>
 
-    <div class="rim"></div>
-    <div class="vignette" style="mix-blend-mode:multiply; opacity:0.45"></div>
+    <!-- transient exclamation -->
+    <div id="ex" style="position:absolute;left:50%;top:18%;transform:translateX(-50%);z-index:170;pointer-events:none"></div>
 
-    <!-- soft glint -->
-    <div class="glint"></div>
-
-    <!-- petals will be injected here -->
-    <div id="petal-layer"></div>
   </div>
 
 <script>
-  // Create falling petals (randomized nice anime-like motion)
-  (function createPetals(){
-    const layer = document.getElementById('petal-layer');
-    const count = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--petal-count')) || 14;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    for(let i=0;i<count;i++){
-      const p = document.createElement('div');
-      p.className='petal';
-      // random start position above viewport
-      const startX = Math.random()*w;
-      const startY = Math.random()*-h*0.4 - 20;
-      const delay = Math.random()*6;
-      const size = 10 + Math.random()*18;
-      p.style.width = size+'px';
-      p.style.height = Math.round(size*0.85)+'px';
-      p.style.left = startX + 'px';
-      p.style.top = startY + 'px';
-      document.body.appendChild(p);
+  // ---------- Cartoon controller ----------
+  (function(){
+    const mouse = document.getElementById('mouse');
+    const girl = document.getElementById('girl');
+    const ex = document.getElementById('ex');
+    const stage = document.getElementById('stage');
 
-      // animate using JS for natural bezier paths
-      (function animatePetal(el, idx){
-        const duration = 8 + Math.random()*6;
-        const amplitudeX = 60 + Math.random()*260;
-        const rota = (Math.random()*360);
-        function run(){
-          el.style.opacity = 1;
-          const start = performance.now();
-          const startLeft = parseFloat(el.style.left);
-          const startTop = parseFloat(el.style.top);
-          const endTop = window.innerHeight + 80 + Math.random()*120;
-          function frame(t){
-            const p = Math.min(1,(t-start)/1000/duration);
-            // ease out quad
-            const ease = 1 - (1-p)*(1-p);
-            const x = startLeft + Math.sin(p* Math.PI*2 + idx) * amplitudeX * (1-p*0.1) + (p* ( (idx%2?1:-1) )*40 );
-            const y = startTop + (endTop-startTop)*ease;
-            el.style.transform = `translate3d(${x-startLeft}px,${y-startTop}px,0) rotate(${rota + p*720}deg)`;
-            // fade near end
-            el.style.opacity = (1 - Math.pow(p,1.6)).toString();
-            if(p < 1) requestAnimationFrame(frame);
-            else {
-              // reset and run again
-              el.style.left = (Math.random()*window.innerWidth) + 'px';
-              el.style.top = (Math.random()*-window.innerHeight*0.4 - 20) + 'px';
-              setTimeout(run, 800 + Math.random()*1200);
-            }
-          }
-          requestAnimationFrame(frame);
-        }
-        setTimeout(run, delay*300);
-      })(p,i);
+    // initial place mouse slightly left under stage
+    resetMouse();
+
+    // timeline: every X seconds, mouse runs across, teases, and girl reacts
+    const cycle = 10.5 * 1000; // match walker travel cycle
+    let next = 1500; // initial delay before first run
+
+    function resetMouse(){
+      mouse.style.left = '-8%';
+      mouse.style.bottom = '6%';
+      mouse.classList.remove('mouse-run','pop');
+      mouse.style.opacity = 1;
+      // small random vertical offset for variety
+      mouse.style.transform = 'translateY(' + (Math.random()*8 - 4) + 'px)';
     }
-  })();
 
-  // small responsive tweak: adjust camera speed for narrow screens
-  (function adapt(){
-    function update(){
+    // mouse run sequence
+    function mouseRunSequence(){
+      // 1) pop (appears quickly)
+      mouse.classList.add('pop');
+      setTimeout(()=>mouse.classList.remove('pop'), 300);
+
+      // 2) quick tease: run across stage fast
+      // place at near-left of screen and animate translate with CSS transform
+      mouse.style.left = (-8 + Math.random()*6) + '%';
+      mouse.classList.add('mouse-run');
+
+      // schedule tease moments: when mouse passes near girl, trigger reactions
+      // compute approximate times: mouseRun duration ~2.6s (see CSS)
+      setTimeout(()=>{ // mouse near girl -> girl startled
+        // 1) flash exclamation
+        showExclamation();
+        // 2) make girl do a comedic startle (squash+rotate)
+        girl.classList.add('react-startle');
+        // temporary squash for cartoon pop
+        girl.classList.add('squash');
+        setTimeout(()=>{ girl.classList.remove('react-startle'); }, 520);
+        setTimeout(()=>{ girl.classList.remove('squash'); }, 300);
+      }, 900 + Math.random()*350);
+
+      // after run finishes, reset mouse position and hide (prepare next run)
+      setTimeout(()=>{
+        mouse.classList.remove('mouse-run');
+        resetMouse();
+      }, 2800);
+    }
+
+    // show exclamation graphic
+    function showExclamation(){
+      const el = document.createElement('div');
+      el.className = 'boom';
+      el.style.left = (50 + (Math.random()*18 - 8)) + '%';
+      el.style.top = (12 + Math.random()*6) + '%';
+      el.innerHTML = '<svg width="86" height="54" viewBox="0 0 86 54" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 44 L26 8 L58 6 L78 36 L46 46 L8 44 Z" fill="#ffd36a"/><text x="44" y="32" font-size="22" text-anchor="middle" fill="#5b1200" font-weight="700">!</text></g></svg>';
+      ex.appendChild(el);
+      // remove after the animation time
+      setTimeout(()=>{ ex.removeChild(el); }, 800);
+    }
+
+    // main loop
+    function schedule(){
+      setTimeout(()=>{
+        mouseRunSequence();
+        // schedule next
+        next = cycle * 0.9 + Math.random()*2000 - 500;
+        schedule();
+      }, next);
+      // ensure next becomes cycle for subsequent runs
+      next = cycle;
+    }
+
+    // start after small delay
+    setTimeout(schedule, 900);
+
+    // small accessibility: click on mouse to trigger immediate run
+    mouse.addEventListener('click', ()=>{ mouseRunSequence(); });
+
+    // responsive tweak: reduce walker travel speed on small screens
+    function adapt(){
       if(window.innerWidth < 720){
-        document.documentElement.style.setProperty('--walk-duration','13s');
-        document.documentElement.style.setProperty('--girl-scale','0.86');
+        document.querySelector('.walker').style.animation = 'walkerTravel 13s linear infinite';
       } else {
-        document.documentElement.style.setProperty('--walk-duration','10s');
-        document.documentElement.style.setProperty('--girl-scale','1');
+        document.querySelector('.walker').style.animation = 'walkerTravel 10.5s linear infinite';
       }
     }
-    update(); window.addEventListener('resize', update);
+    adapt(); window.addEventListener('resize', adapt);
+
   })();
 </script>
-
 </body>
 </html>

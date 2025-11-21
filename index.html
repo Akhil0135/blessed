@@ -130,48 +130,6 @@
     star.style.animationDelay = Math.random() * 3 + "s";
     starContainer.appendChild(star);
   }
-// === Add Click Button ===
-const clickBtn = document.createElement('button');
-clickBtn.textContent = 'Click Here';
-clickBtn.style.position = 'absolute';
-clickBtn.style.bottom = '15%';
-clickBtn.style.left = '50%';
-clickBtn.style.transform = 'translateX(-50%)';
-clickBtn.style.padding = '14px 32px';
-clickBtn.style.fontSize = '20px';
-clickBtn.style.borderRadius = '12px';
-clickBtn.style.border = 'none';
-clickBtn.style.background = 'rgba(255,255,255,0.2)';
-clickBtn.style.backdropFilter = 'blur(6px)';
-clickBtn.style.color = 'white';
-clickBtn.style.cursor = 'pointer';
-clickBtn.style.transition = '0.4s ease';
-clickBtn.style.pointerEvents = 'auto';
-clickBtn.style.opacity = '0';
-clickBtn.style.animation = 'fadeInBtn 4s ease forwards 8s';
-document.body.appendChild(clickBtn);
-
-// Button click → disappear
-clickBtn.onclick = () => {
-  clickBtn.style.opacity = '0';
-  clickBtn.style.pointerEvents = 'none';
-};
-
-// === Moon Movement Stop Before Screen ===
-const moon = document.querySelector('.moon');
-let moonPos = -200;
-let moonSpeed = 2.2;
-let stopPoint = window.innerWidth * 0.74;
-
-function moveMoon(){
-  if(moonPos < stopPoint){
-    moonPos += moonSpeed;
-    moon.style.left = moonPos + 'px';
-    requestAnimationFrame(moveMoon);
-  }
-}
-requestAnimationFrame(moveMoon);
-
 </script>
 
 </body>

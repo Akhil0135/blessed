@@ -61,7 +61,7 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 #message{position:absolute;width:100%;top:62%;text-align:center;z-index:12;color:#fff3da;font-size:28px;letter-spacing:3px;text-shadow:0 6px 20px rgba(0,0,0,0.7);opacity:0;transition:opacity .6s ease;}
 .letter{display:inline-block;opacity:0;transform: translateY(8px);animation:reveal .45s forwards;}
 @keyframes reveal{to{opacity:1;transform:translateY(0);}}
-#clickBtn{position:absolute;left:50%;bottom:10vh;transform:translateX(-50%);z-index:13;padding:14px 34px;border-radius:40px;background: rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.18);cursor:pointer;font-family:'Cinzel', serif;font-size:20px;opacity:0;pointer-events:none;transition:opacity 1s ease, transform .4s ease;}
+#clickBtn{position:absolute;left:50%;bottom:10vh;transform:translateX(-50%);z-index:13;padding:14px 34px;border-radius:40px;background: #111111; color: #fff;border:1px solid rgba(255,255,255,0.18);cursor:pointer;font-family:'Cinzel', serif;font-size:20px;opacity:0;pointer-events:none;transition:opacity 1s ease, transform .4s ease;}
 #clickBtn.float{opacity:1;pointer-events:auto;animation:btnFloat 3s ease-in-out infinite;}
 @keyframes btnFloat{0%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-6px);}100%{transform:translateX(-50%) translateY(0);}}
 </style>
@@ -174,10 +174,14 @@ clickBtn.addEventListener('click',()=>{
   messageEl.animate([{opacity:1},{opacity:0}],{duration:900,fill:'forwards'}); setTimeout(()=>messageEl.style.opacity='0',900);
 });
 
-// ===== Scene Animation / Camera Pan + Cloud Parallax + Color Grade =====
+// ===== Scene Animation / Camera Pan + Zoom + Cloud Parallax + Color Grade =====
 (function animateScene(){
   const t=performance.now()/1000;
-  document.getElementById('cloudLayer').style.transform=`translateY(${Math.sin(t/18)*6}px) translateX(${Math.sin(t/25)*3}px) scale(${1 + Math.sin(t/100)*0.005})`;
+  // Slow camera pan & zoom
+  const camX = Math.sin(t/35)*15;
+  const camY = Math.sin(t/50)*8;
+  const camScale = 1 + Math.sin(t/120)*0.01;
+  document.getElementById('cloudLayer').style.transform=`translate(${camX}px, ${camY}px) scale(${camScale})`;
   document.querySelector('.grade').style.opacity=0.96+Math.sin(t/6)*0.02;
   document.querySelectorAll('.cloud-blob').forEach(c=>{
     const ox=Math.sin(t/12 + parseFloat(c.style.left)/30)*4;

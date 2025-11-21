@@ -22,7 +22,7 @@ html,body {
 
 /* Stars */
 #stars{position:absolute;inset:0;pointer-events:none;z-index:2;}
-.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:0.5;box-shadow:0 0 6px rgba(255,255,255,0.9);animation:twinkle 2.6s infinite alternate;}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:1;box-shadow:0 0 6px rgba(255,255,255,0.9);animation:twinkle 2.6s infinite alternate;}
 @keyframes twinkle{0%{opacity:0.15;}50%{opacity:0.95;}100%{opacity:0.15;}}
 
 /* Shooting stars */
@@ -85,7 +85,7 @@ const starsEl = document.getElementById('stars');
 for(let i=0;i<300;i++){
   const s=document.createElement('div'); s.className='star';
   s.style.left=(Math.random()*100)+'%'; s.style.top=(Math.random()*100)+'%';
-  s.style.opacity=(0.2+Math.random()*0.8); starsEl.appendChild(s);
+  s.style.opacity=1; starsEl.appendChild(s);
 }
 
 // ===== Clouds =====
@@ -133,7 +133,7 @@ document.addEventListener('mousemove',e=>{
     let dx = e.clientX - lastX;
     lastX = e.clientX;
     rotation += dx;
-    rotation = Math.max(0, Math.min(rotation, 360)); // clamp
+    rotation = Math.max(0, Math.min(rotation, 360)); 
     transitionFactor = rotation/360;
     updateScene(transitionFactor);
   }
@@ -157,10 +157,12 @@ function updateScene(f){
   // rotate moon visually
   moon.style.transform = `translate(-50%, -50%) rotate(${f*360}deg)`;
   
-  // fade stars
-  document.querySelectorAll('.star').forEach(s=>{s.style.opacity=0.2*(1-f);});
+  // fade stars completely
+  document.querySelectorAll('.star').forEach(s=>{
+    s.style.opacity = 1*(1-f); // fully disappear at day
+  });
   
-  // background
+  // background transition
   document.body.style.background = `linear-gradient(to top, 
     rgba(16,24,48,${1-f}) , rgba(135,206,235,${f}))`;
   

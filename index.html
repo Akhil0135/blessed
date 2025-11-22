@@ -103,6 +103,29 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 }
 #clickBtn:active{ transform:translateX(-50%) scale(0.96); }
 
+/* ---------- CROSS ---------- */
+#cross{
+  position:absolute;
+  left:50%;
+  top:55%;
+  transform:translate(-50%, -50%) scale(0);
+  width:40px;
+  height:120px;
+  background:#ffffff;
+  z-index:1100;
+  box-shadow: 0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.3);
+  border-radius:8px;
+  opacity:0;
+}
+#cross div{
+  position:absolute;
+  top:40%;
+  left:-40px;
+  width:120px;
+  height:40px;
+  background:#ffffff;
+  border-radius:8px;
+}
 </style>
 </head>
 <body>
@@ -120,9 +143,10 @@ html,body{height:100%;margin:0;background:#000010;font-family:"Cinzel",serif;ove
 <div class="grade"></div>
 <div class="vignette"></div>
 <div class="grain"></div>
-<div id="message"></div>
 
+<div id="message"></div>
 <button id="clickBtn">CLICK HERE</button>
+<div id="cross"><div></div></div>
 
 <script>
 // ====== Stars ======
@@ -217,6 +241,8 @@ function resetParticle(p,initial=false){
 
 // ====== Update Scene & Message ======
 const clickBtn = document.getElementById('clickBtn');
+const cross = document.getElementById('cross');
+
 function updateMessage(progress){
   const letters=document.querySelectorAll('.letter');
   const count=Math.floor(progress*letters.length);
@@ -226,6 +252,7 @@ function updateMessage(progress){
   });
   if(count >= letters.length){ clickBtn.style.display = 'block'; }
 }
+
 function updateScene(progress){
   moon.style.transform=`rotate(${progress*360}deg)`;
   moon.style.opacity=1-progress;
@@ -258,6 +285,19 @@ function updateScene(progress){
   document.querySelector('.grade').style.opacity=0.96+Math.sin(t/6)*0.02;
   requestAnimationFrame(animateScene);
 })();
+
+// ====== Click Button to Reveal Cross ======
+clickBtn.addEventListener('click', ()=>{
+  clickBtn.style.display='none';
+  cross.style.transition='transform 1.6s ease, opacity 1.6s ease';
+  cross.style.opacity='1';
+  cross.style.transform='translate(-50%, -50%) scale(1) rotate(360deg)';
+  cross.animate([
+    { boxShadow:'0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.3)' },
+    { boxShadow:'0 0 60px rgba(255,255,255,0.8), 0 0 120px rgba(255,255,255,0.5)' },
+    { boxShadow:'0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(255,255,255,0.3)' }
+  ], { duration:1800, iterations:Infinity });
+});
 </script>
 </body>
 </html>

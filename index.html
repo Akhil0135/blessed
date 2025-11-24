@@ -81,7 +81,10 @@ document.addEventListener('pointermove',e=>{
 
   // Moon rotation and opacity
   moon.style.transform=`translate(-50%,-50%) rotate(${-rotationDeg}deg)`;
-  moon.style.opacity=rotationDeg===360?0:1;
+  moon.style.opacity=1-rotationDeg/360;
+
+  // Stars fade with moon
+  stars.forEach(star=>star.style.opacity=1-rotationDeg/360);
 
   // Message reveal
   let totalLetters=msg.getAttribute('data-full') || msg.innerText;
@@ -95,9 +98,6 @@ document.addEventListener('pointermove',e=>{
   sun.style.transform=`scale(${0.35+0.65*(rotationDeg/360)})`;
   sunRays.style.opacity=rotationDeg/360;
   sunRays.style.transform=`translate(-50%,-50%) scale(${0.3+0.7*(rotationDeg/360)})`;
-
-  // Stars fade
-  stars.forEach(star=>star.style.opacity=1-(rotationDeg/360));
 
   // Rotation Indicator
   rotationIndicator.style.width=(rotationDeg/360*100)+'%';

@@ -50,7 +50,7 @@ html,body{
   top:28%;
   left:22%;
   transform:translate(-50%,-50%) rotate(0deg);
-  transition:opacity 2.5s ease, transform 0.2s ease;
+  transition:transform 0.2s ease, opacity 0.2s ease;
   z-index:5;
   cursor:pointer;
 }
@@ -216,40 +216,36 @@ document.addEventListener('pointermove', e=>{
   if(!dragging || sunLocked) return;
 
   let rect = moon.getBoundingClientRect();
-  let moonCenterY = rect.top + rect.height/2;
-  let moonCenterX = rect.left + rect.width/2;
+  let centerY = rect.top + rect.height/2;
+  let maxRotation = 90; // max degree
 
-  let dx = e.clientX - moonCenterX;
-  let dy = e.clientY - moonCenterY;
+  // distance moved vertically
+  let dy = centerY - e.clientY; // upwards is positive
+  let p = Math.max(0, Math.min(1, dy/250)); // limit rotation
 
-  let distance = Math.sqrt(dx*dx + dy*dy);
-  let maxDistance = window.innerHeight/1.5;
-  let p = Math.min(distance/maxDistance,1);
-
-  /* Moon rotates and fades */
-  moon.style.transform = `translate(-50%,-50%) rotate(${p*90}deg)`;
+  // Moon rotates only
+  let deg = p * maxRotation;
+  moon.style.transform = `translate(-50%,-50%) rotate(${deg}deg)`;
   moon.style.opacity = 1 - p;
 
-  /* Sun rises */
-  sun.style.opacity = p;
-  sun.style.transform = `translate(${240 - p*240}px, ${260 - p*260}px) scale(${0.35 + p*0.65})`;
+  // Reveal message letter by letter
+  let letters = Math.floor(p * msgText.length);
+  msgEl.innerText = msgText.substring(0, letters);
+  msgEl.style.opacity = letters>0 ? 1 : 0;
 
-  /* Sky evolution */
+  // Sky shifts gradually
   if(p>0.05) sky.classList.add("daySky");
 
-  /* Letter-by-letter message reveal */
-  msgIndex = Math.floor(p * msgText.length);
-  msgEl.innerText = msgText.substring(0,msgIndex);
-  msgEl.style.opacity = p;
-
-  /* Full day → show button */
-  if(p>=1 && !evolutionDone){
-    evolutionDone = true;
+  // Sun rises fully at end of rotation
+  if(p>=1){
+    sun.style.opacity = 1;
+    sun.style.transform = `translate(0px,0px) scale(1)`;
     sunLocked = true;
-    setTimeout(()=>{ btn.style.opacity=1; },600);
+    evolutionDone = true;
+    setTimeout(()=> btn.style.opacity=1,600);
   }
 
-  /* IMAX camera subtle pan and zoom */
+  // subtle cinematic camera
   scene.style.transform = `rotateX(${p*2}deg) rotateY(${p*1.5}deg) scale(${1 + p*0.05})`;
 });
 

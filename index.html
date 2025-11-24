@@ -60,19 +60,16 @@ html,body{
 .shoot{
   position:absolute; width:2px; height:80px; background:linear-gradient(to top, white, transparent);
   transform-origin:bottom center; transform:rotate(-75deg);
-  animation:shooting 1.5s linear infinite;
+  animation:shooting linear infinite;
 }
-@keyframes shooting{
-  0%{opacity:0; transform:rotate(-75deg) translate(0,0);}
-  30%{opacity:1;}
-  100%{opacity:0; transform:rotate(-75deg) translate(200px,-200px);}
-}
+
+/* We'll dynamically set shooting star animations */
 
 /* ---------- Clouds ----------- */
 .cloud{
   position:absolute; width:120px; height:60px; background:rgba(255,255,255,0.12);
   border-radius:50%; filter:blur(6px);
-  animation:cloudMove 40s linear infinite;
+  animation:cloudMove linear infinite;
 }
 @keyframes cloudMove{
   0%{left:-150px;}
@@ -81,7 +78,7 @@ html,body{
 
 /* ---------- Message Text ----------- */
 #msg{
-  position:absolute; width:90%; bottom:14%; left:50%; transform:translateX(-50%);
+  position:absolute; width:90%; bottom:12%; left:50%; transform:translateX(-50%);
   text-align:center; color:#ffecaa; font-size:2rem; font-weight:700; opacity:0;
   text-shadow:0 0 30px #ffdf80;
 }
@@ -113,7 +110,7 @@ html,body{
 
 /* ---------- Rotation Indicator ----------- */
 #rotationIndicator{
-  position:absolute; top:2%; left:50%; transform:translateX(-50%);
+  position:absolute; bottom:2%; left:50%; transform:translateX(-50%);
   color:#ffecaa; font-size:1rem; text-shadow:0 0 10px #fff6d1;
 }
 </style>
@@ -145,14 +142,18 @@ for(let i=0;i<100;i++){
 }
 
 // ---------- Shooting Stars ----------
-for(let i=0;i<5;i++){
+function addShootingStar(){
   let sh=document.createElement('div');
   sh.classList.add('shoot');
-  sh.style.top=Math.random()*40+'%';
-  sh.style.left=Math.random()*100+'%';
-  sh.style.animationDelay=(Math.random()*3)+'s';
+  sh.style.top=(Math.random()*20)+'%';
+  sh.style.left=(Math.random()<0.5?0:window.innerWidth-2)+'px';
+  let duration = 0.8 + Math.random()*1.2;
+  sh.style.animationDuration = duration + 's';
+  sh.style.animationName = 'shooting' + Math.random();
   document.getElementById('scene').appendChild(sh);
+  setTimeout(()=>{sh.remove(); addShootingStar();}, duration*1000);
 }
+for(let i=0;i<5;i++) addShootingStar();
 
 // ---------- Clouds ----------
 for(let i=0;i<7;i++){
@@ -196,7 +197,7 @@ document.addEventListener('pointermove',(e)=>{
     if(diff<-180) diff+=360;
     if(diff>180) diff-=360;
 
-    // Anti-clockwise rotation only
+    // Anti-clockwise only
     if(diff<0){
       cumulativeAngle += -diff;
       cumulativeAngle=Math.min(360,cumulativeAngle);
@@ -212,7 +213,7 @@ document.addEventListener('pointermove',(e)=>{
   msg.textContent=messageText.slice(0,lettersToShow);
   msg.style.opacity=lettersToShow>0?1:0;
 
-  // Update rotation indicator
+  // Rotation indicator
   rotationIndicator.textContent="Rotation: "+Math.floor(cumulativeAngle)+"°";
 
   // Sun rise and scale

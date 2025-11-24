@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Ultimate IMAX Nolan Cinematic Moon-to-Day</title>
+<title>IMAX Nolan Cinematic Moon-to-Day</title>
 <style>
 html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;background:#0a0a1f;}
 #scene{position:relative;width:100%;height:100%;overflow:hidden;transform-origin:center center;transition:transform 0.1s;filter:contrast(1.1) brightness(1.05) saturate(1.15);}
-#sky{position:absolute;inset:0;background:linear-gradient(to bottom,#030014,#120034 40%,#1a0046 70%);transition:background 1.5s ease;}
-#moon{position:absolute;width:180px;height:180px;border-radius:50%;background:#d9d8ff;box-shadow:0 0 50px #c5c4ff,0 0 120px rgba(255,255,255,0.2);top:22%;left:18%;transform:translate(-50%,-50%) rotate(0deg);cursor:pointer;z-index:5;transition:transform 0.1s linear,opacity 1s;filter:drop-shadow(0 0 30px #d9d8ff);}
+#sky{position:absolute;inset:0;background:linear-gradient(to bottom,#0a0a1f,#1b0a3f 40%,#2b0055 70%);transition:background 1.5s ease;}
+#moon{position:absolute;width:180px;height:180px;border-radius:50%;background:#d9d8ff;box-shadow:0 0 80px #c5c4ff,0 0 150px rgba(255,255,255,0.3);top:20%;left:18%;transform:translate(-50%,-50%) rotate(0deg);cursor:pointer;z-index:5;transition:transform 0.1s linear,opacity 1s;filter:drop-shadow(0 0 40px #d9d8ff);}
 #sun{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#ffd27f,#ff9a00);box-shadow:0 0 170px #ffb54c,0 0 300px #ff7b00;opacity:0;top:5%;right:5%;transform:scale(0.35);transition:opacity 1.5s ease, transform 1.5s ease;z-index:3;filter:drop-shadow(0 0 100px #ffd27f);}
 .sun-rays{position:absolute;top:50%;left:50%;width:1000px;height:1000px;background:radial-gradient(circle,#fff5 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none;filter:blur(40px);transition:transform 1.5s, opacity 1.5s;}
 #msg{position:absolute;width:90%;text-align:center;bottom:18%;color:#ffe6aa;font-size:2rem;font-weight:700;opacity:0;text-shadow:0 0 45px #ffb84c,0 0 80px rgba(255,200,100,0.5);transition:opacity 0.1s;}
@@ -22,6 +22,7 @@ html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;backgr
 @keyframes twinkle{0%{opacity:0.3;}50%{opacity:1;}100%{opacity:0.3;}}
 .cloud{position:absolute;width:200px;height:80px;background:rgba(255,255,255,0.05);border-radius:50%;filter:blur(12px);}
 .firefly{position:absolute;width:4px;height:4px;background:#fffa88;border-radius:50%;opacity:0;box-shadow:0 0 20px #fffa88;}
+.shooting-star{position:absolute;width:2px;height:40px;background:linear-gradient(to top,#fff,transparent);opacity:0;filter:blur(1px);}
 </style>
 </head>
 <body>
@@ -66,13 +67,37 @@ for(let i=0;i<6;i++){
 }
 
 // Fireflies
+let fireflies=[];
 for(let i=0;i<20;i++){
-  let firefly=document.createElement('div');
-  firefly.className='firefly';
-  firefly.style.top=Math.random()*100+'%';
-  firefly.style.left=Math.random()*100+'%';
-  document.getElementById('scene').appendChild(firefly);
+  let f=document.createElement('div');
+  f.className='firefly';
+  f.style.top=Math.random()*90+'%';
+  f.style.left=Math.random()*90+'%';
+  document.getElementById('scene').appendChild(f);
+  fireflies.push(f);
 }
+
+// Shooting stars
+function createShootingStar(){
+  let star=document.createElement('div');
+  star.style.position='absolute';
+  star.style.width='3px';
+  star.style.height='3px';
+  star.style.background='white';
+  star.style.top='-10px';
+  star.style.left=Math.random()*50+'%';
+  star.style.opacity=0.8;
+  star.style.borderRadius='50%';
+  star.style.transform='rotate(45deg)';
+  document.getElementById('scene').appendChild(star);
+  let speed=2000+Math.random()*2000;
+  star.animate([
+    {transform:`translate(0,0) rotate(45deg)`,opacity:1},
+    {transform:`translate(${window.innerWidth/2}px,${window.innerHeight}px) rotate(45deg)`,opacity:0}
+  ],{duration:speed,iterations:1,fill:'forwards'});
+  setTimeout(()=>star.remove(),speed);
+}
+setInterval(createShootingStar,1200);
 
 // Moon Rotation & Cinematic
 let moon=document.getElementById('moon');
@@ -122,22 +147,11 @@ document.addEventListener('pointermove',e=>{
   sunRays.style.opacity=rotationDeg/360;
   sunRays.style.transform=`translate(-50%,-50%) scale(${0.3+0.7*(rotationDeg/360)})`;
 
-  // Moon disappear
-  moon.style.opacity=1-rotationDeg/360;
-
-  // Stars fade out
+  // Stars fade
   stars.forEach(star=>star.style.opacity=1-(rotationDeg/360));
 
-  // Dynamic text + cross color
-  let nightColor="#ffe6aa";
-  let dayColor="#ff8c42";
-  let interp = rotationDeg/360;
-  let r = Math.round(parseInt(nightColor.slice(1,3),16)*(1-interp) + parseInt(dayColor.slice(1,3),16)*interp);
-  let g = Math.round(parseInt(nightColor.slice(3,5),16)*(1-interp) + parseInt(dayColor.slice(3,5),16)*interp);
-  let b = Math.round(parseInt(nightColor.slice(5,7),16)*(1-interp) + parseInt(dayColor.slice(5,7),16)*interp);
-  let color=`rgb(${r},${g},${b})`;
-  msg.style.color=color;
-  document.querySelectorAll('.cross-vertical, .cross-horizontal').forEach(el=>el.style.background=color);
+  // Moon fade
+  moon.style.opacity=1-(rotationDeg/360);
 
   // Rotation Indicator
   rotationIndicator.style.width=(rotationDeg/360*100)+'%';
@@ -145,6 +159,7 @@ document.addEventListener('pointermove',e=>{
   // Cinematic slow dolly & tilt
   scene.style.transform=`scale(${1+rotationDeg/360*0.03}) translate(${rotationDeg/360*-15}px,${rotationDeg/360*-20}px)`;
 
+  // Day effect (background subtle)
   if(rotationDeg===360 && !evolutionDone){
     evolutionDone=true;
     setTimeout(()=>{btn.style.opacity=1;},600);
@@ -173,7 +188,6 @@ setInterval(()=>{
 },50);
 
 // Firefly flicker
-let fireflies=document.querySelectorAll('.firefly');
 setInterval(()=>{
   fireflies.forEach(f=>{f.style.opacity=Math.random();});
 },200);

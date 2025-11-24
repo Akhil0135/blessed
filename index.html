@@ -23,7 +23,6 @@ html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;backgr
 @keyframes twinkle{0%{opacity:0.3;}50%{opacity:1;}100%{opacity:0.3;}}
 .cloud{position:absolute;width:200px;height:80px;background:rgba(255,255,255,0.05);border-radius:50%;filter:blur(12px);}
 .firefly{position:absolute;width:4px;height:4px;background:#fffa88;border-radius:50%;opacity:0;box-shadow:0 0 20px #fffa88;}
-.shooting-star{position:absolute;width:2px;height:40px;background:linear-gradient(to top, #fff, transparent);opacity:0;filter:blur(1px);}
 </style>
 </head>
 <body>
@@ -66,28 +65,6 @@ for(let i=0;i<6;i++){
   cloud.speed=0.1+Math.random()*0.2;
   document.getElementById('scene').appendChild(cloud);
   clouds.push(cloud);
-}
-
-// Fireflies
-let fireflies=[];
-for(let i=0;i<20;i++){
-  let f=document.createElement('div');
-  f.className='firefly';
-  f.style.top=Math.random()*90+'%';
-  f.style.left=Math.random()*90+'%';
-  document.getElementById('scene').appendChild(f);
-  fireflies.push(f);
-}
-
-// Shooting stars
-let shootingStars=[];
-for(let i=0;i<10;i++){
-  let s=document.createElement('div');
-  s.className='shooting-star';
-  s.style.top=Math.random()*30+'%';
-  s.style.left=Math.random()*30+'%';
-  shootingStars.push(s);
-  document.getElementById('scene').appendChild(s);
 }
 
 // Moon Rotation & Cinematic
@@ -173,28 +150,6 @@ setInterval(()=>{
     cloud.style.left=left+'%';
   });
 },50);
-
-// Fireflies flicker
-setInterval(()=>{
-  fireflies.forEach(f=>{
-    f.style.opacity=Math.random();
-    f.style.top=parseFloat(f.style.top)+Math.random()*2-1+'%';
-    f.style.left=parseFloat(f.style.left)+Math.random()*2-1+'%';
-  });
-},200);
-
-// Shooting stars
-setInterval(()=>{
-  shootingStars.forEach(star=>{
-    star.style.opacity=Math.random();
-    star.style.top=(parseFloat(star.style.top)+Math.random()*5)+'%';
-    star.style.left=(parseFloat(star.style.left)+Math.random()*5)+'%';
-    if(parseFloat(star.style.top)>100 || parseFloat(star.style.left)>100){
-      star.style.top=Math.random()*30+'%';
-      star.style.left=Math.random()*30+'%';
-    }
-  });
-},100);
 
 // Helper: color interpolation
 function interpolateColor(a,b,f){

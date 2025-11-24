@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>IMAX Nolan Moon-to-Day Cinematic</title>
+<title>Ultimate IMAX Nolan Cinematic Moon-to-Day</title>
 <style>
 html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;background:#000010;}
 #scene{position:relative;width:100%;height:100%;overflow:hidden;transform-origin:center center;transition:transform 0.1s;filter:contrast(1.1) brightness(1.05) saturate(1.15);}
@@ -18,8 +18,10 @@ html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;backgr
 .cross-horizontal{position:absolute;left:50%;transform:translateX(-50%);width:180px;height:24px;top:calc(260px*0.35);background:#ffd700;box-shadow:0 0 60px #ffe600;}
 #rotationIndicator{position:absolute;bottom:5%;width:90%;left:50%;transform:translateX(-50%);height:6px;background:rgba(255,255,255,0.2);border-radius:3px;}
 #rotationProgress{height:100%;width:0%;background:#ffe6aa;border-radius:3px;transition:width 0.1s linear;}
-.star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;opacity:0.8;animation:twinkle 2s infinite alternate;filter:blur(1px);}
+.star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;opacity:0.8;animation:twinkle 2s infinite alternate;filter:blur(1px);animation-play-state:running;}
 @keyframes twinkle{0%{opacity:0.3;}50%{opacity:1;}100%{opacity:0.3;}}
+.cloud{position:absolute;width:200px;height:80px;background:rgba(255,255,255,0.05);border-radius:50%;filter:blur(12px);}
+.firefly{position:absolute;width:4px;height:4px;background:#fffa88;border-radius:50%;opacity:0;box-shadow:0 0 20px #fffa88;}
 </style>
 </head>
 <body>
@@ -46,8 +48,21 @@ for(let i=0;i<150;i++){
   star.style.top=Math.random()*100+'%';
   star.style.left=Math.random()*100+'%';
   star.style.animationDuration=(1+Math.random()*3)+'s';
+  star.style.transform=`scale(${0.5+Math.random()*1})`;
   document.getElementById('scene').appendChild(star);
   stars.push(star);
+}
+
+// Clouds
+let clouds=[];
+for(let i=0;i<6;i++){
+  let cloud=document.createElement('div');
+  cloud.className='cloud';
+  cloud.style.top=(10+i*12)+'%';
+  cloud.style.left=(i*15)+'%';
+  cloud.speed=0.1+Math.random()*0.2;
+  document.getElementById('scene').appendChild(cloud);
+  clouds.push(cloud);
 }
 
 // Moon Rotation & Cinematic
@@ -67,7 +82,8 @@ let lastX=0;
 let evolutionDone=false;
 
 moon.addEventListener('pointerdown',e=>{
-  isDragging=true; lastX=e.clientX;
+  isDragging=true;
+  lastX=e.clientX;
 });
 document.addEventListener('pointerup',()=>{isDragging=false;});
 document.addEventListener('pointermove',e=>{
@@ -79,12 +95,7 @@ document.addEventListener('pointermove',e=>{
   rotationDeg+=deltaX;
   if(rotationDeg>360) rotationDeg=360;
 
-  // Moon rotation and opacity
   moon.style.transform=`translate(-50%,-50%) rotate(${-rotationDeg}deg)`;
-  moon.style.opacity=1-rotationDeg/360;
-
-  // Stars fade with moon
-  stars.forEach(star=>star.style.opacity=1-rotationDeg/360);
 
   // Message reveal
   let totalLetters=msg.getAttribute('data-full') || msg.innerText;
@@ -96,13 +107,22 @@ document.addEventListener('pointermove',e=>{
   // Sun
   sun.style.opacity=rotationDeg/360;
   sun.style.transform=`scale(${0.35+0.65*(rotationDeg/360)})`;
+
+  // Sun rays
   sunRays.style.opacity=rotationDeg/360;
   sunRays.style.transform=`translate(-50%,-50%) scale(${0.3+0.7*(rotationDeg/360)})`;
+
+  // Moon & Stars fade out together
+  moon.style.opacity = 1 - rotationDeg/360;
+  stars.forEach(star => {
+    star.style.animationPlayState='paused';
+    star.style.opacity = 1 - rotationDeg/360;
+  });
 
   // Rotation Indicator
   rotationIndicator.style.width=(rotationDeg/360*100)+'%';
 
-  // Cinematic parallax
+  // Cinematic slow dolly & tilt
   scene.style.transform=`scale(${1+rotationDeg/360*0.03}) translate(${rotationDeg/360*-15}px,${rotationDeg/360*-20}px)`;
 
   if(rotationDeg===360 && !evolutionDone){
@@ -121,6 +141,17 @@ btn.addEventListener('click',()=>{
   },700);
   setTimeout(()=>{cross.style.transform='translateX(-50%) scale(1)';},2500);
 });
+
+// Cloud drift parallax
+setInterval(()=>{
+  clouds.forEach(cloud=>{
+    let left=parseFloat(cloud.style.left);
+    left+=cloud.speed;
+    if(left>110) left=-20;
+    cloud.style.left=left+'%';
+  });
+},50);
+
 </script>
 </body>
 </html>

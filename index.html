@@ -3,21 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cinematic Night → Day</title>
+<title>Cinematic Night to Day</title>
 
 <style>
-
-/* ---------- Reset ---------- */
 html,body{
   height:100%;
-  background:#000;
   margin:0;
+  background:#000;
   overflow:hidden;
-  font-family:"Cinzel", serif;
-  -webkit-font-smoothing:antialiased;
+  font-family: "Cinzel", serif;
 }
 
-/* ---------- Scene Container ---------- */
+/* ---------- Scene Container ----------- */
 #scene{
   position:relative;
   width:100%;
@@ -25,339 +22,190 @@ html,body{
   overflow:hidden;
 }
 
-/* ============================================================
-   CINEMATIC SKY COLOR-GRADIENT (Night → Dawn → Day)
-   ============================================================ */
+/* ---------- SKY GRADIENT ----------- */
 #sky{
   position:absolute;
   inset:0;
-  background:linear-gradient(to bottom, #020111, #04021a 60%, #0a0728);
-  transition:background 2.4s ease;
-  z-index:-20;
+  background:linear-gradient(to bottom,#030014,#120034 40%,#1a0046 70%);
+  transition:background 1.2s ease;
+  pointer-events:none;
 }
 
-/* ---------- Fog Layer ---------- */
-.fog{
+/* ---------- MOON ----------- */
+#moon{
   position:absolute;
-  inset:0;
-  background:rgba(255,255,255,0.03);
-  filter:blur(45px);
-  z-index:2;
-  opacity:0.08;
-  transition:opacity 1.8s ease;
-}
-
-/* ---------- Clouds ---------- */
-.cloud{
-  position:absolute;
-  top:20%;
-  width:280px;
-  height:80px;
-  background:rgba(255,255,255,0.25);
-  filter:blur(14px);
-  border-radius:60px;
-  animation: drift 38s linear infinite;
-  z-index:3;
-  opacity:0.14;
-}
-
-@keyframes drift{
-  from{ transform:translateX(-30vw); }
-  to{ transform:translateX(100vw); }
-}
-
-/* ============================================================
-   MOON — exactly as you had
-   ============================================================ */
-.moon{
-  position:absolute;
-  left:50px;
-  top:110px;
   width:160px;
   height:160px;
   border-radius:50%;
-  background:radial-gradient(circle at 30% 30%, #fff, #cdd0ff 60%, #8588aa);
-  box-shadow:0 0 30px #b8bdff, 0 0 140px rgba(180,190,255,0.35);
-  z-index:10;
-  transition:transform 1s ease;
-}
-
-/* ============================================================
-   ★★★ IMAX-LEVEL SUN (Rises → Locks at Top-Right)
-   ============================================================ */
-.sun{
-  position:absolute;
-  width:320px;
-  height:320px;
-  border-radius:50%;
-  z-index:999;
+  background:#d9d8ff;
+  box-shadow:0 0 40px #b8b6ff;
+  top:25%;
+  left:20%;
+  transform:translate(-50%,-50%);
+  transition:opacity 1.4s ease, transform 1.4s ease;
   pointer-events:none;
-  opacity:0;
-
-  background:radial-gradient(
-    circle at 40% 40%,
-    rgba(255,245,220,1) 0%,
-    rgba(255,210,120,1) 40%,
-    rgba(255,170,60,0.95) 65%,
-    rgba(255,140,40,0.7) 100%
-  );
-
-  box-shadow:
-    0 0 90px 35px rgba(255,200,120,0.45),
-    0 0 220px 120px rgba(255,160,60,0.19),
-    0 0 480px 260px rgba(255,130,40,0.12);
-
-  filter:saturate(1.15) brightness(1.2);
-  transition: opacity 1.6s ease, transform 2.2s cubic-bezier(.15,.6,.1,1);
 }
 
-.sun-rings{
+/* ---------- CINEMATIC SUN (TOP-RIGHT RISE) ----------- */
+#sun{
   position:absolute;
-  inset:-80% -80%;
+  width:280px;
+  height:280px;
   border-radius:50%;
-  pointer-events:none;
+  background: radial-gradient(circle, #ffd27f, #ff9a00);
+  box-shadow: 0 0 160px #ffae42, 0 0 280px #ff7b00;
   opacity:0;
-  filter:blur(60px);
-  mix-blend-mode:screen;
-
-  background:radial-gradient(
-    circle,
-    rgba(255,240,180,0.35),
-    rgba(255,200,120,0.2),
-    rgba(255,150,60,0.07),
-    rgba(255,110,40,0)
-  );
-
-  animation: sunPulse 6s infinite ease-in-out;
+  transform: translate(300px,300px) scale(0.4);
+  right: -200px;
+  top: -200px;
+  transition:opacity 1.4s ease, transform 1.4s ease;
+  pointer-events:none;
 }
 
-@keyframes sunPulse{
-  0%{ transform:scale(1); opacity:0.65; }
-  50%{ transform:scale(1.08); opacity:0.85; }
-  100%{ transform:scale(1); opacity:0.65; }
-}
-
-/* ============================================================
-   CINEMATIC MESSAGE (your exact text)
-   ============================================================ */
-#message{
+/* ---------- MESSAGE TEXT ----------- */
+#msg{
   position:absolute;
   width:100%;
   text-align:center;
-  top:65%;
-  transform:translateY(-50%);
-  color:#d5b7ff;
-  font-size:32px;
-  letter-spacing:1px;
+  bottom:22%;
+  color:#c38bff;
+  font-size:2rem;
+  font-weight:700;
   opacity:0;
-  z-index:1000;
-  text-shadow:0 0 25px #4d0080;
+  text-shadow:0 0 25px #8e3fff;
   transition:opacity 1.4s ease;
+  pointer-events:none;
 }
 
-/* ---------- Click Here Button ---------- */
-#revealBtn{
+/* ---------- BUTTON ----------- */
+#btn{
   position:absolute;
-  top:78%;
   left:50%;
+  bottom:16%;
   transform:translateX(-50%);
-  padding:14px 28px;
-  background:#ffffff15;
-  border:1px solid #ffffff55;
+  background:linear-gradient(to right,#6a00ff,#c200ff);
+  color:#fff;
+  font-size:1.2rem;
+  padding:14px 32px;
+  border:none;
   border-radius:14px;
-  color:white;
-  font-size:18px;
   cursor:pointer;
-  backdrop-filter:blur(6px);
-  transition:opacity 0.5s ease;
-  z-index:1000;
+  box-shadow:0 0 18px #9400ff;
+  transition:opacity 0.6s ease;
 }
 
-#revealBtn:hover{
-  background:#ffffff25;
-}
-
-/* ============================================================
-   CHRISTIAN CROSS (Reveal after button)
-   ============================================================ */
+/* ---------- IMAX CHRISTIAN CROSS ----------- */
 #cross{
   position:absolute;
-  top:40%;
   left:50%;
-  transform:translateX(-50%) scale(0.6);
+  transform:translateX(-50%);
+  top:18%; /* HIGH, MAJESTIC spacing */
   width:0;
   height:0;
   opacity:0;
-  z-index:1200;
   pointer-events:none;
   transition:opacity 1.4s ease, transform 1.4s ease;
 }
 
-/* Cross drawing */
-#cross:before{
-  content:"";
+.cross-vertical{
   position:absolute;
   left:50%;
-  top:0;
   transform:translateX(-50%);
   width:22px;
-  height:180px;
-  background:linear-gradient(to bottom, #2c003e, #6b0099);
-  border-radius:6px;
-  box-shadow:0 0 40px #5a00aa;
+  height:240px;
+  background:#30006b;
+  box-shadow:0 0 32px #7900ff;
 }
 
-#cross:after{
-  content:"";
+.cross-horizontal{
   position:absolute;
-  top:35%;
   left:50%;
   transform:translateX(-50%);
-  width:140px;
+  width:160px;
   height:22px;
-  background:linear-gradient(to right, #2c003e, #6b0099);
-  border-radius:6px;
-  box-shadow:0 0 40px #5a00aa;
+
+  /* Horizontal bar placed at EXACT 35% of vertical bar */
+  top: calc(240px * 0.35);
+
+  background:#30006b;
+  box-shadow:0 0 32px #7900ff;
 }
 
-/* ============================================================
-   Particle Stars
-   ============================================================ */
-.star{
-  position:absolute;
-  width:3px;
-  height:3px;
-  background:white;
-  border-radius:50%;
-  opacity:0.8;
-  filter:blur(1px);
-  animation: twinkle 3s infinite ease-in-out;
+/* Day Mode Sky */
+.daySky{
+  background:linear-gradient(to bottom,#4ac8ff,#ffe29f 60%,#ffcf71 90%);
 }
-
-@keyframes twinkle{
-  0%{ opacity:0.1; }
-  50%{ opacity:1; }
-  100%{ opacity:0.1; }
-}
-
 </style>
 </head>
+
 <body>
-
 <div id="scene">
-
   <div id="sky"></div>
-  <div class="fog"></div>
+  <div id="moon"></div>
+  <div id="sun"></div>
 
-  <div class="cloud" style="top:28%; animation-duration:42s;"></div>
-  <div class="cloud" style="top:45%; animation-duration:55s;"></div>
-
-  <div class="moon"></div>
-
-  <div class="sun">
-    <div class="sun-rings"></div>
-  </div>
-
-  <div id="message">
+  <div id="msg">
     On this calm birthday eve so new, God softly whispers, my plans are made for you.
   </div>
 
-  <button id="revealBtn">Click Here</button>
+  <button id="btn">Click Here</button>
 
-  <div id="cross"></div>
-
+  <div id="cross">
+    <div class="cross-vertical"></div>
+    <div class="cross-horizontal"></div>
+  </div>
 </div>
 
 <script>
+let revealDone = false;
+let sunLocked = false;
 
-/* ============================================================
-   PARTICLE (Star) Generator
-   ============================================================ */
-for(let i=0;i<80;i++){
-    let s=document.createElement("div");
-    s.className="star";
-    s.style.left=Math.random()*100+"vw";
-    s.style.top=Math.random()*100+"vh";
-    s.style.animationDelay=Math.random()*3+"s";
-    document.getElementById("scene").appendChild(s);
-}
+/* CLICK → reveal message, then reveal cross */
+btn.addEventListener('click', ()=>{
+  btn.style.opacity = 0;
+  setTimeout(()=>btn.style.display="none",600);
 
-/* Extract elements */
-const sky=document.getElementById("sky");
-const moon=document.querySelector(".moon");
-const sun=document.querySelector(".sun");
-const sunRings=document.querySelector(".sun-rings");
-const fog=document.querySelector(".fog");
-const message=document.getElementById("message");
-const button=document.getElementById("revealBtn");
-const cross=document.getElementById("cross");
+  msg.style.opacity = 1;
 
-/* ============================================================
-   MOUSE DRAG FOR NIGHT → DAY TRANSITION
-   ============================================================ */
-let dragging=false;
-let progress=0;
+  setTimeout(()=>{
+    cross.style.opacity = 1;
+    cross.style.transform = "translateX(-50%) scale(1.06)";
+  },1200);
 
-document.addEventListener("pointerdown", ()=> dragging=true);
-document.addEventListener("pointerup", ()=> dragging=false);
-document.addEventListener("pointerleave", ()=> dragging=false);
+  revealDone = true;
+});
 
-document.addEventListener("pointermove", (e)=>{
-  if(!dragging) return;
-  
-  const nx=e.clientX / window.innerWidth;
-  progress=Math.min(Math.max(nx,0),1);
+/* CINEMATIC SUN RISE + LOCK */
+let progress = 0;
 
-  /* Moon moves opposite of progress */
-  moon.style.transform=`translateX(${ -progress*220 }px)`;
+document.addEventListener('pointermove', (e)=>{
+  if(!revealDone) return;
+  if(sunLocked) return;
 
-  /* Sky color shift */
-  sky.style.background=`linear-gradient(to bottom,
-    rgba(${2+progress*130}, ${1+progress*80}, ${17+progress*120}, 1),
-    rgba(${4+progress*170}, ${2+progress*120}, ${26+progress*160}, 1) 60%,
-    rgba(${10+progress*200}, ${7+progress*150}, ${40+progress*180}, 1)
-  )`;
+  let y = e.clientY;
+  let screenH = window.innerHeight;
 
-  /* Fog thickens slightly */
-  fog.style.opacity=0.08 + progress*0.25;
+  progress = 1 - (y / screenH);
+  progress = Math.max(0, Math.min(1, progress));
 
-  /* >>>>>>> IMAX SUN RISE TOWARD TOP-RIGHT <<<<<<< */
-  const startY=600;     // off-screen
-  const endY=40;        // final pos top-right
-
-  const startX=window.innerWidth + 300;
-  const endX=window.innerWidth - 360;
-
-  const x=startX + (endX-startX)*progress;
-  const y=startY + (endY-startY)*progress;
-
-  sun.style.left = x+"px";
-  sun.style.top  = y+"px";
-
-  /* Sun appears gradually */
+  /* Sun arc motion */
   sun.style.opacity = progress;
-  sunRings.style.opacity = progress*0.8;
+  sun.style.transform =
+    `translate(${(1-progress)*300}px, ${(1-progress)*300}px) scale(${0.4 + progress*0.6})`;
 
+  /* Moon fade-out */
+  moon.style.opacity = (1-progress);
+
+  /* Sky transition */
+  if(progress > 0.4){
+    sky.classList.add("daySky");
+  }
+
+  /* LOCK when sun fully risen */
+  if(progress >= 1){
+    sunLocked = true;
+  }
 });
-
-/* ============================================================
-   BUTTON → CROSS REVEAL
-   ============================================================ */
-
-button.addEventListener("click", ()=>{
-    button.style.opacity=0;
-    setTimeout(()=> button.style.display="none", 500);
-
-    /* Reveal message */
-    setTimeout(()=> message.style.opacity=1, 800);
-
-    /* Reveal cross above */
-    setTimeout(()=>{
-      cross.style.opacity=1;
-      cross.style.transform="translateX(-50%) scale(1)";
-    }, 1600);
-});
-
 </script>
 </body>
 </html>

@@ -28,8 +28,6 @@ html, body {
   transition: background 2.5s ease;
   pointer-events: none;
 }
-
-/* Day Sky Transition */
 .daySky {
   background: linear-gradient(to bottom,#52d3ff,#ffe6ab 60%,#ffd37c 90%);
 }
@@ -42,11 +40,22 @@ html, body {
   border-radius: 50%;
   background: #d9d8ff;
   box-shadow: 0 0 60px #c5c4ff;
-  top: 20%;
+  top: 18%;
   left: 18%;
   transform: translate(-50%,-50%) rotate(0deg);
   cursor: pointer;
   z-index: 5;
+}
+
+/* Moon Rotation Indicator */
+#rotation-indicator {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #c38bff;
+  font-size: 1.2rem;
+  text-shadow: 0 0 20px #8e3fff;
 }
 
 /* Sun */
@@ -57,7 +66,7 @@ html, body {
   border-radius: 50%;
   background: radial-gradient(circle,#ffd27f,#ff9a00);
   box-shadow: 0 0 170px #ffb54c, 0 0 300px #ff7b00;
-  top: 10%;
+  top: 5%;
   right: 12%;
   transform: scale(0.3);
   opacity: 0;
@@ -139,9 +148,9 @@ html, body {
   animation: twinkle 2s infinite alternate;
 }
 @keyframes twinkle {
-  0% { opacity: 0.2; }
-  50% { opacity: 1; }
-  100% { opacity: 0.2; }
+  0% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.3); }
+  100% { opacity: 0.2; transform: scale(0.9); }
 }
 
 /* Shooting Stars */
@@ -149,7 +158,7 @@ html, body {
   position: absolute;
   width: 3px;
   height: 80px;
-  background: linear-gradient(to bottom, #fff, transparent);
+  background: linear-gradient(to top, #fff, transparent);
   transform: rotate(-45deg);
   opacity: 0;
   pointer-events: none;
@@ -192,6 +201,7 @@ html, body {
   <div id="moon"></div>
   <div id="sun"></div>
   <div id="msg"></div>
+  <div id="rotation-indicator">Rotation: 0°</div>
   <button id="btn">Click Here</button>
   <div id="cross">
     <div class="cross-vertical"></div>
@@ -253,10 +263,11 @@ const sun = document.getElementById("sun");
 const msg = document.getElementById("msg");
 const btn = document.getElementById("btn");
 const cross = document.getElementById("cross");
+const rotationIndicator = document.getElementById("rotation-indicator");
+
 const messageText = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
 let cumulativeAngle = 0;
 let lastTheta = null;
-let msgIndex = 0;
 let evolutionDone = false;
 let rotating = false;
 
@@ -289,6 +300,9 @@ document.addEventListener("pointermove",(e)=>{
   let lettersToShow = Math.floor(messageText.length * (cumulativeAngle/360));
   msg.textContent = messageText.slice(0, lettersToShow);
   msg.style.opacity = lettersToShow>0?1:0;
+
+  // Rotation Indicator
+  rotationIndicator.textContent = "Rotation: " + Math.floor(cumulativeAngle) + "°";
 
   // Sun Rise
   sun.style.opacity = cumulativeAngle/360;

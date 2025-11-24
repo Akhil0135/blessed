@@ -5,197 +5,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>IMAX Nolan Cinematic Moon-to-Day</title>
 <style>
-html, body {
-  margin: 0;
-  height: 100%;
-  overflow: hidden;
-  font-family: "Cinzel", serif;
-  background: #000010;
-  filter: contrast(1.2) brightness(1.05) saturate(1.2);
-}
-#scene {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  transform-origin: center center;
-}
-#sky {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, #030014, #120034 40%, #1a0046 70%);
-  transition: background 0.5s ease;
-}
-#moon {
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: #d9d8ff;
-  box-shadow: 0 0 50px #c5c4ff, 0 0 120px rgba(255,255,255,0.2);
-  top: 18%;
-  left: 15%;
-  transform: translate(-50%,-50%) rotate(0deg);
-  cursor: pointer;
-  z-index: 5;
-  transition: transform 0.1s linear, opacity 0.5s;
-  filter: drop-shadow(0 0 30px #d9d8ff);
-}
-#sun {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle,#ffd27f,#ff9a00);
-  box-shadow: 0 0 170px #ffb54c,0 0 300px #ff7b00;
-  opacity: 0;
-  top: 3%;
-  right: 8%;
-  transform: scale(0.35);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  z-index: 3;
-  filter: drop-shadow(0 0 100px #ffd27f);
-}
-.sun-rays {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 1000px;
-  height: 1000px;
-  background: radial-gradient(circle,#fff5 0%,transparent 70%);
-  border-radius: 50%;
-  transform: translate(-50%,-50%) scale(0);
-  opacity: 0;
-  pointer-events: none;
-  filter: blur(40px);
-  transition: transform 0.5s, opacity 0.5s;
-}
-.lens-flare {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle,#fff2 0%,transparent 60%);
-  border-radius: 50%;
-  top: 3%;
-  right: 8%;
-  opacity: 0;
-  pointer-events: none;
-  filter: blur(60px);
-}
-#msg {
-  position: absolute;
-  width: 90%;
-  text-align: center;
-  bottom: 18%;
-  color: #ffd27f; /* Golden for contrast */
-  font-size: 2rem;
-  font-weight: 700;
-  opacity: 0;
-  text-shadow: 0 0 35px #ffb54c, 0 0 70px rgba(255,180,100,0.6);
-  transition: opacity 0.1s;
-}
-#btn {
-  position: absolute;
-  left: 50%;
-  bottom: 6%;
-  transform: translateX(-50%);
-  background: linear-gradient(to right,#6a00ff,#c200ff);
-  color: #fff;
-  font-size: 1.25rem;
-  padding: 14px 34px;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-  box-shadow: 0 0 25px #9400ff;
-  opacity: 0;
-  transition: opacity 1s;
-}
-#cross {
-  position: absolute;
-  left: 50%;
-  top: 10%;
-  transform: translateX(-50%) scale(0.75);
-  width: 0;
-  height: 0;
-  opacity: 0;
-  transition: opacity 1.5s, transform 1.5s;
-}
-.cross-vertical {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 260px;
-  background: #ffec00;
-  box-shadow: 0 0 80px #ffe600, 0 0 120px #fff200;
-}
-.cross-horizontal {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 180px;
-  height: 24px;
-  top: calc(260px*0.35);
-  background: #ffec00;
-  box-shadow: 0 0 80px #ffe600, 0 0 120px #fff200;
-}
-#rotationIndicator {
-  position: absolute;
-  bottom: 4%;
-  width: 90%;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 6px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 3px;
-}
-#rotationProgress {
-  height: 100%;
-  width: 0%;
-  background: #ffe6aa;
-  border-radius: 3px;
-  transition: width 0.1s linear;
-}
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: twinkle 2s infinite alternate;
-  filter: blur(1px);
-}
-@keyframes twinkle {
-  0% {opacity: 0.3;}
-  50% {opacity: 1;}
-  100% {opacity: 0.3;}
-}
-.cloud {
-  position: absolute;
-  width: 200px;
-  height: 80px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 50%;
-  filter: blur(14px);
-}
-.firefly {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: #fffa88;
-  border-radius: 50%;
-  opacity: 0;
-  box-shadow: 0 0 20px #fffa88;
-}
-.shooting-star {
-  position: absolute;
-  width: 2px;
-  height: 40px;
-  background: linear-gradient(to top, #fff, transparent);
-  opacity: 0;
-  filter: blur(1px);
-}
+html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;background:#000010;}
+#scene{position:relative;width:100%;height:100%;overflow:hidden;transform-origin:center center;filter:contrast(1.2) brightness(1.1) saturate(1.2);}
+#sky{position:absolute;inset:0;background:linear-gradient(to bottom,#030014,#120034 40%,#1a0046 70%);transition:background 0.5s ease;}
+#moon{position:absolute;width:180px;height:180px;border-radius:50%;background:#d9d8ff;box-shadow:0 0 50px #c5c4ff,0 0 120px rgba(255,255,255,0.2);top:20%;left:18%;transform:translate(-50%,-50%) rotate(0deg);cursor:pointer;z-index:5;transition:transform 0.1s linear,opacity 0.5s;filter:drop-shadow(0 0 30px #d9d8ff);}
+#sun{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#fff8c1,#ffd27f,#ff9a00);box-shadow:0 0 170px #ffb54c,0 0 300px #ff7b00;opacity:0;top:8%;right:5%;transform:scale(0.35);transition:opacity 0.5s ease, transform 0.5s ease;z-index:3;filter:drop-shadow(0 0 100px #ffd27f);}
+.sun-rays{position:absolute;top:50%;left:50%;width:1000px;height:1000px;background:radial-gradient(circle,#fff5 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none;filter:blur(40px);transition:transform 0.5s, opacity 0.5s;}
+.lens-flare{position:absolute;width:200px;height:200px;background:radial-gradient(circle,#fff2 0%,transparent 60%);border-radius:50%;top:8%;right:5%;opacity:0;pointer-events:none;filter:blur(60px);}
+#msg{position:absolute;width:90%;text-align:center;bottom:18%;color:#ffe6a1;font-size:2rem;font-weight:700;opacity:0;text-shadow:0 0 45px #ff9a33,0 0 80px rgba(255,180,100,0.5);transition:opacity 0.1s;}
+#btn{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);background:linear-gradient(to right,#6a00ff,#c200ff);color:#fff;font-size:1.25rem;padding:14px 34px;border:none;border-radius:16px;cursor:pointer;box-shadow:0 0 25px #9400ff;opacity:0;transition:opacity 1s;}
+#cross{position:absolute;left:50%;top:10%;transform:translateX(-50%) scale(0.75);width:0;height:0;opacity:0;transition:opacity 1.5s, transform 1.5s;}
+.cross-vertical{position:absolute;left:50%;transform:translateX(-50%);width:24px;height:260px;background:#ffd700;box-shadow:0 0 60px #ffe600;}
+.cross-horizontal{position:absolute;left:50%;transform:translateX(-50%);width:180px;height:24px;top:calc(260px*0.35);background:#ffd700;box-shadow:0 0 60px #ffe600;}
+#rotationIndicator{position:absolute;bottom:5%;width:90%;left:50%;transform:translateX(-50%);height:6px;background:rgba(255,255,255,0.2);border-radius:3px;}
+#rotationProgress{height:100%;width:0%;background:#ffe6aa;border-radius:3px;transition:width 0.1s linear;}
+.star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;opacity:0.8;animation:twinkle 2s infinite alternate;filter:blur(1px);}
+@keyframes twinkle{0%{opacity:0.3;}50%{opacity:1;}100%{opacity:0.3;}}
+.cloud{position:absolute;width:200px;height:80px;background:rgba(255,255,255,0.05);border-radius:50%;filter:blur(12px);}
+.firefly{position:absolute;width:4px;height:4px;background:#fffa88;border-radius:50%;opacity:0;box-shadow:0 0 20px #fffa88;}
+.shooting-star{position:absolute;width:2px;height:40px;background:linear-gradient(to top, #fff, transparent);opacity:0;filter:blur(1px);}
 </style>
 </head>
 <body>
@@ -235,7 +63,7 @@ for(let i=0;i<6;i++){
   cloud.className='cloud';
   cloud.style.top=(10+i*12)+'%';
   cloud.style.left=(i*15)+'%';
-  cloud.speed=0.05+Math.random()*0.15;
+  cloud.speed=0.1+Math.random()*0.2;
   document.getElementById('scene').appendChild(cloud);
   clouds.push(cloud);
 }
@@ -262,7 +90,7 @@ for(let i=0;i<10;i++){
   document.getElementById('scene').appendChild(s);
 }
 
-// Moon rotation
+// Moon Rotation & Cinematic
 let moon=document.getElementById('moon');
 let sun=document.getElementById('sun');
 let msg=document.getElementById('msg');
@@ -278,8 +106,6 @@ let isDragging=false;
 let rotationDeg=0;
 let lastX=0;
 let evolutionDone=false;
-let fullMsg=msg.innerText;
-msg.innerText="";
 
 moon.addEventListener('pointerdown',e=>{
   isDragging=true;
@@ -291,43 +117,45 @@ document.addEventListener('pointermove',e=>{
   let deltaX=e.clientX-lastX;
   lastX=e.clientX;
   if(deltaX>0) return; // anti-clockwise only
-  rotationDeg-=deltaX;
-  if(rotationDeg<0) rotationDeg=0;
+  rotationDeg+=-deltaX;
   if(rotationDeg>360) rotationDeg=360;
   moon.style.transform=`translate(-50%,-50%) rotate(${-rotationDeg}deg)`;
-
+  
   // Message reveal
-  let letters=Math.floor(rotationDeg/360*fullMsg.length);
-  msg.innerText=fullMsg.substr(0,letters);
-  msg.style.opacity=letters>0?1:0;
-
+  let totalLetters=msg.getAttribute('data-full') || msg.innerText;
+  msg.setAttribute('data-full',totalLetters);
+  let lettersToShow=Math.floor((rotationDeg/360)*totalLetters.length);
+  msg.innerHTML=totalLetters.substr(0,lettersToShow);
+  msg.style.opacity=lettersToShow>0?1:0;
+  
   // Sun
-  let sunRatio=rotationDeg/360;
-  sun.style.opacity=sunRatio;
-  sun.style.transform=`scale(${0.35+0.65*sunRatio})`;
-  sunRays.style.opacity=sunRatio;
-  sunRays.style.transform=`translate(-50%,-50%) scale(${0.3+0.7*sunRatio})`;
-  lensFlare.style.opacity=sunRatio;
-
-  // Sky
-  let nightTop="#030014", nightBottom="#1a0046";
-  let dayTop="#a0dfff", dayBottom="#ffe6ab";
+  sun.style.opacity=rotationDeg/360;
+  sun.style.transform=`scale(${0.35+0.65*(rotationDeg/360)})`;
+  sunRays.style.opacity=rotationDeg/360;
+  sunRays.style.transform=`translate(-50%,-50%) scale(${0.3+0.7*(rotationDeg/360)})`;
+  lensFlare.style.opacity=rotationDeg/360;
+  
+  // Sky background
+  let nightColorTop="#030014", nightColorBottom="#1a0046";
+  let dayColorTop="#ffffff", dayColorBottom="#ffe6ab";
   let r=Math.min(1,rotationDeg/360);
-  sky.style.background=`linear-gradient(to bottom, ${interpolateColor(nightTop,dayTop,r)}, ${interpolateColor(nightBottom,dayBottom,r)})`;
-
-  // Moon fade
-  moon.style.opacity=rotationDeg>=360?0:1;
-
-  // Stars fade
-  stars.forEach(star=>star.style.opacity=1-r);
-
-  // Rotation indicator
+  sky.style.background=`linear-gradient(to bottom, 
+    ${interpolateColor(nightColorTop,dayColorTop,r)}, 
+    ${interpolateColor(nightColorBottom,dayColorBottom,r)})`;
+  
+  // Moon disappear
+  moon.style.opacity=rotationDeg===360?0:1;
+  
+  // Stars fade out
+  stars.forEach(star=>star.style.opacity=1-(rotationDeg/360));
+  
+  // Rotation Indicator
   rotationIndicator.style.width=(rotationDeg/360*100)+'%';
-
-  // Cinematic slight scale/translate
+  
+  // Cinematic parallax
   scene.style.transform=`scale(${1+rotationDeg/360*0.03}) translate(${rotationDeg/360*-15}px,${rotationDeg/360*-20}px)`;
-
-  if(rotationDeg>=360 && !evolutionDone){
+  
+  if(rotationDeg===360 && !evolutionDone){
     evolutionDone=true;
     setTimeout(()=>{btn.style.opacity=1;},600);
   }
@@ -337,19 +165,14 @@ document.addEventListener('pointermove',e=>{
 btn.addEventListener('click',()=>{
   btn.style.opacity=0;
   setTimeout(()=>btn.style.display='none',700);
-  // Cross cinematic reveal with glow pulse
   setTimeout(()=>{
     cross.style.opacity=1;
     cross.style.transform='translateX(-50%) scale(1.3)';
-    cross.querySelector('.cross-vertical').style.boxShadow='0 0 100px #fff600,0 0 150px #ffff00';
-    cross.querySelector('.cross-horizontal').style.boxShadow='0 0 100px #fff600,0 0 150px #ffff00';
   },700);
-  setTimeout(()=>{
-    cross.style.transform='translateX(-50%) scale(1)';
-  },2500);
+  setTimeout(()=>{cross.style.transform='translateX(-50%) scale(1)';},2500);
 });
 
-// Cloud drift
+// Cloud drift parallax
 setInterval(()=>{
   clouds.forEach(cloud=>{
     let left=parseFloat(cloud.style.left);
@@ -359,7 +182,7 @@ setInterval(()=>{
   });
 },50);
 
-// Fireflies
+// Fireflies flicker
 setInterval(()=>{
   fireflies.forEach(f=>{
     f.style.opacity=Math.random();
@@ -368,12 +191,12 @@ setInterval(()=>{
   });
 },200);
 
-// Shooting stars top-left to bottom-right
+// Shooting stars
 setInterval(()=>{
   shootingStars.forEach(star=>{
     star.style.opacity=Math.random();
-    star.style.top=(parseFloat(star.style.top)+Math.random()*3)+'%';
-    star.style.left=(parseFloat(star.style.left)+Math.random()*3)+'%';
+    star.style.top=(parseFloat(star.style.top)+Math.random()*5)+'%';
+    star.style.left=(parseFloat(star.style.left)+Math.random()*5)+'%';
     if(parseFloat(star.style.top)>100 || parseFloat(star.style.left)>100){
       star.style.top=Math.random()*30+'%';
       star.style.left=Math.random()*30+'%';
@@ -381,7 +204,7 @@ setInterval(()=>{
   });
 },100);
 
-// Color interpolate
+// Helper: color interpolation
 function interpolateColor(a,b,f){
   let ah=parseInt(a.replace(/#/,'0x'),16),bh=parseInt(b.replace(/#/,'0x'),16);
   let ar=(ah>>16)&255,ag=(ah>>8)&255,ab=ah&255;

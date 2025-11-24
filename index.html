@@ -22,43 +22,43 @@ html,body{
   overflow:hidden;
 }
 
-/* ---------- SKY GRADIENT ----------- */
+/* ---------- NIGHT SKY ----------- */
 #sky{
   position:absolute;
   inset:0;
   background:linear-gradient(to bottom,#030014,#120034 40%,#1a0046 70%);
-  transition:background 1.2s ease;
+  transition:background 2.5s ease;
   pointer-events:none;
 }
 
 /* ---------- MOON ----------- */
 #moon{
   position:absolute;
-  width:160px;
-  height:160px;
+  width:180px;
+  height:180px;
   border-radius:50%;
   background:#d9d8ff;
-  box-shadow:0 0 40px #b8b6ff;
-  top:25%;
-  left:20%;
-  transform:translate(-50%,-50%);
-  transition:opacity 1.4s ease, transform 1.4s ease;
+  box-shadow:0 0 50px #c5c4ff;
+  top:28%;
+  left:22%;
+  transform:translate(-50%,-50%) rotate(0deg);
+  transition:opacity 2.5s ease, transform 2.5s ease;
   pointer-events:none;
 }
 
-/* ---------- CINEMATIC SUN (TOP-RIGHT RISE) ----------- */
+/* ---------- SUN (IMAX-position) ----------- */
 #sun{
   position:absolute;
-  width:280px;
-  height:280px;
+  width:300px;
+  height:300px;
   border-radius:50%;
   background: radial-gradient(circle, #ffd27f, #ff9a00);
-  box-shadow: 0 0 160px #ffae42, 0 0 280px #ff7b00;
+  box-shadow: 0 0 170px #ffb54c, 0 0 300px #ff7b00;
   opacity:0;
-  transform: translate(300px,300px) scale(0.4);
-  right: -200px;
-  top: -200px;
-  transition:opacity 1.4s ease, transform 1.4s ease;
+  right:-200px;
+  top:21%; /* PERFECT CINEMATIC POSITION */
+  transform: translate(240px,260px) scale(0.35);
+  transition:opacity 2.5s ease, transform 2.5s ease;
   pointer-events:none;
 }
 
@@ -67,13 +67,13 @@ html,body{
   position:absolute;
   width:100%;
   text-align:center;
-  bottom:22%;
+  bottom:20%;
   color:#c38bff;
   font-size:2rem;
   font-weight:700;
   opacity:0;
   text-shadow:0 0 25px #8e3fff;
-  transition:opacity 1.4s ease;
+  transition:opacity 2.5s ease;
   pointer-events:none;
 }
 
@@ -81,65 +81,66 @@ html,body{
 #btn{
   position:absolute;
   left:50%;
-  bottom:16%;
+  bottom:14%;
   transform:translateX(-50%);
   background:linear-gradient(to right,#6a00ff,#c200ff);
   color:#fff;
-  font-size:1.2rem;
-  padding:14px 32px;
+  font-size:1.25rem;
+  padding:14px 34px;
   border:none;
-  border-radius:14px;
+  border-radius:16px;
   cursor:pointer;
-  box-shadow:0 0 18px #9400ff;
-  transition:opacity 0.6s ease;
+  box-shadow:0 0 20px #9400ff;
+  opacity:0;
+  transition:opacity 1.4s ease;
 }
 
-/* ---------- IMAX CHRISTIAN CROSS ----------- */
+/* ---------- IMAX CROSS ----------- */
 #cross{
   position:absolute;
   left:50%;
-  transform:translateX(-50%);
-  top:18%; /* HIGH, MAJESTIC spacing */
+  transform:translateX(-50%) scale(0.75);
+  top:15%; /* Godlike high spacing */
   width:0;
   height:0;
   opacity:0;
   pointer-events:none;
-  transition:opacity 1.4s ease, transform 1.4s ease;
+  transition:opacity 2.5s ease, transform 2.5s ease;
 }
 
+/* Vertical bar */
 .cross-vertical{
   position:absolute;
   left:50%;
   transform:translateX(-50%);
-  width:22px;
-  height:240px;
+  width:24px;
+  height:260px;
   background:#30006b;
-  box-shadow:0 0 32px #7900ff;
+  box-shadow:0 0 40px #7a00ff;
 }
 
+/* Horizontal at EXACT 35% */
 .cross-horizontal{
   position:absolute;
   left:50%;
   transform:translateX(-50%);
-  width:160px;
-  height:22px;
-
-  /* Horizontal bar placed at EXACT 35% of vertical bar */
-  top: calc(240px * 0.35);
-
+  width:180px;
+  height:24px;
+  top: calc(260px * 0.35);
   background:#30006b;
-  box-shadow:0 0 32px #7900ff;
+  box-shadow:0 0 40px #7a00ff;
 }
 
-/* Day Mode Sky */
+/* DAY SKY */
 .daySky{
-  background:linear-gradient(to bottom,#4ac8ff,#ffe29f 60%,#ffcf71 90%);
+  background:linear-gradient(to bottom,#52d3ff,#ffe6ab 60%,#ffd37c 90%);
 }
 </style>
 </head>
 
 <body>
 <div id="scene">
+
   <div id="sky"></div>
   <div id="moon"></div>
   <div id="sun"></div>
@@ -154,58 +155,66 @@ html,body{
     <div class="cross-vertical"></div>
     <div class="cross-horizontal"></div>
   </div>
+
 </div>
 
 <script>
-let revealDone = false;
+let evolutionDone = false;
 let sunLocked = false;
 
-/* CLICK → reveal message, then reveal cross */
-btn.addEventListener('click', ()=>{
-  btn.style.opacity = 0;
-  setTimeout(()=>btn.style.display="none",600);
-
-  msg.style.opacity = 1;
-
-  setTimeout(()=>{
-    cross.style.opacity = 1;
-    cross.style.transform = "translateX(-50%) scale(1.06)";
-  },1200);
-
-  revealDone = true;
-});
-
-/* CINEMATIC SUN RISE + LOCK */
-let progress = 0;
-
+/* ---------- MOUSE MOVEMENT → Cinematic Evolution ---------- */
 document.addEventListener('pointermove', (e)=>{
-  if(!revealDone) return;
   if(sunLocked) return;
 
   let y = e.clientY;
-  let screenH = window.innerHeight;
+  let h = window.innerHeight;
 
-  progress = 1 - (y / screenH);
-  progress = Math.max(0, Math.min(1, progress));
+  let p = 1 - (y/h);
+  p = Math.max(0, Math.min(1, p));
 
-  /* Sun arc motion */
-  sun.style.opacity = progress;
+  /* Moon rotates upward and fades */
+  moon.style.opacity = 1 - p;
+  moon.style.transform = `translate(-50%,-50%) rotate(${p*45}deg)`;
+
+  /* Sun rises downward into perfect cinematic spot */
+  sun.style.opacity = p;
   sun.style.transform =
-    `translate(${(1-progress)*300}px, ${(1-progress)*300}px) scale(${0.4 + progress*0.6})`;
+    `translate(${240 - p*240}px, ${260 - p*260}px) scale(${0.35 + p*0.65})`;
 
-  /* Moon fade-out */
-  moon.style.opacity = (1-progress);
-
-  /* Sky transition */
-  if(progress > 0.4){
+  /* Sky shifts */
+  if(p > 0.1){
     sky.classList.add("daySky");
   }
 
-  /* LOCK when sun fully risen */
-  if(progress >= 1){
+  /* Message appears with the day */
+  msg.style.opacity = p;
+
+  /* After full day → show button */
+  if(p === 1 && !evolutionDone){
+    evolutionDone = true;
     sunLocked = true;
+
+    setTimeout(()=>{
+      btn.style.opacity = 1;
+    },600);
   }
 });
+
+/* ---------- CLICK → Holy IMAX Cross Reveal ---------- */
+btn.addEventListener('click', ()=>{
+  btn.style.opacity = 0;
+  setTimeout(()=>btn.style.display="none",700);
+
+  setTimeout(()=>{
+    cross.style.opacity = 1;
+    cross.style.transform = "translateX(-50%) scale(1.12)";
+  },700);
+
+  setTimeout(()=>{
+    cross.style.transform = "translateX(-50%) scale(1)";
+  },2500);
+});
 </script>
+
 </body>
 </html>

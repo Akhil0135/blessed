@@ -3,158 +3,134 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ultimate IMAX Cinematic Night to Day</title>
+<title>IMAX Cinematic Moon-to-Sun</title>
 
 <style>
-html,body{
-  height:100%;
-  margin:0;
-  overflow:hidden;
-  background:#000010;
-  font-family:"Cinzel",serif;
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #000010;
+  overflow: hidden;
+  font-family: "Cinzel", serif;
 }
 
-#scene{
-  position:relative;
-  width:100%;
-  height:100%;
-  perspective:1500px;
-  overflow:hidden;
-  transform-style:preserve-3d;
+/* Scene Container */
+#scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-#sky{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(to bottom,#010014,#120034 40%,#1a0046 70%);
-  transition:background 2.5s ease;
-  pointer-events:none;
+/* NIGHT SKY */
+#sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,#030014,#120034 40%,#1a0046 70%);
+  transition: background 2.5s ease;
+  pointer-events: none;
 }
 
-#fog{
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle,#ffffff0f 0%,#000010 80%);
-  pointer-events:none;
-  mix-blend-mode:overlay;
-  filter:blur(60px);
+/* MOON */
+#moon {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: #d9d8ff;
+  box-shadow: 0 0 80px #c5c4ff, 0 0 160px #b3aaff inset;
+  top: 28%;
+  left: 22%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  cursor: grab;
+  transition: transform 0.05s linear;
+  z-index: 5;
 }
 
-#moon{
-  position:absolute;
-  width:180px;
-  height:180px;
-  border-radius:50%;
-  background:#d9d8ff;
-  box-shadow:0 0 80px #c5c4ff,0 0 120px #b0aaff;
-  top:28%;
-  left:22%;
-  transform:translate(-50%,-50%) rotate(0deg);
-  transition:transform 0.2s ease, opacity 0.2s ease;
-  z-index:5;
-  cursor:pointer;
+/* SUN - repositioned for cinematic IMAX */
+#sun {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd27f, #ff9a00);
+  box-shadow: 0 0 220px #ffb54c, 0 0 400px #ff7b00;
+  opacity: 0;
+  top: 18%;  /* repositioned higher for cinematic feel */
+  left: 75%; /* repositioned to right side */
+  transform: translate(0px,260px) scale(0.35);
+  transition: opacity 2s ease, transform 2s ease;
+  pointer-events: none;
+  z-index: 1;
 }
 
-#sun{
-  position:absolute;
-  width:350px;
-  height:350px;
-  border-radius:50%;
-  background: radial-gradient(circle,#ffe6a0,#ff9000);
-  box-shadow:0 0 250px #ffc550,0 0 400px #ff7b00;
-  opacity:0;
-  right:-250px;
-  top:21%;
-  transform: translate(240px,260px) scale(0.35);
-  transition:opacity 2.5s ease, transform 2.5s ease;
-  pointer-events:none;
-  z-index:4;
+/* MESSAGE */
+#msg {
+  position: absolute;
+  width: 90%;
+  text-align: center;
+  bottom: 20%;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffddff;
+  text-shadow: 0 0 30px #d900ff, 0 0 60px #ff00ff;
+  letter-spacing: 0.05em;
+  opacity: 1;
+  pointer-events: none;
+  white-space: pre-wrap;
 }
 
-#msg{
-  position:absolute;
-  width:90%;
-  text-align:center;
-  bottom:20%;
-  color:#fff2ff;
-  font-size:2rem;
-  font-weight:700;
-  opacity:0;
-  text-shadow:0 0 35px #e500ff, 0 0 50px #ff00ff;
-  letter-spacing:2px;
-  pointer-events:none;
+/* BUTTON */
+#btn {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  transform: translateX(-50%);
+  background: linear-gradient(to right,#6a00ff,#c200ff);
+  color: #fff;
+  font-size: 1.3rem;
+  padding: 16px 36px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 0 30px #9400ff, 0 0 50px #c200ff;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  z-index: 6;
 }
 
-#btn{
-  position:absolute;
-  left:50%;
-  bottom:14%;
-  transform:translateX(-50%);
-  background:linear-gradient(to right,#6a00ff,#ff00ff);
-  color:#fff;
-  font-size:1.25rem;
-  padding:14px 34px;
-  border:none;
-  border-radius:16px;
-  cursor:pointer;
-  box-shadow:0 0 30px #9400ff;
-  opacity:0;
-  transition:opacity 1.4s ease;
-  z-index:10;
+/* CHRISTIAN CROSS */
+#cross {
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  transform: translateX(-50%) scale(0.8) rotate(0deg);
+  opacity: 0;
+  z-index: 10;
 }
 
-#cross{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%) scale(0.75);
-  top:15%;
-  width:0;
-  height:0;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 2.5s ease, transform 2.5s ease;
-  z-index:11;
+.cross-vertical, .cross-horizontal {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom,#ffebaa,#ff8b00);
+  box-shadow: 0 0 50px #ff9a00, 0 0 100px #ffcc66;
 }
 
-.cross-vertical{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  width:28px;
-  height:260px;
-  background:#ff00ff;
-  box-shadow:0 0 60px #ff00ff, 0 0 120px #ff55ff;
+.cross-vertical {
+  width: 30px;
+  height: 260px;
 }
 
-.cross-horizontal{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  width:200px;
-  height:28px;
+.cross-horizontal {
+  width: 180px;
+  height: 30px;
   top: calc(260px * 0.35);
-  background:#ff00ff;
-  box-shadow:0 0 60px #ff00ff,0 0 120px #ff55ff;
 }
 
-.daySky{
-  background:linear-gradient(to bottom,#52d3ff,#ffe6ab 60%,#ffd37c 90%);
-  transition:background 2.5s ease;
-}
-
-.particle{
-  position:absolute;
-  width:3px;
-  height:3px;
-  background:#fff;
-  border-radius:50%;
-  opacity:0.6;
-  pointer-events:none;
-  animation: drift 6s linear infinite;
-}
-@keyframes drift{
-  0%{transform: translateY(0) translateX(0);}
-  100%{transform: translateY(-800px) translateX(200px);}
+/* DAY SKY */
+.daySky {
+  background: linear-gradient(to bottom,#52d3ff,#ffe6ab 60%,#ffd37c 90%);
+  transition: background 2.5s ease;
 }
 </style>
 </head>
@@ -162,7 +138,6 @@ html,body{
 <body>
 <div id="scene">
   <div id="sky"></div>
-  <div id="fog"></div>
   <div id="moon"></div>
   <div id="sun"></div>
   <div id="msg"></div>
@@ -174,94 +149,87 @@ html,body{
 </div>
 
 <script>
+const moon = document.getElementById('moon');
+const sun = document.getElementById('sun');
+const sky = document.getElementById('sky');
+const msgEl = document.getElementById('msg');
+const btn = document.getElementById('btn');
+const cross = document.getElementById('cross');
+
+const fullMsg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+let revealedMsg = '';
+let isDragging = false;
+let rotation = 0;
 let evolutionDone = false;
-let sunLocked = false;
 
-let msgText = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-let msgIndex = 0;
-
-let msgEl = document.getElementById("msg");
-let moon = document.getElementById("moon");
-let sun = document.getElementById("sun");
-let sky = document.getElementById("sky");
-let btn = document.getElementById("btn");
-let cross = document.getElementById("cross");
-let scene = document.getElementById("scene");
-
-/* ---------- CREATE PARTICLES ---------- */
-for(let i=0;i<100;i++){
-  let p = document.createElement("div");
-  p.classList.add("particle");
-  p.style.left = Math.random()*100+"%";
-  p.style.top = Math.random()*100+"%";
-  p.style.opacity = 0.2 + Math.random()*0.6;
-  p.style.width = 1 + Math.random()*4+"px";
-  p.style.height = p.style.width;
-  p.style.animationDuration = 5 + Math.random()*6+"s";
-  scene.appendChild(p);
-}
-
-/* ---------- MOON POINTER CONTROL ---------- */
-let dragging = false;
-
-moon.addEventListener('pointerdown', e=>{
-  dragging = true;
+/* POINTER ON MOON ONLY */
+moon.addEventListener('pointerdown', (e)=>{
+  isDragging = true;
 });
 
-document.addEventListener('pointerup', e=>{
-  dragging = false;
+document.addEventListener('pointerup', (e)=>{
+  isDragging = false;
 });
 
-document.addEventListener('pointermove', e=>{
-  if(!dragging || sunLocked) return;
+document.addEventListener('pointermove', (e)=>{
+  if(!isDragging) return;
 
-  let rect = moon.getBoundingClientRect();
-  let centerY = rect.top + rect.height/2;
-  let maxRotation = 90; // max degree
+  // Calculate horizontal rotation based on pointer X
+  const rect = moon.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
 
-  // distance moved vertically
-  let dy = centerY - e.clientY; // upwards is positive
-  let p = Math.max(0, Math.min(1, dy/250)); // limit rotation
+  const dx = e.clientX - cx;
+  const dy = e.clientY - cy;
 
-  // Moon rotates only
-  let deg = p * maxRotation;
-  moon.style.transform = `translate(-50%,-50%) rotate(${deg}deg)`;
-  moon.style.opacity = 1 - p;
+  let angle = Math.atan2(dy, dx) * 180/Math.PI + 90;
+  if(angle < 0) angle += 360;
+  rotation = Math.min(angle, 360);
+
+  // Moon rotates
+  moon.style.transform = `translate(-50%,-50%) rotate(${rotation}deg)`;
 
   // Reveal message letter by letter
-  let letters = Math.floor(p * msgText.length);
-  msgEl.innerText = msgText.substring(0, letters);
-  msgEl.style.opacity = letters>0 ? 1 : 0;
+  const lettersToShow = Math.floor((rotation/360) * fullMsg.length);
+  revealedMsg = fullMsg.substring(0, lettersToShow);
+  msgEl.textContent = revealedMsg;
 
-  // Sky shifts gradually
-  if(p>0.05) sky.classList.add("daySky");
+  // Sun rises with moon rotation
+  const p = rotation / 360;
+  const startX = 0; // translate start
+  const startY = 260;
+  const targetX = -240; // dramatic IMAX reposition
+  const targetY = 0;
 
-  // Sun rises fully at end of rotation
-  if(p>=1){
-    sun.style.opacity = 1;
-    sun.style.transform = `translate(0px,0px) scale(1)`;
-    sunLocked = true;
-    evolutionDone = true;
-    setTimeout(()=> btn.style.opacity=1,600);
+  sun.style.opacity = p;
+  sun.style.transform = `translate(${startX + p*targetX}px, ${startY - p*startY}px) scale(${0.35 + p*0.65})`;
+
+  // Sky day effect
+  if(p > 0.05){
+    sky.classList.add('daySky');
   }
 
-  // subtle cinematic camera
-  scene.style.transform = `rotateX(${p*2}deg) rotateY(${p*1.5}deg) scale(${1 + p*0.05})`;
+  // Button appears after full rotation
+  if(p >= 1 && !evolutionDone){
+    evolutionDone = true;
+    setTimeout(()=>{
+      btn.style.opacity = 1;
+    }, 500);
+  }
 });
 
-/* ---------- BUTTON → CINEMATIC CROSS ---------- */
+/* CLICK → HOLY CROSS */
 btn.addEventListener('click', ()=>{
   btn.style.opacity = 0;
-  setTimeout(()=>btn.style.display="none",700);
+  setTimeout(()=>btn.style.display="none", 700);
+
+  cross.style.opacity = 1;
+  cross.style.transform = "translateX(-50%) scale(1.2) rotate(360deg)";
+  cross.style.transition = "transform 2s ease, opacity 2s ease";
 
   setTimeout(()=>{
-    cross.style.opacity=1;
-    cross.style.transform="translateX(-50%) scale(1.25) rotate(25deg)";
-  },700);
-
-  setTimeout(()=>{
-    cross.style.transform="translateX(-50%) scale(1) rotate(0deg)";
-  },2500);
+    cross.style.transform = "translateX(-50%) scale(1) rotate(0deg)";
+  }, 2200);
 });
 </script>
 </body>

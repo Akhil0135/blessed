@@ -23,7 +23,38 @@ html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;backgr
 .cloud{position:absolute;width:200px;height:80px;background:rgba(255,255,255,0.05);border-radius:50%;filter:blur(12px);}
 .firefly{position:absolute;width:4px;height:4px;background:#fffa88;border-radius:50%;opacity:0;box-shadow:0 0 20px #fffa88;}
 #birthdayPhase{position:absolute;inset:0;background:linear-gradient(to bottom,#ffddaa,#ffb3aa);opacity:0;transition:opacity 2s;pointer-events:none;z-index:2;}
-#happyText{position:absolute;top:40%;width:100%;text-align:center;font-size:4rem;color:#ffd700;font-weight:900;text-shadow:0 0 40px #ffdd55,0 0 80px #ffcc44;opacity:0;transform:scale(0.5);transition:opacity 2s ease, transform 2s ease;pointer-events:none;z-index:5;}
+#happyText{
+  position:absolute;
+  top:40%;
+  width:100%;
+  text-align:center;
+  font-size:4rem;
+  font-weight:900;
+  background:linear-gradient(90deg,#ff0055,#ffdd00,#00ffdd,#ff00aa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 40px #ffdd55,0 0 80px #ffcc44;
+  opacity:0;
+  transform:scale(0.5);
+  transition:opacity 2s ease, transform 2s ease;
+  pointer-events:none;
+  z-index:5;
+  animation: gradientShift 5s linear infinite;
+}
+@keyframes gradientShift{
+  0%{background-position:0%;}
+  50%{background-position:100%;}
+  100%{background-position:0%;}
+}
+.firework{
+  position:absolute;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background: radial-gradient(circle, #fff, #ff0, #f0f);
+  opacity:0;
+  pointer-events:none;
+}
 </style>
 </head>
 <body>
@@ -150,6 +181,20 @@ document.addEventListener('pointermove',e=>{
   }
 });
 
+// Firework generator
+function createFirework(){
+  let f=document.createElement('div');
+  f.className='firework';
+  f.style.top=(30+Math.random()*40)+'%';
+  f.style.left=(20+Math.random()*60)+'%';
+  scene.appendChild(f);
+  f.animate([
+    {transform:'scale(0)',opacity:1},
+    {transform:'scale(3)',opacity:0}
+  ],{duration:800,fill:'forwards'});
+  setTimeout(()=>f.remove(),800);
+}
+
 // Click Here Button → Cross & Birthday Phase
 btn.addEventListener('click',()=>{
   if(!phaseTwoStarted){
@@ -175,9 +220,10 @@ btn.addEventListener('click',()=>{
     msg.style.opacity=0;
     stars.forEach(s=>s.style.opacity=0);
     birthdayPhase.style.opacity=1;
-    // Happy Birthday Text
     happyText.style.opacity=1;
     happyText.style.transform='scale(1)';
+    // Fireworks repeatedly
+    setInterval(createFirework,300);
   }
 });
 

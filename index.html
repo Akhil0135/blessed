@@ -1,237 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>IMAX Nolan Cinematic Moon-to-Birthday</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IMAX Nolan — Moon → Day → Birthday</title>
 <style>
-html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;background:#0a0a1f;}
-#scene{position:relative;width:100%;height:100%;overflow:hidden;transform-origin:center center;transition:transform 0.1s;filter:contrast(1.1) brightness(1.05) saturate(1.15);}
-#sky{position:absolute;inset:0;background:linear-gradient(to bottom,#0a0a1f,#1b0a3f 40%,#2b0055 70%);transition:background 1.5s ease;pointer-events:none;}
-#moon{position:absolute;width:180px;height:180px;border-radius:50%;background:#d9d8ff;box-shadow:0 0 80px #c5c4ff,0 0 150px rgba(255,255,255,0.3);top:20%;left:18%;transform:translate(-50%,-50%) rotate(0deg);cursor:pointer;z-index:5;transition:transform 0.1s linear,opacity 1s;filter:drop-shadow(0 0 40px #d9d8ff);pointer-events:auto;}
-#sun{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#ffd27f,#ff9a00);box-shadow:0 0 170px #ffb54c,0 0 300px #ff7b00;opacity:0;top:5%;right:5%;transform:scale(0.35);transition:opacity 1.5s ease, transform 1.5s ease;z-index:3;filter:drop-shadow(0 0 100px #ffd27f);pointer-events:none;}
-.sun-rays{position:absolute;top:50%;left:50%;width:1000px;height:1000px;background:radial-gradient(circle,#fff5 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none;filter:blur(40px);transition:transform 1.5s, opacity 1.5s;}
-#msg{position:absolute;width:90%;text-align:center;bottom:18%;color:#ffe6aa;font-size:2rem;font-weight:700;opacity:0;text-shadow:0 0 45px #ffb84c,0 0 80px rgba(255,200,100,0.5);transition:opacity 0.1s;pointer-events:none;}
-#btn{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);background:linear-gradient(to right,#6a00ff,#c200ff);color:#fff;font-size:1.25rem;padding:14px 34px;border:none;border-radius:16px;cursor:pointer;box-shadow:0 0 25px #9400ff;opacity:0;transition:opacity 1s;z-index:10;}
-#cross{position:absolute;left:50%;top:10%;transform:translateX(-50%) scale(0.75);width:0;height:0;opacity:0;transition:opacity 1.5s, transform 1.5s;pointer-events:none;}
-.cross-vertical{position:absolute;left:50%;transform:translateX(-50%);width:24px;height:260px;background:#ffd700;box-shadow:0 0 60px #ffe600;}
-.cross-horizontal{position:absolute;left:50%;transform:translateX(-50%);width:180px;height:24px;top:calc(260px*0.35);background:#ffd700;box-shadow:0 0 60px #ffe600;}
-#rotationIndicator{position:absolute;bottom:5%;width:90%;left:50%;transform:translateX(-50%);height:6px;background:rgba(255,255,255,0.2);border-radius:3px;pointer-events:none;}
-#rotationProgress{height:100%;width:0%;background:#ffe6aa;border-radius:3px;transition:width 0.1s linear;}
-.star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;opacity:0.8;animation:twinkle 2s infinite alternate;filter:blur(1px);}
-@keyframes twinkle{0%{opacity:0.3;}50%{opacity:1;}100%{opacity:0.3;}}
-.cloud{position:absolute;width:200px;height:80px;background:rgba(255,255,255,0.05);border-radius:50%;filter:blur(12px);}
-.firefly{position:absolute;width:4px;height:4px;background:#fffa88;border-radius:50%;opacity:0;box-shadow:0 0 20px #fffa88;}
-#birthdayPhase{position:absolute;inset:0;background:linear-gradient(to bottom,#ffddaa,#ffb3aa);opacity:0;transition:opacity 2s;pointer-events:none;z-index:2;}
-#happyText{
-  position:absolute;
-  top:40%;
-  width:100%;
-  text-align:center;
-  font-size:4rem;
-  font-weight:900;
-  background:linear-gradient(90deg,#ff0055,#ffdd00,#00ffdd,#ff00aa);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 40px #ffdd55,0 0 80px #ffcc44;
-  opacity:0;
-  transform:scale(0.5);
-  transition:opacity 2s ease, transform 2s ease;
-  pointer-events:none;
-  z-index:5;
-  animation: gradientShift 5s linear infinite;
-}
-@keyframes gradientShift{
-  0%{background-position:0%;}
-  50%{background-position:100%;}
-  100%{background-position:0%;}
-}
-.firework{
-  position:absolute;
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background: radial-gradient(circle, #fff, #ff0, #f0f);
-  opacity:0;
-  pointer-events:none;
-}
+  /* ------------- Base / IMAX grade ------------- */
+  :root{
+    --bg-night-1: #070617; /* deep cinematic night */
+    --bg-night-2: #120430;
+    --grade-warm: rgba(255,200,120,0.06);
+    --text-contrast: #ffdFA0;
+  }
+  html,body{height:100%;margin:0;background:var(--bg-night-1);font-family:"Cinzel",serif;overflow:hidden;color:var(--text-contrast);}
+  #stage{position:relative;width:100%;height:100%;overflow:hidden;filter:contrast(1.08) saturate(1.05);}
+
+  /* sky keeps dark cinematic look until full reveal */
+  #sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--bg-night-1),var(--bg-night-2) 55%);transition:background 1.2s ease;pointer-events:none;z-index:0;}
+  .grade-overlay{position:absolute;inset:0;mix-blend-mode:screen;pointer-events:none;opacity:0.18;background:linear-gradient(180deg, rgba(12,8,30,0.0), rgba(10,6,20,0.28));z-index:70}
+
+  /* stars */
+  .star{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.95);box-shadow:0 0 8px rgba(255,255,255,0.8);opacity:0.9;filter:blur(.8px);animation:twinkle var(--tw) infinite alternate;}
+  @keyframes twinkle{0%{opacity:.2;transform:scale(.5)}50%{opacity:1;transform:scale(1.3)}100%{opacity:.25;transform:scale(.7)}}
+
+  /* shooting stars (created dynamically) */
+  .shoot{position:absolute;width:4px;height:28px;border-radius:4px;background:linear-gradient(180deg, rgba(255,255,255,1), rgba(255,255,255,0));filter:blur(1px);transform-origin:center top;opacity:0.95;z-index:10}
+
+  /* moon (drag target) */
+  #moon{
+    position:absolute;
+    width:190px;height:190px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffffff, #f1e3b5 45%, #d8c08a 100%);
+    top:18%;left:16%;
+    box-shadow:0 0 80px rgba(255,245,200,0.14), 0 0 200px rgba(255,240,200,0.06);
+    cursor:pointer;z-index:60;pointer-events:auto;
+    transition:transform .08s linear,opacity 0.9s ease;
+  }
+  #moon .flare{position:absolute;inset:-40px; border-radius:50%; background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,245,200,0)); filter:blur(36px); pointer-events:none;}
+
+  /* clouds (soft, cinematic) */
+  .cloud{position:absolute;width:420px;height:220px;border-radius:45%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.6) 30%, rgba(255,255,255,0.12) 60%, rgba(255,255,255,0) 100%);filter: blur(22px);opacity:0.6;mix-blend-mode:screen;z-index:30;pointer-events:none}
+
+  /* sun — MASSIVE IMAX top-right */
+  #sun{
+    position:absolute;
+    width:780px;height:780px;border-radius:50%;
+    right:6vw; top:-260px; /* starts off-screen above */
+    background: radial-gradient(circle at 38% 34%, #fff8e8 0%, #ffd98f 12%, #ffb258 32%, #ff8a30 60%, rgba(200,80,30,0.6) 85%, rgba(200,80,30,0) 100%);
+    box-shadow:0 0 280px 90px rgba(255,220,140,0.12), 0 0 420px 260px rgba(255,180,90,0.04);
+    opacity:0;pointer-events:none;z-index:55;transition:top 1.8s cubic-bezier(.2,.9,.2,1),opacity 1.6s ease, transform 1.6s ease;
+    will-change:transform,opacity,top;
+  }
+  .sun .corona{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:220%;height:220%;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.12), rgba(255,210,120,0.04), rgba(255,160,60,0)); filter:blur(20px);opacity:0;transition:opacity 0.9s ease}
+
+  /* God-ray band + anamorphic streak */
+  .sun-band{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:34vw;height:120vh;background:linear-gradient(180deg, rgba(255,245,200,0.06), rgba(255,230,160,0.02) 30%, rgba(255,230,160,0) 60%);mix-blend-mode:screen;filter:blur(16px);opacity:0;z-index:54;pointer-events:none;transition:opacity 1.2s ease}
+  .anam{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:2200px;height:48px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,200,0.95) 30%, rgba(255,160,60,0.95) 70%, rgba(255,255,255,0) 100%);filter:blur(30px);opacity:0;mix-blend-mode:screen;pointer-events:none;z-index:56;transition:opacity 1s ease}
+
+  /* message - initially hidden letters */
+  #message{
+    position:absolute;left:0;right:0;top:62%;text-align:center;z-index:80;
+    font-size:34px;letter-spacing:2px;color:#f2d8ff;text-shadow:0 6px 24px rgba(40,10,60,0.45);
+    pointer-events:none;transform:translateZ(0);
+  }
+  .letter{display:inline-block;opacity:0;transform:translateY(12px);transition:opacity .12s ease, transform .12s ease}
+
+  /* click button (bottom center) */
+  #clickBtn{
+    position:absolute;left:50%;transform:translateX(-50%);bottom:6%;
+    padding:14px 28px;border-radius:14px;border:none;font-weight:700;font-size:18px;
+    background:linear-gradient(90deg,#2822ff,#9b00ff);color:white;box-shadow:0 14px 40px rgba(20,6,80,0.5);
+    cursor:pointer;z-index:95;opacity:0;transition:opacity .8s ease;pointer-events:auto;
+  }
+
+  /* cross (center) */
+  #cross{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%) scale(0.85);width:40px;height:120px;background:#0b0b0b;box-shadow:0 12px 70px rgba(10,10,10,0.7) inset;opacity:0;z-index:98;border-radius:3px;pointer-events:none;transition:transform 1.6s cubic-bezier(.2,.9,.2,1),opacity 1.2s ease;}
+  #cross > .bar{position:absolute;top:36%;left:-44px;width:128px;height:36px;background:#0b0b0b;border-radius:3px;box-shadow:0 8px 24px rgba(0,0,0,0.6);}
+
+  /* rotation indicator */
+  #rotTrack{position:absolute;left:50%;transform:translateX(-50%);bottom:2%;width:80%;height:8px;background:rgba(255,255,255,0.08);border-radius:6px;z-index:90;pointer-events:none}
+  #rotFill{height:100%;width:0%;background:linear-gradient(90deg,#ffdFA0,#ffd27f);border-radius:6px;box-shadow:0 4px 18px rgba(255,200,120,0.12);transition:width .06s linear}
+
+  /* birthday overlay (phase 2) */
+  #birthdayOverlay{position:absolute;inset:0;z-index:200;opacity:0;pointer-events:none;transition:opacity 1.4s ease;background:linear-gradient(180deg,#fff7e0,#ffe4c2)}
+  #happy{position:absolute;top:36%;left:50%;transform:translate(-50%,-50%) scale(.75);font-size:84px;font-weight:900;letter-spacing:6px;z-index:210;opacity:0;transition:opacity 1s ease, transform 1s ease; text-shadow:0 10px 50px rgba(255,180,80,0.35); background:linear-gradient(90deg,#ff2b6d,#ffd800,#29f1ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+  /* fireworks particle */
+  .fw{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:215;filter:blur(0.6px);box-shadow:0 0 12px rgba(255,255,255,0.85)}
+  /* subtle vignette for cinematic contrast */
+  .vign{position:absolute;inset:0;pointer-events:none;z-index:300;background:radial-gradient(ellipse at 45% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5) 100%);opacity:0.6}
 </style>
 </head>
 <body>
-<div id="scene">
-  <div id="sky"></div>
-  <div id="moon"></div>
-  <div id="sun"></div>
-  <div class="sun-rays"></div>
-  <div id="msg">On this calm birthday eve so new, God softly whispers, my plans are made for you.</div>
-  <button id="btn">Click Here</button>
-  <div id="cross">
-    <div class="cross-vertical"></div>
-    <div class="cross-horizontal"></div>
+  <div id="stage">
+    <div id="sky"></div>
+    <div class="grade-overlay"></div>
+
+    <!-- stars container -->
+    <div id="stars" style="position:absolute;inset:0;z-index:20;pointer-events:none"></div>
+
+    <!-- clouds -->
+    <div id="clouds" style="position:absolute;inset:0;z-index:30;pointer-events:none"></div>
+
+    <!-- moon (drag target) -->
+    <div id="moon" title="Drag me to reveal the day">
+      <div class="flare"></div>
+    </div>
+
+    <!-- massive IMAX sun -->
+    <div id="sun">
+      <div class="corona"></div>
+    </div>
+
+    <div class="sun-band"></div>
+    <div class="anam"></div>
+
+    <!-- cinematic message -->
+    <div id="message" aria-hidden="true"></div>
+
+    <!-- bottom rotation progress -->
+    <div id="rotTrack"><div id="rotFill"></div></div>
+
+    <!-- click button -->
+    <button id="clickBtn" aria-hidden="true">CLICK HERE</button>
+
+    <!-- cross (center) -->
+    <div id="cross"><div class="bar"></div></div>
+
+    <!-- birthday -->
+    <div id="birthdayOverlay"></div>
+    <div id="happy">🎉 Happy Birthday! 🎉</div>
+
+    <div class="vign"></div>
   </div>
-  <div id="rotationIndicator"><div id="rotationProgress"></div></div>
-  <div id="birthdayPhase"></div>
-  <div id="happyText">🎉 Happy Birthday! 🎉</div>
-</div>
 
 <script>
-// Stars
-let stars=[];
-for(let i=0;i<150;i++){
-  let star=document.createElement('div');
-  star.className='star';
-  star.style.top=Math.random()*100+'%';
-  star.style.left=Math.random()*100+'%';
-  star.style.animationDuration=(1+Math.random()*3)+'s';
-  star.style.transform=`scale(${0.5+Math.random()*1})`;
-  document.getElementById('scene').appendChild(star);
-  stars.push(star);
+/* ================== Config & Text ================== */
+const fullText = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+const ROTATION_NEEDED = 360; // degrees to reveal full message
+
+/* ================== Utilities ================== */
+const $ = sel => document.querySelector(sel);
+const mk = (tag, cls='') => { const e=document.createElement(tag); if(cls) e.className=cls; return e; };
+
+/* ================== Scene refs ================== */
+const moon = $('#moon');
+const sun = $('#sun');
+const sunCorona = sun.querySelector('.corona');
+const sunBand = document.querySelector('.sun-band');
+const anam = document.querySelector('.anam');
+const message = $('#message');
+const starsWrap = $('#stars');
+const cloudsWrap = $('#clouds');
+const clickBtn = $('#clickBtn');
+const cross = $('#cross');
+const rotFill = $('#rotFill');
+const birthdayOverlay = $('#birthdayOverlay');
+const happy = $('#happy');
+let locked = false;           // no going back once finished
+let rotationDeg = 0;          // current rotation measure (0..360)
+let dragging = false;
+let lastX = 0;
+let phaseTwoReady = false;
+let phaseTwoStarted = false;
+
+/* ================== Build scene: stars, clouds with cinematic variability ================== */
+function makeStars(n=160){
+  for(let i=0;i<n;i++){
+    const s = mk('div','star');
+    // varied twinkle speeds
+    s.style.setProperty('--tw', (1.2 + Math.random()*3.4) + 's');
+    s.style.left = (Math.random()*100) + '%';
+    s.style.top = (Math.random()*80) + '%';
+    s.style.opacity = 0.7 + Math.random()*0.4;
+    s.dataset.baseOpacity = s.style.opacity;
+    starsWrap.appendChild(s);
+  }
+}
+function makeClouds(){
+  // layered soft clouds
+  const counts = [4, 5]; // back & front
+  counts.forEach((cnt, layerIdx) => {
+    for(let i=0;i<cnt;i++){
+      const c = mk('div','cloud');
+      const top = 8 + i*14 + (layerIdx*6) + (Math.random()*8 - 4);
+      c.style.top = top + '%';
+      c.style.left = (i*20 + (layerIdx*6) + Math.random()*10 - 6) + '%';
+      c.style.opacity = 0.28 + layerIdx*0.25 + Math.random()*0.2;
+      c.style.transform = 'scale(' + (0.8 + Math.random()*0.8) + ')';
+      cloudsWrap.appendChild(c);
+    }
+  });
+}
+makeStars();
+makeClouds();
+
+/* ================== Message letters (hidden initially) ================== */
+const letters = [];
+for (let i=0;i<fullText.length;i++){
+  const span = mk('span','letter');
+  span.textContent = fullText[i] === ' ' ? '\u00A0' : fullText[i];
+  message.appendChild(span);
+  letters.push(span);
 }
 
-// Clouds
-let clouds=[];
-for(let i=0;i<6;i++){
-  let cloud=document.createElement('div');
-  cloud.className='cloud';
-  cloud.style.top=(10+i*12)+'%';
-  cloud.style.left=(i*15)+'%';
-  cloud.speed=0.1+Math.random()*0.2;
-  document.getElementById('scene').appendChild(cloud);
-  clouds.push(cloud);
+/* ================== Shooting stars generator (from corners to bottom) ================== */
+function spawnShootingCorner(){
+  const s = mk('div','shoot');
+  // choose corner: top-left or top-right or top-center; aim to bottom somewhere
+  const corner = Math.random();
+  let startLeft;
+  if(corner < 0.4) startLeft = Math.random()*18 + '%';            // left
+  else if (corner < 0.8) startLeft = (82 + Math.random()*18) + '%'; // right
+  else startLeft = (40 + Math.random()*20) + '%';                 // center
+  s.style.left = startLeft;
+  s.style.top = '-6%';
+  s.style.opacity = 0.95;
+  s.style.transform = 'rotate(' + (20 + Math.random()*40) + 'deg)'; // thick bottom -> top thin visual
+  document.getElementById('stage').appendChild(s);
+  // animate to bottom with different speeds
+  const duration = 1400 + Math.random()*1700;
+  const tx = (Math.random()*1.6 - 0.8) * window.innerWidth; // drift left/right
+  s.animate([
+    { transform: s.style.transform + ' translate(0,0)', opacity:1 },
+    { transform: s.style.transform + ` translate(${tx}px, ${window.innerHeight + 200}px)`, opacity:0 }
+  ], { duration, easing:'cubic-bezier(.2,.7,.2,1)', iterations:1, fill:'forwards' });
+  setTimeout(()=>s.remove(), duration+80);
+}
+setInterval(spawnShootingCorner, 1100 + Math.random()*800);
+
+/* ================== Moon drag handling (ONLY works when pointer down on moon) ================== */
+moon.addEventListener('pointerdown', (e) => {
+  if (locked) return; // once locked, ignore
+  dragging = true;
+  lastX = e.clientX;
+  moon.setPointerCapture(e.pointerId);
+});
+document.addEventListener('pointerup', (e) => {
+  dragging = false;
+});
+document.addEventListener('pointermove', (e) => {
+  if (!dragging || locked) return;
+  // only accept horizontal rightward movement (left-to-right drag => rotation increases)
+  const dx = e.clientX - lastX;
+  lastX = e.clientX;
+  if (dx <= 0) return; // ignore leftwards movement (no going back)
+  // scale dx to degrees (smoother)
+  rotationDeg += dx * 0.8; // sensitivity
+  if (rotationDeg >= ROTATION_NEEDED) {
+    rotationDeg = ROTATION_NEEDED;
+    finishReveal();
+  }
+  updateSceneByRotation(rotationDeg / ROTATION_NEEDED);
+});
+
+/* freeze after completion */
+function finishReveal(){
+  if (locked) return;
+  locked = true;
+  // ensure final state
+  updateSceneByRotation(1);
+  // show button after brief cinematic hold (3s requested)
+  setTimeout(()=> {
+    clickBtn.style.opacity = 1;
+    clickBtn.disabled = false;
+  }, 3000);
 }
 
-// Fireflies
-let fireflies=[];
-for(let i=0;i<20;i++){
-  let f=document.createElement('div');
-  f.className='firefly';
-  f.style.top=Math.random()*90+'%';
-  f.style.left=Math.random()*90+'%';
-  document.getElementById('scene').appendChild(f);
-  fireflies.push(f);
+/* ================== Update visuals based on normalized progress (0..1) ================== */
+function updateSceneByRotation(t){
+  // moon rotate & fade
+  const deg = t * 360;
+  moon.style.transform = `translate(-50%,-50%) rotate(${-deg}deg)`;
+  moon.style.opacity = `${Math.max(0, 1 - t)}`;
+
+  // reveal letters proportional to t
+  const lettersToShow = Math.floor(t * letters.length);
+  for (let i=0;i<letters.length;i++){
+    if (i < lettersToShow){
+      letters[i].style.opacity = 1;
+      letters[i].style.transform = 'translateY(0)';
+      // stagger small delay to feel organic
+      letters[i].style.transitionDelay = (i*7/1000) + 's';
+    } else {
+      letters[i].style.opacity = 0;
+      letters[i].style.transform = 'translateY(12px)';
+      letters[i].style.transitionDelay = '0s';
+    }
+  }
+
+  // sun appears and descends a bit to final cinematic top-right
+  sun.style.opacity = `${Math.min(1, t*1.05)}`;
+  // start top -260px to final ~ -80px (so it feels like descending into frame)
+  const startTop = -260;
+  const endTop = -80;
+  sun.style.top = `${startTop + (endTop - startTop)*t}px`;
+  const scale = 0.6 + 0.8*t; // large IMAX presence
+  sun.style.transform = `scale(${scale})`;
+
+  // corona, band, anamorphic
+  sunCorona.style.opacity = Math.min(1, t*1.1);
+  sunBand.style.opacity = Math.min(1, t*0.95);
+  anam.style.opacity = Math.min(1, Math.pow(t,0.9) * 0.95);
+
+  // stars fade out as day comes
+  starsWrap.querySelectorAll('.star').forEach(s => {
+    const base = +s.dataset.baseOpacity || 1;
+    s.style.opacity = Math.max(0, base * (1 - t*1.1));
+  });
+
+  // subtle sky grade shift (keep overall dark look but warmer tint toward end)
+  if (t > 0.06){
+    // blend slightly toward warmer but still cinematic
+    document.getElementById('sky').style.background = `linear-gradient(180deg, rgba(8,6,24,1), rgba(${34 + t*80|0},${6 + t*80|0},${60 - t*20|0},1) 60%)`;
+  }
+
+  // particles/clouds subtle brightness shift
+  cloudsWrap.querySelectorAll('.cloud').forEach(c=>{
+    c.style.opacity = `${0.55 - 0.35 * t}`;
+    const lateral = (t*10) + (Math.sin(Date.now()/4000)*1.2);
+    c.style.transform = `translateX(${lateral}px) scale(${parseFloat(c.style.transform.replace('scale(','').replace(')','')) || 1})`;
+  });
+
+  // progress bar
+  rotFill.style.width = `${Math.min(100, t*100)}%`;
 }
 
-// Shooting stars
-function createShootingStar(){
-  let star=document.createElement('div');
-  star.style.position='absolute';
-  star.style.width='3px';
-  star.style.height='3px';
-  star.style.background='white';
-  star.style.top='-10px';
-  star.style.left=Math.random()*50+'%';
-  star.style.opacity=0.8;
-  star.style.borderRadius='50%';
-  star.style.transform='rotate(45deg)';
-  document.getElementById('scene').appendChild(star);
-  let speed=2000+Math.random()*2000;
-  star.animate([
-    {transform:`translate(0,0) rotate(45deg)`,opacity:1},
-    {transform:`translate(${window.innerWidth/2}px,${window.innerHeight}px) rotate(45deg)`,opacity:0}
-  ],{duration:speed,iterations:1,fill:'forwards'});
-  setTimeout(()=>star.remove(),speed);
-}
-setInterval(createShootingStar,1200);
+/* ================== Once 360 reached: lock interaction and show button (handled in finishReveal) ================== */
 
-// Moon Rotation
-let moon=document.getElementById('moon');
-let sun=document.getElementById('sun');
-let msg=document.getElementById('msg');
-let btn=document.getElementById('btn');
-let cross=document.getElementById('cross');
-let sky=document.getElementById('sky');
-let rotationIndicator=document.getElementById('rotationProgress');
-let scene=document.getElementById('scene');
-let sunRays=document.querySelector('.sun-rays');
-let birthdayPhase=document.getElementById('birthdayPhase');
-let happyText=document.getElementById('happyText');
+/* ================== Button clicks: 1 -> reveal cross, re-show button (phase 2 ready), 2 -> birthday phase ================== */
+let clickCount = 0;
+clickBtn.addEventListener('click', () => {
+  if (clickCount === 0) {
+    // cinematic cross reveal
+    clickBtn.style.opacity = 0;
+    clickBtn.disabled = true;
+    setTimeout(()=> clickBtn.style.display = 'none', 700);
 
-let isDragging=false;
-let rotationDeg=0;
-let lastX=0;
-let evolutionDone=false;
-let phaseTwoStarted=false;
+    // animate cross: pop & glow
+    cross.style.opacity = 1;
+    cross.style.transform = 'translate(-50%, -50%) scale(1.18)';
+    cross.style.transition = 'transform 1.6s cubic-bezier(.2,.9,.2,1), opacity 1.1s ease';
+    // inner bar highlight
+    cross.querySelector('.bar').style.background = '#fff7e0';
+    cross.querySelector('.bar').style.boxShadow = '0 10px 46px rgba(255,215,120,0.28)';
 
-moon.addEventListener('pointerdown',e=>{isDragging=true;lastX=e.clientX;});
-document.addEventListener('pointerup',()=>{isDragging=false;});
-document.addEventListener('pointermove',e=>{
-  if(!isDragging) return;
-  let deltaX=e.clientX-lastX;
-  lastX=e.clientX;
-  if(deltaX<0) return;
-  rotationDeg+=deltaX;
-  if(rotationDeg>360) rotationDeg=360;
-  moon.style.transform=`translate(-50%,-50%) rotate(${-rotationDeg}deg)`;
-  let totalLetters=msg.getAttribute('data-full') || msg.innerText;
-  msg.setAttribute('data-full',totalLetters);
-  let lettersToShow=Math.floor((rotationDeg/360)*totalLetters.length);
-  msg.innerHTML=totalLetters.substr(0,lettersToShow);
-  msg.style.opacity=lettersToShow>0?1:0;
-  sun.style.opacity=rotationDeg/360;
-  sun.style.transform=`scale(${0.35+0.65*(rotationDeg/360)})`;
-  sunRays.style.opacity=rotationDeg/360;
-  sunRays.style.transform=`translate(-50%,-50%) scale(${0.3+0.7*(rotationDeg/360)})`;
-  stars.forEach(s=>s.style.opacity=1-(rotationDeg/360));
-  moon.style.opacity=1-(rotationDeg/360);
-  rotationIndicator.style.width=(rotationDeg/360*100)+'%';
-  scene.style.transform=`scale(${1+rotationDeg/360*0.03}) translate(${rotationDeg/360*-15}px,${rotationDeg/360*-20}px)`;
-  if(rotationDeg===360 && !evolutionDone){
-    evolutionDone=true;
-    setTimeout(()=>{btn.style.opacity=1;},3000);
+    setTimeout(()=> {
+      cross.style.transform = 'translate(-50%,-50%) scale(1)';
+    }, 1600);
+
+    // after 3s re-show button that transitions to birthday phase
+    setTimeout(()=> {
+      clickBtn.innerText = "Click Here for Birthday!";
+      clickBtn.style.display = 'block';
+      // re-enable
+      clickBtn.disabled = false;
+      setTimeout(()=> clickBtn.style.opacity = 1, 60);
+      phaseTwoReady = true;
+    }, 3000);
+
+    clickCount = 1;
+  } else if (clickCount === 1 && phaseTwoReady && !phaseTwoStarted) {
+    // TRANSITION to birthday phase — hide scene elements and show birthday overlay + fireworks
+    phaseTwoStarted = true;
+    clickBtn.style.opacity = 0;
+    clickBtn.disabled = true;
+    setTimeout(()=> clickBtn.style.display='none', 600);
+
+    // elegantly hide the main scene (sun/msg/stars/moon fade away) but keep the cross
+    sun.style.transition = 'opacity 1.2s ease, transform 1.2s ease, top 1.2s ease';
+    sun.style.opacity = 0;
+    document.querySelectorAll('.letter').forEach(l => { l.style.opacity = 0; l.style.transform = 'translateY(18px)'; });
+    starsWrap.querySelectorAll('.star').forEach(s => { s.style.opacity = 0; });
+    moon.style.opacity = 0;
+
+    // reveal birthday overlay
+    setTimeout(()=>{
+      birthdayOverlay.style.opacity = 1;
+      // set background of overlay to bold IMAX-esque festive colors
+      birthdayOverlay.style.background = 'linear-gradient(180deg,#fffaf0,#fff1cc 40%, #ffe2b6 100%)';
+      // show big happy text with stronger color
+      happy.style.opacity = 1;
+      happy.style.transform = 'translate(-50%,-50%) scale(1)';
+    }, 900);
+
+    // fireworks loop - creative bursts
+    const fireLoop = setInterval(()=> {
+      spawnFireworksBurst();
+    }, 420);
+
+    // stop after a while? We can let it run — if you want to stop, call clearInterval(fireLoop)
+    clickCount = 2;
   }
 });
 
-// Firework generator
-function createFirework(){
-  let f=document.createElement('div');
-  f.className='firework';
-  f.style.top=(30+Math.random()*40)+'%';
-  f.style.left=(20+Math.random()*60)+'%';
-  scene.appendChild(f);
-  f.animate([
-    {transform:'scale(0)',opacity:1},
-    {transform:'scale(3)',opacity:0}
-  ],{duration:800,fill:'forwards'});
-  setTimeout(()=>f.remove(),800);
+/* ================== Fireworks ================== */
+function spawnFireworksBurst(){
+  // burst center in upper half
+  const cx = window.innerWidth * (0.2 + Math.random()*0.6);
+  const cy = window.innerHeight * (0.25 + Math.random()*0.25);
+  const colors = ['#ff0055','#ffd200','#00f7ff','#ff7b00','#c200ff'];
+  const particles = 12 + Math.floor(Math.random()*12);
+  for(let i=0;i<particles;i++){
+    const p = mk('div','fw');
+    const c = colors[Math.floor(Math.random()*colors.length)];
+    p.style.background = c;
+    p.style.left = (cx - 4) + 'px';
+    p.style.top = (cy - 4) + 'px';
+    document.getElementById('stage').appendChild(p);
+    // random direction + velocity
+    const angle = Math.random()*Math.PI*2;
+    const dist = 80 + Math.random()*260;
+    const dx = Math.cos(angle)*dist;
+    const dy = Math.sin(angle)*dist;
+    const dur = 700 + Math.random()*800;
+    p.animate([
+      { transform: 'translate(0,0) scale(0.3)', opacity:1, offset:0 },
+      { transform: `translate(${dx}px, ${dy}px) scale(1.2)`, opacity:0.2, offset:0.7 },
+      { transform: `translate(${dx*1.15}px, ${dy*1.15}px) scale(0.2)`, opacity:0 }
+    ], { duration: dur, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards' });
+    setTimeout(()=> p.remove(), dur + 40);
+  }
 }
 
-// Click Here Button → Cross & Birthday Phase
-btn.addEventListener('click',()=>{
-  if(!phaseTwoStarted){
-    btn.style.opacity=0;
-    setTimeout(()=>btn.style.display='none',700);
-    setTimeout(()=>{
-      cross.style.opacity=1;
-      cross.style.transform='translateX(-50%) scale(1.3)';
-    },700);
-    setTimeout(()=>{cross.style.transform='translateX(-50%) scale(1)';},2500);
-    setTimeout(()=>{
-      btn.innerText="Click Here for Birthday!";
-      btn.style.display='block';
-      btn.style.opacity=1;
-      phaseTwoStarted=true;
-    },3000);
-  } else {
-    // Birthday Phase
-    btn.style.opacity=0;
-    moon.style.opacity=0;
-    sun.style.opacity=0;
-    sunRays.style.opacity=0;
-    msg.style.opacity=0;
-    stars.forEach(s=>s.style.opacity=0);
-    birthdayPhase.style.opacity=1;
-    happyText.style.opacity=1;
-    happyText.style.transform='scale(1)';
-    // Fireworks repeatedly
-    setInterval(createFirework,300);
-  }
+/* ================== Minor animation loops (cloud drift, stars tweak) ================== */
+setInterval(()=> {
+  // move clouds slowly
+  cloudsWrap.querySelectorAll('.cloud').forEach((c, idx) => {
+    let left = parseFloat(c.style.left) || 0;
+    left += (0.03 + (idx%3)*0.02);
+    if (left > 120) left = -40;
+    c.style.left = left + '%';
+  });
+}, 60);
+
+setInterval(()=> {
+  // small star breathing if present
+  starsWrap.querySelectorAll('.star').forEach((s,i) => {
+    // only if still visible
+    if (parseFloat(s.style.opacity || 1) > 0.02) {
+      s.style.transform = `scale(${0.8 + 0.6*Math.abs(Math.sin((Date.now()/1200) + i))})`;
+    }
+  });
+}, 200);
+
+/* ================== Accessibility / on-load UX ================== */
+window.addEventListener('resize', () => {
+  // nothing heavy needed but keep fireworks in-bounds on resize
 });
 
-// Cloud drift parallax
-setInterval(()=>{clouds.forEach(cloud=>{let left=parseFloat(cloud.style.left);left+=cloud.speed;if(left>110) left=-20;cloud.style.left=left+'%';});},50);
+/* small hint: animate a soft sun beam when near completion for additional cinematic feel */
+let sunPulseTick = 0;
+setInterval(()=> {
+  if (rotationDeg > 0) {
+    sunPulseTick++;
+    // apply a tiny breathe to sun scale when visible
+    const t = Math.min(1, rotationDeg/ROTATION_NEEDED);
+    const breathe = 1 + Math.sin(Date.now()/900)*0.006 * t;
+    sun.style.transform = `scale(${(0.6 + 0.8*t) * breathe})`;
+    anam.style.transform = `translate(-50%,-50%) rotate(${Math.sin(Date.now()/1200)*0.3}deg) scale(${1 + 0.06*t})`;
+  }
+}, 90);
 
-// Firefly flicker
-setInterval(()=>{fireflies.forEach(f=>f.style.opacity=Math.random());},200);
+/* ================== Initial instructions (optional) ================== */
+// You can show a very subtle pointer cursor hint on the moon (handled by browser since moon has pointer cursor)
+
+/* =============== Done =============== */
 </script>
 </body>
 </html>

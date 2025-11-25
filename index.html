@@ -58,6 +58,7 @@
     align-items:center;
     justify-content:center;
     transform:translate(-50%,-50%) rotate(0deg);
+    touch-action: none; /* prevent default touch panning while dragging */
   }
   #moon:active{cursor:grabbing}
   #moon .flare{position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,245,200,0));filter:blur(36px);pointer-events:none}
@@ -211,6 +212,8 @@ let lastX = 0;
 let phaseTwoReady = false;
 let phaseTwoStarted = false;
 let clickCount = 0;
+let fireworksTimer = null;
+let fireworksActive = false;
 
 /* ---------------- Build scene: stars & clouds ---------------- */
 function makeStars(n=160){
@@ -271,21 +274,27 @@ function spawnShootingCorner(){
   ], { duration, easing:'cubic-bezier(.2,.7,.2,1)', iterations:1, fill:'forwards' });
   setTimeout(()=> s.remove(), duration+80);
 }
-setInterval(spawnShootingCorner, 1100 + Math.random()*800);
+// keep a spaced interval but safe
+let shootingInterval = setInterval(spawnShootingCorner, 1400 + Math.random()*800);
 
-/* ---------------- Drag handling (left-to-right only) ---------------- */
+/* ---------------- Drag handling (pointer/touch-friendly) ---------------- */
+/* pointer events are used, touch-action:none on the moon prevents page panning */
+function getClientX(e){
+  return (e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX) ?? lastX);
+}
 function onPointerDown(e){
   if (locked) return;
   dragging = true;
-  lastX = e.clientX ?? (e.touches && e.touches[0].clientX) ?? 0;
+  lastX = getClientX(e);
   try{ e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId); }catch(err){}
 }
-function onPointerUp(){
+function onPointerUp(e){
   dragging = false;
+  try{ e.target && e.target.releasePointerCapture && e.target.releasePointerCapture(e.pointerId); }catch(err){}
 }
 function onPointerMove(e){
   if (!dragging || locked) return;
-  const clientX = e.clientX ?? (e.touches && e.touches[0].clientX) ?? lastX;
+  const clientX = getClientX(e);
   const dx = clientX - lastX;
   lastX = clientX;
   if (dx <= 0) return;
@@ -298,8 +307,20 @@ function onPointerMove(e){
 }
 
 moon.addEventListener('pointerdown', onPointerDown);
-document.addEventListener('pointerup', onPointerUp);
-document.addEventListener('pointermove', onPointerMove);
+window.addEventListener('pointerup', onPointerUp);
+window.addEventListener('pointermove', onPointerMove);
+
+// make keyboard accessible for the moon
+moon.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ' ) {
+    e.preventDefault();
+    if (!locked) {
+      rotationDeg = ROTATION_NEEDED;
+      finishReveal();
+      updateSceneByRotation(1);
+    }
+  }
+});
 
 /* ---------------- finish reveal (shows first button after hold) ---------------- */
 function finishReveal(){
@@ -312,7 +333,7 @@ function finishReveal(){
     clickBtn.disabled = false;
     clickBtn.setAttribute('aria-hidden','false');
     clickBtn.focus();
-  }, 1800);
+  }, 1400);
 }
 
 /* ---------------- update visuals by progress (t:0..1) ---------------- */
@@ -400,12 +421,14 @@ clickBtn.addEventListener('click', () => {
   clickBtn.style.opacity = 0;
   clickBtn.disabled = true;
   clickBtn.style.pointerEvents = 'none';
+  clickBtn.setAttribute('aria-hidden','true');
 
   // Cinematic breathing before cross reveal
   setTimeout(() => {
     // reveal cross at top-center with slow Nolan push
     cross.style.opacity = 1;
     cross.style.transform = 'translateX(-50%) scale(1)';
+    cross.setAttribute('aria-hidden','false');
     // slight camera push-in (Nolan camera push)
     stage.style.transition = 'transform 2.4s cubic-bezier(.2,.9,.2,1)';
     stage.style.transform = 'scale(1.04)';
@@ -419,7 +442,9 @@ clickBtn.addEventListener('click', () => {
     clickBtn.style.display = 'block';
     clickBtn.style.opacity = 1;
     clickBtn.disabled = false;
+    clickBtn.style.pointerEvents = 'auto';
     clickBtn.setAttribute('aria-hidden','false');
+    clickBtn.focus();
     clickCount = 1;
   }, 3600);
 });
@@ -433,6 +458,7 @@ clickBtn.addEventListener('click', (e) => {
   // hide button
   clickBtn.style.opacity = 0;
   clickBtn.disabled = true;
+  clickBtn.setAttribute('aria-hidden','true');
   setTimeout(()=> clickBtn.style.display='none', 600);
 
   // gently fade main scene elements but KEEP cross visible
@@ -445,18 +471,26 @@ clickBtn.addEventListener('click', (e) => {
   setTimeout(()=> {
     birthdayOverlay.style.opacity = 1;
     birthdayOverlay.style.background = 'linear-gradient(180deg,#fffaf0,#fff1cc 40%, #ffe2b6 100%)';
+    birthdayOverlay.setAttribute('aria-hidden','false');
     happy.style.opacity = 1;
     happy.style.transform = 'translate(-50%,-50%) scale(1)';
+    happy.setAttribute('aria-hidden','false');
   }, 900);
 
-  // start fireworks loop
-  const fireLoop = setInterval(()=> spawnFireworksBurst(), 420);
-
-  // keep fireworks running — optional stop could be added
+  // start fireworks loop (with auto-stop after 10s)
+  fireworksActive = true;
+  spawnFireworksBurst(); // immediate burst
+  fireworksTimer = setInterval(()=> spawnFireworksBurst(), 420);
+  // stop after 10 seconds to avoid infinite background activity
+  setTimeout(()=> {
+    if (fireworksTimer) clearInterval(fireworksTimer);
+    fireworksActive = false;
+  }, 10000);
 });
 
 /* ---------------- Fireworks ---------------- */
 function spawnFireworksBurst(){
+  if (!fireworksActive && fireworksTimer === null) return;
   const cx = window.innerWidth * (0.2 + Math.random()*0.6);
   const cy = window.innerHeight * (0.25 + Math.random()*0.25);
   const colors = ['#ff0055','#ffd200','#00f7ff','#ff7b00','#c200ff'];
@@ -482,33 +516,42 @@ function spawnFireworksBurst(){
   }
 }
 
-/* ---------------- Minor animation loops ---------------- */
-setInterval(()=> {
-  cloudsWrap.querySelectorAll('.cloud').forEach((c, idx) => {
-    let left = parseFloat(c.style.left) || 0;
-    left += (0.03 + (idx%3)*0.02);
-    if (left > 120) left = -40;
-    c.style.left = left + '%';
-  });
-}, 60);
+/* ---------------- Minor animation loops (requestAnimationFrame friendly) ---------------- */
+(function cloudsLoop(){
+  const clouds = cloudsWrap.querySelectorAll('.cloud');
+  if (clouds.length > 0){
+    clouds.forEach((c, idx) => {
+      let left = parseFloat(c.style.left) || 0;
+      left += (0.03 + (idx%3)*0.02);
+      if (left > 120) left = -40;
+      c.style.left = left + '%';
+    });
+  }
+  requestAnimationFrame(cloudsLoop);
+})();
 
-setInterval(()=> {
-  starsWrap.querySelectorAll('.star').forEach((s,i) => {
-    if (parseFloat(s.style.opacity || 1) > 0.02) {
-      s.style.transform = `scale(${0.8 + 0.6*Math.abs(Math.sin((Date.now()/1200) + i))})`;
-    }
-  });
-}, 200);
+(function starsLoop(){
+  const list = starsWrap.querySelectorAll('.star');
+  if (list.length > 0){
+    list.forEach((s,i) => {
+      if (parseFloat(s.style.opacity || 1) > 0.02) {
+        s.style.transform = `scale(${0.8 + 0.6*Math.abs(Math.sin((Date.now()/1200) + i))})`;
+      }
+    });
+  }
+  setTimeout(()=> requestAnimationFrame(starsLoop), 150); // modest throttle
+})();
 
-/* sun breathe */
-setInterval(()=> {
-  if (rotationDeg > 0) {
+/* sun breathe (throttled with rAF) */
+(function sunBreathe(){
+  if (rotationDeg > 0){
     const t = Math.min(1, rotationDeg/ROTATION_NEEDED);
     const breathe = 1 + Math.sin(Date.now()/900)*0.006 * t;
     sun.style.transform = `scale(${(0.6 + 0.8*t) * breathe})`;
     anam.style.transform = `translate(-50%,-50%) rotate(${Math.sin(Date.now()/1200)*0.3}deg) scale(${1 + 0.06*t})`;
   }
-}, 90);
+  setTimeout(()=> requestAnimationFrame(sunBreathe), 90);
+})();
 
 /* initial hint pulse on moon */
 moon.animate([
@@ -517,9 +560,10 @@ moon.animate([
   { transform: 'translate(-50%,-50%) scale(1)' }
 ], { duration:2200, easing:'ease-in-out', iterations:Infinity });
 
-/* keyboard accessibility */
+/* keyboard accessibility (global) */
 window.addEventListener('keydown', (e) => {
   if (e.code === 'Space') {
+    e.preventDefault();
     if (!locked) {
       rotationDeg = ROTATION_NEEDED;
       finishReveal();
@@ -533,8 +577,20 @@ window.addEventListener('keydown', (e) => {
 });
 
 /* responsive safety */
-window.addEventListener('resize', ()=>{ /* no heavy work */ });
+let resizeTimeout = null;
+window.addEventListener('resize', ()=>{
+  // lightweight: avoid frequent heavy recalculations
+  if (resizeTimeout) clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(()=> {
+    // small adaptions could go here later (kept minimal)
+  }, 150);
+});
 
+/* cleanup on page unload to avoid timers sticking around */
+window.addEventListener('beforeunload', ()=>{
+  if (shootingInterval) clearInterval(shootingInterval);
+  if (fireworksTimer) clearInterval(fireworksTimer);
+});
 </script>
 </body>
 </html>

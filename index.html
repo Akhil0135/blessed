@@ -3,28 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>IMAX Nolan Cinematic Moon-to-Day → Birthday</title>
+<title>IMAX Nolan Cinematic Moon-to-Birthday</title>
 <style>
 html,body{margin:0;height:100%;overflow:hidden;font-family:"Cinzel",serif;background:#0a0a1f;}
 #scene{position:relative;width:100%;height:100%;overflow:hidden;transform-origin:center center;transition:transform 0.1s;filter:contrast(1.1) brightness(1.05) saturate(1.15);}
-#sky{position:absolute;inset:0;background:linear-gradient(to bottom,#0a0a1f,#1b0a3f 40%,#2b0055 70%);transition:background 1.5s ease;}
-#moon{position:absolute;width:180px;height:180px;border-radius:50%;background:#d9d8ff;box-shadow:0 0 80px #c5c4ff,0 0 150px rgba(255,255,255,0.3);top:20%;left:18%;transform:translate(-50%,-50%) rotate(0deg);cursor:pointer;z-index:5;transition:transform 0.1s linear,opacity 1s;filter:drop-shadow(0 0 40px #d9d8ff);}
-#sun{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#ffd27f,#ff9a00);box-shadow:0 0 170px #ffb54c,0 0 300px #ff7b00;opacity:0;top:5%;right:5%;transform:scale(0.35);transition:opacity 1.5s ease, transform 1.5s ease;z-index:3;filter:drop-shadow(0 0 100px #ffd27f);}
+#sky{position:absolute;inset:0;background:linear-gradient(to bottom,#0a0a1f,#1b0a3f 40%,#2b0055 70%);transition:background 1.5s ease;pointer-events:none;}
+#moon{position:absolute;width:180px;height:180px;border-radius:50%;background:#d9d8ff;box-shadow:0 0 80px #c5c4ff,0 0 150px rgba(255,255,255,0.3);top:20%;left:18%;transform:translate(-50%,-50%) rotate(0deg);cursor:pointer;z-index:5;transition:transform 0.1s linear,opacity 1s;filter:drop-shadow(0 0 40px #d9d8ff);pointer-events:auto;}
+#sun{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#ffd27f,#ff9a00);box-shadow:0 0 170px #ffb54c,0 0 300px #ff7b00;opacity:0;top:5%;right:5%;transform:scale(0.35);transition:opacity 1.5s ease, transform 1.5s ease;z-index:3;filter:drop-shadow(0 0 100px #ffd27f);pointer-events:none;}
 .sun-rays{position:absolute;top:50%;left:50%;width:1000px;height:1000px;background:radial-gradient(circle,#fff5 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none;filter:blur(40px);transition:transform 1.5s, opacity 1.5s;}
-#msg{position:absolute;width:90%;text-align:center;bottom:18%;color:#ffe6aa;font-size:2rem;font-weight:700;opacity:0;text-shadow:0 0 45px #ffb84c,0 0 80px rgba(255,200,100,0.5);transition:opacity 0.1s;}
-#btn{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);background:linear-gradient(to right,#6a00ff,#c200ff);color:#fff;font-size:1.25rem;padding:14px 34px;border:none;border-radius:16px;cursor:pointer;box-shadow:0 0 25px #9400ff;opacity:0;transition:opacity 1s;}
-#cross{position:absolute;left:50%;top:10%;transform:translateX(-50%) scale(0.75);width:0;height:0;opacity:0;transition:opacity 1.5s, transform 1.5s;}
+#msg{position:absolute;width:90%;text-align:center;bottom:18%;color:#ffe6aa;font-size:2rem;font-weight:700;opacity:0;text-shadow:0 0 45px #ffb84c,0 0 80px rgba(255,200,100,0.5);transition:opacity 0.1s;pointer-events:none;}
+#btn{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);background:linear-gradient(to right,#6a00ff,#c200ff);color:#fff;font-size:1.25rem;padding:14px 34px;border:none;border-radius:16px;cursor:pointer;box-shadow:0 0 25px #9400ff;opacity:0;transition:opacity 1s;z-index:10;}
+#cross{position:absolute;left:50%;top:10%;transform:translateX(-50%) scale(0.75);width:0;height:0;opacity:0;transition:opacity 1.5s, transform 1.5s;pointer-events:none;}
 .cross-vertical{position:absolute;left:50%;transform:translateX(-50%);width:24px;height:260px;background:#ffd700;box-shadow:0 0 60px #ffe600;}
 .cross-horizontal{position:absolute;left:50%;transform:translateX(-50%);width:180px;height:24px;top:calc(260px*0.35);background:#ffd700;box-shadow:0 0 60px #ffe600;}
-#rotationIndicator{position:absolute;bottom:5%;width:90%;left:50%;transform:translateX(-50%);height:6px;background:rgba(255,255,255,0.2);border-radius:3px;}
+#rotationIndicator{position:absolute;bottom:5%;width:90%;left:50%;transform:translateX(-50%);height:6px;background:rgba(255,255,255,0.2);border-radius:3px;pointer-events:none;}
 #rotationProgress{height:100%;width:0%;background:#ffe6aa;border-radius:3px;transition:width 0.1s linear;}
 .star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;opacity:0.8;animation:twinkle 2s infinite alternate;filter:blur(1px);}
 @keyframes twinkle{0%{opacity:0.3;}50%{opacity:1;}100%{opacity:0.3;}}
 .cloud{position:absolute;width:200px;height:80px;background:rgba(255,255,255,0.05);border-radius:50%;filter:blur(12px);}
 .firefly{position:absolute;width:4px;height:4px;background:#fffa88;border-radius:50%;opacity:0;box-shadow:0 0 20px #fffa88;}
-.confetti{position:absolute;width:6px;height:12px;border-radius:2px;animation:fall linear forwards;}
-@keyframes fall{0%{transform:translateY(0) rotate(0deg);}100%{transform:translateY(100vh) rotate(360deg);opacity:0;}}
-#birthdayPhase{position:absolute;inset:0;background:linear-gradient(to bottom,#ffccff,#ffe6aa);opacity:0;z-index:10;}
+#birthdayPhase{position:absolute;inset:0;background:linear-gradient(to bottom,#ffddaa,#ffb3aa);opacity:0;transition:opacity 2s;pointer-events:none;z-index:2;}
 </style>
 </head>
 <body>
@@ -80,7 +78,29 @@ for(let i=0;i<20;i++){
   fireflies.push(f);
 }
 
-// Moon rotation
+// Shooting stars
+function createShootingStar(){
+  let star=document.createElement('div');
+  star.style.position='absolute';
+  star.style.width='3px';
+  star.style.height='3px';
+  star.style.background='white';
+  star.style.top='-10px';
+  star.style.left=Math.random()*50+'%';
+  star.style.opacity=0.8;
+  star.style.borderRadius='50%';
+  star.style.transform='rotate(45deg)';
+  document.getElementById('scene').appendChild(star);
+  let speed=2000+Math.random()*2000;
+  star.animate([
+    {transform:`translate(0,0) rotate(45deg)`,opacity:1},
+    {transform:`translate(${window.innerWidth/2}px,${window.innerHeight}px) rotate(45deg)`,opacity:0}
+  ],{duration:speed,iterations:1,fill:'forwards'});
+  setTimeout(()=>star.remove(),speed);
+}
+setInterval(createShootingStar,1200);
+
+// Moon Rotation
 let moon=document.getElementById('moon');
 let sun=document.getElementById('sun');
 let msg=document.getElementById('msg');
@@ -96,7 +116,7 @@ let isDragging=false;
 let rotationDeg=0;
 let lastX=0;
 let evolutionDone=false;
-let btnClickCount=0;
+let phaseTwoStarted=false;
 
 moon.addEventListener('pointerdown',e=>{isDragging=true;lastX=e.clientX;});
 document.addEventListener('pointerup',()=>{isDragging=false;});
@@ -117,63 +137,57 @@ document.addEventListener('pointermove',e=>{
   sun.style.transform=`scale(${0.35+0.65*(rotationDeg/360)})`;
   sunRays.style.opacity=rotationDeg/360;
   sunRays.style.transform=`translate(-50%,-50%) scale(${0.3+0.7*(rotationDeg/360)})`;
-  stars.forEach(star=>star.style.opacity=1-(rotationDeg/360));
+  stars.forEach(s=>s.style.opacity=1-(rotationDeg/360));
   moon.style.opacity=1-(rotationDeg/360);
   rotationIndicator.style.width=(rotationDeg/360*100)+'%';
   scene.style.transform=`scale(${1+rotationDeg/360*0.03}) translate(${rotationDeg/360*-15}px,${rotationDeg/360*-20}px)`;
   if(rotationDeg===360 && !evolutionDone){
     evolutionDone=true;
-    setTimeout(()=>{btn.style.opacity=1;btn.style.display='block';},600);
+    setTimeout(()=>{btn.style.opacity=1;},3000);
   }
 });
 
-// Click Here button logic
-btn.addEventListener('click', () => {
-  btnClickCount++;
-  if(btnClickCount===1){
-    // First click → show cross
+// Click Here Button → Cross & Birthday Phase
+btn.addEventListener('click',()=>{
+  if(!phaseTwoStarted){
     btn.style.opacity=0;
-    setTimeout(()=>{btn.style.display='none';},700);
+    setTimeout(()=>btn.style.display='none',700);
     setTimeout(()=>{
       cross.style.opacity=1;
       cross.style.transform='translateX(-50%) scale(1.3)';
     },700);
-    // Reappear after 3 seconds
+    setTimeout(()=>{cross.style.transform='translateX(-50%) scale(1)';},2500);
+    // Phase 2 button
     setTimeout(()=>{
       btn.innerText="Click Here for Birthday!";
       btn.style.display='block';
       btn.style.opacity=1;
-    },3700);
-  } else if(btnClickCount===2){
+      phaseTwoStarted=true;
+    },3000);
+  } else {
     // Birthday Phase
     btn.style.opacity=0;
-    setTimeout(()=>{btn.style.display='none';},700);
     moon.style.opacity=0;
-    msg.style.opacity=0;
     sun.style.opacity=0;
     sunRays.style.opacity=0;
-    stars.forEach(star=>star.style.opacity=0);
+    msg.style.opacity=0;
+    stars.forEach(s=>s.style.opacity=0);
     birthdayPhase.style.opacity=1;
-    // Confetti
-    for(let i=0;i<120;i++){
-      let conf=document.createElement('div');
-      conf.className='confetti';
-      conf.style.left=Math.random()*100+'%';
-      conf.style.background=`hsl(${Math.random()*360},100%,50%)`;
-      conf.style.animationDuration=(2+Math.random()*2)+'s';
-      scene.appendChild(conf);
-    }
-    // Cross glowing
-    setInterval(()=>{
-      cross.style.filter=`drop-shadow(0 0 ${20+Math.random()*40}px #fff200)`;
-    },100);
   }
 });
 
-// Cloud drift
-setInterval(()=>{clouds.forEach(cloud=>{let left=parseFloat(cloud.style.left);left+=cloud.speed;if(left>110) left=-20;cloud.style.left=left+'%';});},50);
+// Cloud drift parallax
+setInterval(()=>{
+  clouds.forEach(cloud=>{
+    let left=parseFloat(cloud.style.left);
+    left+=cloud.speed;
+    if(left>110) left=-20;
+    cloud.style.left=left+'%';
+  });
+},50);
+
 // Firefly flicker
-setInterval(()=>{fireflies.forEach(f=>{f.style.opacity=Math.random();});},200);
+setInterval(()=>{fireflies.forEach(f=>f.style.opacity=Math.random());},200);
 </script>
 </body>
 </html>

@@ -28,7 +28,6 @@ body {
   color: var(--gold);
   font-family: "Cinzel", serif;
   overflow: hidden;
-  animation: camPush 18s ease-out forwards;
 }
 
 /* ------------------- IMAX Letterbox Bars ------------------- */
@@ -44,16 +43,16 @@ body {
 .top-bar { top: 0; }
 .bottom-bar { bottom: 0; }
 
-/* ------------------- The ONLY Text ------------------- */
+/* ------------------- Text at Top Center ------------------- */
 h1 {
   position: absolute;
-  top: 50%;
+  top: 110px; /* Slightly below top bar */
   left: 50%;
-  transform: translate(-50%, -50%) translateY(20px);
+  transform: translateX(-50%);
 
-  font-size: 4.6rem;
+  font-size: 3.8rem;
   font-weight: 600;
-  letter-spacing: 8px;
+  letter-spacing: 7px;
 
   text-align: center;
   color: var(--gold);
@@ -63,19 +62,13 @@ h1 {
     0 0 30px var(--glow-soft);
 
   opacity: 0;
-  animation: fadeIn 3s ease-out forwards;
-}
-
-/* ------------------- Light camera push ------------------- */
-@keyframes camPush {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.05); }
+  animation: fadeIn 2.5s ease-out forwards;
 }
 
 /* ------------------- Text Reveal ------------------- */
 @keyframes fadeIn {
-  0% { opacity: 0; transform: translate(-50%, -50%) translateY(40px); }
-  100% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 </style>
 </head>

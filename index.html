@@ -265,5 +265,37 @@ function updateScene(){
     document.body.style.transform=`scale(${1+evo*0.03})`;
 }
 </script>
+  <div id="dragMessage" style="position:absolute; bottom:10%; width:100%; text-align:center; font-size:1.6rem; color:#fff; letter-spacing:2px; font-family:'Cinzel',serif; opacity:0; pointer-events:none;">On this calm birthday eve so new, God softly whispers, my plans are made for you.</div>
+
+  <script>
+    const dragMsg = document.getElementById('dragMessage');
+    const fullText = dragMsg.innerText;
+    dragMsg.innerText = '';
+
+    let isDragging = false;
+    let dragStartX = 0;
+
+    moon.addEventListener('mousedown', (e)=>{
+      isDragging = true;
+      dragStartX = e.clientX;
+    });
+
+    window.addEventListener('mouseup', ()=>{
+      isDragging = false;
+    });
+
+    window.addEventListener('mousemove', (e)=>{
+      if(!isDragging) return;
+
+      const dx = Math.min(Math.max(e.clientX - dragStartX, 0), 300);
+      const progress = dx / 300;
+
+      const charsToShow = Math.floor(fullText.length * progress);
+      dragMsg.innerText = fullText.substring(0, charsToShow);
+      dragMsg.style.opacity = progress;
+
+      moon.style.transform = `translate(${dx}px, 0px)`;
+    });
+  </script>
 </body>
 </html>

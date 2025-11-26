@@ -6,7 +6,7 @@
 <title>God Bless You — IMAX Vision</title>
 
 <style>
-/* ===== IMAX + NOLAN COLOR PALETTE ===== */
+/* ===== IMAX + NOLAN COLORS ===== */
 :root {
   --bg-deep: #050508;
   --bg-soft: #070710;
@@ -15,112 +15,109 @@
 }
 
 /* ===== RESET ===== */
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  height: 100vh;
+*{margin:0; padding:0; box-sizing:border-box;}
+body{
+  height:100vh;
   background: radial-gradient(circle at center, var(--bg-soft), var(--bg-deep));
-  font-family: "Cinzel", serif;
+  font-family:"Cinzel", serif;
   color: var(--gold);
-  overflow: hidden;
+  overflow:hidden;
 }
 
-/* ===== IMAX LETTERBOXES ===== */
-.top-bar, .bottom-bar {
-  position: fixed;
-  left: 0; width: 100%; height: 90px;
-  background: rgba(0,0,0,0.92);
-  z-index: 10;
+/* ===== IMAX BARS ===== */
+.top-bar,.bottom-bar{
+  position: fixed; left:0; width:100%; height:90px;
+  background: rgba(0,0,0,0.92); z-index:50;
 }
-.top-bar { top: 0; }
-.bottom-bar { bottom: 0; }
+.top-bar{top:0;} .bottom-bar{bottom:0;}
 
 /* ===== MAIN TEXT ===== */
-h1 {
-  position: absolute;
-  top: 105px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 4rem;
-  font-weight: 600;
-  letter-spacing: 8px;
-  text-shadow: 0 0 9px var(--glow), 0 0 22px var(--glow);
-  opacity: 0;
-  animation: textReveal 2.5s ease-out forwards;
+h1{
+  position:absolute;
+  top:105px; left:50%;
+  transform:translateX(-50%);
+  font-size:4rem; font-weight:600; letter-spacing:8px;
+  text-shadow:0 0 9px var(--glow),0 0 22px var(--glow);
+  opacity:0;
+  animation:textReveal 2.5s ease-out forwards;
 }
 
-@keyframes textReveal {
-  0% { opacity:0; transform:translateX(-50%) translateY(-18px); }
-  100% { opacity:1; transform:translateX(-50%) translateY(0); }
-}
-
-/* ===== STARS ===== */
-.star {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  opacity: 0;
-  animation: twinkle 4s infinite ease-in-out;
-}
-
-@keyframes twinkle {
-  0%   { opacity: 0.0; }
-  40%  { opacity: 0.35; }
-  70%  { opacity: 0.6; }
-  100% { opacity: 0.1; }
+@keyframes textReveal{
+  0%{opacity:0; transform:translateX(-50%) translateY(-18px);}
+  100%{opacity:1; transform:translateX(-50%) translateY(0);}
 }
 
 /* ===== MOON ===== */
-.moon {
-  position: absolute;
-  top: 130px;
-  left: 90px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ffffff, #d9d7d1, #999897);
-  box-shadow: 0 0 40px rgba(255,255,255,0.18);
-  opacity: 0;
-  transform: scale(0.6);
-  animation: moonAppear 3s ease-out forwards;
-  animation-delay: 2s; /* evolves after 2 seconds */
+.moon{
+  position:absolute; top:130px; left:90px;
+  width:140px; height:140px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff,#d9d7d1,#999897);
+  box-shadow:0 0 40px rgba(255,255,255,0.18);
+  opacity:0; transform:scale(0.6);
+  animation:moonAppear 3s ease-out forwards;
+  animation-delay:2s;
+  z-index:20;
 }
 
-@keyframes moonAppear {
-  0% { opacity:0; transform:scale(0.6) translateY(-20px); }
-  100% { opacity:1; transform:scale(1) translateY(0); }
+@keyframes moonAppear{
+  0%{opacity:0; transform:scale(0.6) translateY(-20px);}
+  100%{opacity:1; transform:scale(1) translateY(0);}
+}
+
+/* ===== STARS CONTAINER ===== */
+.stars{
+  position:absolute; inset:0;
+  pointer-events:none; z-index:5;
+  opacity:0;
+  animation:starsAppear 1.5s ease-out forwards;
+  animation-delay:2s;
+}
+
+/* ===== STAR ELEMENT ===== */
+.star{
+  position:absolute; background:white; border-radius:50%;
+  width:2px; height:2px; opacity:0.8;
+  animation:twinkle 2s infinite ease-in-out;
+}
+
+@keyframes twinkle{
+  0%,100%{opacity:0.3;}
+  50%{opacity:1;}
+}
+
+@keyframes starsAppear{
+  0%{opacity:0;}
+  100%{opacity:1;}
 }
 </style>
 </head>
-
 <body>
 
 <div class="top-bar"></div>
 
 <h1>GOD BLESS YOU</h1>
 
-<!-- Moon (appears after 2 seconds) -->
 <div class="moon"></div>
+
+<div class="stars" id="starsContainer"></div>
 
 <div class="bottom-bar"></div>
 
 <script>
-/* ===== GENERATE SUBTLE PRESTIGE-STYLE STARS ===== */
-const starCount = 70;  // controlled, premium look
-for(let i=0; i<starCount; i++){
+/* ===== GENERATE TWINKLING STARS ===== */
+const starsContainer = document.getElementById("starsContainer");
+const starCount = 120; // controlled, visible
+
+for(let i=0;i<starCount;i++){
   let star = document.createElement("div");
   star.classList.add("star");
-
-  let size = Math.random()*2 + 1; // very small stars
+  let size = Math.random()*2 + 1;
   star.style.width = size + "px";
   star.style.height = size + "px";
-
   star.style.top = Math.random()*100 + "vh";
   star.style.left = Math.random()*100 + "vw";
-
-  star.style.animationDelay = (Math.random()*4) + "s";
-
-  document.body.appendChild(star);
+  star.style.animationDelay = (Math.random()*2) + "s";
+  starsContainer.appendChild(star);
 }
 </script>
 

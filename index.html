@@ -3,17 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GOD BLESS YOU — IMAX Divine</title>
+<title>GOD BLESS YOU — IMAX Nolan</title>
 
 <style>
-/* ------------------- IMAX / NOLAN Palette ------------------- */
+/* ------------------- IMAX / Nolan Grade ------------------- */
 :root {
-  --bg-deep: #010109;
-  --bg-soft: #0a0a15;
-  --gold: #ffe9c7;
-  --glow-1: rgba(255,230,180,0.9);
-  --glow-2: rgba(255,220,150,0.45);
-  --beam: rgba(255,235,170,0.15);
+  --bg-top: #0a0a14;
+  --bg-bottom: #020208;
+  --gold: #f7dfb5;
+  --glow-soft: rgba(255,220,150,0.35);
+  --glow-strong: rgba(255,220,150,0.75);
 }
 
 /* ------------------- Reset ------------------- */
@@ -25,14 +24,14 @@
 
 body {
   height: 100vh;
-  background: radial-gradient(circle at center, var(--bg-soft), var(--bg-deep));
-  overflow: hidden;
-  font-family: "Cinzel", serif;
+  background: linear-gradient(to bottom, var(--bg-top), var(--bg-bottom));
   color: var(--gold);
-  animation: cameraPush 18s ease-out forwards;
+  font-family: "Cinzel", serif;
+  overflow: hidden;
+  animation: camPush 18s ease-out forwards;
 }
 
-/* ------------------- Cinematic IMAX Bars ------------------- */
+/* ------------------- IMAX Letterbox Bars ------------------- */
 .top-bar, .bottom-bar {
   position: fixed;
   left: 0;
@@ -40,133 +39,43 @@ body {
   height: 90px;
   background: rgba(0,0,0,0.88);
   backdrop-filter: blur(4px);
-  z-index: 99;
+  z-index: 10;
 }
 .top-bar { top: 0; }
 .bottom-bar { bottom: 0; }
 
-/* ------------------- Divine Light Beam ------------------- */
-.beam {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  width: 220px;
-  height: 100vh;
-  transform: translateX(-50%);
-  background: linear-gradient(to bottom, var(--beam), transparent 80%);
-  filter: blur(35px);
-  opacity: 0;
-  animation: beamFade 3s ease-out 1.5s forwards;
-  pointer-events: none;
-}
-
-/* ------------------- Divine Aura Halo ------------------- */
-.halo {
-  position: fixed;
-  top: 150px;
-  left: 50%;
-  width: 500px;
-  height: 500px;
-  transform: translateX(-50%);
-  background: radial-gradient(circle, var(--glow-1), transparent 70%);
-  filter: blur(45px);
-  opacity: 0;
-  animation: haloGlow 4s ease-out 2s forwards;
-  pointer-events: none;
-}
-
-/* ------------------- Main Text ------------------- */
+/* ------------------- The ONLY Text ------------------- */
 h1 {
   position: absolute;
-  top: 120px;
-  width: 100%;
-  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateY(20px);
 
-  font-size: 4.2rem;
+  font-size: 4.6rem;
   font-weight: 600;
-  letter-spacing: 7px;
+  letter-spacing: 8px;
 
+  text-align: center;
   color: var(--gold);
+
   text-shadow:
-    0 0 12px var(--glow-1),
-    0 0 28px var(--glow-2),
-    0 0 55px var(--glow-2);
+    0 0 15px var(--glow-strong),
+    0 0 30px var(--glow-soft);
 
   opacity: 0;
-  transform: translateY(-40px);
-  animation: textReveal 3s ease-out forwards;
+  animation: fadeIn 3s ease-out forwards;
 }
 
-/* ------------------- Fog ------------------- */
-.fog {
-  position: fixed;
-  bottom: 0;
-  width: 140%;
-  height: 60%;
-  left: -20%;
-  background: url("https://i.imgur.com/8UG7ZQf.png");
-  opacity: 0.18;
-  filter: blur(3px);
-  animation: fogMove 20s linear infinite;
-  pointer-events: none;
-}
-
-/* ------------------- Particles ------------------- */
-.particles {
-  position: fixed;
-  inset: 0;
-  background: url("https://i.imgur.com/h8R3y7R.png");
-  mix-blend-mode: screen;
-  opacity: 0.1;
-  animation: particlesMove 12s linear infinite;
-  pointer-events: none;
-}
-
-/* ------------------- Film Grain ------------------- */
-.grain {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image: url("https://i.imgur.com/4NJl9tP.png");
-  opacity: 0.07;
-  mix-blend-mode: overlay;
-  animation: grainShift 1s steps(8) infinite;
-}
-
-/* ------------------- Animations ------------------- */
-@keyframes textReveal {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes haloGlow {
-  to { opacity: 1; }
-}
-
-@keyframes beamFade {
-  to { opacity: 1; }
-}
-
-@keyframes fogMove {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-20%); }
-}
-
-@keyframes particlesMove {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-6%); }
-}
-
-@keyframes grainShift {
-  0% { transform: translate(0,0); }
-  100% { transform: translate(-12px,-12px); }
-}
-
-@keyframes cameraPush {
+/* ------------------- Light camera push ------------------- */
+@keyframes camPush {
   0% { transform: scale(1); }
-  100% { transform: scale(1.06); }
+  100% { transform: scale(1.05); }
+}
+
+/* ------------------- Text Reveal ------------------- */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translate(-50%, -50%) translateY(40px); }
+  100% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
 }
 </style>
 </head>
@@ -175,14 +84,7 @@ h1 {
 
 <div class="top-bar"></div>
 
-<div class="beam"></div>
-<div class="halo"></div>
-
 <h1>GOD BLESS YOU</h1>
-
-<div class="fog"></div>
-<div class="particles"></div>
-<div class="grain"></div>
 
 <div class="bottom-bar"></div>
 

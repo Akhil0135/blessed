@@ -99,18 +99,18 @@
   /* ---------- CROSS (TOP-CENTER) ---------- */
   #cross {
     position: absolute;
-    top: 12%;
+    top: 14%;
     left: 50%;
-    width: 6px;
-    height: 220px;
-    background: rgba(255,255,255,0.95);
-    border-radius: 4px;
+    width: 4px;
+    height: 160px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 2px;
     transform: translateX(-50%) scale(0.75);
     opacity: 0;
     transition: opacity 1.6s ease, transform 1.6s ease;
-    filter: drop-shadow(0 0 18px rgba(255,255,255,0.85))
-            drop-shadow(0 0 40px rgba(255,255,255,0.65))
-            brightness(1.4);
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.65))
+            drop-shadow(0 0 28px rgba(255,255,255,0.55))
+            brightness(1.2);
     z-index:120;
     pointer-events:none;
   }
@@ -120,116 +120,223 @@
     position: absolute;
     left: 50%;
     top: 38%;
-    width: 140px;
-    height: 6px;
+    width: 80px;
+    height: 4px;
     background: rgba(255,255,255,0.92);
-    border-radius: 3px;
+    border-radius: 2px;
     transform: translateX(-50%);
-    filter: drop-shadow(0 0 12px rgba(255,255,255,0.7));
-    animation: shimmer 2.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
   }
 
-  /* shimmer horizontal */
-  @keyframes shimmer {
-    0% { transform: translateX(-50%) translateX(-20px); opacity:0.3 }
-    50% { transform: translateX(-50%) translateX(20px); opacity:1 }
-    100% { transform: translateX(-50%) translateX(-20px); opacity:0.3 }
+  /* shooting */
+  .shoot{
+    position:absolute;
+    width:3px;
+    height:18px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.6));
+    border-radius:2px;
+    box-shadow:0 0 10px rgba(255,255,255,0.9);
+    z-index:95;
+    pointer-events:none;
+    transform-origin:center;
+    filter:blur(.6px);
   }
-
-  /* divine streaks */
-  #cross .streak {
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0) 100%);
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    border-radius: 1px;
-    filter: blur(3px);
-    animation: streakSlide 1.6s linear infinite;
-  }
-
-  @keyframes streakSlide {
-    0% { transform: translateY(-100%) scaleX(1); opacity:0.2; }
-    50% { transform: translateY(100%) scaleX(1.1); opacity:0.8; }
-    100% { transform: translateY(200%) scaleX(1); opacity:0; }
-  }
-
-  /* shooting stars */
-  .shoot{position:absolute;width:3px;height:18px;background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.6));border-radius:2px;box-shadow:0 0 10px rgba(255,255,255,0.9);z-index:95;pointer-events:none;transform-origin:center;filter:blur(.6px);}
 
   @media (max-width:720px){
     #sun{width:520px;height:520px;right:6vw;top:-200px}
     #moon{width:140px;height:140px}
     #message{font-size:18px;top:64%}
     #happy{font-size:44px;top:34%}
-    #cross{height:160px}
-    #cross::before{width:96px;height:4px}
+    #cross{height:120px}
+    #cross::before{width:56px}
   }
 </style>
 </head>
 <body>
-<div id="stage" role="application" aria-label="Cinematic moon to day birthday reveal" tabindex="0">
-  <div id="sky" aria-hidden="true"></div>
-  <div class="grade-overlay" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
-  <div id="stars" style="position:absolute;inset:0;z-index:20;pointer-events:none" aria-hidden="true"></div>
-  <div id="clouds" style="position:absolute;inset:0;z-index:30;pointer-events:none" aria-hidden="true"></div>
-  <div class="fog" aria-hidden="true"></div>
-  <div id="moon" title="Drag me to reveal the day" role="button" aria-label="Drag moon to reveal day" tabindex="0"><div class="flare" aria-hidden="true"></div></div>
-  <div id="sun" aria-hidden="true"><div class="corona"></div></div>
-  <div class="sun-band" aria-hidden="true"></div>
-  <div class="anam" aria-hidden="true"></div>
-  <div id="message" aria-hidden="true"></div>
-  <div id="rotTrack" aria-hidden="true"><div id="rotFill"></div></div>
-  <button id="clickBtn" aria-hidden="true" disabled aria-label="Reveal next stage">CLICK HERE</button>
-  <div id="cross" aria-hidden="true"></div>
-  <div id="birthdayOverlay" aria-hidden="true"></div>
-  <div id="happy" aria-hidden="true">🎉 Happy Birthday! 🎉</div>
-  <div class="vign" aria-hidden="true"></div>
-</div>
+  <div id="stage" role="application" aria-label="Cinematic moon to day birthday reveal" tabindex="0">
+    <div id="sky" aria-hidden="true"></div>
+    <div class="grade-overlay" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <div id="stars" style="position:absolute;inset:0;z-index:20;pointer-events:none" aria-hidden="true"></div>
+    <div id="clouds" style="position:absolute;inset:0;z-index:30;pointer-events:none" aria-hidden="true"></div>
+    <div class="fog" aria-hidden="true"></div>
+
+    <div id="moon" title="Drag me to reveal the day" role="button" aria-label="Drag moon to reveal day" tabindex="0"><div class="flare" aria-hidden="true"></div></div>
+    <div id="sun" aria-hidden="true"><div class="corona"></div></div>
+    <div class="sun-band" aria-hidden="true"></div>
+    <div class="anam" aria-hidden="true"></div>
+
+    <div id="message" aria-hidden="true"></div>
+
+    <div id="rotTrack" aria-hidden="true"><div id="rotFill"></div></div>
+
+    <button id="clickBtn" aria-hidden="true" disabled aria-label="Reveal next stage">CLICK HERE</button>
+
+    <div id="cross" aria-hidden="true"></div>
+
+    <div id="birthdayOverlay" aria-hidden="true"></div>
+    <div id="happy" aria-hidden="true">🎉 Happy Birthday! 🎉</div>
+
+    <div class="vign" aria-hidden="true"></div>
+  </div>
 
 <script>
-// ---------- Keep all previous JS unchanged except adding streaks ----------
-clickBtn.addEventListener('click', () => {
-  if (clickCount !== 0) return;
-  if (!phaseTwoReady && !locked) return;
+/* ---------------- Config ---------------- */
+const fullText = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+const ROTATION_NEEDED = 360;
 
-  clickBtn.style.opacity = 0;
-  clickBtn.disabled = true;
-  clickBtn.style.pointerEvents = 'none';
-  clickBtn.setAttribute('aria-hidden','true');
+/* ---------------- Utils & refs ---------------- */
+const $ = s => document.querySelector(s);
+const mk = (t,c='') => { const e=document.createElement(t); if(c) e.className=c; return e; };
 
-  setTimeout(() => {
-    cross.style.opacity = 1;
-    cross.style.transform = 'translateX(-50%) scale(1)';
-    cross.setAttribute('aria-hidden','false');
+const stage = $('#stage');
+const moon = $('#moon');
+const sun = $('#sun');
+const sunCorona = sun.querySelector('.corona');
+const sunBand = document.querySelector('.sun-band');
+const anam = document.querySelector('.anam');
+const message = $('#message');
+const starsWrap = $('#stars');
+const cloudsWrap = $('#clouds');
+const clickBtn = $('#clickBtn');
+const cross = $('#cross');
+const rotFill = $('#rotFill');
+const birthdayOverlay = $('#birthdayOverlay');
+const happy = $('#happy');
 
-    // Add divine streaks dynamically
-    for (let i = 0; i < 2; i++) {
-      const s = document.createElement('div');
-      s.className = 'streak';
-      s.style.animationDelay = (i * 0.8) + 's';
-      cross.appendChild(s);
+let locked = false;
+let rotationDeg = 0;
+let dragging = false;
+let lastX = 0;
+let phaseTwoReady = false;
+let phaseTwoStarted = false;
+let clickCount = 0;
+let fireworksTimer = null;
+let fireworksActive = false;
+
+/* ---------------- Build scene: stars & clouds ---------------- */
+function makeStars(n=160){
+  for(let i=0;i<n;i++){
+    const s = mk('div','star');
+    s.style.setProperty('--tw', (1.2 + Math.random()*3.4) + 's');
+    s.style.left = (Math.random()*100) + '%';
+    s.style.top = (Math.random()*80) + '%';
+    s.style.opacity = (0.6 + Math.random()*0.4).toFixed(2);
+    s.dataset.baseOpacity = s.style.opacity;
+    starsWrap.appendChild(s);
+  }
+}
+function makeClouds(){
+  const counts = [4,5];
+  counts.forEach((cnt, layerIdx) => {
+    for(let i=0;i<cnt;i++){
+      const c = mk('div','cloud');
+      const top = 8 + i*14 + (layerIdx*6) + (Math.random()*8 - 4);
+      c.style.top = top + '%';
+      c.style.left = (i*20 + (layerIdx*6) + Math.random()*10 - 6) + '%';
+      c.style.opacity = 0.28 + layerIdx*0.25 + Math.random()*0.18;
+      c.style.transform = 'scale(' + (0.8 + Math.random()*0.8) + ')';
+      cloudsWrap.appendChild(c);
     }
+  });
+}
+makeStars();
+makeClouds();
 
-    stage.style.transition = 'transform 2.4s cubic-bezier(.2,.9,.2,1)';
-    stage.style.transform = 'scale(1.04)';
-    document.querySelector('.grade-overlay').style.opacity = 0.28;
-  }, 600);
+/* ---------------- Message letters ---------------- */
+const letters = [];
+for (let i=0;i<fullText.length;i++){
+  const span = mk('span','letter');
+  span.textContent = fullText[i] === ' ' ? '\u00A0' : fullText[i];
+  message.appendChild(span);
+  letters.push(span);
+}
 
-  setTimeout(() => {
-    clickBtn.innerText = "Click Here for Birthday!";
-    clickBtn.style.display = 'block';
-    clickBtn.style.opacity = 1;
-    clickBtn.disabled = false;
-    clickBtn.style.pointerEvents = 'auto';
-    clickBtn.setAttribute('aria-hidden','false');
-    clickBtn.focus();
-    clickCount = 1;
-  }, 3600);
+/* ---------------- Drag & pointer handling ---------------- */
+function getClientX(e){ return (e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX) ?? lastX);}
+function onPointerDown(e){ if(locked) return; dragging=true; lastX=getClientX(e); try{ e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId);}catch{} }
+function onPointerUp(e){ dragging=false; try{ e.target.releasePointerCapture && e.target.releasePointerCapture(e.pointerId);}catch{}}
+function onPointerMove(e){ if(!dragging||locked) return; const clientX=getClientX(e); const dx=clientX-lastX; lastX=clientX; if(dx<=0) return; rotationDeg+=dx*0.9; if(rotationDeg>=ROTATION_NEEDED){rotationDeg=ROTATION_NEEDED; finishReveal();} updateSceneByRotation(rotationDeg/ROTATION_NEEDED); }
+
+moon.addEventListener('pointerdown',onPointerDown);
+document.addEventListener('pointerup',onPointerUp);
+document.addEventListener('pointermove',onPointerMove);
+
+/* ---------------- Scene update ---------------- */
+function updateSceneByRotation(t){
+  t = Math.min(1,t);
+  // rotate moon
+  moon.style.transform = `translate(-50%,-50%) rotate(${t*360}deg)`;
+  // stars fade slowly
+  starsWrap.style.opacity = `${1-t*0.48}`;
+  // sun – subtle in phase 1
+  sun.style.opacity = `${Math.min(0.28, t*0.28)}`;
+  sun.style.transform = `scale(${0.5 + 0.3*t})`;
+  sunCorona.style.opacity = `${Math.min(0.12, t*0.12)}`;
+  sunBand.style.opacity = `${Math.min(0.14, t*0.14)}`;
+  anam.style.opacity = `${Math.min(0.16, t*0.16)}`;
+
+  // cross – dominant throughout
+  cross.style.opacity = `${Math.min(1, t*1.2)}`;
+  cross.style.transform = `translateX(-50%) scale(${0.75 + 0.25*t})`;
+
+  // message letters animation
+  letters.forEach((l,i)=>{
+    if(t*fullText.length > i) l.style.opacity=1;
+    else l.style.opacity=0;
+  });
+
+  // progress bar
+  rotFill.style.width = `${t*100}%`;
+}
+
+/* ---------------- Finish reveal ---------------- */
+function finishReveal(){
+  if(locked) return;
+  locked=true;
+  phaseTwoReady=true;
+  clickBtn.disabled=false;
+  clickBtn.style.opacity=1;
+}
+
+/* ---------------- Click to next phase ---------------- */
+clickBtn.addEventListener('click',()=>{
+  if(!phaseTwoReady || phaseTwoStarted) return;
+  phaseTwoStarted=true;
+  clickBtn.disabled=true;
+  clickBtn.style.opacity=0;
+
+  // sun fully rises in phase 2
+  sun.style.transition='opacity 1.4s ease, transform 1.4s ease, top 1.8s cubic-bezier(.2,.9,.2,1)';
+  sun.style.opacity=1;
+  sun.style.transform='scale(1.2)';
+  sun.style.top='12%';
+  sunCorona.style.opacity=0.48;
+  sunBand.style.opacity=0.36;
+  anam.style.opacity=0.28;
+
+  // reveal birthday overlay
+  birthdayOverlay.style.opacity=1;
+  happy.style.opacity=1;
+  happy.style.transform='translate(-50%,-50%) scale(1)';
+
+  // optional fireworks
+  startFireworks();
 });
+
+/* ---------------- Fireworks ---------------- */
+function startFireworks(){
+  if(fireworksActive) return;
+  fireworksActive=true;
+  fireworksTimer=setInterval(()=>{
+    const fw=mk('div','fw');
+    fw.style.left=Math.random()*100+'%';
+    fw.style.top=Math.random()*40+'%';
+    document.body.appendChild(fw);
+    setTimeout(()=>fw.remove(),2000+Math.random()*2000);
+  },140);
+}
 </script>
 </body>
 </html>

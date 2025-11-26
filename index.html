@@ -19,8 +19,8 @@ html, body { margin:0; padding:0; width:100%; height:100%; background:#010108; o
 .lensflare { position:absolute; width:400px; height:400px; border-radius:50%; pointer-events:none; background:radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%); z-index:19; filter:blur(100px); opacity:0; transition:opacity 0.5s linear, transform 0.5s linear; }
 .particle { position:absolute; width:2px; height:2px; background:white; border-radius:50%; opacity:0.1; animation:drift 10s linear infinite; z-index:6; }
 @keyframes drift { from{transform:translate(0,0);} to{transform:translate(50px,50px);} }
-#clickBtn { position:absolute; bottom:5%; left:50%; transform:translateX(-50%); padding:15px 40px; font-size:1.5rem; background:rgba(255,255,255,0.2); border:2px solid #FFDFA0; color:#FFDFA0; border-radius:10px; cursor:pointer; opacity:0; z-index:30; transition:opacity 1s linear; }
-#clickBtn:hover { background:rgba(255,255,255,0.4); }
+#clickBtn { position:absolute; bottom:5%; left:50%; transform:translateX(-50%) scale(0); padding:20px 50px; font-size:1.5rem; background:rgba(255,255,255,0.1); border:2px solid #FFDFA0; color:#FFDFA0; border-radius:15px; cursor:pointer; opacity:0; z-index:30; transition:opacity 1s ease-in-out, transform 1s ease-in-out; box-shadow:0 0 40px #FFDFA0, 0 0 80px rgba(255,223,160,0.4); }
+#clickBtn:hover { background:rgba(255,255,255,0.3); box-shadow:0 0 60px #FFDFA0, 0 0 120px rgba(255,223,160,0.6); }
 </style>
 </head>
 <body>
@@ -116,8 +116,11 @@ window.addEventListener('mousemove',(e)=>{
   sunFlare.style.opacity = progress*0.5;
   sunFlare.style.transform = `translate(${-dx/2}px,0)`;
 
-  // Show click button after sun fully evolved
-  if(progress >= 0.99){ clickBtn.style.opacity = 1; }
+  // Show click button after sun fully evolved with Nolan style scale & fade
+  if(progress >= 0.99){
+    clickBtn.style.opacity = 1;
+    clickBtn.style.transform = 'translateX(-50%) scale(1)';
+  }
 });
 </script>
 </body>

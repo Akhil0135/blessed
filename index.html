@@ -2,97 +2,63 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IMAX Nolan — Ultimate Cinematic (Moon → Sun)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMAX Nolan Cinematic Scene</title>
 <style>
-html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:'Cinzel',serif;background:#010108;transform-origin:center;color:white;}
-
-/* 70mm IMAX Grain */
-#grain{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAC1+jfqAAAAIUlEQVR4Ae3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAPgGzNQAAUkbAG4AAAAASUVORK5CYII=');opacity:0.13;mix-blend-mode:overlay;animation:grainMove 1.4s steps(8) infinite;}
-@keyframes grainMove{0%{transform:translate(0,0);}50%{transform:translate(-2px,1px);}100%{transform:translate(2px,-2px);}}
-
-#scene{width:100%;height:100%;position:relative;background:radial-gradient(circle at 50% 78%,#0C0824,#02020A 75%);overflow:hidden;}
-
-/* Stars */
-.star{position:absolute;border-radius:50%;background:white;animation:twinkle 2.2s infinite ease-in-out;}
-@keyframes twinkle{0%,100%{opacity:0.25;}50%{opacity:1;}}
-
-/* Dust */
-.dust{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.15);filter:blur(2px);animation:floatDust 12s infinite linear;}
-@keyframes floatDust{from{transform:translateY(0);}to{transform:translateY(-900px);}}
-
-/* Clouds */
-.cloud{position:absolute;width:500px;height:200px;background:rgba(255,255,255,0.06);filter:blur(40px);border-radius:50%;animation:drift 65s linear infinite;}
-@keyframes drift{from{transform:translateX(-600px);}to{transform:translateX(1600px);}}
-
-#fog{position:absolute;bottom:0;width:100%;height:45%;background:linear-gradient(to top, rgba(255,255,255,0.15), transparent);filter:blur(45px);opacity:0.38;}
-
-#gb{position:absolute;top:3%;width:100%;text-align:center;font-size:2.6rem;font-weight:600;letter-spacing:3px;text-shadow:0 0 28px rgba(255,230,200,0.6);z-index:10;}
-
-#moon{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#F7F7FF,#D5D2F4 60%,#8C86C5 100%);box-shadow:0 0 70px #C7C3FF;position:absolute;top:10%;left:6%;cursor:grab;transition:opacity 0.3s linear;}
-#sun{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#FFE8A0,#FF8C00 55%,#B45A00 100%);box-shadow:0 0 200px rgba(255,165,90,0.85);position:absolute;top:10%;right:6%;transform:scale(0);opacity:0;}
-#flare{position:absolute;top:10%;right:6%;width:700px;height:700px;background:radial-gradient(circle, rgba(255,180,100,0.35), transparent 75%);transform:translate(50%,50%) scale(0);pointer-events:none;opacity:0;filter:blur(55px);}
-#heat{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 75% 12%, rgba(255,180,90,0.08), transparent 60%);mix-blend-mode:screen;filter:blur(50px);opacity:0;transition:opacity 1s linear;pointer-events:none;}
-
-/* Letter-by-letter message */
-#dragMessage{position:absolute;bottom:20%;width:100%;text-align:center;font-size:1.6rem;color:#fff;letter-spacing:2px;font-family:'Cinzel',serif;opacity:0;pointer-events:none;text-shadow:0 0 8px rgba(255,255,255,0.4),0 0 18px rgba(255,240,200,0.2);transform:translateZ(60px);animation:shimmer 6s infinite ease-in-out;}
-@keyframes shimmer{0%{text-shadow:0 0 6px rgba(255,255,255,0.4),0 0 12px rgba(255,240,200,0.1);}50%{text-shadow:0 0 14px rgba(255,255,255,0.7),0 0 28px rgba(255,240,200,0.25);}100%{text-shadow:0 0 6px rgba(255,255,255,0.4),0 0 12px rgba(255,240,200,0.1);}}
-#flareSweep{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;background:linear-gradient(75deg, transparent 0%, rgba(255,255,255,0.15) 45%, transparent 90%);opacity:0;mix-blend-mode:screen;}
-@keyframes sweepMove{0%{transform:translateX(-100%);opacity:0;}10%{opacity:0.15;}40%{opacity:0.25;}70%{opacity:0.15;}100%{transform:translateX(150%);opacity:0;}}
-#heatWarp{position:absolute;bottom:20%;left:50%;width:40%;height:12%;transform:translateX(-50%);background:radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);filter:blur(14px);opacity:0;pointer-events:none;}
-#volFog{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 50% 70%, rgba(255,255,255,0.05), transparent 65%);opacity:0;pointer-events:none;mix-blend-mode:screen;}
-#dustField{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+html, body { margin:0; padding:0; width:100%; height:100%; background:#010108; overflow:hidden; font-family:'Cinzel', serif; }
+#scene { position:relative; width:100%; height:100%; }
+#gb { position:absolute; top:2%; width:100%; text-align:center; font-size:3rem; color:#fff; text-shadow:0 0 20px #fff; z-index:10; }
+#moon { position:absolute; top:10%; left:5%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#f7f7ff,#d5d2f4,#8c86c5); box-shadow:0 0 70px #C7C3FF; cursor:grab; z-index:9; }
+#sun { position:absolute; top:10%; right:5%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#FFE8A0,#FF8C00,#B45A00); box-shadow:0 0 200px rgba(255,165,90,0.85); transform:scale(0); opacity:0; z-index:8; }
+#message { position:absolute; bottom:20%; width:100%; text-align:center; font-size:1.6rem; color:#fff; letter-spacing:2px; opacity:0; z-index:11; }
+.star { position:absolute; width:2px; height:2px; background:white; border-radius:50%; animation:twinkle 2s infinite alternate; }
+@keyframes twinkle { from{opacity:0.2;} to{opacity:1;} }
 </style>
 </head>
 <body>
 <div id="scene">
-<div id="gb">God Bless You</div>
-<div class="cloud" style="top:30%;animation-duration:60s;"></div>
-<div class="cloud" style="top:48%;animation-duration:80s;"></div>
-<div class="cloud" style="top:62%;animation-duration:95s;"></div>
-<div id="fog"></div>
-<div id="moon"></div>
-<div id="sun"></div>
-<div id="flare"></div>
-<div id="heat"></div>
-<div id="dragMessage">On this calm birthday eve so new, God softly whispers, my plans are made for you.</div>
-<div id="flareSweep"></div>
-<div id="heatWarp"></div>
-<div id="volFog"></div>
-<canvas id="dustField"></canvas>
-<div id="grain"></div>
+  <div id="gb">God Bless You</div>
+  <div id="moon"></div>
+  <div id="sun"></div>
+  <div id="message">On this calm birthday eve so new, God softly whispers, my plans are made for you.</div>
+</div>
 <script>
-const moon=document.getElementById("moon"),sun=document.getElementById("sun"),flare=document.getElementById("flare"),heat=document.getElementById("heat"),dragMsg=document.getElementById("dragMessage"),flareSweep=document.getElementById("flareSweep"),heatWarp=document.getElementById("heatWarp"),volFog=document.getElementById("volFog"),dust=document.getElementById("dustField"),ctx=dust.getContext('2d');
-dust.width=innerWidth;dust.height=innerHeight;
+const moon = document.getElementById('moon');
+const sun = document.getElementById('sun');
+const message = document.getElementById('message');
+const scene = document.getElementById('scene');
 
-let dragging=false,offsetX=0,offsetY=0,evo=0,dustPull=0;
-const fullText=dragMsg.innerText;dragMsg.innerText='';
+// Generate stars
+for(let i=0;i<150;i++){
+  const star = document.createElement('div');
+  star.className='star';
+  star.style.top=Math.random()*100+'%';
+  star.style.left=Math.random()*100+'%';
+  star.style.animationDuration=1+Math.random()*3+'s';
+  scene.appendChild(star);
+}
 
-const particles=Array.from({length:120},()=>({x:Math.random()*dust.width,y:Math.random()*dust.height,size:Math.random()*2+1,vx:0,vy:0}));
-
-moon.addEventListener('mousedown',e=>{dragging=true;offsetX=e.clientX-moon.offsetLeft;offsetY=e.clientY-moon.offsetTop;});
-window.addEventListener('mouseup',()=>dragging=false);
-window.addEventListener('mousemove',e=>{
-  if(!dragging)return;
-  const dx=Math.min(Math.max(e.clientX-offsetX,0),300),progress=dx/300;
-  const charsToShow=Math.floor(fullText.length*progress);
-  dragMsg.innerText=fullText.substring(0,charsToShow);
-  dragMsg.style.opacity=progress;
-  dragMsg.style.transform=`translateY(${-progress*20}px)`;
-  heatWarp.style.opacity=progress*0.9;
-  volFog.style.opacity=progress*0.6;
-  dustPull=progress*3;
-  if(progress>0.05)flareSweep.style.animation='sweepMove 2.4s ease-out';
-  moon.style.transform=`translate(${dx}px,0px)`;
-  evo+=0.012;if(evo>1)evo=1;
-  sun.style.transform=`scale(${evo*6.2})`;sun.style.opacity=evo;
-  flare.style.transform=`translate(50%,50%) scale(${evo*8.2})`;flare.style.opacity=evo*0.85;
-  heat.style.opacity=evo;for(let i=0;i<8;i++){document.getElementsByClassName('beam')[i]?.style.opacity=evo*0.7;}
-  moon.style.opacity=1-evo;moon.style.transform+=` scale(${1-evo*0.7})`;
+// Drag logic
+let dragging = false;
+let offsetX = 0;
+let fullText = message.innerText;
+message.innerText = '';
+moon.addEventListener('mousedown',(e)=>{ dragging=true; offsetX=e.clientX - moon.offsetLeft; });
+window.addEventListener('mouseup',()=>{ dragging=false; });
+window.addEventListener('mousemove',(e)=>{
+  if(!dragging) return;
+  let dx = e.clientX - offsetX;
+  if(dx<0) dx=0; if(dx>300) dx=300;
+  moon.style.left = 5 + dx/scene.offsetWidth*90 + '%';
+  // Letter-by-letter reveal
+  let progress = dx/300;
+  let charCount = Math.floor(fullText.length*progress);
+  message.innerText = fullText.substring(0,charCount);
+  message.style.opacity = progress;
+  // Sun evolution
+  sun.style.transform = 'scale('+progress*6+')';
+  sun.style.opacity = progress;
 });
-
-function animateDust(){ctx.clearRect(0,0,dust.width,dust.height);particles.forEach(p=>{const dx=(moon.getBoundingClientRect().left+40)-p.x,dy=(moon.getBoundingClientRect().top+40)-p.y,dist=Math.hypot(dx,dy),force=dustPull/dist;p.vx+=force*(dx/dist);p.vy+=force*(dy/dist);p.x+=p.vx*0.05;p.y+=p.vy*0.05;ctx.fillStyle='rgba(255,255,255,0.7)';ctx.fillRect(p.x,p.y,p.size,p.size);});requestAnimationFrame(animateDust);}
-animateDust();
 </script>
 </body>
 </html>

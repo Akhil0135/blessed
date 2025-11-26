@@ -3,72 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GOD BLESS YOU — IMAX Nolan</title>
+<title>GOD BLESS YOU — IMAX Vision</title>
 
 <style>
-/* ------------------- IMAX / Nolan Grade ------------------- */
+/* --------- PURE IMAX × NOLAN COLOR SCIENCE --------- */
 :root {
-  --bg-top: #0a0a14;
-  --bg-bottom: #020208;
-  --gold: #f7dfb5;
-  --glow-soft: rgba(255,220,150,0.35);
-  --glow-strong: rgba(255,220,150,0.75);
+  --bg-deep: #050508;        /* deep cinematic black-blue */
+  --bg-soft: #0b0b12;        /* soft gradation */
+  --gold: #f7e7c4;           /* soft divine gold */
+  --glow: rgba(255,228,170,0.42); /* gentle Nolan glow */
 }
 
-/* ------------------- Reset ------------------- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* --------- RESET --------- */
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
   height: 100vh;
-  background: linear-gradient(to bottom, var(--bg-top), var(--bg-bottom));
-  color: var(--gold);
+  background: linear-gradient(to bottom, var(--bg-soft), var(--bg-deep));
   font-family: "Cinzel", serif;
+  color: var(--gold);
   overflow: hidden;
 }
 
-/* ------------------- IMAX Letterbox Bars ------------------- */
+/* --------- IMAX LETTERBOX BARS --------- */
 .top-bar, .bottom-bar {
   position: fixed;
   left: 0;
   width: 100%;
   height: 90px;
-  background: rgba(0,0,0,0.88);
-  backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.90);
   z-index: 10;
 }
 .top-bar { top: 0; }
 .bottom-bar { bottom: 0; }
 
-/* ------------------- Text at Top Center ------------------- */
+/* --------- THE ONLY TEXT — TOP CENTER --------- */
 h1 {
   position: absolute;
-  top: 110px; /* Slightly below top bar */
+  top: 105px; /* Perfect spacing under IMAX bar */
   left: 50%;
   transform: translateX(-50%);
 
-  font-size: 3.8rem;
+  font-size: 4rem;
   font-weight: 600;
-  letter-spacing: 7px;
+  letter-spacing: 8px;
 
   text-align: center;
   color: var(--gold);
 
   text-shadow:
-    0 0 15px var(--glow-strong),
-    0 0 30px var(--glow-soft);
+    0 0 9px var(--glow),
+    0 0 22px var(--glow);
 
   opacity: 0;
-  animation: fadeIn 2.5s ease-out forwards;
+  animation: fadeIn 2.6s ease-out forwards;
 }
 
-/* ------------------- Text Reveal ------------------- */
+/* --------- TEXT REVEAL (Prestige Style) --------- */
 @keyframes fadeIn {
-  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  0% { opacity:0; transform:translateX(-50%) translateY(-18px); }
+  100% { opacity:1; transform:translateX(-50%) translateY(0); }
 }
 </style>
 </head>

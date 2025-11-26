@@ -3,66 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GOD BLESS YOU — IMAX Vision</title>
+<title>God Bless You — IMAX Vision</title>
 
 <style>
-/* --------- PURE IMAX × NOLAN COLOR SCIENCE --------- */
+/* ===== IMAX + NOLAN COLOR PALETTE ===== */
 :root {
-  --bg-deep: #050508;        /* deep cinematic black-blue */
-  --bg-soft: #0b0b12;        /* soft gradation */
-  --gold: #f7e7c4;           /* soft divine gold */
-  --glow: rgba(255,228,170,0.42); /* gentle Nolan glow */
+  --bg-deep: #050508;
+  --bg-soft: #070710;
+  --gold: #f7e7c4;
+  --glow: rgba(255,228,170,0.42);
 }
 
-/* --------- RESET --------- */
+/* ===== RESET ===== */
 * { margin:0; padding:0; box-sizing:border-box; }
 
 body {
   height: 100vh;
-  background: linear-gradient(to bottom, var(--bg-soft), var(--bg-deep));
+  background: radial-gradient(circle at center, var(--bg-soft), var(--bg-deep));
   font-family: "Cinzel", serif;
   color: var(--gold);
   overflow: hidden;
 }
 
-/* --------- IMAX LETTERBOX BARS --------- */
+/* ===== IMAX LETTERBOXES ===== */
 .top-bar, .bottom-bar {
   position: fixed;
-  left: 0;
-  width: 100%;
-  height: 90px;
-  background: rgba(0,0,0,0.90);
+  left: 0; width: 100%; height: 90px;
+  background: rgba(0,0,0,0.92);
   z-index: 10;
 }
 .top-bar { top: 0; }
 .bottom-bar { bottom: 0; }
 
-/* --------- THE ONLY TEXT — TOP CENTER --------- */
+/* ===== MAIN TEXT ===== */
 h1 {
   position: absolute;
-  top: 105px; /* Perfect spacing under IMAX bar */
+  top: 105px;
   left: 50%;
   transform: translateX(-50%);
-
   font-size: 4rem;
   font-weight: 600;
   letter-spacing: 8px;
-
-  text-align: center;
-  color: var(--gold);
-
-  text-shadow:
-    0 0 9px var(--glow),
-    0 0 22px var(--glow);
-
+  text-shadow: 0 0 9px var(--glow), 0 0 22px var(--glow);
   opacity: 0;
-  animation: fadeIn 2.6s ease-out forwards;
+  animation: textReveal 2.5s ease-out forwards;
 }
 
-/* --------- TEXT REVEAL (Prestige Style) --------- */
-@keyframes fadeIn {
+@keyframes textReveal {
   0% { opacity:0; transform:translateX(-50%) translateY(-18px); }
   100% { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+
+/* ===== STARS ===== */
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: twinkle 4s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%   { opacity: 0.0; }
+  40%  { opacity: 0.35; }
+  70%  { opacity: 0.6; }
+  100% { opacity: 0.1; }
+}
+
+/* ===== MOON ===== */
+.moon {
+  position: absolute;
+  top: 130px;
+  left: 90px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, #d9d7d1, #999897);
+  box-shadow: 0 0 40px rgba(255,255,255,0.18);
+  opacity: 0;
+  transform: scale(0.6);
+  animation: moonAppear 3s ease-out forwards;
+  animation-delay: 2s; /* evolves after 2 seconds */
+}
+
+@keyframes moonAppear {
+  0% { opacity:0; transform:scale(0.6) translateY(-20px); }
+  100% { opacity:1; transform:scale(1) translateY(0); }
 }
 </style>
 </head>
@@ -73,7 +99,30 @@ h1 {
 
 <h1>GOD BLESS YOU</h1>
 
+<!-- Moon (appears after 2 seconds) -->
+<div class="moon"></div>
+
 <div class="bottom-bar"></div>
+
+<script>
+/* ===== GENERATE SUBTLE PRESTIGE-STYLE STARS ===== */
+const starCount = 70;  // controlled, premium look
+for(let i=0; i<starCount; i++){
+  let star = document.createElement("div");
+  star.classList.add("star");
+
+  let size = Math.random()*2 + 1; // very small stars
+  star.style.width = size + "px";
+  star.style.height = size + "px";
+
+  star.style.top = Math.random()*100 + "vh";
+  star.style.left = Math.random()*100 + "vw";
+
+  star.style.animationDelay = (Math.random()*4) + "s";
+
+  document.body.appendChild(star);
+}
+</script>
 
 </body>
 </html>

@@ -3,131 +3,156 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX Nolan — Final Cinematic (Moon → Sun)</title>
+<title>IMAX Nolan — Ultra Final Cinematic (Moon → Sun)</title>
 <style>
     html,body{
         margin:0;padding:0;
-        background:#02020A;
+        background:#010108;
         height:100%;
         overflow:hidden;
         font-family:"Cinzel",serif;
         color:white;
+        transform-origin:center;
     }
 
-    /* --- IMAX 70mm Grain --- */
+    /* 70mm IMAX Grain */
     #grain{
         position:fixed;
-        top:0;left:0;
-        width:100%;height:100%;
+        top:0;left:0;width:100%;height:100%;
         pointer-events:none;
         background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAC1+jfqAAAAIUlEQVR4Ae3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAPgGzNQAAUkbAG4AAAAASUVORK5CYII=');
-        opacity:0.09;
+        opacity:0.13;
         mix-blend-mode:overlay;
-        animation:grainMove 1.8s steps(6) infinite;
+        animation:grainMove 1.4s steps(8) infinite;
     }
     @keyframes grainMove{
-        0%{transform:translate(0,0);}50%{transform:translate(2px,-2px);}100%{transform:translate(-1px,1px);} 
-    }
+        0%{transform:translate(0,0);}50%{transform:translate(-2px,1px);}100%{transform:translate(2px,-2px);} }
 
+    /* Scene base */
     #scene{
         width:100%;height:100%;position:relative;
-        background:radial-gradient(circle at 50% 80%, #120A2A, #02020A 80%);
+        background:radial-gradient(circle at 50% 78%, #0C0824, #02020A 75%);
         overflow:hidden;
     }
 
-    /* Stars */
+    /* Enhanced Stars (Parallax) */
     .star{
         position:absolute;
-        width:2px;height:2px;
         border-radius:50%;
         background:white;
-        opacity:0.7;
-        animation:twinkle 2s infinite ease-in-out;
+        animation:twinkle 2.2s infinite ease-in-out;
     }
     @keyframes twinkle{
-        0%,100%{opacity:0.3;}50%{opacity:1;}
+        0%,100%{opacity:0.25;}50%{opacity:1;} }
+
+    /* Background dust particles */
+    .dust{
+        position:absolute;
+        width:4px;height:4px;
+        border-radius:50%;
+        background:rgba(255,255,255,0.15);
+        filter:blur(2px);
+        animation:floatDust 12s infinite linear;
+    }
+    @keyframes floatDust{
+        from{transform:translateY(0);} to{transform:translateY(-900px);} }
+
+    /* Interstellar-style volumetric beams */
+    .beam{
+        position:absolute;
+        width:2px;height:80vh;
+        background:linear-gradient(to bottom, rgba(255,255,200,0.15), rgba(255,255,255,0));
+        filter:blur(2px);
+        opacity:0;
+        pointer-events:none;
+        transition:opacity 1.5s ease;
+        mix-blend-mode:screen;
     }
 
     /* Clouds */
     .cloud{
         position:absolute;
-        top:20%;
-        width:400px;height:150px;
-        background:rgba(255,255,255,0.05);
+        width:500px;height:200px;
+        background:rgba(255,255,255,0.06);
         filter:blur(40px);
         border-radius:50%;
-        animation: drift 50s linear infinite;
+        animation: drift 65s linear infinite;
     }
     @keyframes drift{
-        from{transform:translateX(-500px);} to{transform:translateX(1600px);}    }
+        from{transform:translateX(-600px);} to{transform:translateX(1600px);} }
 
-    /* Fog */
     #fog{
         position:absolute;
         bottom:0;
         width:100%;height:45%;
-        background:linear-gradient(to top, rgba(255,255,255,0.12), transparent);
-        filter:blur(35px);
-        opacity:0.35;
+        background:linear-gradient(to top, rgba(255,255,255,0.15), transparent);
+        filter:blur(45px);
+        opacity:0.38;
     }
 
-    /* God Bless You */
     #gb{
         position:absolute;
-        top:4%;
-        width:100%;
-        text-align:center;
-        font-size:2.4rem;
-        font-weight:600;
-        letter-spacing:2px;
-        text-shadow:0 0 25px rgba(255,220,180,0.55);
+        top:3%;width:100%;text-align:center;
+        font-size:2.6rem;font-weight:600;
+        letter-spacing:3px;
+        text-shadow:0 0 28px rgba(255,230,200,0.6);
         z-index:10;
     }
 
-    /* Moon at top-left */
+    /* Moon */
     #moon{
-        width:180px;height:180px;
+        width:200px;height:200px;
         border-radius:50%;
-        background:radial-gradient(circle,#F8F7FF,#CFCBEF 60%,#918CC5 100%);
-        box-shadow:0 0 65px #C7C3FF;
+        background:radial-gradient(circle,#F7F7FF,#D5D2F4 60%,#8C86C5 100%);
+        box-shadow:0 0 70px #C7C3FF;
         position:absolute;
-        top:12%;left:8%;
+        top:10%;left:6%;
         cursor:grab;
-        transition:opacity 0.25s linear;
+        transition:opacity 0.3s linear;
     }
 
-    /* Sun at top-right evolving */
+    /* Sun */
     #sun{
-        width:120px;height:120px;
+        width:150px;height:150px;
         border-radius:50%;
-        background:radial-gradient(circle,#FFEAA8,#FF9E00 60%,#B46200 100%);
-        box-shadow:0 0 150px #FFB834;
+        background:radial-gradient(circle,#FFE8A0,#FF8C00 55%,#B45A00 100%);
+        box-shadow:0 0 200px rgba(255,165,90,0.85);
         position:absolute;
-        top:12%;right:8%;
+        top:10%;right:6%;
         transform:scale(0);
         opacity:0;
     }
 
+    /* Heat Distortion Layer */
+    #heat{
+        position:absolute;
+        top:0;left:0;width:100%;height:100%;
+        background:radial-gradient(circle at 75% 12%, rgba(255,180,90,0.08), transparent 60%);
+        mix-blend-mode:screen;
+        filter:blur(50px);
+        opacity:0;
+        transition:opacity 1s linear;
+        pointer-events:none;
+    }
+
     #flare{
         position:absolute;
-        top:12%;right:8%;
-        width:600px;height:600px;
-        background:radial-gradient(circle, rgba(255,182,90,0.25), transparent 75%);
+        top:10%;right:6%;
+        width:700px;height:700px;
+        background:radial-gradient(circle, rgba(255,180,100,0.35), transparent 75%);
         transform:translate(50%,50%) scale(0);
         pointer-events:none;
         opacity:0;
-        filter:blur(40px);
+        filter:blur(55px);
     }
 
     #message{
         position:absolute;
-        bottom:11%;
-        width:100%;
-        text-align:center;
-        font-size:2rem;
+        bottom:8%;width:100%;text-align:center;
+        font-size:2.1rem;
         opacity:0;
         transform:translateY(40px);
-        text-shadow:0 0 30px rgba(255,235,190,0.55);
+        text-shadow:0 0 35px rgba(255,240,200,0.55);
     }
 </style>
 </head>
@@ -136,27 +161,49 @@
 
     <div id="gb">God Bless You</div>
 
-    <!-- Stars -->
     <script>
-    for(let i=0;i<250;i++){
+    // Stars
+    for(let i=0;i<300;i++){
         const s=document.createElement('div');
         s.className='star';
+        const size=Math.random()*2+1;
+        s.style.width=size+'px';
+        s.style.height=size+'px';
         s.style.left=Math.random()*100+'%';
         s.style.top=Math.random()*100+'%';
-        s.style.animationDuration=(1.5+Math.random()*2)+'s';
-        document.body.appendChild(s);
+        s.style.animationDuration=(1.2+Math.random()*2)+'s';
+        scene.appendChild(s);
+    }
+
+    // Dust
+    for(let i=0;i<40;i++){
+        const d=document.createElement('div');
+        d.className='dust';
+        d.style.left=Math.random()*100+'%';
+        d.style.top=(50+Math.random()*50)+'%';
+        d.style.animationDuration=(8+Math.random()*10)+'s';
+        scene.appendChild(d);
+    }
+
+    // Beams
+    for(let i=0;i<8;i++){
+        const b=document.createElement('div');
+        b.className='beam';
+        b.style.left=(60+Math.random()*25)+'%';
+        scene.appendChild(b);
     }
     </script>
 
-    <div class="cloud" style="top:28%; animation-duration:55s;"></div>
-    <div class="cloud" style="top:42%; animation-duration:70s;"></div>
-    <div class="cloud" style="top:58%; animation-duration:90s;"></div>
+    <div class="cloud" style="top:30%; animation-duration:60s;"></div>
+    <div class="cloud" style="top:48%; animation-duration:80s;"></div>
+    <div class="cloud" style="top:62%; animation-duration:95s;"></div>
 
     <div id="fog"></div>
 
     <div id="moon"></div>
     <div id="sun"></div>
     <div id="flare"></div>
+    <div id="heat"></div>
 
     <div id="message">"On this calm birthday eve so new, God softly whispers, my plans are made for you."</div>
 </div>
@@ -167,7 +214,9 @@
 const moon=document.getElementById("moon");
 const sun=document.getElementById("sun");
 const flare=document.getElementById("flare");
+const heat=document.getElementById("heat");
 const message=document.getElementById("message");
+const beams=document.getElementsByClassName("beam");
 
 let dragging=false;
 let offsetX=0,offsetY=0;
@@ -177,11 +226,7 @@ moon.addEventListener("mousedown",startDrag);
 document.addEventListener("mousemove",drag);
 document.addEventListener("mouseup",()=>dragging=false);
 
-function startDrag(e){
-    dragging=true;
-    offsetX=e.clientX-moon.offsetLeft;
-    offsetY=e.clientY-moon.offsetTop;
-}
+function startDrag(e){ dragging=true; offsetX=e.clientX-moon.offsetLeft; offsetY=e.clientY-moon.offsetTop; }
 
 function drag(e){
     if(!dragging)return;
@@ -189,16 +234,15 @@ function drag(e){
     moon.style.left=(e.clientX-offsetX)+"px";
     moon.style.top=(e.clientY-offsetY)+"px";
 
-    evo+=0.01;
+    evo+=0.012;
     if(evo>1)evo=1;
 
     updateScene();
 }
 
 function updateScene(){
-    // Sun growth
-    const sunScale=0+evo*5.8;
-    const flareScale=0+evo*7.5;
+    const sunScale=0+evo*6.2;
+    const flareScale=0+evo*8.2;
 
     sun.style.transform=`scale(${sunScale})`;
     sun.style.opacity=evo;
@@ -206,16 +250,19 @@ function updateScene(){
     flare.style.transform=`translate(50%,50%) scale(${flareScale})`;
     flare.style.opacity=evo*0.85;
 
-    // Moon fading
+    heat.style.opacity=evo*0.7;
+
+    for(let i=0;i<beams.length;i++){
+        beams[i].style.opacity=evo*0.7;
+    }
+
     moon.style.opacity=1-evo;
     moon.style.transform=`scale(${1-evo*0.7})`;
 
-    // Message reveal
     message.style.opacity=evo;
     message.style.transform=`translateY(${40-40*evo}px)`;
 
-    // Subtle camera push-in
-    document.body.style.transform=`scale(${1+evo*0.02})`;
+    document.body.style.transform=`scale(${1+evo*0.03})`;
 }
 </script>
 </body>

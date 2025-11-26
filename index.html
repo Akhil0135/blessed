@@ -8,8 +8,8 @@
 html, body { margin:0; padding:0; width:100%; height:100%; background:#010108; overflow:hidden; font-family:'Cinzel', serif; }
 #scene { position:relative; width:100%; height:100%; }
 #gb { position:absolute; top:2%; width:100%; text-align:center; font-size:3rem; color:#fff; text-shadow:0 0 20px #fff; z-index:10; }
-#moon { position:absolute; top:10%; left:5%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#f7f7ff,#d5d2f4,#8c86c5); box-shadow:0 0 70px #C7C3FF; cursor:grab; z-index:9; }
-#sun { position:absolute; top:10%; right:5%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#FFE8A0,#FF8C00,#B45A00); box-shadow:0 0 200px rgba(255,165,90,0.85); transform:scale(0); opacity:0; z-index:8; }
+#moon { position:absolute; top:10%; left:5%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#f7f7ff,#d5d2f4,#8c86c5); box-shadow:0 0 70px #C7C3FF; cursor:grab; z-index:9; transition:opacity 0.3s linear; }
+#sun { position:absolute; top:10%; right:5%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#FFE8A0,#FF8C00,#B45A00); box-shadow:0 0 200px rgba(255,165,90,0.85); transform:scale(0); opacity:0; z-index:8; transition:opacity 0.3s linear, transform 0.3s linear; }
 #message { position:absolute; bottom:20%; width:100%; text-align:center; font-size:1.6rem; color:#fff; letter-spacing:2px; opacity:0; z-index:11; }
 .star { position:absolute; width:2px; height:2px; background:white; border-radius:50%; animation:twinkle 2s infinite alternate; }
 @keyframes twinkle { from{opacity:0.2;} to{opacity:1;} }
@@ -58,6 +58,8 @@ window.addEventListener('mousemove',(e)=>{
   // Sun evolution
   sun.style.transform = 'scale('+progress*6+')';
   sun.style.opacity = progress;
+  // Moon fade away
+  moon.style.opacity = 1 - progress;
 });
 </script>
 </body>

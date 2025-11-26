@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>God Bless You — IMAX Starry Vision</title>
-
+<title>God Bless You — Interactive IMAX</title>
 <style>
 :root {
   --bg-deep: #050508;
@@ -13,7 +12,8 @@
   --glow: rgba(255,228,170,0.42);
 }
 
-*{margin:0; padding:0; box-sizing:border-box;}
+/* Reset */
+* {margin:0; padding:0; box-sizing:border-box;}
 body{
   height:100vh;
   background: radial-gradient(circle at center, var(--bg-soft), var(--bg-deep));
@@ -29,7 +29,7 @@ body{
 }
 .top-bar{top:0;} .bottom-bar{bottom:0;}
 
-/* Text */
+/* Top Text */
 h1{
   position:absolute;
   top:105px; left:50%;
@@ -54,81 +54,109 @@ h1{
   animation:moonAppear 3s ease-out forwards;
   animation-delay:2s;
   z-index:20;
-}
-@keyframes moonAppear{
-  0%{opacity:0; transform:scale(0.6) translateY(-20px);}
-  100%{opacity:1; transform:scale(1) translateY(0);}
+  cursor: grab;
 }
 
-/* Stars Container */
-.stars{
-  position:absolute; inset:0; pointer-events:none; z-index:5;
+/* Sun */
+.sun{
+  position:absolute; top:50px; right:100px;
+  width:120px; height:120px; border-radius:50%;
+  background: radial-gradient(circle at 50% 50%, #ffeaa0,#ffcc33,#aa8800);
+  box-shadow:0 0 80px rgba(255,210,120,0.25);
   opacity:0;
-  animation:starsAppear 1.5s ease-out forwards;
-  animation-delay:2s;
+  transform:scale(0.5);
+  z-index:15;
 }
 
-/* Star */
-.star{
-  position:absolute; background:white; border-radius:50%;
-  width:2px; height:2px; opacity:0.8;
-  animation-name:twinkle;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-}
-
-@keyframes twinkle{
-  0%,100%{opacity:0.2;}
-  50%{opacity:1;}
-}
-
-@keyframes starsAppear{
-  0%{opacity:0;}
-  100%{opacity:1;}
-}
+/* Stars container */
+.stars{position:absolute; inset:0; pointer-events:none; z-index:5; opacity:0; animation:starsAppear 1.5s ease-out forwards; animation-delay:2s;}
+.star{position:absolute; background:white; border-radius:50%; width:2px; height:2px; opacity:0.8; animation-name:twinkle; animation-iteration-count: infinite; animation-timing-function: ease-in-out;}
+@keyframes twinkle{0%,100%{opacity:0.3;}50%{opacity:1;}}
+@keyframes starsAppear{0%{opacity:0;}100%{opacity:1;}}
+@keyframes moonAppear{0%{opacity:0; transform:scale(0.6) translateY(-20px);}100%{opacity:1; transform:scale(1) translateY(0);}}
 </style>
 </head>
-
 <body>
 
 <div class="top-bar"></div>
 
 <h1>GOD BLESS YOU</h1>
 
-<div class="moon"></div>
-
+<div class="moon" id="moon"></div>
+<div class="sun" id="sun"></div>
 <div class="stars" id="starsContainer"></div>
+
+<!-- Evolving Message -->
+<div id="message" style="position:absolute;bottom:120px;width:80%;left:50%;transform:translateX(-50%);text-align:center;font-size:1.8rem;color:var(--gold);opacity:0;"></div>
 
 <div class="bottom-bar"></div>
 
 <script>
-/* ===== ULTRA CINEMATIC TWINKLING STARS ===== */
+// Generate stars
 const starsContainer = document.getElementById("starsContainer");
-const starCount = 300; // dense sky
-
+const starCount = 300;
 for(let i=0;i<starCount;i++){
   let star = document.createElement("div");
   star.classList.add("star");
-
   let size = Math.random()*2 + 0.8;
-  star.style.width = size + "px";
-  star.style.height = size + "px";
-
-  star.style.top = Math.random()*100 + "vh";
-  star.style.left = Math.random()*100 + "vw";
-
-  // Random twinkling speed between 1.5s and 4s
-  let speed = (Math.random()*2.5 + 1.5).toFixed(2) + "s";
+  star.style.width = size+"px";
+  star.style.height = size+"px";
+  star.style.top = Math.random()*100+"vh";
+  star.style.left = Math.random()*100+"vw";
+  let speed = (Math.random()*2.5 + 1.5).toFixed(2)+"s";
   star.style.animationDuration = speed;
-
-  // Random animation delay for natural effect
-  star.style.animationDelay = (Math.random()*3).toFixed(2) + "s";
-
-  // Random opacity for depth
+  star.style.animationDelay = (Math.random()*3).toFixed(2)+"s";
   star.style.opacity = Math.random()*0.7 + 0.3;
-
   starsContainer.appendChild(star);
 }
+
+// Moon Drag and message
+const moon = document.getElementById("moon");
+const sun = document.getElementById("sun");
+const message = document.getElementById("message");
+
+let isDragging = false;
+let startX = 0, startY = 0;
+
+moon.addEventListener('contextmenu', e=>e.preventDefault());
+
+moon.addEventListener('mousedown', e=>{
+  if(e.button===2){ // right-click
+    isDragging = true;
+    startX = e.clientX - moon.offsetLeft;
+    startY = e.clientY - moon.offsetTop;
+    moon.style.cursor='grabbing';
+    message.style.opacity=1;
+    sun.style.opacity=1;
+  }
+});
+
+document.addEventListener('mouseup', e=>{
+  if(isDragging){
+    isDragging=false;
+    moon.style.cursor='grab';
+  }
+});
+
+document.addEventListener('mousemove', e=>{
+  if(isDragging){
+    let x = e.clientX - startX;
+    let y = e.clientY - startY;
+    moon.style.left = x+'px';
+    moon.style.top = y+'px';
+
+    // Evolve message based on horizontal drag
+    const fullMessage = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+    const maxX = window.innerWidth-140;
+    let progress = Math.min(Math.max(x/ maxX,0),1);
+    let letters = Math.floor(fullMessage.length*progress);
+    message.innerText = fullMessage.substring(0,letters);
+
+    // Sun evolution
+    sun.style.opacity = 0.5 + 0.5*progress;
+    sun.style.transform = `scale(${0.5 + 0.5*progress})`;
+  }
+});
 </script>
 
 </body>

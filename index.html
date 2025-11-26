@@ -3,206 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Blessings</title>
-
+<title>IMAX Nolan Blessing</title>
 <style>
-:root {
-  --bg-deep: #050508;
-  --bg-soft: #070710;
-  --gold: #f7e7c4;
-  --glow: rgba(255,228,170,0.42);
-}
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: #03030f;
+        font-family: "Cinzel", serif;
+        color: white;
+    }
 
-/* Reset */
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  height:100vh;
-  background: radial-gradient(circle at center, var(--bg-soft), var(--bg-deep));
-  font-family:"Cinzel", serif;
-  color: var(--gold);
-  overflow:hidden;
-  user-select:none;
-}
+    /* IMAX bars */
+    .imax-top, .imax-bottom {
+        position: fixed;
+        left: 0;
+        width: 100%;
+        height: 90px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+        pointer-events: none;
+        z-index: 10;
+    }
+    .imax-bottom {
+        bottom: 0;
+        top: auto;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    }
 
-/* IMAX bars */
-.top-bar,.bottom-bar{
-  position:fixed;left:0;width:100%;height:90px;
-  background:rgba(0,0,0,0.92);z-index:50;
-}
-.top-bar{top:0;}
-.bottom-bar{bottom:0;}
+    /* Blessing text */
+    #title {
+        position: fixed;
+        top: 20px;
+        width: 100%;
+        text-align: center;
+        font-size: 44px;
+        letter-spacing: 3px;
+        opacity: 1;
+        color: #fdfdfd;
+        text-shadow: 0 0 20px #ffffff33, 0 0 40px #fff3;
+        z-index: 20;
+    }
 
-/* Main Blessing Text */
-h1{
-  position:absolute;
-  top:105px;left:50%;transform:translateX(-50%);
-  font-size:4rem;font-weight:600;letter-spacing:8px;
-  text-shadow:0 0 9px var(--glow),0 0 22px var(--glow);
-  opacity:0;
-  animation:textReveal 2.5s ease-out forwards;
-  z-index:60;
-}
-@keyframes textReveal{
-  0%{opacity:0;transform:translateX(-50%) translateY(-18px);}
-  100%{opacity:1;transform:translateX(-50%) translateY(0);}
-}
+    /* Moon */
+    #moon {
+        position: absolute;
+        top: 120px;
+        left: 120px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #ffffff, #d0d0d0 40%, #808080 70%, #404040);
+        box-shadow: 0 0 40px #ffffff66, 0 0 100px #ffffff33;
+        opacity: 0;
+        pointer-events: auto;
+        z-index: 5;
+        transition: opacity 2s ease;
+    }
 
-/* Moon */
-.moon{
-  position:absolute;
-  top:130px;left:90px;
-  width:140px;height:140px;border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, #ffffff,#d9d7d1,#999897);
-  box-shadow:0 0 40px rgba(255,255,255,0.18);
-  opacity:0; transform:scale(0.6);
-  animation:moonAppear 3s ease-out forwards;
-  animation-delay:2s;
-  z-index:200;
-  cursor:grab;
-}
-@keyframes moonAppear{
-  0%{opacity:0;transform:scale(0.6) translateY(-20px);}
-  100%{opacity:1;transform:scale(1) translateY(0);}
-}
+    /* Sun */
+    #sun {
+        position: absolute;
+        top: 140px;
+        left: 140px;
+        width: 0px;
+        height: 0px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #ffdd55, #ff8800);
+        box-shadow: 0 0 50px #ffcc33aa, 0 0 140px #ff880044;
+        opacity: 0;
+        z-index: 1;
+    }
 
-/* Sun */
-.sun{
-  position:absolute;top:110px;right:100px;
-  width:120px;height:120px;border-radius:50%;
-  background: radial-gradient(circle at 50% 50%, #ffeaa0,#ffcc33,#aa8800);
-  opacity:0;transform:scale(0.5);
-  z-index:100;
-  transition:0.35s ease-out;
-}
+    /* Message appearing with drag */
+    #message {
+        position: fixed;
+        bottom: 130px;
+        width: 100%;
+        text-align: center;
+        font-size: 28px;
+        letter-spacing: 1px;
+        opacity: 0;
+        transition: opacity 0.5s linear;
+        text-shadow: 0 0 10px #ffffff44;
+        z-index: 20;
+    }
 
-/* Stars */
-.stars{position:absolute;inset:0;pointer-events:none;z-index:5;opacity:0;
-animation:starsAppear 1.5s ease-out forwards;animation-delay:2s;}
-@keyframes starsAppear{0%{opacity:0;}100%{opacity:1;}}
-.star{
-  position:absolute;background:white;border-radius:50%;
-  width:2px;height:2px;opacity:0.8;
-  animation:twinkle 2s infinite ease-in-out;
-}
-@keyframes twinkle{0%,100%{opacity:0.3;}50%{opacity:1;}}
-
-/* Message */
-#message{
-  position:absolute;
-  bottom:140px;
-  width:90%;
-  left:50%;
-  transform:translateX(-50%);
-  text-align:center;
-  font-size:1.8rem;
-  opacity:0;
-  z-index:150;
-}
+    /* Stars */
+    .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        opacity: 0;
+        border-radius: 50%;
+        animation: twinkle 3s infinite ease-in-out;
+    }
+    @keyframes twinkle {
+        0%,100% { opacity: 0.1; }
+        50% { opacity: 1; }
+    }
 </style>
 </head>
 <body>
 
-<div class="top-bar"></div>
-<h1>GOD BLESS YOU</h1>
+<div class="imax-top"></div>
+<div class="imax-bottom"></div>
 
-<div class="moon" id="moon"></div>
-<div class="sun" id="sun"></div>
-<div class="stars" id="starsContainer"></div>
+<div id="title">GOD BLESS YOU</div>
+
+<div id="moon"></div>
+<div id="sun"></div>
 
 <div id="message"></div>
 
-<div class="bottom-bar"></div>
-
 <script>
-/* ===== STARFIELD ===== */
-const starsContainer = document.getElementById("starsContainer");
-let starCount = 300;
-
-for (let i=0;i<starCount;i++){
-  let s = document.createElement("div");
-  s.classList.add("star");
-
-  let size = Math.random()*2 + 0.8;
-  s.style.width = size+"px";
-  s.style.height = size+"px";
-
-  s.dataset.depth = Math.random()*0.6 + 0.4;
-
-  s.style.top = Math.random()*100 + "vh";
-  s.style.left = Math.random()*100 + "vw";
-  s.style.animationDuration = (Math.random()*2 + 1.5) + "s";
-  s.style.opacity = Math.random()*0.7 + 0.3;
-
-  starsContainer.appendChild(s);
+/* ---------------------------- Stars ---------------------------- */
+for (let i = 0; i < 350; i++) {
+    let s = document.createElement("div");
+    s.className = "star";
+    s.style.top = Math.random() * window.innerHeight + "px";
+    s.style.left = Math.random() * window.innerWidth + "px";
+    s.style.animationDelay = Math.random() * 3 + "s";
+    document.body.appendChild(s);
 }
 
-/* ===== DRAG FIX ===== */
-const moon = document.getElementById("moon");
-const sun = document.getElementById("sun");
-const message = document.getElementById("message");
+/* -------------------- Show moon after 2 sec -------------------- */
+setTimeout(() => {
+    document.getElementById("moon").style.opacity = 1;
+}, 2000);
+
+/* ----------------------- Dragging Logic ------------------------ */
+let moon = document.getElementById("moon");
+let sun = document.getElementById("sun");
+let msg = document.getElementById("message");
 
 let dragging = false;
-let offsetX=0, offsetY=0;
-let targetX = 90;
-let targetY = 130;
-let currentX = targetX;
-let currentY = targetY;
+let offsetX, offsetY;
 
-let fullMsg = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-
-moon.addEventListener("contextmenu", e=>e.preventDefault());
-
-moon.addEventListener("mousedown", e=>{
-  if(e.button===2){
-    dragging=true;
-    offsetX = e.clientX - currentX;
-    offsetY = e.clientY - currentY;
-
-    message.style.opacity = 1;
-    sun.style.opacity = 1;
-    moon.style.cursor="grabbing";
-  }
+moon.addEventListener("mousedown", (e) => {
+    dragging = true;
+    offsetX = e.clientX - moon.offsetLeft;
+    offsetY = e.clientY - moon.offsetTop;
 });
 
-document.addEventListener("mouseup", ()=>{
-  dragging=false;
-  moon.style.cursor="grab";
+document.addEventListener("mouseup", () => dragging = false);
+
+document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+
+    let x = e.clientX - offsetX;
+    let y = e.clientY - offsetY;
+
+    moon.style.left = x + "px";
+    moon.style.top = y + "px";
+
+    /* Drag progression (0 to 1) based on horizontal movement */
+    let progress = Math.min(Math.max(x / (window.innerWidth - 150), 0), 1);
+
+    /* Sun evolution */
+    sun.style.opacity = progress;
+    sun.style.width = 200 * progress + "px";
+    sun.style.height = 200 * progress + "px";
+    sun.style.left = (x + 60) + "px";
+    sun.style.top = (y + 60) + "px";
+
+    /* Message evolution */
+    msg.style.opacity = progress;
+    msg.innerHTML = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
 });
-
-document.addEventListener("mousemove", e=>{
-  if(dragging){
-    targetX = e.clientX - offsetX;
-    targetY = e.clientY - offsetY;
-
-    targetX = Math.max(0, Math.min(targetX, window.innerWidth-140));
-    targetY = Math.max(0, Math.min(targetY, window.innerHeight-140));
-
-    let progress = targetX / (window.innerWidth - 140);
-    progress = Math.max(0, Math.min(progress,1));
-
-    let letters = Math.floor(fullMsg.length * progress);
-    message.innerText = fullMsg.substring(0,letters);
-
-    sun.style.transform = `scale(${0.5 + 0.6*progress})`;
-    sun.style.boxShadow = `0 0 ${40 + 120*progress}px rgba(255,200,90,${0.2 + progress*0.35})`;
-
-    document.querySelectorAll(".star").forEach(star=>{
-      let depth = star.dataset.depth;
-      star.style.transform = `translateX(${progress * depth * 40}px)`;
-    });
-  }
-});
-
-/* ===== INERTIA ===== */
-function animate(){
-  currentX += (targetX - currentX) * 0.15;
-  currentY += (targetY - currentY) * 0.15;
-  moon.style.left = currentX + "px";
-  moon.style.top = currentY + "px";
-
-  requestAnimationFrame(animate);
-}
-animate();
 </script>
 
 </body>

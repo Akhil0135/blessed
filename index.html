@@ -12,12 +12,12 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 .letterbox-top,.letterbox-bottom{position:absolute;left:0;right:0;height:var(--imax-letterbox);background:linear-gradient(180deg,rgba(0,0,0,0.95),rgba(0,0,0,0.7));z-index:60;pointer-events:none}.letterbox-top{top:0}.letterbox-bottom{bottom:0}
 /* --- Enhanced Dynamic Background --- */
 .background{position:absolute;inset:0;z-index:1;overflow:hidden}
-.nebula-layer{position:absolute;inset:-30%;mix-blend-mode:screen;filter:blur(80px) saturate(2);animation:nebulaDrift linear infinite;opacity:0.35}
-.nebula1{background:radial-gradient(circle at 25% 40%, rgba(255,120,160,0.2), transparent 25%);animation-duration:150s;}
-.nebula2{background:radial-gradient(circle at 75% 65%, rgba(80,150,255,0.15), transparent 30%);animation-duration:180s;}
-.nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,200,255,0.12), transparent 35%);animation-duration:220s;}
+.nebula-layer{position:absolute;inset:-30%;mix-blend-mode:screen;filter:blur(140px) saturate(2);animation:nebulaDrift linear infinite;opacity:0.9}
+.nebula1{background:radial-gradient(circle at 25% 40%, rgba(255,120,160,0.6), transparent 25%);animation-duration:150s;}
+.nebula2{background:radial-gradient(circle at 75% 65%, rgba(80,150,255,0.55), transparent 30%);animation-duration:180s;}
+.nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,200,255,0.5), transparent 35%);animation-duration:220s;}
 @keyframes nebulaDrift{0%{transform:translate(0,0)}50%{transform:translate(200px,-120px)}100%{transform:translate(0,0)}}
-.stars{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0.9;background-image:radial-gradient(#fff 1.2px, transparent 1px),radial-gradient(#fff 0.8px, transparent 1px);background-size:400px 400px, 120px 120px;filter:blur(.4px);animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
+.stars{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:1;background-image:radial-gradient(#fff 1.2px, transparent 1px),radial-gradient(#fff 0.8px, transparent 1px);background-size:400px 400px, 120px 120px;filter:blur(.4px);animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
 @keyframes starTwinkle{0%{opacity:0.75}50%{opacity:0.95}100%{opacity:0.8}}
 @keyframes starDrift{0%{transform:translate(0,0)}100%{transform:translate(-200px,150px)}}
 .bloom{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.3;background:radial-gradient(circle at 50% 40%, rgba(255,200,100,0.05), transparent 15%)}

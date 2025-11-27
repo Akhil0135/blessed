@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Shield & Prince Letters</title>
+<title>IMAX — Nolan Cosmic • Shield & Steel Letters</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
@@ -13,12 +13,10 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 
 /* ----- BACKGROUND LAYERS ----- */
 .background{position:absolute;inset:0;z-index:1;overflow:hidden}
-
 .nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1}
 .nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,90,140,0.9), transparent 40%);animation-duration:120s;}
 .nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;}
 .nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;}
-
 @keyframes nebulaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(300px,-200px) scale(1.3)}100%{transform:translate(0,0) scale(1)}}
 
 .stars{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:
@@ -26,7 +24,6 @@ radial-gradient(#fff 1.2px, transparent 1px),
 radial-gradient(#fff 0.8px, transparent 1px);
 background-size:400px 400px,120px 120px;filter:blur(.4px);
 animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
-
 @keyframes starTwinkle{0%{opacity:0.75}50%{opacity:0.95}100%{opacity:0.8}}
 @keyframes starDrift{0%{transform:translate(0,0)}100%{transform:translate(-200px,150px)}}
 
@@ -55,39 +52,19 @@ background:radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%),
 filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
 @keyframes galaxySpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 
-/* Cinematic Light Ring */
+/* Light Ring Pulsation */
 .light-ring{position:absolute;left:50%;top:50%;width:160vmin;height:160vmin;border-radius:50%;
 transform:translate(-50%,-50%);border:4px solid rgba(255,255,255,0.05);
 animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
-@keyframes ringPulse{
-  0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}
-  50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}
-  100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}
-}
+@keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}}
 
-/* Supernova */
+/* Supernova / Radiation */
 .supernova{position:absolute;left:50%;top:50%;width:40vmin;height:40vmin;border-radius:50%;
 transform:translate(-50%,-50%);background:radial-gradient(circle,
 rgba(255,240,200,0.9),rgba(255,150,50,0.4),rgba(255,80,0,0));
-filter:blur(20px);opacity:0;animation:superPulse 8s infinite ease-out;pointer-events:none;z-index:4}
-@keyframes superPulse{
-  0%{transform:translate(-50%,-50%) scale(0.2);opacity:0.6}
-  50%{transform:translate(-50%,-50%) scale(1.8);opacity:0.25}
-  100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}
-}
-
-/* Comets */
-.comet{position:absolute;width:2px;height:2px;background:white;border-radius:50%;
-box-shadow:0 0 12px 6px rgba(255,255,255,0.8);animation:cometFly linear infinite;z-index:3;pointer-events:none}
-@keyframes cometFly{0%{transform:translate(110vw,-10vh)}100%{transform:translate(-20vw,140vh)}}
-
-/* Portal */
-.portal{position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;border-radius:50%;
-transform:translate(-50%,-50%);background:conic-gradient(
-rgba(0,180,255,0.2),rgba(180,0,255,0.3),rgba(255,120,0,0.25),rgba(0,180,255,0.2)
-);
-filter:blur(60px);opacity:0.35;animation:portalSpin 22s linear infinite;pointer-events:none;z-index:2}
-@keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+filter:blur(20px);opacity:0;pointer-events:none;z-index:4;
+animation:superPulse 1.5s ease-out forwards;}
+@keyframes superPulse{0%{transform:translate(-50%,-50%) scale(0.2);opacity:0.6}50%{transform:translate(-50%,-50%) scale(1.8);opacity:0.25}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}}
 
 /* Sparks */
 .spark{position:absolute;width:2px;height:2px;border-radius:50%;background:yellow;opacity:0.8;
@@ -99,13 +76,13 @@ pointer-events:none;animation:sparkFly linear forwards;}
   position:absolute;
   font-size:6vmin;
   font-weight:bold;
-  color:#ffd700;
+  color:#c0c0c0;
   opacity:0;
   transform:translate(-50%,-50%) scale(0);
   pointer-events:none;
-  text-shadow:0 0 12px #fff,0 0 20px #ffcc00;
+  text-shadow:0 0 10px #fff,0 0 20px #aaa;
   z-index:25;
-  transition:transform 1.8s cubic-bezier(0.22,1,0.36,1), opacity 1.5s ease-out;
+  transition:transform 1.5s cubic-bezier(0.22,1,0.36,1), opacity 1.2s ease-out;
 }
 </style>
 </head>
@@ -113,11 +90,9 @@ pointer-events:none;animation:sparkFly linear forwards;}
 <div class="stage">
   <div class="background">
     <div class="galaxy"></div>
-    <div class="portal"></div>
     <div class="cosmic-rays" id="rays"></div>
     <div class="light-ring"></div>
-    <div class="supernova"></div>
-    <div id="cometLayer"></div>
+    <div class="supernova" id="radiation"></div>
     <div class="nebula-layer nebula1"></div>
     <div class="nebula-layer nebula2"></div>
     <div class="nebula-layer nebula3"></div>
@@ -129,32 +104,18 @@ pointer-events:none;animation:sparkFly linear forwards;}
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
       <defs>
-        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ff4d4d"/>
-          <stop offset="100%" stop-color="#990000"/>
-        </radialGradient>
-        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ffffff"/>
-          <stop offset="100%" stop-color="#cccccc"/>
-        </radialGradient>
-        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#4d90ff"/>
-          <stop offset="100%" stop-color="#003366"/>
-        </radialGradient>
+        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#990000"/></radialGradient>
+        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#cccccc"/></radialGradient>
+        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4d90ff"/><stop offset="100%" stop-color="#003366"/></radialGradient>
       </defs>
-
       <g id="rings" transform="translate(100,100)">
         <circle r="92" fill="url(#metalRed)" />
         <circle r="76" fill="url(#metalWhite)" />
         <circle r="56" fill="url(#metalRed)" />
         <circle r="36" fill="url(#metalBlue)" />
       </g>
-
       <g id="starGroup" transform="translate(100,100)">
-        <polygon id="shield-star"
-          points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8"
-          fill="#ffffff"
-        />
+        <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#ffffff"/>
       </g>
     </svg>
   </div>
@@ -175,60 +136,51 @@ for(let i=0;i<18;i++){
 const star=document.getElementById('shield-star');
 const shield=document.querySelector('.shield-svg');
 const stage=document.querySelector('.stage');
+const radiation=document.getElementById('radiation');
 
-// Letter sequence
+// Letters sequence
 const lettersArr=['P','R','I','N','C','E'];
 
-// Star click → spin, shatter, letters radiate
+// Star click → spin, shield break, letters
 star.addEventListener('click',()=>{
-  star.style.transition='transform 0.5s linear';
-  star.style.transform='scale(1.2) rotate(1080deg)';
+  star.style.transition='transform 0.6s linear';
+  star.style.transform='scale(1.3) rotate(1080deg)';
   setTimeout(()=>{
     star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
     star.style.transform='scale(1) rotate(0deg)';
     shatterShield();
-    radiateLetters();
-  },500);
+    triggerRadiation();
+    setTimeout(()=>{radiateLetters();},300); // letters start after radiation begins
+  },600);
 });
 
-// Shield shatter (rings explode)
+// Shield shatter
 function shatterShield(){
   const rings=document.getElementById('rings');
   if(!rings) return;
   rings.style.opacity=0;
-
   const layers=[
     {r:92, fill:'url(#metalRed)', slices:8},
     {r:76, fill:'url(#metalWhite)', slices:6},
     {r:56, fill:'url(#metalRed)', slices:6},
     {r:36, fill:'url(#metalBlue)', slices:4}
   ];
-
   const fragRoot=document.createElementNS('http://www.w3.org/2000/svg','g');
   shield.appendChild(fragRoot);
-
   layers.forEach(layer=>{
     for(let i=0;i<layer.slices;i++){
       const piece=document.createElementNS('http://www.w3.org/2000/svg','path');
-      const a1=i*(360/layer.slices);
-      const a2=a1+(360/layer.slices);
+      const a1=i*(360/layer.slices); const a2=a1+(360/layer.slices);
       const R=layer.r, r=layer.r*0.6;
-
-      const x1=r*Math.cos(a1*Math.PI/180);
-      const y1=r*Math.sin(a1*Math.PI/180);
-      const x2=R*Math.cos(a1*Math.PI/180);
-      const y2=R*Math.sin(a1*Math.PI/180);
-      const x3=R*Math.cos(a2*Math.PI/180);
-      const y3=R*Math.sin(a2*Math.PI/180);
-      const x4=r*Math.cos(a2*Math.PI/180);
-      const y4=r*Math.sin(a2*Math.PI/180);
-
+      const x1=r*Math.cos(a1*Math.PI/180); const y1=r*Math.sin(a1*Math.PI/180);
+      const x2=R*Math.cos(a1*Math.PI/180); const y2=R*Math.sin(a1*Math.PI/180);
+      const x3=R*Math.cos(a2*Math.PI/180); const y3=R*Math.sin(a2*Math.PI/180);
+      const x4=r*Math.cos(a2*Math.PI/180); const y4=r*Math.sin(a2*Math.PI/180);
       piece.setAttribute('fill',layer.fill);
       piece.setAttribute('d',`M ${x1} ${y1} L ${x2} ${y2} A ${R} ${R} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${r} ${r} 0 0 0 ${x1} ${y1}`);
       piece.style.transformOrigin='100px 100px';
       piece.style.transition='transform 1.2s ease-out, opacity 1.5s ease-out';
       fragRoot.appendChild(piece);
-
       setTimeout(()=>{
         const dx=(Math.random()-0.5)*300;
         const dy=(Math.random()-0.5)*300;
@@ -239,11 +191,7 @@ function shatterShield(){
       },50);
     }
   });
-
-  setTimeout(()=>{
-    try{ if(rings.parentNode) rings.parentNode.removeChild(rings); }catch(e){}
-    setTimeout(()=>{ try{ if(fragRoot.parentNode) fragRoot.parentNode.removeChild(fragRoot); }catch(e){} },1400);
-  },2200);
+  setTimeout(()=>{rings.remove(); setTimeout(()=>fragRoot.remove(),1400);},2200);
 }
 
 // Sparks
@@ -263,7 +211,13 @@ function spawnSparks(cx,cy,count){
   }
 }
 
-// Letters radiate
+// Radiation pulse
+function triggerRadiation(){
+  radiation.style.opacity=1;
+  radiation.style.animation='superPulse 1.5s ease-out forwards';
+}
+
+// Letters radiate from star and settle
 function radiateLetters(){
   const centerX=window.innerWidth/2;
   const centerY=window.innerHeight/2;
@@ -272,21 +226,23 @@ function radiateLetters(){
     el.className='letter';
     el.innerText=l;
     stage.appendChild(el);
-
-    const angle=(i-2.5)*20; // spread letters slightly
-    const radius=250 + Math.random()*50;
     el.style.left=centerX+'px';
     el.style.top=centerY+'px';
 
+    const angle=(i-2.5)*20; 
+    const radius=250 + Math.random()*50;
+
+    // evolve along with radiation
     setTimeout(()=>{
       el.style.opacity=1;
       el.style.transform=`translate(${Math.cos(angle*Math.PI/180)*radius}px,${Math.sin(angle*Math.PI/180)*radius}px) scale(1.2)`;
-    },i*300);
+    },i*200);
 
+    // settle at bottom
     setTimeout(()=>{
       el.style.transition='transform 1.5s cubic-bezier(0.22,1,0.36,1), opacity 1.2s ease-out';
       el.style.transform=`translate(${(i-2.5)*12}vw, 80vh) scale(1)`;
-    },2000+i*300);
+    },1000+i*300);
   });
 }
 
@@ -304,7 +260,9 @@ for(let i=0;i<120;i++){
 }
 
 // Comets
-const cometLayer=document.getElementById('cometLayer');
+const cometLayer=document.createElement('div');
+cometLayer.className='comet-layer';
+stage.appendChild(cometLayer);
 for(let i=0;i<12;i++){
   const c=document.createElement('div');
   c.className='comet';

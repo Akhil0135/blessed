@@ -1,251 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IMAX Captain Shield</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IMAX — Nolan Cosmic • Steel Shield Break with Sparks</title>
 <style>
-    html,body{
-        margin:0;
-        height:100%;
-        background:#02040F;
-        overflow:hidden;
-        font-family:"Cinzel",serif;
-    }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
 
-    /* ---------- Background ---------- */
-    .bg-stars{
-        position:absolute;
-        inset:0;
-        background:
-            radial-gradient(circle at center, #0A0F2F 0%, #02040F 70%),
-            url('https://i.imgur.com/2JY9Z4b.png');
-        background-size:cover;
-        animation: spaceFloat 20s linear infinite;
-        opacity:0.70;
-    }
-    @keyframes spaceFloat{
-        0%{transform:scale(1);}
-        50%{transform:scale(1.05);}
-        100%{transform:scale(1);}
-    }
+/* ----- CORE STAGE ----- */
+.stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
 
-    /* ---------- Metallic Shield ---------- */
-    .shield{
-        position:absolute;
-        top:50%;
-        left:50%;
-        width:280px;
-        height:280px;
-        transform:translate(-50%,-50%);
-        border-radius:50%;
-        background:
-           radial-gradient(circle, #7A0B17 0%, #CC1B2C 60%, #5A0008 100%); /* Outer Red */
-        box-shadow:0 0 40px #FF0011AA inset,0 0 40px #FF0020AA;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        transition:opacity 1s;
-    }
+/* ----- BACKGROUND LAYERS ----- */
+.background{position:absolute;inset:0;z-index:1;overflow:hidden}
 
-    .ring2{
-        width:70%;
-        height:70%;
-        border-radius:50%;
-        background:radial-gradient(circle,#fff,#ccc);
-        box-shadow:0 0 20px #ffffffaa inset;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-    }
+.nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1}
+.nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,90,140,0.9), transparent 40%);animation-duration:120s;}
+.nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;}
+.nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;}
 
-    .ring3{
-        width:65%;
-        height:65%;
-        border-radius:50%;
-        background:radial-gradient(circle,#9A0E19,#D81828,#6A0009);
-        box-shadow:0 0 18px #ff1133aa inset;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-    }
+@keyframes nebulaDrift{
+  0%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(300px,-200px) scale(1.3)}
+  100%{transform:translate(0,0) scale(1)}
+}
 
-    .core{
-        width:45%;
-        height:45%;
-        border-radius:50%;
-        background:radial-gradient(circle,#0A2A7F,#1B4CFF,#00153F);
-        box-shadow:0 0 18px #4477FFaa inset;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        position:relative;
-        overflow:visible;
-    }
+.stars{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:
+radial-gradient(#fff 1.2px, transparent 1px),
+radial-gradient(#fff 0.8px, transparent 1px);
+background-size:400px 400px,120px 120px;filter:blur(.4px);
+animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
 
-    /* ---------- Star (metallic, center) ---------- */
-    .star{
-        width:80px;
-        height:80px;
-        background:url('https://i.imgur.com/1gZCqLe.png');
-        background-size:contain;
-        position:absolute;
-        transform-origin:center;
-        cursor:pointer;
-        filter:drop-shadow(0 0 8px #88aaff);
-    }
+@keyframes starTwinkle{0%{opacity:0.75}50%{opacity:0.95}100%{opacity:0.8}}
+@keyframes starDrift{0%{transform:translate(0,0)}100%{transform:translate(-200px,150px)}}
 
-    /* star spin */
-    @keyframes spinQuick{
-        0%{transform:rotate(0deg) scale(1);}
-        100%{transform:rotate(1440deg) scale(1.08);}
-    }
+/* Floating Particles */
+.particles{position:absolute;inset:0;z-index:4;pointer-events:none;}
+.particle{position:absolute;width:3px;height:3px;background:#fff;opacity:0.5;border-radius:50%;animation:particleDrift linear infinite;}
+@keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
 
-    /* ---------- Crack visual ---------- */
-    .crack{
-        position:absolute;
-        inset:0;
-        background:url('https://i.imgur.com/S5PFx9B.png');
-        background-size:cover;
-        filter:brightness(2);
-        opacity:0;
-        transition:opacity 1s;
-    }
+/* Shield */
+.shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
+.shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
+#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;pointer-events:auto;}
 
-    /* ---------- PRINCE Letters ---------- */
-    .letter{
-        position:absolute;
-        font-size:48px;
-        font-weight:700;
-        color:#ffffff;
-        text-shadow:0 0 12px #88aaff,0 0 24px #3355ff;
-        opacity:0;
-        transform:translate(-50%,-50%) scale(0.2);
-        left:50%;
-        top:50%;
-        pointer-events:none;
-    }
+/* Rays */
+.cosmic-rays{position:absolute;inset:0;z-index:2;mix-blend-mode:screen;pointer-events:none;overflow:hidden}
+.ray{position:absolute;width:2px;height:180vmax;left:50%;top:50%;
+background:linear-gradient(to bottom, rgba(255,255,255,0.9),rgba(255,200,80,0));
+opacity:0.25;transform-origin:center;animation:raySpin linear infinite;filter:blur(2px)}
+@keyframes raySpin{
+  0%{transform:translate(-50%,-50%) rotate(0deg)}
+  100%{transform:translate(-50%,-50%) rotate(360deg)}
+}
 
-    @keyframes burst{
-        0%{opacity:0;transform:translate(-50%,-50%) scale(0.2);}
-        50%{opacity:1;transform:translate(-50%,-80%) scale(1.3);}
-        100%{opacity:1;transform:translate(-50%,400%) scale(1);}
-    }
+/* Galaxy Fog */
+.galaxy{position:absolute;inset:-20%;z-index:1;mix-blend-mode:screen;
+background:radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%),
+           radial-gradient(circle, rgba(160,120,255,0.25), transparent 60%),
+           radial-gradient(circle, rgba(120,180,255,0.25), transparent 65%);
+filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
+@keyframes galaxySpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 
-    /* bottom settle area */
-    .bottom-row{
-        position:absolute;
-        bottom:40px;
-        left:50%;
-        transform:translateX(-50%);
-        display:flex;
-        gap:20px;
-    }
+/* Cinematic Light Ring */
+.light-ring{position:absolute;left:50%;top:50%;width:160vmin;height:160vmin;border-radius:50%;
+transform:translate(-50%,-50%);border:4px solid rgba(255,255,255,0.05);
+animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
+@keyframes ringPulse{
+  0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}
+  50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}
+  100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}
+}
 
-    .bottom-letter{
-        font-size:48px;
-        font-weight:700;
-        color:#fff;
-        opacity:0;
-        text-shadow:0 0 12px #88aaff,0 0 24px #4477ff;
-        transition:opacity 1.2s;
-    }
+/* Supernova */
+.supernova{position:absolute;left:50%;top:50%;width:40vmin;height:40vmin;border-radius:50%;
+transform:translate(-50%,-50%);background:radial-gradient(circle,
+rgba(255,240,200,0.9),rgba(255,150,50,0.4),rgba(255,80,0,0));
+filter:blur(20px);opacity:0;animation:superPulse 8s infinite ease-out;pointer-events:none;z-index:4}
+@keyframes superPulse{
+  0%{transform:translate(-50%,-50%) scale(0.2);opacity:0.6}
+  50%{transform:translate(-50%,-50%) scale(1.8);opacity:0.25}
+  100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}
+}
 
+/* Comets */
+.comet{position:absolute;width:2px;height:2px;background:white;border-radius:50%;
+box-shadow:0 0 12px 6px rgba(255,255,255,0.8);animation:cometFly linear infinite;z-index:3;pointer-events:none}
+@keyframes cometFly{0%{transform:translate(110vw,-10vh)}100%{transform:translate(-20vw,140vh)}}
+
+/* Portal */
+.portal{position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;border-radius:50%;
+transform:translate(-50%,-50%);background:conic-gradient(
+rgba(0,180,255,0.2),rgba(180,0,255,0.3),rgba(255,120,0,0.25),rgba(0,180,255,0.2)
+);
+filter:blur(60px);opacity:0.35;animation:portalSpin 22s linear infinite;pointer-events:none;z-index:2}
+@keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* Sparks */
+.spark{position:absolute;width:2px;height:2px;border-radius:50%;background:yellow;opacity:0.8;
+pointer-events:none;animation:sparkFly linear forwards;}
+@keyframes sparkFly{0%{transform:translate(0,0)}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+
+/* -------- PRINCE letters (bottom row) -------- */
+#princeRow{
+  position:fixed;
+  left:50%;
+  bottom:36px;
+  transform:translateX(-50%);
+  display:flex;
+  gap:28px;
+  z-index:130;
+  pointer-events:none;
+}
+.prince-letter{
+  font-family: "Cinzel", serif;
+  font-size:44px;
+  font-weight:700;
+  color:#e9f2ff;
+  opacity:0;
+  text-shadow:0 0 10px rgba(80,150,255,0.9), 0 0 24px rgba(40,80,200,0.6);
+  transition:opacity .8s, transform .6s;
+}
+
+/* temporary burst letter */
+.burst-letter{
+  position:fixed;
+  left:0;
+  top:0;
+  font-family:"Cinzel", serif;
+  font-size:56px;
+  font-weight:800;
+  color:#ffffff;
+  text-shadow:0 0 14px rgba(120,180,255,0.95), 0 0 28px rgba(40,110,255,0.5);
+  pointer-events:none;
+  z-index:140;
+}
 </style>
 </head>
 
 <body>
+<div class="stage">
+  <div class="background">
+    <div class="galaxy"></div>
+    <div class="portal"></div>
+    <div class="cosmic-rays" id="rays"></div>
+    <div class="light-ring"></div>
+    <div class="supernova"></div>
+    <div id="cometLayer"></div>
+    <div class="nebula-layer nebula1"></div>
+    <div class="nebula-layer nebula2"></div>
+    <div class="nebula-layer nebula3"></div>
+    <div class="stars"></div>
+    <div class="particles"></div>
+  </div>
 
-<div class="bg-stars"></div>
+  <!-- SHIELD -->
+  <div class="shield-wrap">
+    <svg class="shield-svg" viewBox="0 0 200 200">
+      <defs>
+        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff4d4d"/>
+          <stop offset="100%" stop-color="#990000"/>
+        </radialGradient>
+        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#cccccc"/>
+        </radialGradient>
+        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#4d90ff"/>
+          <stop offset="100%" stop-color="#003366"/>
+        </radialGradient>
+      </defs>
 
-<!-- Shield -->
-<div class="shield" id="shield">
-    <div class="ring2">
-        <div class="ring3">
-            <div class="core">
-                <div class="star" id="star"></div>
-                <div class="crack" id="crack"></div>
-            </div>
-        </div>
-    </div>
+      <g id="rings" transform="translate(100,100)">
+        <circle r="92" fill="url(#metalRed)" />
+        <circle r="76" fill="url(#metalWhite)" />
+        <circle r="56" fill="url(#metalRed)" />
+        <circle r="36" fill="url(#metalBlue)" />
+      </g>
+
+      <g id="starGroup" transform="translate(100,100)">
+        <polygon id="shield-star"
+          points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8"
+          fill="#ffffff"
+        />
+      </g>
+    </svg>
+  </div>
 </div>
 
-<!-- PRINCE letters will settle here -->
-<div class="bottom-row" id="bottomRow"></div>
+<!-- PRINCE bottom row container -->
+<div id="princeRow"></div>
 
 <script>
-let cracked = false;
-let spinning = false;
-let clickIndex = 0;
-const letters = ["P","R","I","N","C","E"];
+// Rays
+const rays=document.getElementById('rays');
+for(let i=0;i<18;i++){
+  const r=document.createElement('div');
+  r.className='ray';
+  r.style.animationDuration=(20+i*2)+'s';
+  r.style.transform=`translate(-50%,-50%) rotate(${i*20}deg)`;
+  rays.appendChild(r);
+}
 
-const star = document.getElementById("star");
-const shield = document.getElementById("shield");
-const crack = document.getElementById("crack");
-const bottomRow = document.getElementById("bottomRow");
+// existing elements
+const star=document.getElementById('shield-star');
+const shield=document.querySelector('.shield-svg');
+const stage=document.querySelector('.stage');
+const princeRow=document.getElementById('princeRow');
 
-/* ---------- Star Click Logic ---------- */
-star.onclick = () => {
-    if(spinning) return;
-    spinning = true;
+// PRINCE config
+const PRINCE = ["P","R","I","N","C","E"];
+let princeIndex = 0;
+let shattered = false; // becomes true after first shatter
+let preventedReShatter = false;
 
-    /* Spin first */
-    star.style.animation = "spinQuick 1s ease-out";
+// star click handling
+star.addEventListener('click', (e)=>{
+    // if shield not shattered yet: do the shatter
+    if(!shattered){
+        // spin & shatter
+        star.style.transition='transform 0.5s linear';
+        star.style.transform='scale(1) rotate(1080deg)';
+        setTimeout(()=>{
+            star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
+            star.style.transform='scale(1) rotate(0deg)';
+            shatterShield();
+        },500);
+        return;
+    }
 
-    setTimeout(()=>{
+    // after shattered: spawn letters until filled
+    if(princeIndex < PRINCE.length){
+        spawnPrinceLetter(PRINCE[princeIndex]);
+        princeIndex++;
+    }
+    // else do nothing (all letters already placed)
+});
 
-        star.style.animation = "none";
+// SHATTER function (keeps star)
+function shatterShield(){
+    if(preventedReShatter) return;
+    preventedReShatter = true;
 
-        // FIRST CLICK EVER → CRACK SHIELD
-        if(!cracked){
-            cracked = true;
+    const rings=document.getElementById('rings');
+    if(!rings) return;
 
-            crack.style.opacity = 1;   // show crack
+    shattered = true;
+
+    rings.style.opacity = 0;
+
+    const layers=[
+        {r:92, fill:'url(#metalRed)', slices:8},
+        {r:76, fill:'url(#metalWhite)', slices:6},
+        {r:56, fill:'url(#metalRed)', slices:6},
+        {r:36, fill:'url(#metalBlue)', slices:4}
+    ];
+
+    const fragRoot=document.createElementNS('http://www.w3.org/2000/svg','g');
+    shield.appendChild(fragRoot);
+
+    layers.forEach(layer=>{
+        for(let i=0;i<layer.slices;i++){
+            const piece=document.createElementNS('http://www.w3.org/2000/svg','path');
+            const a1=i*(360/layer.slices);
+            const a2=a1+(360/layer.slices);
+            const R=layer.r, r=layer.r*0.6;
+
+            const x1=r*Math.cos(a1*Math.PI/180);
+            const y1=r*Math.sin(a1*Math.PI/180);
+            const x2=R*Math.cos(a1*Math.PI/180);
+            const y2=R*Math.sin(a1*Math.PI/180);
+            const x3=R*Math.cos(a2*Math.PI/180);
+            const y3=R*Math.sin(a2*Math.PI/180);
+            const x4=r*Math.cos(a2*Math.PI/180);
+            const y4=r*Math.sin(a2*Math.PI/180);
+
+            piece.setAttribute('fill',layer.fill);
+            piece.setAttribute('d',
+              `M ${x1} ${y1} L ${x2} ${y2} A ${R} ${R} 0 0 1 ${x3} ${y3}
+               L ${x4} ${y4} A ${r} ${r} 0 0 0 ${x1} ${y1}`
+            );
+
+            piece.style.transformOrigin='100px 100px';
+            piece.style.transition='transform 1.2s ease-out, opacity 1.5s ease-out';
+            piece.setAttribute('class','shard');
+
+            fragRoot.appendChild(piece);
 
             setTimeout(()=>{
-                shield.style.opacity = 0;  // fade shield away
-            },1200);
+                const dx=(Math.random()-0.5)*300;
+                const dy=(Math.random()-0.5)*300;
+                const rot=(Math.random()-0.5)*720;
 
-        } else {
-            // After cracking → spawn letters
-            spawnLetter();
+                piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.85)`;
+
+                setTimeout(()=>piece.style.opacity=0,700);
+
+                spawnSparks(100+dx,100+dy,6);
+
+            },50 + Math.random()*160);
         }
+    });
 
-        spinning = false;
-
-    },1000);
-};
-
-
-/* ---------- Letter Spawn + Settle ---------- */
-function spawnLetter(){
-    if(clickIndex >= letters.length) return;
-
-    const lt = document.createElement("div");
-    lt.className = "letter";
-    lt.innerText = letters[clickIndex];
-    document.body.appendChild(lt);
-
-    // animate
-    lt.style.animation = "burst 1.6s ease-out forwards";
-
-    // settle
+    // remove original rings but keep star
     setTimeout(()=>{
-        lt.remove();
+        try{ if(rings && rings.parentNode) rings.parentNode.removeChild(rings); }catch(e){}
+        setTimeout(()=>{
+            try{ if(fragRoot && fragRoot.parentNode) fragRoot.parentNode.removeChild(fragRoot); }catch(e){}
+        },1400);
+    },2200);
+}
 
-        const b = document.createElement("div");
-        b.className = "bottom-letter";
-        b.innerText = letters[clickIndex];
-        bottomRow.appendChild(b);
+// Sparks (unchanged)
+function spawnSparks(cx,cy,count){
+    for(let i=0;i<count;i++){
+        const s=document.createElement('div');
+        s.className='spark';
+        const a=Math.random()*2*Math.PI;
+        const d=50+Math.random()*100;
+        s.style.left=cx+'px';
+        s.style.top=cy+'px';
+        s.style.setProperty('--sx',Math.cos(a)*d+'px');
+        s.style.setProperty('--sy',Math.sin(a)*d+'px');
+        s.style.animationDuration=(0.6+Math.random()*0.6)+'s';
+        stage.appendChild(s);
+        setTimeout(()=>s.remove(),800);
+    }
+}
 
-        setTimeout(()=>{ b.style.opacity = 1; },50);
+// spawnPRINCE letter: burst from star, then settle into bottom row
+function spawnPrinceLetter(letter){
+    // get star center in viewport coords
+    const starRect = star.getBoundingClientRect();
+    const startX = starRect.left + starRect.width/2;
+    const startY = starRect.top + starRect.height/2;
 
-    },1500);
+    // create temporary burst element
+    const temp = document.createElement('div');
+    temp.className = 'burst-letter';
+    temp.textContent = letter;
+    document.body.appendChild(temp);
 
-    clickIndex++;
+    // place at star center
+    temp.style.left = startX + 'px';
+    temp.style.top = startY + 'px';
+    temp.style.transform = 'translate(-50%, -50%) scale(0.6)';
+    temp.style.opacity = '0';
+
+    // small pop to visible
+    requestAnimationFrame(()=> {
+        temp.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+        temp.style.opacity = '1';
+        temp.style.transform = 'translate(-50%, -120%) scale(1.25)';
+    });
+
+    // target position in the bottom row:
+    const targetIndex = princeIndex; // 0-based
+    // compute target X based on princeRow position and gap
+    const gap = 28;
+    const letterWidth = 44; // approx—visual alignment handled by center later
+    // ensure princeRow exists (it does)
+    const rowRect = princeRow.getBoundingClientRect();
+    const baseX = rowRect.left + rowRect.width/2; // center of row (initially 0 width)
+    // compute target left by counting existing children
+    const existing = princeRow.children.length;
+    // we'll compute target X relative to viewport: center minus half total width + offset
+    const totalWidth = (PRINCE.length * letterWidth) + ((PRINCE.length-1) * gap);
+    const startLeft = window.innerWidth/2 - totalWidth/2;
+    const targetX = startLeft + existing*(letterWidth + gap) + letterWidth/2;
+    const targetY = window.innerHeight - 36 - 24; // bottomRow bottom 36px, half letter height ~24
+
+    // add small delay so burst looks organic, then animate to target
+    setTimeout(()=>{
+        // animate using WA API for smooth motion
+        const anim = temp.animate([
+            { transform:`translate(-50%,-120%) scale(1.25)`, opacity:1, offset:0 },
+            { transform:`translate(${targetX - startX}px, ${targetY - startY}px) scale(0.95)`, opacity:1, offset:0.7 },
+            { transform:`translate(${targetX - startX}px, ${targetY - startY}px) scale(0.9)`, opacity:1, offset:1 }
+        ], {
+            duration: 900,
+            easing: 'cubic-bezier(0.22,1,0.36,1)',
+            fill: 'forwards'
+        });
+
+        anim.onfinish = ()=> {
+            // remove temp and create final bottom letter
+            try{ temp.remove(); }catch(e){}
+
+            const final = document.createElement('div');
+            final.className = 'prince-letter';
+            final.textContent = letter;
+            princeRow.appendChild(final);
+
+            // reveal final (fade in)
+            requestAnimationFrame(()=> {
+                final.style.opacity = '1';
+                final.style.transform = 'translateY(0)';
+            });
+        };
+    }, 180);
+}
+
+// Particles (existing)
+const particleContainer=document.querySelector('.particles');
+for(let i=0;i<120;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.setProperty('--x',(Math.random()*400-200)+'px');
+  p.style.setProperty('--y',(Math.random()*400-200)+'px');
+  p.style.left=Math.random()*100+'%';
+  p.style.top=Math.random()*100+'%';
+  p.style.animationDuration=(60+Math.random()*60)+'s';
+  particleContainer.appendChild(p);
+}
+
+// Comets (existing)
+const cometLayer=document.getElementById('cometLayer');
+for(let i=0;i<12;i++){
+  const c=document.createElement('div');
+  c.className='comet';
+  c.style.left=Math.random()*100+'vw';
+  c.style.top=Math.random()*100+'vh';
+  c.style.animationDuration=(6+Math.random()*6)+'s';
+  c.style.animationDelay=(-Math.random()*10)+'s';
+  cometLayer.appendChild(c);
 }
 </script>
-
 </body>
 </html>

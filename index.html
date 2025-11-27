@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Steel Shield Break</title>
+<title>IMAX — Nolan Cosmic • Steel Shield Break with Sparks</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
@@ -36,6 +36,8 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 @keyframes cometFly{0%{transform:translate(110vw,-10vh) scale(1);opacity:1}100%{transform:translate(-20vw,140vh) scale(0.3);opacity:0}}
 .portal{position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;border-radius:50%;transform:translate(-50%,-50%);background:conic-gradient(from 0deg, rgba(0,180,255,0.2), rgba(180,0,255,0.3), rgba(255,120,0,0.25), rgba(0,180,255,0.2));filter:blur(60px);opacity:0.35;animation:portalSpin 22s linear infinite;pointer-events:none;z-index:2}
 @keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+.spark{position:absolute;width:2px;height:2px;border-radius:50%;background:yellow;opacity:0.8;pointer-events:none;animation:sparkFly linear forwards;}
+@keyframes sparkFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
 </style>
 </head>
 <body>
@@ -59,7 +61,6 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
         <radialGradient id="metalRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#990000"/></radialGradient>
         <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#cccccc"/></radialGradient>
         <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4d90ff"/><stop offset="100%" stop-color="#003366"/></radialGradient>
-        <!-- Highlight gradient for steel glint -->
         <radialGradient id="glint" cx="50%" cy="30%" r="50%" fx="50%" fy="30%">
           <stop offset="0%" stop-color="rgba(255,255,255,0.8)"/>
           <stop offset="60%" stop-color="rgba(255,255,255,0.0)"/>
@@ -90,10 +91,11 @@ for(let i=0;i<18;i++){
   rays.appendChild(r);
 }
 
-// Star + shield steel glint + shatter
+// Star + shield steel glint + shatter with sparks
 const star=document.getElementById('shield-star');
 const shield=document.querySelector('.shield-svg');
 const glintLayer=document.getElementById('glintLayer');
+const stage=document.querySelector('.stage');
 
 star.addEventListener('click', ()=>{
     star.style.transition='transform 0.5s linear';
@@ -146,9 +148,29 @@ function shatterShield(){
                 const rot=(Math.random()-0.5)*720;
                 piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.9)`;
                 piece.style.opacity=0;
+                spawnSparks(100+dx,100+dy,6);
             },50);
         }
     });
+}
+
+// Sparks
+function spawnSparks(cx,cy,count){
+    for(let i=0;i<count;i++){
+        const s=document.createElement('div');
+        s.className='spark';
+        const angle=Math.random()*2*Math.PI;
+        const dist=50+Math.random()*100;
+        const sx=Math.cos(angle)*dist;
+        const sy=Math.sin(angle)*dist;
+        s.style.left=cx+'px';
+        s.style.top=cy+'px';
+        s.style.setProperty('--sx', sx+'px');
+        s.style.setProperty('--sy', sy+'px');
+        s.style.animationDuration=(0.6+Math.random()*0.6)+'s';
+        stage.appendChild(s);
+        setTimeout(()=>s.remove(),800);
+    }
 }
 
 // Particles

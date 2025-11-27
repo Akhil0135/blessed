@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Shield Reveal — Birthday</title>
+<title>IMAX — Nolan Cosmic • Shield Break</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
@@ -56,10 +56,10 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
       <g id="rings" transform="translate(100,100)">
-        <circle r="92" fill="#0b2340" />
-        <circle r="76" fill="#d33a3a" />
-        <circle r="56" fill="#ffffff" />
-        <circle r="36" fill="#2b5ea6" />
+        <circle r="92" fill="red" />
+        <circle r="76" fill="white" />
+        <circle r="56" fill="red" />
+        <circle r="36" fill="blue" />
       </g>
       <g id="starGroup" transform="translate(100,100)">
         <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#fff" />
@@ -67,6 +67,7 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
     </svg>
   </div>
 </div>
+
 <script>
 // Stars rays
 const rays=document.getElementById('rays');
@@ -95,17 +96,22 @@ function shatterShield(){
     const rings = document.getElementById('rings');
     if(!rings) return;
     rings.style.opacity = 0;
-    const piecesData = [
-        {r:92, fill:'#0b2340'}, {r:76, fill:'#d33a3a'}, 
-        {r:56, fill:'#ffffff'}, {r:36, fill:'#2b5ea6'}
+
+    // Split circles into slices for cinematic cracks
+    const layers = [
+        {r:92, fill:'red', slices:8},
+        {r:76, fill:'white', slices:6},
+        {r:56, fill:'red', slices:6},
+        {r:36, fill:'blue', slices:4}
     ];
-    piecesData.forEach(data=>{
-        for(let i=0;i<6;i++){
+
+    layers.forEach(layer=>{
+        for(let i=0;i<layer.slices;i++){
             const piece = document.createElementNS('http://www.w3.org/2000/svg','path');
-            const angleStart = i * 60;
-            const angleEnd = angleStart + 60;
-            const rOuter = data.r;
-            const rInner = data.r * 0.6;
+            const angleStart = i * (360/layer.slices);
+            const angleEnd = angleStart + (360/layer.slices);
+            const rOuter = layer.r;
+            const rInner = layer.r*0.6;
             const x1 = rInner * Math.cos(angleStart * Math.PI/180);
             const y1 = rInner * Math.sin(angleStart * Math.PI/180);
             const x2 = rOuter * Math.cos(angleStart * Math.PI/180);
@@ -116,13 +122,13 @@ function shatterShield(){
             const y4 = rInner * Math.sin(angleEnd * Math.PI/180);
             const d = `M ${x1} ${y1} L ${x2} ${y2} A ${rOuter} ${rOuter} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rInner} ${rInner} 0 0 0 ${x1} ${y1}`;
             piece.setAttribute('d',d);
-            piece.setAttribute('fill',data.fill);
+            piece.setAttribute('fill',layer.fill);
             piece.style.transformOrigin='100px 100px';
-            piece.style.transition='transform 1s ease-out, opacity 1s ease-out';
+            piece.style.transition='transform 1.2s ease-out, opacity 1.2s ease-out';
             shield.appendChild(piece);
             setTimeout(()=>{
-                const dx = (Math.random()-0.5)*200;
-                const dy = (Math.random()-0.5)*200;
+                const dx = (Math.random()-0.5)*300;
+                const dy = (Math.random()-0.5)*300;
                 const rot = (Math.random()-0.5)*720;
                 piece.style.transform = `translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.9)`;
                 piece.style.opacity = 0;

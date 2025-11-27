@@ -1,1 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IMAX Nolan Shield Scene</title>
+<style>
+    html,body{
+        margin:0;
+        padding:0;
+        background:#000;
+        overflow:hidden;
+        height:100%;
+        font-family:Arial, sans-serif;
+    }
+
+    /* ---------- BACKGROUND STARFIELD LAYERS ---------- */
+    .starfield{
+        position:fixed;
+        top:0; left:0;
+        width:100vw;
+        height:100vh;
+        pointer-events:none;
+    }
+
+    canvas{position:absolute;top:0;left:0;}
+
+    /* ---------- SHIELD ---------- */
+    #shield {
+        position:absolute;
+        top:50%; left:50%;
+        width:260px; height:260px;
+        transform:translate(-50%,-50%);
+        border-radius:50%;
+        background: radial-gradient(circle,
+            #b00000 0%, #7a0000 45%, #4a0000 100%);
+        box-shadow:0 0 25px #ff000040 inset, 0 0 40px #ff000040;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        transition:0.4s ease-out;
+    }
+
+    #inner1{
+        width:190px; height:190px;
+        border-radius:50%;
+        background: radial-gradient(circle,
+            #ffffff 0%, #cfcfcf 50%, #a0a0a0 100%);
+        box-shadow:0 0 30px #ffffff30 inset;
+        display:flex; justify-content:center; align-items:center;
+    }
+
+    #inner2{
+        width:130px; height:130px;
+        border-radius:50%;
+        background: radial-gradient(circle,
+            #b00000 0%, #7a0000 60%, #4a0000 100%);
+        box-shadow:0 0 20px #ff000040 inset;
+        display:flex; justify-content:center; align-items:center;
+    }
+
+    /* ---------- STAR (METALLIC) ---------- */
+    #star{
+        width:90px;
+        height:90px;
+        background: linear-gradient(135deg,#d7d7d7,#9f9f9f,#e5e5e5,#bfbfbf);
+        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 
+                           68% 57%, 79% 91%, 50% 70%, 
+                           21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        filter:drop-shadow(0 0 10px #ffffff70);
+        transition:transform 1.6s cubic-bezier(.19,1,.22,1);
+        cursor:pointer;
+    }
+
+    /* ---------- CRACK EFFECT ---------- */
+    .crack{
+        position:absolute;
+        width:3px;
+        height:0;
+        background:#fff;
+        left:50%; top:50%;
+        transform-origin:top;
+        opacity:0.9;
+        box-shadow:0 0 8px #fff;
+    }
+
+    .fadeAway{
+        animation:fadeOut 1.4s forwards ease-in-out;
+    }
+
+    @keyframes fadeOut{
+        to{opacity:0; transform:scale(1.3);}
+    }
+
+</style>
+</head>
+<body>
+
+<!-- STARFIELD LAYERS -->
+<canvas id="starsBack" class="starfield"></canvas>
+<canvas id="starsMid" class="starfield"></canvas>
+<canvas id="starsFront" class="starfield"></canvas>
+
+<!-- SHIELD + STAR -->
+<div id="shield">
+    <div id="inner1">
+        <div id="inner2">
+            <div id="star"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* =========================================================
+   ⭐ STARFIELD (IMAX-LAYERED, DEPTH, TWINKLE)
+   ========================================================= */
+
+function createStarfield(canvas, count, speedScale){
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width = window.innerWidth;
+    const h = canvas.height = window.innerHeight;
+
+    const stars = [];
+    for(let i=0; i<count; i++){
+        stars.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: Math.random()*1.3 + 0.3,
+            tw: Math.random()*0.05 + 0.02,
+            base: Math.random()*0.6 + 0.4
+        });
+    }
+
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        stars.forEach(s=>{
+            s.base += s.tw;
+            let alpha = 0.4 + Math.sin(s.base)*0.4;
+            ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+            ctx.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+createStarfield(document.getElementById("starsBack"), 140, 0.2);
+createStarfield(document.getElementById("starsMid"), 90, 0.4);
+createStarfield(document.getElementById("starsFront"), 45, 0.6);
+
+
+/* =========================================================
+   ⭐ SHIELD SPIN → STOP → CRACK
+   ========================================================= */
+
+let spinning = true;
+let cracked = false;
+
+const star = document.getElementById("star");
+const shield = document.getElementById("shield");
+
+star.style.animation = "spin 2.2s linear infinite";
+
+star.addEventListener("click", ()=>{
+    if(spinning){
+        star.style.animation = "";
+        spinning = false;
+        setTimeout(doCrack, 800);
+    }
+});
+
+/* ---------- CRACK CREATION ---------- */
+function doCrack(){
+    if(cracked) return;
+    cracked = true;
+
+    for(let i=0;i<16;i++){
+        let c = document.createElement("div");
+        c.className = "crack";
+        let angle = (360/16)*i;
+        c.style.transform = `translate(-50%,-50%) rotate(${angle}deg)`;
+        shield.appendChild(c);
+
+        setTimeout(()=>{
+            c.style.height = (Math.random()*120+60)+"px";
+        }, 30*i);
+    }
+
+    setTimeout(()=>{
+        shield.classList.add("fadeAway");
+    }, 1200);
+}
+
+</script>
+
+</body>
+</html>
 

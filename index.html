@@ -69,9 +69,6 @@ filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
 /* Portal Swirl */
 .portal{position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;border-radius:50%;transform:translate(-50%,-50%);background:conic-gradient(from 0deg, rgba(0,180,255,0.2), rgba(180,0,255,0.3), rgba(255,120,0,0.25), rgba(0,180,255,0.2));filter:blur(60px);opacity:0.35;animation:portalSpin 22s linear infinite;pointer-events:none;z-index:2}
 @keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
-
-/* SUN / MOON */
-.sun{position:absolute;left:50%;top:50%;width:25vmin;height:25vmin;border-radius:50%;transform:translate(-50%,-150%);background:radial-gradient(circle, #ffe27d, #ff9c33, #ff6a00);filter:blur(40px);z-index:0;opacity:0;transition:all 6s ease-in-out;}
 </style>
 </head>
 <body>
@@ -89,7 +86,6 @@ filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
     <div class="stars"></div>
     <div class="bloom"></div>
     <div class="particles"></div>
-    <div class="sun" id="sun"></div>
   </div>
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
@@ -153,18 +149,6 @@ for(let i=0;i<12;i++){
   c.style.animationDelay=(-Math.random()*10)+'s';
   cometLayer.appendChild(c);
 }
-
-// SUN / DAY EVOLUTION
-const sun = document.getElementById('sun');
-setTimeout(()=>{
-  sun.style.top='50%';
-  sun.style.opacity='1';
-  document.querySelector('.nebula-layer.nebula1').style.opacity='0.35';
-  document.querySelector('.nebula-layer.nebula2').style.opacity='0.35';
-  document.querySelector('.nebula-layer.nebula3').style.opacity='0.35';
-  document.querySelector('.stars').style.opacity='0.1';
-}, 3500);
-
 </script>
 </body>
 </html>

@@ -3,14 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Shield Reveal</title>
+<title>IMAX — Nolan Cosmic • Shield Reveal — Birthday</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
 :root{--imax-letterbox:12vh;--accent:#e5f1ff}
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
 .letterbox-top,.letterbox-bottom{position:absolute;left:0;right:0;height:var(--imax-letterbox);background:linear-gradient(180deg,rgba(0,0,0,0.95),rgba(0,0,0,0.7));z-index:60;pointer-events:none}.letterbox-top{top:0}.letterbox-bottom{bottom:0}
-
 /* --- Enhanced Dynamic Background --- */
 .background{position:absolute;inset:0;z-index:1;overflow:hidden}
 .nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1}
@@ -18,80 +17,55 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 .nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;}
 .nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;}
 @keyframes nebulaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(300px,-200px) scale(1.3)}100%{transform:translate(0,0) scale(1)}}
-
-.stars{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:1;}
-.star-layer{
-  position:absolute;
-  inset:0;
-  background-image: radial-gradient(#fff 1.2px, transparent 1px);
-  background-size:400px 400px;
-  opacity:0.7;
-  animation:starDrift 200s linear infinite, starTwinkle 3s infinite alternate;
-}
-.star-layer:nth-child(2){
-  background-size:200px 200px;
-  animation:starDrift 180s linear infinite, starTwinkle2 4s infinite alternate;
-  opacity:0.5;
-}
-.star-layer:nth-child(3){
-  background-size:120px 120px;
-  animation:starDrift 150s linear infinite, starTwinkle3 5s infinite alternate;
-  opacity:0.3;
-}
-
+.stars{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:1;background-image:radial-gradient(#fff 1.2px, transparent 1px),radial-gradient(#fff 0.8px, transparent 1px);background-size:400px 400px, 120px 120px;filter:blur(.4px);animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
+@keyframes starTwinkle{0%{opacity:0.75}50%{opacity:0.95}100%{opacity:0.8}}
 @keyframes starDrift{0%{transform:translate(0,0)}100%{transform:translate(-200px,150px)}}
-@keyframes starTwinkle{0%{opacity:0.6}25%{opacity:0.85}50%{opacity:1}75%{opacity:0.8}100%{opacity:0.65}}
-@keyframes starTwinkle2{0%{opacity:0.4}25%{opacity:0.6}50%{opacity:0.8}75%{opacity:0.6}100%{opacity:0.45}}
-@keyframes starTwinkle3{0%{opacity:0.2}25%{opacity:0.35}50%{opacity:0.5}75%{opacity:0.35}100%{opacity:0.25}}
-
-.bloom{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.6;background:radial-gradient(circle at 50% 50%, rgba(255,200,120,0.15), transparent 60%)}
+.bloom{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.3;background:radial-gradient(circle at 50% 40%, rgba(255,200,100,0.05), transparent 15%)}
 .particles{position:absolute;inset:0;z-index:4;pointer-events:none;}
 .particle{position:absolute;width:3px;height:3px;background:#fff;opacity:0.5;border-radius:50%;animation:particleDrift linear infinite;}
 @keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
-
 /* Shield */
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
 #shield-star{transform-box:fill-box;transform-origin:center center;opacity:0;transform:scale(0) rotate(0deg);transition:transform 1.2s cubic-bezier(0.22,1,0.36,1),opacity 0.8s ease-out;cursor:pointer}
-
-/* --- Cosmic Rays Behind Shield --- */
+/* Cosmic Rays Behind Shield */
 .cosmic-rays{position:absolute;inset:0;z-index:2;mix-blend-mode:screen;pointer-events:none;overflow:hidden}
 .ray{position:absolute;width:2px;height:180vmax;left:50%;top:50%;background:linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,200,80,0.0));opacity:0.25;transform-origin:center center;animation:raySpin linear infinite;filter:blur(2px)}
 @keyframes raySpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
-
-/* --- Rotating Galaxy Layer --- */
+/* Rotating Galaxy Layer */
 .galaxy{position:absolute;inset:-20%;z-index:1;mix-blend-mode:screen;background:radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 70%),
             radial-gradient(circle at 60% 40%, rgba(160,120,255,0.25), transparent 60%),
             radial-gradient(circle at 40% 60%, rgba(120,180,255,0.25), transparent 65%);
 filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
 @keyframes galaxySpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-
-/* --- Pulsating Light Rings --- */
+/* Pulsating Light Rings */
 .light-ring{position:absolute;left:50%;top:50%;width:160vmin;height:160vmin;border-radius:50%;transform:translate(-50%,-50%);border:4px solid rgba(255,255,255,0.05);animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
 @keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}}
-
-/* --- COMETS --- */
+/* SUPER NOVA PULSE */
+.supernova{position:absolute;left:50%;top:50%;width:40vmin;height:40vmin;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle, rgba(255,240,200,0.9), rgba(255,150,50,0.4), rgba(255,80,0,0));filter:blur(20px);opacity:0;animation:superPulse 8s infinite ease-out;pointer-events:none;z-index:4}
+@keyframes superPulse{0%{transform:translate(-50%,-50%) scale(0.2);opacity:0.6}50%{transform:translate(-50%,-50%) scale(1.8);opacity:0.25}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}}
+/* COMETS */
 .comet{position:absolute;width:2px;height:2px;background:white;border-radius:50%;box-shadow:0 0 12px 6px rgba(255,255,255,0.8);animation:cometFly linear infinite;z-index:3;pointer-events:none}
 @keyframes cometFly{0%{transform:translate(110vw,-10vh) scale(1);opacity:1}100%{transform:translate(-20vw,140vh) scale(0.3);opacity:0}}
-
+/* PORTAL SWIRL */
+.portal{position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;border-radius:50%;transform:translate(-50%,-50%);background:conic-gradient(from 0deg, rgba(0,180,255,0.2), rgba(180,0,255,0.3), rgba(255,120,0,0.25), rgba(0,180,255,0.2));filter:blur(60px);opacity:0.35;animation:portalSpin 22s linear infinite;pointer-events:none;z-index:2}
+@keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
 </style>
 </head>
 <body>
 <div class="stage">
   <div class="background">
     <div class="galaxy"></div>
+    <div class="portal"></div>
     <div class="cosmic-rays" id="rays"></div>
     <div class="light-ring"></div>
     <div class="supernova"></div>
     <div id="cometLayer"></div>
+    <div class="galaxy"></div>
     <div class="nebula-layer nebula1"></div>
     <div class="nebula-layer nebula2"></div>
     <div class="nebula-layer nebula3"></div>
-    <div class="stars">
-      <div class="star-layer"></div>
-      <div class="star-layer"></div>
-      <div class="star-layer"></div>
-    </div>
+    <div class="stars"></div>
     <div class="bloom"></div>
     <div class="particles"></div>
   </div>
@@ -107,12 +81,10 @@ filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
         <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#fff" />
       </g>
     </svg>
-    <div class="sheen"></div>
   </div>
 </div>
-
 <script>
-// Add spinning rays dynamically
+// Stars rays
 const rays=document.getElementById('rays');
 for(let i=0;i<18;i++){
   const r=document.createElement('div');
@@ -122,18 +94,60 @@ for(let i=0;i<18;i++){
   rays.appendChild(r);
 }
 
-// Shield star interaction
+// Star rotation + shield shatter
 const star = document.getElementById('shield-star');
-if(star){
-  setTimeout(()=>{ star.style.opacity=1; star.style.transform='scale(1) rotate(360deg)'; }, 1200);
-  star.addEventListener('click', ()=>{
+const shield = document.querySelector('.shield-svg');
+star.addEventListener('click', ()=>{
     star.style.transition='transform 0.5s linear';
     star.style.transform='scale(1) rotate(1080deg)';
-    setTimeout(()=>{ star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)'; star.style.transform='scale(1) rotate(0deg)'; }, 500);
-  });
+    setTimeout(()=>{
+        star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
+        star.style.transform='scale(1) rotate(0deg)';
+        shatterShield();
+    },500);
+});
+
+function shatterShield(){
+    const rings = document.getElementById('rings');
+    if(!rings) return;
+    rings.style.opacity = 0;
+    const piecesData = [
+        {r:92, fill:'#0b2340'}, {r:76, fill:'#d33a3a'}, 
+        {r:56, fill:'#ffffff'}, {r:36, fill:'#2b5ea6'}
+    ];
+    piecesData.forEach(data=>{
+        for(let i=0;i<6;i++){
+            const piece = document.createElementNS('http://www.w3.org/2000/svg','path');
+            const angleStart = i * 60;
+            const angleEnd = angleStart + 60;
+            const rOuter = data.r;
+            const rInner = data.r * 0.6;
+            const x1 = rInner * Math.cos(angleStart * Math.PI/180);
+            const y1 = rInner * Math.sin(angleStart * Math.PI/180);
+            const x2 = rOuter * Math.cos(angleStart * Math.PI/180);
+            const y2 = rOuter * Math.sin(angleStart * Math.PI/180);
+            const x3 = rOuter * Math.cos(angleEnd * Math.PI/180);
+            const y3 = rOuter * Math.sin(angleEnd * Math.PI/180);
+            const x4 = rInner * Math.cos(angleEnd * Math.PI/180);
+            const y4 = rInner * Math.sin(angleEnd * Math.PI/180);
+            const d = `M ${x1} ${y1} L ${x2} ${y2} A ${rOuter} ${rOuter} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rInner} ${rInner} 0 0 0 ${x1} ${y1}`;
+            piece.setAttribute('d',d);
+            piece.setAttribute('fill',data.fill);
+            piece.style.transformOrigin='100px 100px';
+            piece.style.transition='transform 1s ease-out, opacity 1s ease-out';
+            shield.appendChild(piece);
+            setTimeout(()=>{
+                const dx = (Math.random()-0.5)*200;
+                const dy = (Math.random()-0.5)*200;
+                const rot = (Math.random()-0.5)*720;
+                piece.style.transform = `translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.9)`;
+                piece.style.opacity = 0;
+            },50);
+        }
+    });
 }
 
-// Generate drifting particles
+// Particles
 const particleContainer=document.querySelector('.particles');
 for(let i=0;i<120;i++){
   const p=document.createElement('div');

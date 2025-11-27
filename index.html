@@ -6,7 +6,7 @@
 <title>IMAX — Nolan Cosmic • Shield to Letters</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
+html,body{height:100%;background:#000008;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
 
 /* --- STAGE --- */
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
@@ -69,15 +69,17 @@ animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
   background:linear-gradient(120deg,#ff4d4d,#003366);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:metalPulse 2s infinite alternate;
+  animation:metalShimmer 2s infinite alternate;
   opacity:0;
   transform:translate(-50%,-50%) scale(0.2);
   pointer-events:none;
 }
-@keyframes metalPulse{
+@keyframes metalShimmer{
   0%{transform:translate(-50%,-50%) scale(0.9);filter:drop-shadow(0 0 6px #ff4d4d);}
-  50%{transform:translate(-50%,-50%) scale(1.05);filter:drop-shadow(0 0 12px #003366);}
-  100%{transform:translate(-50%,-50%) scale(1);filter:drop-shadow(0 0 10px #ff4d4d);}
+  25%{transform:translate(-50%,-50%) scale(1.02);filter:drop-shadow(0 0 12px #003366);}
+  50%{transform:translate(-50%,-50%) scale(1.05);filter:drop-shadow(0 0 14px #ff4d4d);}
+  75%{transform:translate(-50%,-50%) scale(1.02);filter:drop-shadow(0 0 10px #003366);}
+  100%{transform:translate(-50%,-50%) scale(1);filter:drop-shadow(0 0 8px #ff4d4d);}
 }
 
 /* --- SPARKS --- */

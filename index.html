@@ -7,13 +7,21 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
+
+/* --- CORE STAGE --- */
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
+
+/* --- BACKGROUND --- */
 .background{position:absolute;inset:0;z-index:1;overflow:hidden}
+
 .nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1}
 .nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,90,140,0.9), transparent 40%);animation-duration:120s;}
 .nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;}
 .nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;}
+
 @keyframes nebulaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(300px,-200px) scale(1.3)}100%{transform:translate(0,0) scale(1)}}
+
+/* Stars */
 .stars{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:
 radial-gradient(#fff 1.2px, transparent 1px),
 radial-gradient(#fff 0.8px, transparent 1px);
@@ -21,55 +29,62 @@ background-size:400px 400px,120px 120px;filter:blur(.4px);
 animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
 @keyframes starTwinkle{0%{opacity:0.75}50%{opacity:0.95}100%{opacity:0.8}}
 @keyframes starDrift{0%{transform:translate(0,0)}100%{transform:translate(-200px,150px)}}
+
+/* Particles */
 .particles{position:absolute;inset:0;z-index:4;pointer-events:none;}
 .particle{position:absolute;width:3px;height:3px;background:#fff;opacity:0.5;border-radius:50%;animation:particleDrift linear infinite;}
 @keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
+
+/* Shield */
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
 #shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;}
+
+/* Rays */
 .cosmic-rays{position:absolute;inset:0;z-index:2;mix-blend-mode:screen;pointer-events:none;overflow:hidden}
 .ray{position:absolute;width:2px;height:180vmax;left:50%;top:50%;
 background:linear-gradient(to bottom, rgba(255,255,255,0.9),rgba(255,200,80,0));
 opacity:0.25;transform-origin:center;animation:raySpin linear infinite;filter:blur(2px)}
 @keyframes raySpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* Galaxy Fog */
 .galaxy{position:absolute;inset:-20%;z-index:1;mix-blend-mode:screen;
 background:radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%),
            radial-gradient(circle, rgba(160,120,255,0.25), transparent 60%),
            radial-gradient(circle, rgba(120,180,255,0.25), transparent 65%);
 filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
 @keyframes galaxySpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* Cinematic Light Ring */
 .light-ring{position:absolute;left:50%;top:50%;width:160vmin;height:160vmin;border-radius:50%;
 transform:translate(-50%,-50%);border:4px solid rgba(255,255,255,0.05);
 animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
-@keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}}
-.supernova{position:absolute;left:50%;top:50%;width:40vmin;height:40vmin;border-radius:50%;
-transform:translate(-50%,-50%);background:radial-gradient(circle,
-rgba(255,240,200,0.9),rgba(255,150,50,0.4),rgba(255,80,0,0));
-filter:blur(20px);opacity:0;animation:superPulse 8s infinite ease-out;pointer-events:none;z-index:4}
-@keyframes superPulse{0%{transform:translate(-50%,-50%) scale(0.2);opacity:0.6}50%{transform:translate(-50%,-50%) scale(1.8);opacity:0.25}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}}
-.comet{position:absolute;width:2px;height:2px;background:white;border-radius:50%;
-box-shadow:0 0 12px 6px rgba(255,255,255,0.8);animation:cometFly linear infinite;z-index:3;pointer-events:none}
-@keyframes cometFly{0%{transform:translate(110vw,-10vh)}100%{transform:translate(-20vw,140vh)}}
-.portal{position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;border-radius:50%;
-transform:translate(-50%,-50%);background:conic-gradient(
-rgba(0,180,255,0.2),rgba(180,0,255,0.3),rgba(255,120,0,0.25),rgba(0,180,255,0.2)
-);
-filter:blur(60px);opacity:0.35;animation:portalSpin 22s linear infinite;pointer-events:none;z-index:2}
-@keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes ringPulse{
+  0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}
+  50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}
+  100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}
+}
+
+/* Sparks */
 .spark{position:absolute;width:2px;height:2px;border-radius:50%;background:yellow;opacity:0.8;
 pointer-events:none;animation:sparkFly linear forwards;}
 @keyframes sparkFly{0%{transform:translate(0,0)}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+
+/* Letters */
 .letter{
   position:absolute;
   font-size:6vmin;
   font-weight:bold;
-  color:#c0c0c0;
+  background: linear-gradient(145deg, #999,#ccc,#fff,#999);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color:transparent;
   opacity:0;
   transform:translate(-50%,-50%) scale(0);
   pointer-events:none;
-  text-shadow:0 0 12px #fff,0 0 20px #aaa;
+  text-shadow:0 0 12px #fff,0 0 18px #aaa;
   z-index:25;
-  transition:transform 1.8s cubic-bezier(0.22,1,0.36,1), opacity 1.5s ease-out;
+  transition:transform 2s cubic-bezier(0.22,1,0.36,1), opacity 1.5s ease-out;
 }
 </style>
 </head>
@@ -77,11 +92,9 @@ pointer-events:none;animation:sparkFly linear forwards;}
 <div class="stage">
   <div class="background">
     <div class="galaxy"></div>
-    <div class="portal"></div>
     <div class="cosmic-rays" id="rays"></div>
     <div class="light-ring"></div>
     <div class="supernova"></div>
-    <div id="cometLayer"></div>
     <div class="nebula-layer nebula1"></div>
     <div class="nebula-layer nebula2"></div>
     <div class="nebula-layer nebula3"></div>
@@ -89,21 +102,36 @@ pointer-events:none;animation:sparkFly linear forwards;}
     <div class="particles"></div>
   </div>
 
+  <!-- SHIELD -->
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
       <defs>
-        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#990000"/></radialGradient>
-        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#cccccc"/></radialGradient>
-        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4d90ff"/><stop offset="100%" stop-color="#003366"/></radialGradient>
+        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff4d4d"/>
+          <stop offset="100%" stop-color="#990000"/>
+        </radialGradient>
+        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#cccccc"/>
+        </radialGradient>
+        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#4d90ff"/>
+          <stop offset="100%" stop-color="#003366"/>
+        </radialGradient>
       </defs>
+
       <g id="rings" transform="translate(100,100)">
         <circle r="92" fill="url(#metalRed)" />
         <circle r="76" fill="url(#metalWhite)" />
         <circle r="56" fill="url(#metalRed)" />
         <circle r="36" fill="url(#metalBlue)" />
       </g>
+
       <g id="starGroup" transform="translate(100,100)">
-        <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#ffffff"/>
+        <polygon id="shield-star"
+          points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8"
+          fill="#ffffff"
+        />
       </g>
     </svg>
   </div>
@@ -126,6 +154,7 @@ const shield=document.querySelector('.shield-svg');
 const stage=document.querySelector('.stage');
 const lettersArr=['P','R','I','N','C','E'];
 
+// Star click → spin, shatter, letters radiate
 star.addEventListener('click',()=>{
   star.style.transition='transform 0.5s linear';
   star.style.transform='scale(1.2) rotate(1080deg)';
@@ -133,22 +162,26 @@ star.addEventListener('click',()=>{
     star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
     star.style.transform='scale(1) rotate(0deg)';
     shatterShield();
-    radiateLettersWithBeams();
+    radiateLetters();
   },500);
 });
 
+// Shield shatter
 function shatterShield(){
   const rings=document.getElementById('rings');
   if(!rings) return;
   rings.style.opacity=0;
+
   const layers=[
     {r:92, fill:'url(#metalRed)', slices:8},
     {r:76, fill:'url(#metalWhite)', slices:6},
     {r:56, fill:'url(#metalRed)', slices:6},
     {r:36, fill:'url(#metalBlue)', slices:4}
   ];
+
   const fragRoot=document.createElementNS('http://www.w3.org/2000/svg','g');
   shield.appendChild(fragRoot);
+
   layers.forEach(layer=>{
     for(let i=0;i<layer.slices;i++){
       const piece=document.createElementNS('http://www.w3.org/2000/svg','path');
@@ -178,9 +211,12 @@ function shatterShield(){
       },50);
     }
   });
-  setTimeout(()=>{try{if(rings.parentNode) rings.parentNode.removeChild(rings);}catch(e){};setTimeout(()=>{try{if(fragRoot.parentNode) fragRoot.parentNode.removeChild(fragRoot);}catch(e){}},1400);},2200);
+
+  setTimeout(()=>{ try{ rings.parentNode.removeChild(rings); }catch(e){} },2200);
+  setTimeout(()=>{ try{ fragRoot.parentNode.removeChild(fragRoot); }catch(e){} },3600);
 }
 
+// Sparks
 function spawnSparks(cx,cy,count){
   for(let i=0;i<count;i++){
     const s=document.createElement('div');
@@ -197,72 +233,33 @@ function spawnSparks(cx,cy,count){
   }
 }
 
-// Cinematic letter reveal along beams
-function radiateLettersWithBeams(){
-  const centerX = window.innerWidth/2;
-  const centerY = window.innerHeight/2;
-
+// Letters radiate via beams
+function radiateLetters(){
+  const centerX=window.innerWidth/2;
+  const centerY=window.innerHeight/2;
   lettersArr.forEach((l,i)=>{
     const el=document.createElement('div');
     el.className='letter';
     el.innerText=l;
     stage.appendChild(el);
+
+    const angle=i*(15) - 45; // angular spread
+    const radius=220 + Math.random()*60;
     el.style.left=centerX+'px';
     el.style.top=centerY+'px';
-    el.style.opacity=0;
-    el.style.transform='translate(-50%,-50%) scale(0)';
 
-    const angle = (i-(lettersArr.length-1)/2)*20;
-    const radius = 300;
-
+    // Beam pulse reveal
     setTimeout(()=>{
-      el.style.transition='transform 1.6s cubic-bezier(0.22,1,0.36,1), opacity 1.4s ease-out';
       el.style.opacity=1;
-      el.style.transform = `translate(${Math.cos(angle*Math.PI/180)*radius}px, ${Math.sin(angle*Math.PI/180)*radius}px) scale(1.2) rotate(${(Math.random()-0.5)*20}deg)`;
+      el.style.transform=`translate(${Math.cos(angle*Math.PI/180)*radius}px,${Math.sin(angle*Math.PI/180)*radius}px) scale(1.3)`;
+    },i*400);
 
-      const beam = document.createElement('div');
-      beam.style.position='absolute';
-      beam.style.left=centerX+'px';
-      beam.style.top=centerY+'px';
-      beam.style.width='2px';
-      beam.style.height=radius+'px';
-      beam.style.background='linear-gradient(to bottom, #fff8, transparent)';
-      beam.style.transform=`rotate(${angle}deg) translate(-50%,-50%)`;
-      beam.style.zIndex=20;
-      stage.appendChild(beam);
-      setTimeout(()=>beam.remove(),1600);
-    }, i*200);
-
+    // Settle at bottom
     setTimeout(()=>{
-      el.style.transition='transform 1.5s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 1s ease-out';
-      el.style.transform=`translate(${(i-(lettersArr.length-1)/2)*12}vw, 80vh) scale(1) rotate(0deg)`;
-    },2200 + i*200);
+      el.style.transition='transform 1.8s cubic-bezier(0.22,1,0.36,1), opacity 1.2s ease-out';
+      el.style.transform=`translate(${(i-2.5)*12}vw, 80vh) scale(1)`;
+    },2000+i*400);
   });
-}
-
-// Particles
-const particleContainer=document.querySelector('.particles');
-for(let i=0;i<120;i++){
-  const p=document.createElement('div');
-  p.className='particle';
-  p.style.setProperty('--x',(Math.random()*400-200)+'px');
-  p.style.setProperty('--y',(Math.random()*400-200)+'px');
-  p.style.left=Math.random()*100+'%';
-  p.style.top=Math.random()*100+'%';
-  p.style.animationDuration=(60+Math.random()*60)+'s';
-  particleContainer.appendChild(p);
-}
-
-// Comets
-const cometLayer=document.getElementById('cometLayer');
-for(let i=0;i<12;i++){
-  const c=document.createElement('div');
-  c.className='comet';
-  c.style.left=Math.random()*100+'vw';
-  c.style.top=Math.random()*100+'vh';
-  c.style.animationDuration=(6+Math.random()*6)+'s';
-  c.style.animationDelay=(-Math.random()*10)+'s';
-  cometLayer.appendChild(c);
 }
 </script>
 </body>

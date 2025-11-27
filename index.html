@@ -1,142 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Shield Reveal — Birthday</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMAX Nolan Avengers Birthday</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
-:root{--imax-letterbox:12vh;--accent:#e5f1ff}
-.stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
-.letterbox-top,.letterbox-bottom{position:absolute;left:0;right:0;height:var(--imax-letterbox);background:linear-gradient(180deg,rgba(0,0,0,0.95),rgba(0,0,0,0.7));z-index:60;pointer-events:none}.letterbox-top{top:0}.letterbox-bottom{bottom:0}
-/* --- Enhanced Dynamic Background --- */
-.background{position:absolute;inset:0;z-index:1;overflow:hidden}
-.nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1} /* BOOSTED */{position:absolute;inset:-30%;mix-blend-mode:screen;filter:blur(140px) saturate(2);animation:nebulaDrift linear infinite;opacity:0.9}
-.nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,90,140,0.9), transparent 40%);animation-duration:120s;} /* brighter */{background:radial-gradient(circle at 25% 40%, rgba(255,120,160,0.6), transparent 25%);animation-duration:150s;}
-.nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;} /* brighter */{background:radial-gradient(circle at 75% 65%, rgba(80,150,255,0.55), transparent 30%);animation-duration:180s;}
-.nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;} /* brighter */{background:radial-gradient(circle at 50% 50%, rgba(120,200,255,0.5), transparent 35%);animation-duration:220s;}
-@keyframes nebulaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(300px,-200px) scale(1.3)}100%{transform:translate(0,0) scale(1)}} /* stronger movement */{0%{transform:translate(0,0)}50%{transform:translate(200px,-120px)}100%{transform:translate(0,0)}}
-.stars{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:1;background-image:radial-gradient(#fff 2px, transparent 1px),radial-gradient(#fff 1px, transparent 1px);background-size:300px 300px, 100px 100px;filter:blur(.2px);animation:starDrift 120s linear infinite, starTwinkle 3s infinite alternate;} /* brighter stars */{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:1;background-image:radial-gradient(#fff 1.2px, transparent 1px),radial-gradient(#fff 0.8px, transparent 1px);background-size:400px 400px, 120px 120px;filter:blur(.4px);animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
-@keyframes starTwinkle{0%{opacity:0.75}50%{opacity:0.95}100%{opacity:0.8}}
-@keyframes starDrift{0%{transform:translate(0,0)}100%{transform:translate(-350px,250px)}} /* faster drift */{0%{transform:translate(0,0)}100%{transform:translate(-200px,150px)}}
-.bloom{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.6;background:radial-gradient(circle at 50% 50%, rgba(255,200,120,0.15), transparent 60%)} /* stronger bloom */{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.3;background:radial-gradient(circle at 50% 40%, rgba(255,200,100,0.05), transparent 15%)}
-.particles{position:absolute;inset:0;z-index:4;pointer-events:none;}
-.particle{position:absolute;width:3px;height:3px;background:#fff;opacity:0.5;border-radius:50%;animation:particleDrift linear infinite;}
-@keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
-/* Shield */
-.shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
-.shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
-.shield-enter{animation:shieldRise 2.6s cubic-bezier(.2,.9,.2,1) forwards, shieldBounce 0.9s 2.6s cubic-bezier(.2,.9,.2,1) both}@keyframes shieldRise{0%{transform:translateY(18vh) scale(.3) rotate(-10deg);opacity:0}60%{opacity:1;transform:translateY(-2vh) scale(1.05) rotate(6deg)}100%{transform:translateY(0) scale(1) rotate(0deg)}}@keyframes shieldBounce{0%{transform:translateY(0)}30%{transform:translateY(-1.2vh)}60%{transform:translateY(0)}100%{transform:translateY(0)}}
-#shield-star{transform-box:fill-box;transform-origin:center center;opacity:0;transform:scale(0) rotate(0deg);transition:transform 1.2s cubic-bezier(0.22,1,0.36,1),opacity 0.8s ease-out;cursor:pointer}
-.title{position:absolute;bottom:calc(var(--imax-letterbox) + 6vh);left:50%;transform:translateX(-50%);text-align:center;z-index:30;pointer-events:none}.title .greeting{font-size:clamp(12px,1.6vmin,18px);letter-spacing:6px;color:rgba(230,240,255,0.8);text-transform:uppercase;font-weight:600;opacity:0;transform:translateY(8px);animation:greetIn 0.9s 3.6s cubic-bezier(.2,.9,.2,1) forwards}.title .name{font-family:"Cinzel",serif;font-weight:700;font-size:clamp(28px,4.6vmin,72px);letter-spacing:.02em;color:var(--accent);opacity:0;transform:translateY(18px) scale(.92);animation:nameIn 1s 3.9s cubic-bezier(.2,.9,.2,1) forwards}@keyframes greetIn{to{opacity:1;transform:translateY(0)}}@keyframes nameIn{to{opacity:1;transform:translateY(0) scale(1)}}
-/* --- Cosmic Rays Behind Shield --- */
-.cosmic-rays{position:absolute;inset:0;z-index:2;mix-blend-mode:screen;pointer-events:none;overflow:hidden}
-.ray{position:absolute;width:2px;height:180vmax;left:50%;top:50%;background:linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,200,80,0.0));opacity:0.25;transform-origin:center center;animation:raySpin linear infinite;filter:blur(2px)}
-@keyframes raySpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
-/* --- Rotating Galaxy Layer --- */
-.galaxy{position:absolute;inset:-20%;z-index:1;mix-blend-mode:screen;background:radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 70%),
-            radial-gradient(circle at 60% 40%, rgba(160,120,255,0.25), transparent 60%),
-            radial-gradient(circle at 40% 60%, rgba(120,180,255,0.25), transparent 65%);
-filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
-@keyframes galaxySpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-/* --- Pulsating Light Rings --- */
-.light-ring{position:absolute;left:50%;top:50%;width:160vmin;height:160vmin;border-radius:50%;transform:translate(-50%,-50%);border:4px solid rgba(255,255,255,0.05);animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
-@keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}}
+/* ------------------------------------------------------
+   GLOBAL RESET
+------------------------------------------------------ */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: black;
+  font-family: sans-serif;
+}
 
-/* --- SUPER NOVA PULSE --- */
-.supernova{position:absolute;left:50%;top:50%;width:40vmin;height:40vmin;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle, rgba(255,240,200,0.9), rgba(255,150,50,0.4), rgba(255,80,0,0));filter:blur(20px);opacity:0;animation:superPulse 8s infinite ease-out;pointer-events:none;z-index:4}
-@keyframes superPulse{0%{transform:translate(-50%,-50%) scale(0.2);opacity:0.6}50%{transform:translate(-50%,-50%) scale(1.8);opacity:0.25}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}}
+/* ------------------------------------------------------
+   IMAX + NOLAN BACKGROUND
+------------------------------------------------------ */
 
-/* --- COMETS --- */
-.comet{position:absolute;width:2px;height:2px;background:white;border-radius:50%;box-shadow:0 0 12px 6px rgba(255,255,255,0.8);animation:cometFly linear infinite;z-index:3;pointer-events:none}
-@keyframes cometFly{0%{transform:translate(110vw,-10vh) scale(1);opacity:1}100%{transform:translate(-20vw,140vh) scale(0.3);opacity:0}}
+#imax-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: -10;
+}
 
-/* --- PORTAL SWIRL --- */
-.portal{position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;border-radius:50%;transform:translate(-50%,-50%);background:conic-gradient(from 0deg, rgba(0,180,255,0.2), rgba(180,0,255,0.3), rgba(255,120,0,0.25), rgba(0,180,255,0.2));filter:blur(60px);opacity:0.35;animation:portalSpin 22s linear infinite;pointer-events:none;z-index:2}
-@keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+/* IMAX Rolling Gradient */
+#imax-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #120430 0%,
+    #4A148C 45%,
+    #FF6F00 100%
+  );
+  background-size: 100% 300%;
+  animation: imaxRoll 18s linear infinite;
+  opacity: 0.28;
+}
+
+/* Fog */
+.fog {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle,
+      rgba(255,255,255,0.06) 0%,
+      rgba(255,255,255,0) 70%);
+  animation: fogFloat 12s ease-in-out infinite;
+  opacity: 0.18;
+  filter: blur(80px);
+}
+.fog:nth-child(2) {
+  animation-duration: 16s;
+  opacity: 0.12;
+}
+
+/* Stars */
+#stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.7), transparent);
+  animation: starDrift 22s linear infinite;
+  opacity: 0.38;
+  filter: blur(0.4px);
+}
+
+/* Core Light */
+#core-light {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle,
+      rgba(90,0,150,0.45) 0%,
+      rgba(0,0,0,0) 75%);
+  filter: blur(100px);
+  opacity: 0.35;
+  animation: corePulse 6s ease-in-out infinite;
+}
+
+/* Flash (reserved) */
+#imax-flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------
+   AVENGERS SHIELD + STAR
+------------------------------------------------------ */
+
+.container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.shield {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #ffffff 0%, #ffffff 20%, transparent 21%),
+    radial-gradient(circle, #d32f2f 22%, #d32f2f 38%, transparent 39%),
+    radial-gradient(circle, #ffffff 40%, #ffffff 55%, transparent 56%),
+    radial-gradient(circle, #d32f2f 57%, #d32f2f 75%, transparent 76%);
+  box-shadow: 0 0 40px rgba(255,255,255,0.3);
+}
+
+/* STAR */
+.star {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  border-left: 26px solid transparent;
+  border-right: 26px solid transparent;
+  border-bottom: 40px solid #ffffff;
+  transform: translate(-50%, -50%) scale(0.1);
+  left: 50%;
+  top: 50%;
+  filter: drop-shadow(0 0 12px #ffffff);
+  transition: all 1s ease-out;
+}
+
+/* after star evolves, shape complete */
+.star.revealed {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.star:after {
+  content: "";
+  position: absolute;
+  top: 26px;
+  left: -26px;
+  width: 0;
+  height: 0;
+  border-left: 26px solid transparent;
+  border-right: 26px solid transparent;
+  border-top: 40px solid #ffffff;
+}
+
+/* SPIN */
+.spin {
+  animation: spinStar 0.6s cubic-bezier(.22,.61,.36,1) 1;
+}
+
+/* ------------------------------------------------------
+   KEYFRAMES
+------------------------------------------------------ */
+
+@keyframes imaxRoll {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 300%; }
+}
+
+@keyframes fogFloat {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-40px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes starDrift {
+  0% { transform: scale(1) translateY(0); }
+  100% { transform: scale(1.2) translateY(-70px); }
+}
+
+@keyframes corePulse {
+  0% { opacity: 0.30; }
+  50% { opacity: 0.45; }
+  100% { opacity: 0.30; }
+}
+
+@keyframes spinStar {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(720deg); }
+}
 
 </style>
 </head>
+
 <body>
-<div class="stage">
-  <div class="background">
-    <div class="galaxy"></div>
-    <div class="portal"></div>
-    <div class="cosmic-rays" id="rays"></div>
-    <div class="light-ring"></div>
-    <div class="supernova"></div>
-    <div id="cometLayer"></div>
-    <div class="galaxy"></div>
-    <div class="cosmic-rays" id="rays"></div>
-    <div class="light-ring"></div>
-    <div class="nebula-layer nebula1"></div>
-    <div class="nebula-layer nebula2"></div>
-    <div class="nebula-layer nebula3"></div>
-    <div class="stars"></div>
-    <div class="bloom"></div>
-    <div class="particles"></div>
-  </div>
-  <div class="shield-wrap">
-    <svg class="shield-svg" viewBox="0 0 200 200">
-      <g id="rings" transform="translate(100,100)">
-        <circle r="92" fill="#0b2340" />
-        <circle r="76" fill="#d33a3a" />
-        <circle r="56" fill="#ffffff" />
-        <circle r="36" fill="#2b5ea6" />
-      </g>
-      <g id="starGroup" transform="translate(100,100)">
-        <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#fff" />
-      </g>
-    </svg>
-    <div class="sheen"></div>
-  </div>
-  <div class="title"><div class="greeting">Happy Birthday</div><div class="name" id="nameText">Someone</div></div>
+
+<!-- IMAX Background -->
+<div id="imax-bg">
+  <div id="imax-gradient"></div>
+  <div class="fog"></div>
+  <div class="fog"></div>
+  <div id="stars"></div>
+  <div id="core-light"></div>
+  <div id="imax-flash"></div>
 </div>
+
+<!-- Shield + Star -->
+<div class="container">
+  <div class="shield">
+    <div id="star" class="star"></div>
+  </div>
+</div>
+
 <script>
-// Add spinning rays dynamically
-const rays=document.getElementById('rays');
-for(let i=0;i<18;i++){
-  const r=document.createElement('div');
-  r.className='ray';
-  r.style.animationDuration=(20+i*2)+'s';
-  r.style.transform=`translate(-50%,-50%) rotate(${i*20}deg)`;
-  rays.appendChild(r);
-}
+/* STAR EVOLUTION + SPIN */
+setTimeout(() => {
+  document.getElementById("star").classList.add("revealed");
+}, 800);
 
-const star = document.getElementById('shield-star');
-if(star){
-  setTimeout(()=>{ star.style.opacity=1; star.style.transform='scale(1) rotate(360deg)'; }, 1200);
-  star.addEventListener('click', ()=>{
-    star.style.transition='transform 0.5s linear';
-    star.style.transform='scale(1) rotate(1080deg)';
-    setTimeout(()=>{ star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)'; star.style.transform='scale(1) rotate(0deg)'; }, 500);
-  });
-}
-// Generate drifting particles
-const particleContainer=document.querySelector('.particles');
-for(let i=0;i<120;i++){
-  const p=document.createElement('div');
-  p.className='particle';
-  p.style.setProperty('--x', (Math.random()*400-200)+'px');
-  p.style.setProperty('--y', (Math.random()*400-200)+'px');
-  p.style.left=Math.random()*100+'%';
-  p.style.top=Math.random()*100+'%';
-  p.style.animationDuration=(60+Math.random()*60)+'s';
-  particleContainer.appendChild(p);
-}
-// COMETS
-const cometLayer=document.getElementById('cometLayer');
-for(let i=0;i<12;i++){
-  const c=document.createElement('div');
-  c.className='comet';
-  c.style.left=Math.random()*100+'vw';
-  c.style.top=Math.random()*100+'vh';
-  c.style.animationDuration=(6+Math.random()*6)+'s';
-  c.style.animationDelay=(-Math.random()*10)+'s';
-  cometLayer.appendChild(c);
-}
-
+document.getElementById("star").addEventListener("click", () => {
+  let s = document.getElementById("star");
+  s.classList.remove("spin");
+  void s.offsetWidth; 
+  s.classList.add("spin");
+});
 </script>
+
 </body>
 </html>

@@ -22,7 +22,8 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 @keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
-#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;pointer-events:auto;}
+#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;pointer-events:auto;transition:transform .5s}
+#shield-star.metal{filter:drop-shadow(0 8px 18px rgba(255,255,255,0.06));}
 .cosmic-rays{position:absolute;inset:0;z-index:2;mix-blend-mode:screen;pointer-events:none;overflow:hidden}
 .ray{position:absolute;width:2px;height:180vmax;left:50%;top:50%;background:linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,200,80,0.0));opacity:0.25;transform-origin:center center;animation:raySpin linear infinite;filter:blur(2px)}
 @keyframes raySpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
@@ -38,6 +39,8 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 @keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
 .spark{position:absolute;width:2px;height:2px;border-radius:50%;background:yellow;opacity:0.8;pointer-events:none;animation:sparkFly linear forwards;}
 @keyframes sparkFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+/* shard glow class */
+.shard{filter:drop-shadow(0 0 6px rgba(255,235,180,0.12));mix-blend-mode:screen}
 </style>
 </head>
 <body>
@@ -65,6 +68,23 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
           <stop offset="0%" stop-color="rgba(255,255,255,0.8)"/>
           <stop offset="60%" stop-color="rgba(255,255,255,0.0)"/>
         </radialGradient>
+
+        <!-- metallic star gradient -->
+        <radialGradient id="metalStar" cx="40%" cy="35%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="40%" stop-color="#e6e6e6"/>
+          <stop offset="70%" stop-color="#bdbdbd"/>
+          <stop offset="100%" stop-color="#7f7f7f"/>
+        </radialGradient>
+
+        <!-- small gloss -->
+        <filter id="starGloss" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="1.2" result="g1"/>
+          <feMerge>
+            <feMergeNode in="g1"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
       </defs>
       <g id="rings" transform="translate(100,100)">
         <circle r="92" fill="url(#metalRed)" />
@@ -74,7 +94,8 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
         <circle r="92" fill="url(#glint)" style="opacity:0.3;mix-blend-mode:screen;" id="glintLayer"/>
       </g>
       <g id="starGroup" transform="translate(100,100)">
-        <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#fff" />
+        <!-- star uses metallic gradient and filter -->
+        <polygon id="shield-star" class="metal" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="url(#metalStar)" filter="url(#starGloss)" />
       </g>
     </svg>
   </div>
@@ -97,23 +118,40 @@ const shield=document.querySelector('.shield-svg');
 const glintLayer=document.getElementById('glintLayer');
 const stage=document.querySelector('.stage');
 
+let broken = false; // will prevent re-shatter and reappearance
+
 star.addEventListener('click', ()=>{
+    if (broken) return;              // prevent repeated triggers
+    broken = true;                   // mark as broken immediately so further clicks do nothing
+
+    // Spin star
     star.style.transition='transform 0.5s linear';
     star.style.transform='scale(1) rotate(1080deg)';
     glintLayer.style.transition='opacity 0.2s ease-in-out';
     glintLayer.style.opacity=1;
+
     setTimeout(()=>{ 
+        // settle star
         star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
         star.style.transform='scale(1) rotate(0deg)';
         glintLayer.style.opacity=0;
+
+        // Start shatter sequence
         shatterShield();
+
+        // disable interaction: remove pointer events and fade star slightly as it survives momentarily
+        try{
+          star.style.pointerEvents='none';
+          star.style.opacity = 0.88;
+        }catch(e){}
     },500);
 });
 
-// SHATTER + IMAX FADE-OUT UPGRADE
+// SHATTER + IMAX FADE-OUT UPGRADE (pieces fade away and never reappear)
 function shatterShield(){
     const rings = document.getElementById('rings');
     if(!rings) return;
+    // hide the original ring group immediately (but not remove yet)
     rings.style.opacity = 0;
 
     const layers = [
@@ -122,6 +160,11 @@ function shatterShield(){
         {r:56, fill:'url(#metalRed)', slices:6},
         {r:36, fill:'url(#metalBlue)', slices:4}
     ];
+
+    // create a fragment group so we can remove it later
+    const fragRoot = document.createElementNS('http://www.w3.org/2000/svg','g');
+    fragRoot.setAttribute('id','fragRoot');
+    shield.appendChild(fragRoot);
 
     layers.forEach(layer=>{
         for(let i=0;i<layer.slices;i++){
@@ -138,32 +181,43 @@ function shatterShield(){
             const x4=rInner*Math.cos(angleEnd*Math.PI/180);
             const y4=rInner*Math.sin(angleEnd*Math.PI/180);
             const d=`M ${x1} ${y1} L ${x2} ${y2} A ${rOuter} ${rOuter} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rInner} ${rInner} 0 0 0 ${x1} ${y1}`;
+
             piece.setAttribute('fill',layer.fill);
             piece.setAttribute('d',d);
+            piece.setAttribute('class','shard');
             piece.style.transformOrigin='100px 100px';
-
             piece.style.transition='transform 1.2s ease-out, opacity 1.5s ease-out';
+            fragRoot.appendChild(piece);
 
-            shield.appendChild(piece);
-
+            // staggered outward explosion then fade
             setTimeout(()=>{
                 const dx=(Math.random()-0.5)*300;
                 const dy=(Math.random()-0.5)*300;
                 const rot=(Math.random()-0.5)*720;
 
-                // explode outward
-                piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.85)`;
+                // move shard outwards
+                piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.92)`;
 
-                // IMAX FADE — delayed fade to 0
+                // delayed fade (so shard is visible for a moment) — then remove permanently
                 setTimeout(()=>{
                     piece.style.opacity=0;
+                    // remove piece after fade finishes
+                    setTimeout(()=>{ try{ fragRoot.removeChild(piece); }catch(e){} }, 1100);
                 },700);
 
+                // spawn sparks near the piece location (screen coordinates)
                 spawnSparks(100+dx,100+dy,6);
-
-            },50);
+            },50 + Math.random()*180);
         }
     });
+
+    // remove the original ring group and star after shards have finished fading to ensure nothing reappears
+    setTimeout(()=>{
+      try{ if(rings && rings.parentNode) rings.parentNode.removeChild(rings); }catch(e){}
+      try{ if(star && star.parentNode) star.parentNode.removeChild(star); }catch(e){}
+      // also remove fragRoot after safe delay if any remain
+      setTimeout(()=>{ try{ if(fragRoot && fragRoot.parentNode) fragRoot.parentNode.removeChild(fragRoot); }catch(e){} }, 1400);
+    },2200);
 }
 
 // sparks
@@ -181,7 +235,7 @@ function spawnSparks(cx,cy,count){
         s.style.setProperty('--sy', sy+'px');
         s.style.animationDuration=(0.6+Math.random()*0.6)+'s';
         stage.appendChild(s);
-        setTimeout(()=>s.remove(),800);
+        setTimeout(()=>s.remove(),900);
     }
 }
 
@@ -212,4 +266,3 @@ for(let i=0;i<12;i++){
 </script>
 </body>
 </html>
-

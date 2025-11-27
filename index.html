@@ -61,8 +61,8 @@ animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
 /* --- STAR PULSE STEEL --- */
 @keyframes steelStarGlow{0%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}30%{fill:#d0d0d0;filter:drop-shadow(0 0 35px #ccc);}60%{fill:#909090;filter:drop-shadow(0 0 40px #fff);}100%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}}
 
-/* LETTERS METAL SHIMMER */
-.letter{position:absolute;font-size:5vmin;font-weight:800;background:linear-gradient(120deg,#cfcfcf,#ffffff,#cfcfcf);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 2s infinite linear;text-shadow:0 0 12px #fff,0 0 25px #ccc;opacity:0;transform:translate(-50%,-50%) scale(0.2);pointer-events:none}
+/* LETTERS WITH SHIELD GRADIENT COLORS */
+.letter{position:absolute;font-size:5vmin;font-weight:800;background:linear-gradient(120deg,#ff4d4d,#003366);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 2s infinite linear;text-shadow:0 0 12px #fff,0 0 25px #ccc;opacity:0;transform:translate(-50%,-50%) scale(0.2);pointer-events:none}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 
 /* --- SPARKS --- */
@@ -130,13 +130,12 @@ star.addEventListener('click',()=>{
   star.style.transform='scale(1.3) rotate(1080deg)';
   setTimeout(()=>{
     star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
-    star.style.transform='scale(1) rotate(0deg)';
+    star.style.transform='scale(1) rotate(0deg)'; // stays in place
     if(!lettersRevealed){
       shatterShield();
-      spawnRadiation();
       spawnSonicWaves();
-      steelStarPulse();
       spawnSparks();
+      steelStarPulse();
       setTimeout(()=>revealLetters(),900);
       lettersRevealed=true;
     } else {
@@ -185,17 +184,6 @@ function shatterShield(){
   });
   setTimeout(()=>{ try{ rings.parentNode.removeChild(rings);}catch(e){} },2400);
   setTimeout(()=>{ try{ fragRoot.parentNode.removeChild(fragRoot);}catch(e){} },3800);
-}
-
-// Radiation Waves
-function spawnRadiation(){
-  for(let i=0;i<6;i++){
-    const wave=document.createElement('div');
-    wave.className='radiation';
-    wave.style.animationDelay=(i*0.2)+'s';
-    stage.appendChild(wave);
-    setTimeout(()=>wave.remove(),2500);
-  }
 }
 
 // Sonic Waves

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Steel Star Pulse & Sonic Waves</title>
+<title>IMAX — Nolan Cosmic • Shield to Letters</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
@@ -19,12 +19,12 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 .nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;}
 @keyframes nebulaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(300px,-200px) scale(1.3)}100%{transform:translate(0,0) scale(1)}}
 
-/* --- TWINKLING REAL STARS --- */
+/* --- TWINKLING STARS --- */
 #dynamic-stars-container{position:absolute;inset:0;z-index:3;pointer-events:none}
 .tw-star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;opacity:0.2;animation:twinkleStar 2s infinite ease-in-out}
 @keyframes twinkleStar{0%{opacity:0.1; transform:scale(1);}50%{opacity:1; transform:scale(1.8);}100%{opacity:0.15; transform:scale(1);}}
 
-/* --- EXISTING BACKGROUND STARS --- */
+/* --- BACKGROUND STARS --- */
 .stars{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:
 radial-gradient(#fff 1.2px, transparent 1px),
 radial-gradient(#fff 0.8px, transparent 1px);
@@ -61,9 +61,24 @@ animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
 /* --- STAR PULSE STEEL --- */
 @keyframes steelStarGlow{0%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}30%{fill:#d0d0d0;filter:drop-shadow(0 0 35px #ccc);}60%{fill:#909090;filter:drop-shadow(0 0 40px #fff);}100%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}}
 
-/* LETTERS WITH SHIELD GRADIENT COLORS */
-.letter{position:absolute;font-size:5vmin;font-weight:800;background:linear-gradient(120deg,#ff4d4d,#003366);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 2s infinite linear;text-shadow:0 0 12px #fff,0 0 25px #ccc;opacity:0;transform:translate(-50%,-50%) scale(0.2);pointer-events:none}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+/* --- LETTERS --- */
+.letter{
+  position:absolute;
+  font-size:5vmin;
+  font-weight:800;
+  background:linear-gradient(120deg,#ff4d4d,#003366);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:metalPulse 2s infinite alternate;
+  opacity:0;
+  transform:translate(-50%,-50%) scale(0.2);
+  pointer-events:none;
+}
+@keyframes metalPulse{
+  0%{transform:translate(-50%,-50%) scale(0.9);filter:drop-shadow(0 0 6px #ff4d4d);}
+  50%{transform:translate(-50%,-50%) scale(1.05);filter:drop-shadow(0 0 12px #003366);}
+  100%{transform:translate(-50%,-50%) scale(1);filter:drop-shadow(0 0 10px #ff4d4d);}
+}
 
 /* --- SPARKS --- */
 .spark{position:absolute;width:2px;height:2px;background:rgba(255,255,255,0.9);border-radius:50%;pointer-events:none;opacity:0;animation:sparkFly 1s forwards}
@@ -130,7 +145,7 @@ star.addEventListener('click',()=>{
   star.style.transform='scale(1.3) rotate(1080deg)';
   setTimeout(()=>{
     star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
-    star.style.transform='scale(1) rotate(0deg)'; // stays in place
+    star.style.transform='scale(1) rotate(0deg)';
     if(!lettersRevealed){
       shatterShield();
       spawnSonicWaves();

@@ -94,6 +94,21 @@
   /* Small UI helper (click to replay) */
   .ui{position:fixed;right:18px;bottom:18px;z-index:120}
   .btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:#cfe8ff;font-size:13px;backdrop-filter: blur(6px);cursor:pointer}
+  
+  /* --- Star Evolution From Center --- */
+  #shield-star{
+    transform-origin:center center;
+    opacity:0;
+    transform:scale(0) rotate(0deg);
+    transition:transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out;
+    pointer-events:auto;
+  }
+  
+  .star-evolve{
+    opacity:1 !important;
+    transform:scale(1) rotate(360deg) !important;
+  }
+
 </style>
 </head>
 <body>
@@ -238,7 +253,26 @@
     // Offer keyboard replay (space)
     window.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); runSequence(); } });
   })();
-// --- Shield Star Quick Rotation on Click ---
+// --- Star Evolution From Center ---
+    const star = document.getElementById('shield-star');
+    if(star){
+      // evolve star when shield loads
+      setTimeout(()=>{
+        star.classList.add('star-evolve');
+      },1200);
+
+      // quick spin on click
+      star.addEventListener('click',()=>{
+        star.style.transition='transform 0.3s ease-out';
+        star.style.transform='scale(1) rotate(720deg)';
+        setTimeout(()=>{
+          star.style.transform='scale(1) rotate(0deg)';
+          star.style.transition='transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+        },350);
+      });
+    }
+
+    // --- IMAX Aspect Ratio Shift ---
     const star = document.getElementById('shield-star');
     if(star){
       star.style.transition='transform 0.3s ease-out';

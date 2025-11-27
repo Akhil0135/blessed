@@ -239,5 +239,59 @@
     window.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); runSequence(); } });
   })();
 </script>
+  <!-- Additional Cinematic Enhancements -->
+  <div class="cosmic-flares"></div>
+  <div class="light-ripples"></div>
+  <script>
+    // --- Extra Cosmic Lens Flares ---
+    const flares = document.querySelector('.cosmic-flares');
+    for(let i=0;i<6;i++){
+      const f=document.createElement('div');
+      f.className='flare';
+      f.style.left=Math.random()*100+'%';
+      f.style.top=Math.random()*100+'%';
+      f.style.animationDelay=(Math.random()*3)+'s';
+      flares.appendChild(f);
+    }
+
+    // --- Ripple Light Waves ---
+    const ripples = document.querySelector('.light-ripples');
+    setInterval(()=>{
+      const r=document.createElement('div');
+      r.className='ripple';
+      r.style.left='50%';
+      r.style.top='50%';
+      r.style.transform='translate(-50%,-50%) scale(0)';
+      ripples.appendChild(r);
+      setTimeout(()=>{ r.remove(); }, 3000);
+    },1500);
+  </script>
+  <!-- Ultra Cinematic Add-ons -->
+  <div class="portal-sparks"></div>
+  <div class="lightning-layer"></div>
+  <script>
+    // --- Avengers Portal Sparks ---
+    const sparks = document.querySelector('.portal-sparks');
+    for(let i=0;i<50;i++){
+      const s=document.createElement('div');
+      s.className='spark';
+      s.style.left=Math.random()*100+'%';
+      s.style.top=Math.random()*100+'%';
+      s.style.animationDelay=(Math.random()*2)+'s';
+      sparks.appendChild(s);
+    }
+
+    // --- Blue Lightning Arcs ---
+    const lightningLayer=document.querySelector('.lightning-layer');
+    function flashLightning(){
+      const l=document.createElement('div');
+      l.className='lightning';
+      l.style.left=Math.random()*100+'%';
+      l.style.top=Math.random()*100+'%';
+      lightningLayer.appendChild(l);
+      setTimeout(()=>{ l.remove(); },300);
+    }
+    setInterval(flashLightning, 1200);
+  </script>
 </body>
 </html>

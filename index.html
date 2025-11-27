@@ -10,24 +10,30 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 :root{--imax-letterbox:12vh;--accent:#e5f1ff}
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
 .letterbox-top,.letterbox-bottom{position:absolute;left:0;right:0;height:var(--imax-letterbox);background:linear-gradient(180deg,rgba(0,0,0,0.95),rgba(0,0,0,0.7));z-index:60;pointer-events:none}.letterbox-top{top:0}.letterbox-bottom{bottom:0}
-.cosmic{position:absolute;inset:0;z-index:1;transform-origin:center;filter:contrast(1.05) saturate(1.1);
+/* --- Enhanced Cosmic Background --- */
+.cosmic{position:absolute;inset:0;z-index:1;transform-origin:center;filter:contrast(1.1) saturate(1.2);
   background:
     radial-gradient(circle at 20% 30%, #0b0f25 0%, transparent 15%),
     radial-gradient(circle at 75% 80%, #1b0b2d 0%, transparent 15%),
     radial-gradient(circle at 50% 50%, rgba(10,10,40,0.6), transparent 70%),
     linear-gradient(180deg,#01010b 0%,#000010 70%);
-  animation:cosmicDrift 120s linear infinite;
+  animation:cosmicDrift 150s linear infinite;
 }
-@keyframes cosmicDrift{
-  0%{background-position:0% 0%,0% 0%,0% 0%,0% 0%}
-  100%{background-position:50% 50%,40% 60%,20% 30%,0% 0%}
+@keyframes cosmicDrift{0%{background-position:0% 0%,0% 0%,0% 0%,0% 0%}100%{background-position:50% 50%,40% 60%,20% 30%,0% 0%}}
+.nebula{position:absolute;inset:-20%;mix-blend-mode:screen;z-index:2;filter:blur(60px) saturate(1.6);animation:nebulaDrift 120s linear infinite;
+  background:radial-gradient(circle at 25% 40%, rgba(255,120,160,0.08), transparent 15%),
+             radial-gradient(circle at 75% 65%, rgba(80,150,255,0.06), transparent 15%),
+             radial-gradient(circle at 50% 50%, rgba(120,200,255,0.04), transparent 20%);
 }
-.nebula{position:absolute;inset:-15%;background:radial-gradient(circle at 25% 40%, rgba(255,120,160,0.08), transparent 12%),radial-gradient(circle at 75% 65%, rgba(80,150,255,0.06), transparent 12%);mix-blend-mode:screen;z-index:2;filter:blur(50px) saturate(1.5);animation:nebulaDrift 80s linear infinite;}
-@keyframes nebulaDrift{0%{transform:translate(0,0)}50%{transform:translate(20px,-15px)}100%{transform:translate(0,0)}}
+@keyframes nebulaDrift{0%{transform:translate(0,0)}50%{transform:translate(40px,-25px)}100%{transform:translate(0,0)}}
 .stars{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0.95;background-image:radial-gradient(#fff 0.8px, transparent 1px),radial-gradient(#fff 0.6px, transparent 1px);background-size:400px 400px, 120px 120px;filter:blur(.3px);animation:starTwinkle 5s infinite alternate;}
 @keyframes starTwinkle{0%{opacity:0.85}50%{opacity:0.95}100%{opacity:0.88}}
-.flare{position:absolute;left:-20%;top:10%;width:140%;height:40%;pointer-events:none;z-index:4;filter:blur(40px);opacity:0.7;background:linear-gradient(90deg,transparent 0%, rgba(255,255,255,0.035) 40%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.035) 60%, transparent 100%);transform:rotate(-12deg)}
+.flare{position:absolute;left:-20%;top:10%;width:140%;height:40%;pointer-events:none;z-index:4;filter:blur(50px);opacity:0.7;background:linear-gradient(90deg,transparent 0%, rgba(255,255,255,0.035) 40%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.035) 60%, transparent 100%);transform:rotate(-12deg)}
 .bloom{position:absolute;inset:0;z-index:5;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.28;background:radial-gradient(circle at 50% 40%, rgba(255,200,100,0.03), transparent 10%)}
+/* Subtle cosmic particles */
+.particles{position:absolute;inset:0;z-index:3;pointer-events:none;}
+.particle{position:absolute;width:2px;height:2px;background:#fff;opacity:0.3;border-radius:50%;animation:particleDrift linear infinite;}
+@keyframes particleDrift{0%{transform:translate(0,0)}50%{transform:translate(var(--x),var(--y))}100%{transform:translate(0,0)}}
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
 .shield-enter{animation:shieldRise 2.6s cubic-bezier(.2,.9,.2,1) forwards, shieldBounce 0.9s 2.6s cubic-bezier(.2,.9,.2,1) both}@keyframes shieldRise{0%{transform:translateY(18vh) scale(.3) rotate(-10deg);opacity:0}60%{opacity:1;transform:translateY(-2vh) scale(1.05) rotate(6deg)}100%{transform:translateY(0) scale(1) rotate(0deg)}}@keyframes shieldBounce{0%{transform:translateY(0)}30%{transform:translateY(-1.2vh)}60%{transform:translateY(0)}100%{transform:translateY(0)}}
@@ -42,6 +48,7 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
   <div class="stars"></div>
   <div class="flare"></div>
   <div class="bloom"></div>
+  <div class="particles"></div>
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
       <g id="rings" transform="translate(100,100)">
@@ -67,6 +74,18 @@ if(star){
     star.style.transform='scale(1) rotate(1080deg)';
     setTimeout(()=>{ star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)'; star.style.transform='scale(1) rotate(0deg)'; }, 500);
   });
+}
+// Generate drifting particles
+const particleContainer=document.querySelector('.particles');
+for(let i=0;i<60;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.setProperty('--x', (Math.random()*60-30)+'px');
+  p.style.setProperty('--y', (Math.random()*60-30)+'px');
+  p.style.left=Math.random()*100+'%';
+  p.style.top=Math.random()*100+'%';
+  p.style.animationDuration=(50+Math.random()*50)+'s';
+  particleContainer.appendChild(p);
 }
 </script>
 </body>

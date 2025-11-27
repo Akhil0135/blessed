@@ -56,17 +56,13 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
       <defs>
-        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ff4d4d" />
-          <stop offset="100%" stop-color="#990000" />
-        </radialGradient>
-        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ffffff" />
-          <stop offset="100%" stop-color="#cccccc" />
-        </radialGradient>
-        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#4d90ff" />
-          <stop offset="100%" stop-color="#003366" />
+        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#990000"/></radialGradient>
+        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#cccccc"/></radialGradient>
+        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4d90ff"/><stop offset="100%" stop-color="#003366"/></radialGradient>
+        <!-- Highlight gradient for steel glint -->
+        <radialGradient id="glint" cx="50%" cy="30%" r="50%" fx="50%" fy="30%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.8)"/>
+          <stop offset="60%" stop-color="rgba(255,255,255,0.0)"/>
         </radialGradient>
       </defs>
       <g id="rings" transform="translate(100,100)">
@@ -74,6 +70,7 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
         <circle r="76" fill="url(#metalWhite)" />
         <circle r="56" fill="url(#metalRed)" />
         <circle r="36" fill="url(#metalBlue)" />
+        <circle r="92" fill="url(#glint)" style="opacity:0.3;mix-blend-mode:screen;" id="glintLayer"/>
       </g>
       <g id="starGroup" transform="translate(100,100)">
         <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#fff" />
@@ -83,7 +80,7 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 </div>
 
 <script>
-// Stars rays
+// Rays
 const rays=document.getElementById('rays');
 for(let i=0;i<18;i++){
   const r=document.createElement('div');
@@ -93,15 +90,20 @@ for(let i=0;i<18;i++){
   rays.appendChild(r);
 }
 
-// Star rotation + shield shatter
-const star = document.getElementById('shield-star');
-const shield = document.querySelector('.shield-svg');
+// Star + shield steel glint + shatter
+const star=document.getElementById('shield-star');
+const shield=document.querySelector('.shield-svg');
+const glintLayer=document.getElementById('glintLayer');
+
 star.addEventListener('click', ()=>{
     star.style.transition='transform 0.5s linear';
     star.style.transform='scale(1) rotate(1080deg)';
-    setTimeout(()=>{
+    glintLayer.style.transition='opacity 0.2s ease-in-out';
+    glintLayer.style.opacity=1;
+    setTimeout(()=>{ 
         star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
         star.style.transform='scale(1) rotate(0deg)';
+        glintLayer.style.opacity=0;
         shatterShield();
     },500);
 });
@@ -120,31 +122,30 @@ function shatterShield(){
 
     layers.forEach(layer=>{
         for(let i=0;i<layer.slices;i++){
-            const piece = document.createElementNS('http://www.w3.org/2000/svg','path');
-            const angleStart = i * (360/layer.slices);
-            const angleEnd = angleStart + (360/layer.slices);
-            const rOuter = layer.r;
-            const rInner = layer.r*0.6;
-            const x1 = rInner * Math.cos(angleStart * Math.PI/180);
-            const y1 = rInner * Math.sin(angleStart * Math.PI/180);
-            const x2 = rOuter * Math.cos(angleStart * Math.PI/180);
-            const y2 = rOuter * Math.sin(angleStart * Math.PI/180);
-            const x3 = rOuter * Math.cos(angleEnd * Math.PI/180);
-            const y3 = rOuter * Math.sin(angleEnd * Math.PI/180);
-            const x4 = rInner * Math.cos(angleEnd * Math.PI/180);
-            const y4 = rInner * Math.sin(angleEnd * Math.PI/180);
-            const d = `M ${x1} ${y1} L ${x2} ${y2} A ${rOuter} ${rOuter} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rInner} ${rInner} 0 0 0 ${x1} ${y1}`;
+            const piece=document.createElementNS('http://www.w3.org/2000/svg','path');
+            const angleStart=i*(360/layer.slices);
+            const angleEnd=angleStart+(360/layer.slices);
+            const rOuter=layer.r, rInner=layer.r*0.6;
+            const x1=rInner*Math.cos(angleStart*Math.PI/180);
+            const y1=rInner*Math.sin(angleStart*Math.PI/180);
+            const x2=rOuter*Math.cos(angleStart*Math.PI/180);
+            const y2=rOuter*Math.sin(angleStart*Math.PI/180);
+            const x3=rOuter*Math.cos(angleEnd*Math.PI/180);
+            const y3=rOuter*Math.sin(angleEnd*Math.PI/180);
+            const x4=rInner*Math.cos(angleEnd*Math.PI/180);
+            const y4=rInner*Math.sin(angleEnd*Math.PI/180);
+            const d=`M ${x1} ${y1} L ${x2} ${y2} A ${rOuter} ${rOuter} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rInner} ${rInner} 0 0 0 ${x1} ${y1}`;
             piece.setAttribute('d',d);
             piece.setAttribute('fill',layer.fill);
             piece.style.transformOrigin='100px 100px';
             piece.style.transition='transform 1.2s ease-out, opacity 1.2s ease-out';
             shield.appendChild(piece);
             setTimeout(()=>{
-                const dx = (Math.random()-0.5)*300;
-                const dy = (Math.random()-0.5)*300;
-                const rot = (Math.random()-0.5)*720;
-                piece.style.transform = `translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.9)`;
-                piece.style.opacity = 0;
+                const dx=(Math.random()-0.5)*300;
+                const dy=(Math.random()-0.5)*300;
+                const rot=(Math.random()-0.5)*720;
+                piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.9)`;
+                piece.style.opacity=0;
             },50);
         }
     });
@@ -163,7 +164,7 @@ for(let i=0;i<120;i++){
   particleContainer.appendChild(p);
 }
 
-// COMETS
+// Comets
 const cometLayer=document.getElementById('cometLayer');
 for(let i=0;i<12;i++){
   const c=document.createElement('div');

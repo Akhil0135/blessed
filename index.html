@@ -1,178 +1,319 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMAX Nolan Star — Radiant Revelation</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IMAX — Nolan Cosmic • Shield & Prince Letters</title>
 <style>
-    html,body{
-        margin:0; padding:0; height:100%; overflow:hidden;
-        background:#000;
-        font-family: "Cinzel", serif;
-        color:white;
-    }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
 
-    /* ------ Cosmic Background ------ */
-    #space {
-        position:absolute;
-        inset:0;
-        background:radial-gradient(circle at center, #0a0a15 0%, #000 70%);
-        filter:brightness(1.4);
-    }
+/* ----- CORE STAGE ----- */
+.stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
 
-    /* ------ Metallic Star ------ */
-    #star {
-        position:absolute;
-        top:50%; left:50%;
-        width:120px; height:120px;
-        background: radial-gradient(circle at 30% 30%, #fff 0%, #d0d0d0 40%, #7a7a7a 70%, #2b2b2b 100%);
-        clip-path: polygon(
-            50% 0%, 61% 35%, 98% 35%,
-            68% 57%, 79% 91%, 50% 70%,
-            21% 91%, 32% 57%, 2% 35%,
-            39% 35%
-        );
-        transform: translate(-50%, -50%) scale(1);
-        box-shadow:0 0 40px 10px #ffd700aa, inset 0 0 25px #ffffff;
-        animation: starPulse 3s infinite ease-in-out;
-        z-index:5;
-    }
+/* ----- BACKGROUND LAYERS ----- */
+.background{position:absolute;inset:0;z-index:1;overflow:hidden}
 
-    @keyframes starPulse {
-        0% { transform:translate(-50%,-50%) scale(1);}
-        50% { transform:translate(-50%,-50%) scale(1.15);}
-        100% { transform:translate(-50%,-50%) scale(1);}
-    }
+.nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1}
+.nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,90,140,0.9), transparent 40%);animation-duration:120s;}
+.nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;}
+.nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;}
 
-    /* ------ Radiations ------ */
-    .ray {
-        position:absolute;
-        top:50%; left:50%;
-        width:2px; height:0;
-        background:linear-gradient(to bottom, #fff, #ffe08a);
-        transform-origin:top;
-        opacity:0;
-        filter:blur(0.5px);
-    }
+@keyframes nebulaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(300px,-200px) scale(1.3)}100%{transform:translate(0,0) scale(1)}}
 
-    /* ------ Letters at bottom ------ */
-    #letters {
-        position:absolute;
-        bottom:40px;
-        left:50%;
-        transform:translateX(-50%);
-        display:flex;
-        gap:25px;
-        font-size:48px;
-        letter-spacing:4px;
-    }
+.stars{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:
+radial-gradient(#fff 1.2px, transparent 1px),
+radial-gradient(#fff 0.8px, transparent 1px);
+background-size:400px 400px,120px 120px;filter:blur(.4px);
+animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
 
-    .letter {
-        opacity:0;
-        transform:translateY(60px) scale(0.2);
-        filter:blur(20px);
-        transition:all 1.4s ease-out;
-        text-shadow:0 0 25px #ffd37f;
-    }
+@keyframes starTwinkle{0%{opacity:0.75}50%{opacity:0.95}100%{opacity:0.8}}
+@keyframes starDrift{0%{transform:translate(0,0)}100%{transform:translate(-200px,150px)}}
 
-    /* Cosmic Dust */
-    .dust {
-        position: absolute;
-        width:2px; height:2px;
-        background:white;
-        opacity:0.4;
-        border-radius:50%;
-        animation: floatDust 6s infinite ease-in-out;
-        filter:blur(1px);
-    }
-    @keyframes floatDust {
-        0% { transform:translateY(0) scale(1); opacity:0.4; }
-        50% { transform:translateY(-40px) scale(1.6); opacity:1; }
-        100% { transform:translateY(0) scale(1); opacity:0.4; }
-    }
+/* Floating Particles */
+.particles{position:absolute;inset:0;z-index:4;pointer-events:none;}
+.particle{position:absolute;width:3px;height:3px;background:#fff;opacity:0.5;border-radius:50%;animation:particleDrift linear infinite;}
+@keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
 
+/* Shield */
+.shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
+.shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
+#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;}
+
+/* Rays */
+.cosmic-rays{position:absolute;inset:0;z-index:2;mix-blend-mode:screen;pointer-events:none;overflow:hidden}
+.ray{position:absolute;width:2px;height:180vmax;left:50%;top:50%;
+background:linear-gradient(to bottom, rgba(255,255,255,0.9),rgba(255,200,80,0));
+opacity:0.25;transform-origin:center;animation:raySpin linear infinite;filter:blur(2px)}
+@keyframes raySpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* Galaxy Fog */
+.galaxy{position:absolute;inset:-20%;z-index:1;mix-blend-mode:screen;
+background:radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%),
+           radial-gradient(circle, rgba(160,120,255,0.25), transparent 60%),
+           radial-gradient(circle, rgba(120,180,255,0.25), transparent 65%);
+filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
+@keyframes galaxySpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* Cinematic Light Ring */
+.light-ring{position:absolute;left:50%;top:50%;width:160vmin;height:160vmin;border-radius:50%;
+transform:translate(-50%,-50%);border:4px solid rgba(255,255,255,0.05);
+animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
+@keyframes ringPulse{
+  0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}
+  50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}
+  100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}
+}
+
+/* Supernova */
+.supernova{position:absolute;left:50%;top:50%;width:40vmin;height:40vmin;border-radius:50%;
+transform:translate(-50%,-50%);background:radial-gradient(circle,
+rgba(255,240,200,0.9),rgba(255,150,50,0.4),rgba(255,80,0,0));
+filter:blur(20px);opacity:0;animation:superPulse 8s infinite ease-out;pointer-events:none;z-index:4}
+@keyframes superPulse{
+  0%{transform:translate(-50%,-50%) scale(0.2);opacity:0.6}
+  50%{transform:translate(-50%,-50%) scale(1.8);opacity:0.25}
+  100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}
+}
+
+/* Comets */
+.comet{position:absolute;width:2px;height:2px;background:white;border-radius:50%;
+box-shadow:0 0 12px 6px rgba(255,255,255,0.8);animation:cometFly linear infinite;z-index:3;pointer-events:none}
+@keyframes cometFly{0%{transform:translate(110vw,-10vh)}100%{transform:translate(-20vw,140vh)}}
+
+/* Portal */
+.portal{position:absolute;left:50%;top:50%;width:70vmin;height:70vmin;border-radius:50%;
+transform:translate(-50%,-50%);background:conic-gradient(
+rgba(0,180,255,0.2),rgba(180,0,255,0.3),rgba(255,120,0,0.25),rgba(0,180,255,0.2)
+);
+filter:blur(60px);opacity:0.35;animation:portalSpin 22s linear infinite;pointer-events:none;z-index:2}
+@keyframes portalSpin{0%{transform:translate(-50%,-50%) rotate(0)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* Sparks */
+.spark{position:absolute;width:2px;height:2px;border-radius:50%;background:yellow;opacity:0.8;
+pointer-events:none;animation:sparkFly linear forwards;}
+@keyframes sparkFly{0%{transform:translate(0,0)}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+
+/* Letters */
+.letter{
+  position:absolute;
+  font-size:6vmin;
+  font-weight:bold;
+  color:#ffd700;
+  opacity:0;
+  transform:translate(-50%,-50%) scale(0);
+  pointer-events:none;
+  text-shadow:0 0 12px #fff,0 0 20px #ffcc00;
+  z-index:25;
+  transition:transform 1.8s cubic-bezier(0.22,1,0.36,1), opacity 1.5s ease-out;
+}
 </style>
 </head>
 <body>
+<div class="stage">
+  <div class="background">
+    <div class="galaxy"></div>
+    <div class="portal"></div>
+    <div class="cosmic-rays" id="rays"></div>
+    <div class="light-ring"></div>
+    <div class="supernova"></div>
+    <div id="cometLayer"></div>
+    <div class="nebula-layer nebula1"></div>
+    <div class="nebula-layer nebula2"></div>
+    <div class="nebula-layer nebula3"></div>
+    <div class="stars"></div>
+    <div class="particles"></div>
+  </div>
 
-<div id="space"></div>
+  <!-- SHIELD -->
+  <div class="shield-wrap">
+    <svg class="shield-svg" viewBox="0 0 200 200">
+      <defs>
+        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff4d4d"/>
+          <stop offset="100%" stop-color="#990000"/>
+        </radialGradient>
+        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#cccccc"/>
+        </radialGradient>
+        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#4d90ff"/>
+          <stop offset="100%" stop-color="#003366"/>
+        </radialGradient>
+      </defs>
 
-<!-- Metallic Star -->
-<div id="star"></div>
+      <g id="rings" transform="translate(100,100)">
+        <circle r="92" fill="url(#metalRed)" />
+        <circle r="76" fill="url(#metalWhite)" />
+        <circle r="56" fill="url(#metalRed)" />
+        <circle r="36" fill="url(#metalBlue)" />
+      </g>
 
-<!-- Letters -->
-<div id="letters">
-    <div class="letter" id="L1">P</div>
-    <div class="letter" id="L2">R</div>
-    <div class="letter" id="L3">I</div>
-    <div class="letter" id="L4">N</div>
-    <div class="letter" id="L5">C</div>
-    <div class="letter" id="L6">E</div>
+      <g id="starGroup" transform="translate(100,100)">
+        <polygon id="shield-star"
+          points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8"
+          fill="#ffffff"
+        />
+      </g>
+    </svg>
+  </div>
 </div>
 
 <script>
-/* ---------- Create IMAX Radiations ---------- */
-function createRadiations() {
-    const count = 60;
-    for(let i=0;i<count;i++){
-        let r=document.createElement("div");
-        r.className="ray";
-        let angle=(360/count)*i;
-        r.style.transform=`rotate(${angle}deg)`;
-        document.body.appendChild(r);
+// Rays
+const rays=document.getElementById('rays');
+for(let i=0;i<18;i++){
+  const r=document.createElement('div');
+  r.className='ray';
+  r.style.animationDuration=(20+i*2)+'s';
+  r.style.transform=`translate(-50%,-50%) rotate(${i*20}deg)`;
+  rays.appendChild(r);
+}
 
-        setTimeout(()=> {
-            r.style.transition="height 1.4s ease-out, opacity 1.4s ease-out";
-            r.style.height="240px";
-            r.style.opacity="1";
-        }, 300);
+// Star, Shield, Stage
+const star=document.getElementById('shield-star');
+const shield=document.querySelector('.shield-svg');
+const stage=document.querySelector('.stage');
 
-        // crack effect
-        setTimeout(()=>{
-            r.style.opacity="0";
-            r.style.height="300px";
-            r.style.filter="blur(8px)";
-        }, 1700);
+// Letter sequence
+const lettersArr=['P','R','I','N','C','E'];
+
+// Star click → spin, shatter, letters radiate
+star.addEventListener('click',()=>{
+  star.style.transition='transform 0.5s linear';
+  star.style.transform='scale(1.2) rotate(1080deg)';
+  setTimeout(()=>{
+    star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
+    star.style.transform='scale(1) rotate(0deg)';
+    shatterShield();
+    radiateLetters();
+  },500);
+});
+
+// Shield shatter (rings explode)
+function shatterShield(){
+  const rings=document.getElementById('rings');
+  if(!rings) return;
+  rings.style.opacity=0;
+
+  const layers=[
+    {r:92, fill:'url(#metalRed)', slices:8},
+    {r:76, fill:'url(#metalWhite)', slices:6},
+    {r:56, fill:'url(#metalRed)', slices:6},
+    {r:36, fill:'url(#metalBlue)', slices:4}
+  ];
+
+  const fragRoot=document.createElementNS('http://www.w3.org/2000/svg','g');
+  shield.appendChild(fragRoot);
+
+  layers.forEach(layer=>{
+    for(let i=0;i<layer.slices;i++){
+      const piece=document.createElementNS('http://www.w3.org/2000/svg','path');
+      const a1=i*(360/layer.slices);
+      const a2=a1+(360/layer.slices);
+      const R=layer.r, r=layer.r*0.6;
+
+      const x1=r*Math.cos(a1*Math.PI/180);
+      const y1=r*Math.sin(a1*Math.PI/180);
+      const x2=R*Math.cos(a1*Math.PI/180);
+      const y2=R*Math.sin(a1*Math.PI/180);
+      const x3=R*Math.cos(a2*Math.PI/180);
+      const y3=R*Math.sin(a2*Math.PI/180);
+      const x4=r*Math.cos(a2*Math.PI/180);
+      const y4=r*Math.sin(a2*Math.PI/180);
+
+      piece.setAttribute('fill',layer.fill);
+      piece.setAttribute('d',`M ${x1} ${y1} L ${x2} ${y2} A ${R} ${R} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${r} ${r} 0 0 0 ${x1} ${y1}`);
+      piece.style.transformOrigin='100px 100px';
+      piece.style.transition='transform 1.2s ease-out, opacity 1.5s ease-out';
+      fragRoot.appendChild(piece);
+
+      setTimeout(()=>{
+        const dx=(Math.random()-0.5)*300;
+        const dy=(Math.random()-0.5)*300;
+        const rot=(Math.random()-0.5)*720;
+        piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.85)`;
+        setTimeout(()=>piece.style.opacity=0,700);
+        spawnSparks(100+dx,100+dy,6);
+      },50);
     }
+  });
+
+  setTimeout(()=>{
+    try{ if(rings.parentNode) rings.parentNode.removeChild(rings); }catch(e){}
+    setTimeout(()=>{ try{ if(fragRoot.parentNode) fragRoot.parentNode.removeChild(fragRoot); }catch(e){} },1400);
+  },2200);
 }
 
-/* ---------- IMAX Cracking + Letter Evolution ---------- */
-function evolveLetters() {
-    let delay = 0;
-    const letters = ["L1","L2","L3","L4","L5","L6"];
-
-    letters.forEach((id)=> {
-        let el=document.getElementById(id);
-
-        setTimeout(()=>{
-            el.style.opacity="1";
-            el.style.transform="translateY(0px) scale(1)";
-            el.style.filter="blur(0px)";
-        }, delay);
-
-        delay += 700;   // IMAX stagger
-    });
+// Sparks
+function spawnSparks(cx,cy,count){
+  for(let i=0;i<count;i++){
+    const s=document.createElement('div');
+    s.className='spark';
+    const a=Math.random()*2*Math.PI;
+    const d=50+Math.random()*100;
+    s.style.left=cx+'px';
+    s.style.top=cy+'px';
+    s.style.setProperty('--sx',Math.cos(a)*d+'px');
+    s.style.setProperty('--sy',Math.sin(a)*d+'px');
+    s.style.animationDuration=(0.6+Math.random()*0.6)+'s';
+    stage.appendChild(s);
+    setTimeout(()=>s.remove(),900);
+  }
 }
 
-/* ---------- Cosmic Dust ---------- */
-function dust() {
-    for(let i=0;i<60;i++){
-        let d=document.createElement("div");
-        d.className="dust";
-        d.style.left= (Math.random()*100)+"vw";
-        d.style.top= (Math.random()*100)+"vh";
-        d.style.animationDelay= (Math.random()*4)+"s";
-        document.body.appendChild(d);
-    }
+// Letters radiate
+function radiateLetters(){
+  const centerX=window.innerWidth/2;
+  const centerY=window.innerHeight/2;
+  lettersArr.forEach((l,i)=>{
+    const el=document.createElement('div');
+    el.className='letter';
+    el.innerText=l;
+    stage.appendChild(el);
+
+    const angle=(i-2.5)*20; // spread letters slightly
+    const radius=250 + Math.random()*50;
+    el.style.left=centerX+'px';
+    el.style.top=centerY+'px';
+
+    setTimeout(()=>{
+      el.style.opacity=1;
+      el.style.transform=`translate(${Math.cos(angle*Math.PI/180)*radius}px,${Math.sin(angle*Math.PI/180)*radius}px) scale(1.2)`;
+    },i*300);
+
+    setTimeout(()=>{
+      el.style.transition='transform 1.5s cubic-bezier(0.22,1,0.36,1), opacity 1.2s ease-out';
+      el.style.transform=`translate(${(i-2.5)*12}vw, 80vh) scale(1)`;
+    },2000+i*300);
+  });
 }
 
-/* ---------- Sequence ---------- */
-setTimeout(createRadiations, 400);
-setTimeout(evolveLetters, 2400);
-dust();
+// Particles
+const particleContainer=document.querySelector('.particles');
+for(let i=0;i<120;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.setProperty('--x',(Math.random()*400-200)+'px');
+  p.style.setProperty('--y',(Math.random()*400-200)+'px');
+  p.style.left=Math.random()*100+'%';
+  p.style.top=Math.random()*100+'%';
+  p.style.animationDuration=(60+Math.random()*60)+'s';
+  particleContainer.appendChild(p);
+}
 
+// Comets
+const cometLayer=document.getElementById('cometLayer');
+for(let i=0;i<12;i++){
+  const c=document.createElement('div');
+  c.className='comet';
+  c.style.left=Math.random()*100+'vw';
+  c.style.top=Math.random()*100+'vh';
+  c.style.animationDuration=(6+Math.random()*6)+'s';
+  c.style.animationDelay=(-Math.random()*10)+'s';
+  cometLayer.appendChild(c);
+}
 </script>
-
 </body>
 </html>

@@ -24,7 +24,7 @@ html,body{height:100%;background:#030114;font-family:Inter,system-ui,Segoe UI,Ro
 .hud{position:absolute;inset:0;z-index:20;pointer-events:none}.hud .scan{position:absolute;left:0;right:0;top:35%;height:0.6px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);opacity:0;animation:scanIn 1.2s 2.9s forwards}@keyframes scanIn{to{opacity:1}}
 .caption{position:absolute;bottom:calc(var(--imax-letterbox) + 2vh);left:50%;transform:translateX(-50%);z-index:30;font-size:12px;color:rgba(200,220,255,0.6);letter-spacing:1px}
 .bloom{position:absolute;inset:0;z-index:5;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.28;background:radial-gradient(circle at 50% 40%, rgba(255,200,100,0.03), transparent 10%)}
-#shield-star{transform-box:fill-box;transform-origin:100px 100px;opacity:0;transform:scale(0) rotate(0deg);transition:transform 1.2s cubic-bezier(0.22,1,0.36,1),opacity 0.8s ease-out;cursor:pointer}
+#shield-star{transform-box:fill-box;transform-origin:center center;opacity:0;transform:scale(0) rotate(0deg);transition:transform 1.2s cubic-bezier(0.22,1,0.36,1),opacity 0.8s ease-out;cursor:pointer}
 .star-particle{position:fixed;width:6px;height:6px;background:#3ec5ff;border-radius:50%;opacity:1;transition:transform 0.8s ease-out, opacity 0.8s ease-out}
 </style>
 </head>
@@ -59,19 +59,12 @@ html,body{height:100%;background:#030114;font-family:Inter,system-ui,Segoe UI,Ro
 <script>
 const star = document.getElementById('shield-star');
 if(star){
-  // evolve from center of the circles
+  // evolve from center of circles
   setTimeout(()=>{ star.style.opacity=1; star.style.transform='scale(1) rotate(360deg)'; }, 1200);
-  star.addEventListener('click', (event)=>{
-    star.style.transition='transform 0.28s ease-out';
-    star.style.transform='scale(1.05) rotate(720deg)';
-    // particles
-    for(let i=0;i<20;i++){
-      const p=document.createElement('div'); p.className='star-particle'; p.style.left=event.clientX+'px'; p.style.top=event.clientY+'px'; document.body.appendChild(p);
-      const angle=Math.random()*360; const dist=80+Math.random()*40;
-      p.style.transform=`translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`; p.style.opacity='0';
-      setTimeout(()=>p.remove(),800);
-    }
-    setTimeout(()=>{ star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)'; star.style.transform='scale(1) rotate(0deg)'; }, 300);
+  star.addEventListener('click', ()=>{
+    star.style.transition='transform 0.5s linear';
+    star.style.transform='scale(1) rotate(1080deg)'; // rotate around itself
+    setTimeout(()=>{ star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)'; star.style.transform='scale(1) rotate(0deg)'; }, 500);
   });
 }
 </script>

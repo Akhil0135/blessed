@@ -1,89 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMAX Nolan Cinematic Scene</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IMAX — Nolan Cosmic • Shield Reveal — Birthday</title>
 <style>
-html, body { margin:0; padding:0; width:100%; height:100%; background:#010108; overflow:hidden; font-family:'Cinzel', serif; }
-#scene { position:relative; width:100%; height:100%; perspective:1000px; overflow:hidden; }
-#gb { position:absolute; top:2%; width:100%; text-align:center; font-size:3rem; color:#fff; text-shadow:0 0 40px #fff, 0 0 80px #FFDFA0; z-index:25; transition:opacity 1s ease-in-out; }
-#moon, #sun, #message, #fog, .star, .particle, .lensflare, #clickBtn { transition:opacity 1s ease-in-out, transform 1s ease-in-out; }
-#moon { position:absolute; top:10%; left:5%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#f7f7ff,#d5d2f4,#8c86c5); box-shadow:0 0 150px #C7C3FF,0 0 300px rgba(200,200,255,0.3); cursor:grab; z-index:20; }
-#sun { position:absolute; top:10%; right:5%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#FFE8A0,#FF8C00,#B45A00); box-shadow:0 0 400px rgba(255,165,90,0.85),0 0 500px rgba(255,200,120,0.2); transform:scale(0); opacity:0; z-index:18; }
-#message { position:absolute; bottom:20%; width:100%; text-align:center; font-size:1.6rem; color:#fff; letter-spacing:2px; opacity:0; z-index:25; text-shadow:0 0 10px rgba(255,255,255,0.4),0 0 25px rgba(255,240,200,0.25); }
-.star { position:absolute; border-radius:50%; background:white; animation:twinkle 2s infinite alternate; z-index:5; opacity:0.3; }
-@keyframes twinkle { 0%{opacity:0.2;} 50%{opacity:1;} 100%{opacity:0.2;} }
-#bgGradient { position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom,#010108,#120430 75%); z-index:0; }
-#fog { position:absolute; bottom:0; width:100%; height:50%; background:radial-gradient(circle at 50% 80%, rgba(255,255,255,0.08), transparent 70%); filter:blur(50px); opacity:0.25; z-index:10; animation:fogDrift 60s linear infinite; }
-@keyframes fogDrift { 0%{transform:translateX(0);} 50%{transform:translateX(20px);} 100%{transform:translateX(0);} }
-.lensflare { position:absolute; width:400px; height:400px; border-radius:50%; pointer-events:none; background:radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%); z-index:19; filter:blur(100px); opacity:0; }
-.particle { position:absolute; width:2px; height:2px; background:white; border-radius:50%; opacity:0.1; animation:drift 10s linear infinite; z-index:6; }
-@keyframes drift { from{transform:translate(0,0);} to{transform:translate(50px,50px);} }
-#clickBtn { position:absolute; bottom:5%; left:50%; transform:translateX(-50%) scale(0); padding:20px 50px; font-size:1.5rem; background:rgba(255,255,255,0.1); border:2px solid #FFDFA0; color:#FFDFA0; border-radius:15px; cursor:pointer; opacity:0; z-index:30; box-shadow:0 0 40px #FFDFA0,0 0 80px rgba(255,223,160,0.4); transition:opacity 1s ease-in-out, transform 1s ease-in-out; }
-#clickBtn:hover { background:rgba(255,255,255,0.3); box-shadow:0 0 60px #FFDFA0,0 0 120px rgba(255,223,160,0.6); }
-#birthdayBackdrop { position:absolute; top:0; left:0; width:100%; height:100%; background:#FFE8A0 url('https://i.imgur.com/3VwqR6H.png') center/cover no-repeat; opacity:0; z-index:35; transition:opacity 2s ease-in-out; }
+  /* Reset */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#030114;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff}
+  :root{
+    --imax-letterbox: 12vh;
+    --accent:#e5f1ff;
+  }
+
+  /* Stage */
+  .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
+
+  /* Cinematic letterbox */
+  .letterbox-top,.letterbox-bottom{position:absolute;left:0;right:0;height:var(--imax-letterbox);background:linear-gradient(180deg,rgba(0,0,0,0.95),rgba(0,0,0,0.7));z-index:60;pointer-events:none}
+  .letterbox-top{top:0}
+  .letterbox-bottom{bottom:0}
+
+  /* Cosmic backdrop */
+  .cosmic{position:absolute;inset:0;background:
+    radial-gradient(very farthest-corner at 20% 20%,#0b1440 0%,transparent 10%),
+    radial-gradient(very farthest-corner at 80% 80%,#2b0b2d 0%,transparent 12%),
+    linear-gradient(180deg,#08061a 0%,#000 60%);
+    transform-origin:center;z-index:1;filter:contrast(1.05) saturate(1.1)}
+
+  /* Nebula soft light */
+  .nebula{position:absolute;inset:-10%;background:radial-gradient(circle at 30% 40%, rgba(255,120,160,0.08), transparent 12%),radial-gradient(circle at 75% 70%, rgba(80,150,255,0.06), transparent 12%);mix-blend-mode:screen;z-index:2;filter:blur(40px) saturate(1.4)}
+
+  /* Stars */
+  .stars{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0.9}
+  .stars:after{content:'';position:absolute;inset:0;background-image:radial-gradient(#fff 0.8px, transparent 1px),radial-gradient(#fff 0.6px, transparent 1px);background-size:400px 400px, 120px 120px;opacity:0.35;mix-blend-mode:screen;filter:blur(.2px)}
+
+  /* Film grain */
+  .grain{position:absolute;inset:0;z-index:70;pointer-events:none;mix-blend-mode:overlay;opacity:0.06;background-image:linear-gradient(0deg, rgba(255,255,255,0.02) 1px, transparent 1px);background-size:100% 3px}
+
+  /* Light sweep / Lens flare */
+  .flare{position:absolute;left:-20%;top:10%;width:140%;height:40%;pointer-events:none;z-index:4;filter:blur(40px);opacity:0.7;background:linear-gradient(90deg,transparent 0%, rgba(255,255,255,0.035) 40%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.035) 60%, transparent 100%);transform:rotate(-12deg)}
+
+  /* Shield container */
+  .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0);}
+
+  /* Shield reveal — use SVG scaling and mask */
+  .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
+
+  /* Shield entrance cinematic motion */
+  .shield-enter{animation:shieldRise 2.6s cubic-bezier(.2,.9,.2,1) forwards, shieldBounce 0.9s 2.6s cubic-bezier(.2,.9,.2,1) both}
+  @keyframes shieldRise{
+    0%{transform:translateY(18vh) scale(.3) rotate(-10deg);opacity:0}
+    60%{opacity:1;transform:translateY(-2vh) scale(1.05) rotate(6deg)}
+    100%{transform:translateY(0) scale(1) rotate(0deg)}
+  }
+  @keyframes shieldBounce{
+    0%{transform:translateY(0)}
+    30%{transform:translateY(-1.2vh)}
+    60%{transform:translateY(0)}
+    100%{transform:translateY(0)}
+  }
+
+  /* Star pulse */
+  .star-core{transform-origin:center center;animation:starPulse 1.2s 2.6s ease-out both}
+  @keyframes starPulse{0%{transform:scale(0.2);opacity:0}50%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:1}}
+
+  /* Shield metallic sheen sweep */
+  .sheen{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen}
+  .sheen:before{content:'';position:absolute;inset:-40% -40% -40% -40%;background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.04) 55%, transparent 100%);transform:translateX(-100%);animation:sheenMove 2.6s 2s cubic-bezier(.2,.9,.2,1) forwards}
+  @keyframes sheenMove{to{transform:translateX(120%)}}
+
+  /* Title / Name reveal */
+  .title{position:absolute;bottom:calc(var(--imax-letterbox) + 6vh);left:50%;transform:translateX(-50%);text-align:center;z-index:30;pointer-events:none}
+  .title .greeting{font-size:clamp(12px,1.6vmin,18px);letter-spacing:6px;color:rgba(230,240,255,0.8);text-transform:uppercase;font-weight:600;opacity:0;transform:translateY(8px);animation:greetIn 0.9s 3.6s cubic-bezier(.2,.9,.2,1) forwards}
+  .title .name{font-family:"Cinzel",serif;font-weight:700;font-size:clamp(28px,4.6vmin,72px);letter-spacing:.02em;color:var(--accent);opacity:0;transform:translateY(18px) scale(.92);animation:nameIn 1s 3.9s cubic-bezier(.2,.9,.2,1) forwards}
+  @keyframes greetIn{to{opacity:1;transform:translateY(0)}}
+  @keyframes nameIn{to{opacity:1;transform:translateY(0) scale(1)}}
+
+  /* Subtle HUD lines and scan */
+  .hud{position:absolute;inset:0;z-index:20;pointer-events:none}
+  .hud .scan{position:absolute;left:0;right:0;top:35%;height:0.6px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);opacity:0;animation:scanIn 1.2s 2.9s forwards}
+  @keyframes scanIn{to{opacity:1}}
+
+  /* Small caption */
+  .caption{position:absolute;bottom:calc(var(--imax-letterbox) + 2vh);left:50%;transform:translateX(-50%);z-index:30;font-size:12px;color:rgba(200,220,255,0.6);letter-spacing:1px}
+
+  /* Tiny cinematic bloom */
+  .bloom{position:absolute;inset:0;z-index:5;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.28;background:radial-gradient(circle at 50% 40%, rgba(255,200,100,0.03), transparent 10%)}
+
+  /* Responsive tweaks */
+  @media (max-aspect-ratio: 3/4){:root{--imax-letterbox:9vh}}
+
+  /* Small UI helper (click to replay) */
+  .ui{position:fixed;right:18px;bottom:18px;z-index:120}
+  .btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:#cfe8ff;font-size:13px;backdrop-filter: blur(6px);cursor:pointer}
 </style>
 </head>
 <body>
-<div id="scene">
-  <div id="bgGradient"></div>
-  <div id="gb">God Bless You</div>
-  <div id="moon"></div>
-  <div id="sun"></div>
-  <div class="lensflare" id="moonFlare"></div>
-  <div class="lensflare" id="sunFlare"></div>
-  <div id="message">On this calm birthday eve so new, God softly whispers, my plans are made for you.</div>
-  <div id="fog"></div>
-  <button id="clickBtn">Click Here</button>
-  <div id="birthdayBackdrop"></div>
-</div>
+  <div class="stage" id="stage">
+    <div class="cosmic" id="cosmic"></div>
+    <div class="nebula"></div>
+    <div class="stars"></div>
+    <div class="flare"></div>
+    <div class="bloom"></div>
+
+    <div class="shield-wrap" id="shieldWrap" aria-hidden="true">
+      <!-- Captain-style shield built with SVG (original design, not traced from any official asset) -->
+      <svg class="shield-svg" viewBox="0 0 200 200" id="shieldSVG" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="metalGrad" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+            <stop offset="35%" stop-color="#e6eefc" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#b8c5d9" stop-opacity="1"/>
+          </radialGradient>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Outer rings -->
+        <g id="rings" transform="translate(100,100)">
+          <circle r="92" fill="#0b2340" />
+          <circle r="76" fill="#d33a3a" />
+          <circle r="56" fill="#ffffff" />
+          <circle r="36" fill="#2b5ea6" />
+        </g>
+
+        <!-- central star -->
+        <g id="starGroup" transform="translate(100,100) scale(0.9)" opacity="0">
+          <polygon class="star-core" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#fff" filter="url(#glow)"/>
+        </g>
+
+        <!-- metallic sheen mask -->
+        <g id="sheenGroup" transform="translate(100,100)">
+          <circle r="92" fill="none"/>
+        </g>
+      </svg>
+      <div class="sheen" aria-hidden="true"></div>
+    </div>
+
+    <!-- HUD / scan lines -->
+    <div class="hud">
+      <div class="scan"></div>
+    </div>
+
+    <!-- Title area -->
+    <div class="title">
+      <div class="greeting">Happy Birthday</div>
+      <div class="name" id="nameText">NAME</div>
+    </div>
+
+    <div class="caption">An IMAX • Nolan-grade cosmic tribute</div>
+
+    <div class="grain"></div>
+    <div class="letterbox-top"></div>
+    <div class="letterbox-bottom"></div>
+
+    <div class="ui">
+      <button class="btn" id="replayBtn">Replay</button>
+    </div>
+  </div>
+
 <script>
-const moon = document.getElementById('moon');
-const sun = document.getElementById('sun');
-const message = document.getElementById('message');
-const clickBtn = document.getElementById('clickBtn');
-const birthdayBackdrop = document.getElementById('birthdayBackdrop');
-const gb = document.getElementById('gb');
-const fog = document.getElementById('fog');
-const stars = document.querySelectorAll('.star');
-const particles = document.querySelectorAll('.particle');
-const moonFlare = document.getElementById('moonFlare');
-const sunFlare = document.getElementById('sunFlare');
+  (function(){
+    // Elements
+    const shieldSVG = document.getElementById('shieldSVG');
+    const starGroup = document.getElementById('starGroup');
+    const shieldWrap = document.getElementById('shieldWrap');
+    const stage = document.getElementById('stage');
+    const nameText = document.getElementById('nameText');
+    const replayBtn = document.getElementById('replayBtn');
 
-let dragging=false, offsetX=0;
-let fullText = message.innerText;
-message.innerText='';
+    // USER-FRIENDLY: If your real name is known, replace here. Otherwise leave as NAME.
+    // We'll not ask — attempt to detect if the surrounding page has a title that looks like a name (best-effort)
+    try {
+      const guess = document.title.match(/[A-Z][a-z]{2,}/g);
+      if(guess && guess.length) nameText.textContent = guess[0];
+    } catch(e){}
 
-moon.addEventListener('mousedown', e=>{ dragging=true; offsetX=e.clientX - moon.offsetLeft; });
-window.addEventListener('mouseup', ()=>{ dragging=false; });
-window.addEventListener('mousemove', e=>{
-  if(!dragging) return;
-  let dx = e.clientX - offsetX;
-  if(dx<0) dx=0; if(dx>400) dx=400;
-  moon.style.left = 5 + dx/window.innerWidth*90 + '%';
-  let progress = dx/400;
-  message.innerText = fullText.substring(0, Math.floor(fullText.length*progress));
-  message.style.opacity = progress;
-  sun.style.transform = `scale(${progress*6})`;
-  sun.style.opacity = progress;
-  moon.style.opacity = 1 - progress;
-  moonFlare.style.opacity = 1 - progress;
-  sunFlare.style.opacity = progress;
-  if(progress>=0.99){
-    clickBtn.style.opacity=1;
-    clickBtn.style.transform='translateX(-50%) scale(1)';
-  }
-});
+    // Animation sequence controller
+    function runSequence(){
+      // reset
+      starGroup.style.opacity = 0;
+      shieldSVG.style.transform = 'scale(.3) translateY(18vh) rotate(-10deg)';
+      shieldSVG.classList.remove('shield-enter');
+      void shieldSVG.offsetWidth;
 
-clickBtn.addEventListener('click', ()=>{
-  // Fade out first phase
-  moon.style.opacity=0; sun.style.opacity=0; message.style.opacity=0; clickBtn.style.opacity=0; gb.style.opacity=0;
-  fog.style.opacity=0; moonFlare.style.opacity=0; sunFlare.style.opacity=0;
-  stars.forEach(s=>s.style.opacity=0); particles.forEach(p=>p.style.opacity=0);
-  // Show birthday backdrop
-  birthdayBackdrop.style.opacity=1;
-});
+      // cinematic slow zoom of background
+      stage.animate([{transform:'scale(1)'},{transform:'scale(1.04)'}],{duration:7500,fill:'forwards',easing:'linear'});
+
+      // reveal shield
+      setTimeout(()=>{
+        shieldSVG.classList.add('shield-enter');
+      },200);
+
+      // star appear and pulse timed with shield
+      setTimeout(()=>{ starGroup.style.transition='opacity .35s ease-out'; starGroup.style.opacity=1; starGroup.querySelector('.star-core').style.opacity=1; }, 1700);
+
+      // sheen sweep intensity
+      const sheen = document.querySelector('.sheen:before');
+
+      // name/title reveal handled by CSS delays — but we can nudge subtle letter spacing
+      const nameEl = nameText;
+      nameEl.style.letterSpacing = '0.18em';
+      nameEl.animate([{letterSpacing:'0.6em'},{letterSpacing:'0.02em'}],{duration:1200,delay:3800,easing:'cubic-bezier(.2,.9,.2,1)',fill:'forwards'});
+
+      // small camera rumble
+      setTimeout(()=>{
+        stage.animate([{transform:'translateY(0)'},{transform:'translateY(-6px)'},{transform:'translateY(0)'}],{duration:900,iterations:1,easing:'cubic-bezier(.2,.9,.2,1)'});
+      },2600);
+    }
+
+    // Make the SVG star scale pulse using CSS class already present
+    // Add event for replay
+    replayBtn.addEventListener('click', ()=>{ runSequence(); });
+
+    // initial run
+    window.addEventListener('load', ()=>{ runSequence(); });
+
+    // Accessibility: allow changing name by double-clicking the title
+    nameText.addEventListener('dblclick', ()=>{
+      const newName = prompt('Enter name to appear in the video (will not be saved):', nameText.textContent || 'NAME');
+      if(newName) nameText.textContent = newName.trim().slice(0,30);
+    });
+
+    // subtle parallax on mouse move for cinematic depth
+    stage.addEventListener('mousemove',(e)=>{
+      const rect = stage.getBoundingClientRect();
+      const dx = (e.clientX - rect.left) / rect.width - 0.5;
+      const dy = (e.clientY - rect.top) / rect.height - 0.5;
+      const t = `translate3d(${dx*6}px,${dy*6}px,0) scale(1.002)`;
+      shieldWrap.style.transform = t;
+    });
+    stage.addEventListener('mouseleave',()=>{ shieldWrap.style.transform = 'translateZ(0)'; });
+
+    // Offer keyboard replay (space)
+    window.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); runSequence(); } });
+  })();
 </script>
 </body>
 </html>

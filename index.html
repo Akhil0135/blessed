@@ -12,17 +12,18 @@ html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Ro
 .letterbox-top,.letterbox-bottom{position:absolute;left:0;right:0;height:var(--imax-letterbox);background:linear-gradient(180deg,rgba(0,0,0,0.95),rgba(0,0,0,0.7));z-index:60;pointer-events:none}.letterbox-top{top:0}.letterbox-bottom{bottom:0}
 /* --- Enhanced Dynamic Background --- */
 .background{position:absolute;inset:0;z-index:1;overflow:hidden}
-.nebula-layer{position:absolute;inset:-30%;mix-blend-mode:screen;filter:blur(60px) saturate(1.6);animation:nebulaDrift linear infinite;}
-.nebula1{background:radial-gradient(circle at 25% 40%, rgba(255,120,160,0.08), transparent 15%);animation-duration:120s;}
-.nebula2{background:radial-gradient(circle at 75% 65%, rgba(80,150,255,0.06), transparent 15%);animation-duration:140s;}
-.nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,200,255,0.04), transparent 20%);animation-duration:180s;}
-@keyframes nebulaDrift{0%{transform:translate(0,0)}50%{transform:translate(50px,-30px)}100%{transform:translate(0,0)}}
-.stars{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0.9;background-image:radial-gradient(#fff 0.8px, transparent 1px),radial-gradient(#fff 0.6px, transparent 1px);background-size:400px 400px, 120px 120px;filter:blur(.3px);animation:starTwinkle 5s infinite alternate;}
-@keyframes starTwinkle{0%{opacity:0.85}50%{opacity:0.95}100%{opacity:0.88}}
-.bloom{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.28;background:radial-gradient(circle at 50% 40%, rgba(255,200,100,0.03), transparent 10%)}
+.nebula-layer{position:absolute;inset:-30%;mix-blend-mode:screen;filter:blur(80px) saturate(2);animation:nebulaDrift linear infinite;opacity:0.35}
+.nebula1{background:radial-gradient(circle at 25% 40%, rgba(255,120,160,0.2), transparent 25%);animation-duration:150s;}
+.nebula2{background:radial-gradient(circle at 75% 65%, rgba(80,150,255,0.15), transparent 30%);animation-duration:180s;}
+.nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,200,255,0.12), transparent 35%);animation-duration:220s;}
+@keyframes nebulaDrift{0%{transform:translate(0,0)}50%{transform:translate(200px,-120px)}100%{transform:translate(0,0)}}
+.stars{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0.9;background-image:radial-gradient(#fff 1.2px, transparent 1px),radial-gradient(#fff 0.8px, transparent 1px);background-size:400px 400px, 120px 120px;filter:blur(.4px);animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
+@keyframes starTwinkle{0%{opacity:0.75}50%{opacity:0.95}100%{opacity:0.8}}
+@keyframes starDrift{0%{transform:translate(0,0)}100%{transform:translate(-200px,150px)}}
+.bloom{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:50%;mix-blend-mode:screen;opacity:0.3;background:radial-gradient(circle at 50% 40%, rgba(255,200,100,0.05), transparent 15%)}
 .particles{position:absolute;inset:0;z-index:4;pointer-events:none;}
-.particle{position:absolute;width:2px;height:2px;background:#fff;opacity:0.3;border-radius:50%;animation:particleDrift linear infinite;}
-@keyframes particleDrift{0%{transform:translate(0,0)}50%{transform:translate(var(--x),var(--y))}100%{transform:translate(0,0)}}
+.particle{position:absolute;width:3px;height:3px;background:#fff;opacity:0.5;border-radius:50%;animation:particleDrift linear infinite;}
+@keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
 /* Shield */
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
@@ -69,11 +70,11 @@ if(star){
 }
 // Generate drifting particles
 const particleContainer=document.querySelector('.particles');
-for(let i=0;i<80;i++){
+for(let i=0;i<120;i++){
   const p=document.createElement('div');
   p.className='particle';
-  p.style.setProperty('--x', (Math.random()*80-40)+'px');
-  p.style.setProperty('--y', (Math.random()*80-40)+'px');
+  p.style.setProperty('--x', (Math.random()*400-200)+'px');
+  p.style.setProperty('--y', (Math.random()*400-200)+'px');
   p.style.left=Math.random()*100+'%';
   p.style.top=Math.random()*100+'%';
   p.style.animationDuration=(60+Math.random()*60)+'s';

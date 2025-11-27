@@ -238,7 +238,49 @@
     // Offer keyboard replay (space)
     window.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); runSequence(); } });
   })();
-</script>
+// --- Shield Star Quick Rotation on Click ---
+    const star = document.getElementById('shield-star');
+    if(star){
+      star.style.transition='transform 0.3s ease-out';
+      star.addEventListener('click',()=>{
+        star.style.transform='rotate(720deg)';
+        setTimeout(()=>{
+          star.style.transform='rotate(0deg)';
+        },400);
+      });
+    }
+
+    // --- IMAX Aspect Ratio Shift ---
+    function imaxShift(){
+      document.body.classList.add('imax-shift');
+      setTimeout(()=>{
+        document.body.classList.remove('imax-shift');
+      },1500);
+    }
+    setTimeout(imaxShift, 2500);
+
+    // --- Deep Space Bloom ---
+    const spaceBloom=document.createElement('div');
+    spaceBloom.className='space-bloom';
+    document.body.appendChild(spaceBloom);
+    setTimeout(()=>{ spaceBloom.classList.add('active'); }, 1800);
+    setTimeout(()=>{ spaceBloom.remove(); }, 3500);
+
+    // --- Slow Motion Particle Burst ---
+    const burstContainer=document.createElement('div');
+    burstContainer.className='burst';
+    document.body.appendChild(burstContainer);
+    for(let i=0;i<80;i++){
+      const p=document.createElement('div');
+      p.className='burst-particle';
+      p.style.left='50%';
+      p.style.top='50%';
+      p.style.transform=`translate(-50%,-50%) rotate(${Math.random()*360}deg)`;
+      p.style.animationDelay=(Math.random()*0.5)+'s';
+      burstContainer.appendChild(p);
+    }
+    setTimeout(()=>{ burstContainer.remove(); }, 4000);
+  </script>
   <!-- Additional Cinematic Enhancements -->
   <div class="cosmic-flares"></div>
   <div class="light-ripples"></div>

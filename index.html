@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Explosive Shield & Twinkling Star</title>
+<title>IMAX — Nolan Cosmic • Explosive Shield & Radiant Star</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
@@ -69,6 +69,13 @@ animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
 .spark{position:absolute;width:2px;height:2px;border-radius:50%;background:yellow;opacity:0.8;
 pointer-events:none;animation:sparkFly linear forwards;}
 @keyframes sparkFly{0%{transform:translate(0,0)}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+
+/* --- RADIATION WAVES --- */
+.radiation{position:absolute;width:4vmin;height:4vmin;border-radius:50%;border:2px solid rgba(255,255,255,0.6);
+pointer-events:none;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);
+animation:wavePulse 2.2s ease-out forwards;}
+@keyframes wavePulse{0%{transform:translate(-50%,-50%) scale(0);opacity:1}50%{transform:translate(-50%,-50%) scale(2);opacity:0.4}100%{transform:translate(-50%,-50%) scale(3);opacity:0}}
+
 </style>
 </head>
 <body>
@@ -136,7 +143,7 @@ const star=document.getElementById('shield-star');
 const shield=document.querySelector('.shield-svg');
 const stage=document.querySelector('.stage');
 
-// Star click → spin + explosive shatter
+// Star click → spin + shatter + radiation
 star.addEventListener('click',()=>{
   star.style.transition='transform 0.5s linear';
   star.style.transform='scale(1.3) rotate(1080deg)';
@@ -144,6 +151,7 @@ star.addEventListener('click',()=>{
     star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
     star.style.transform='scale(1) rotate(0deg)';
     shatterShield();
+    spawnRadiation();
   },500);
 });
 
@@ -211,6 +219,17 @@ function spawnSparks(cx,cy,count){
     s.style.animationDuration=(0.6+Math.random()*0.8)+'s';
     stage.appendChild(s);
     setTimeout(()=>s.remove(),1200);
+  }
+}
+
+// Radiation Waves
+function spawnRadiation(){
+  for(let i=0;i<6;i++){
+    const wave=document.createElement('div');
+    wave.className='radiation';
+    wave.style.animationDelay=(i*0.2)+'s';
+    stage.appendChild(wave);
+    setTimeout(()=>wave.remove(),2500);
   }
 }
 

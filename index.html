@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Steel Star Pulse & Radiation</title>
+<title>IMAX — Nolan Cosmic • Steel Star Pulse & Sonic Waves</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#01010b;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
@@ -43,32 +43,20 @@ animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
 #shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;transition:filter 0.2s, transform 0.3s;fill:#b0b0b0}
 
-/* --- RAYS --- */
-.cosmic-rays{position:absolute;inset:0;z-index:2;mix-blend-mode:screen;pointer-events:none;overflow:hidden}
-.ray{position:absolute;width:2px;height:180vmax;left:50%;top:50%;
-background:linear-gradient(to bottom, rgba(255,255,255,0.9),rgba(255,200,80,0));
-opacity:0.25;transform-origin:center;animation:raySpin linear infinite;filter:blur(2px);}
-@keyframes raySpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
-
-/* --- GALAXY FOG --- */
-.galaxy{position:absolute;inset:-20%;z-index:1;mix-blend-mode:screen;
-background:radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%),
-           radial-gradient(circle, rgba(160,120,255,0.25), transparent 60%),
-           radial-gradient(circle, rgba(120,180,255,0.25), transparent 65%);
-filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
-@keyframes galaxySpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-
 /* --- LIGHT RING --- */
 .light-ring{position:absolute;left:50%;top:50%;width:160vmin;height:160vmin;border-radius:50%;
 transform:translate(-50%,-50%);border:4px solid rgba(255,255,255,0.05);
 animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
 @keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.4}100%{transform:translate(-50%,-50%) scale(0.9);opacity:0.15}}
 
-/* --- RADIATION WAVES --- */
-.radiation{position:absolute;width:4vmin;height:4vmin;border-radius:50%;border:2px solid rgba(255,255,255,0.6);
-pointer-events:none;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);
-animation:wavePulse 2.2s ease-out forwards;}
-@keyframes wavePulse{0%{transform:translate(-50%,-50%) scale(0);opacity:1}50%{transform:translate(-50%,-50%) scale(2);opacity:0.4}100%{transform:translate(-50%,-50%) scale(3);opacity:0}}
+/* --- SONIC WAVES --- */
+.sonic-wave{position:absolute;left:50%;top:50%;width:4vmin;height:4vmin;border-radius:50%;border:2px solid rgba(255,255,255,0.6);pointer-events:none;transform:translate(-50%,-50%) scale(0);animation:sonicPulse 2.5s ease-out forwards;}
+@keyframes sonicPulse{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0.8}
+  30%{transform:translate(-50%,-50%) scale(1.5);opacity:0.5}
+  60%{transform:translate(-50%,-50%) scale(2.5);opacity:0.3}
+  100%{transform:translate(-50%,-50%) scale(3.5);opacity:0}
+}
 
 /* --- STAR PULSE STEEL --- */
 @keyframes steelStarGlow{0%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}30%{fill:#d0d0d0;filter:drop-shadow(0 0 35px #ccc);}60%{fill:#909090;filter:drop-shadow(0 0 40px #fff);}100%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}}
@@ -86,7 +74,6 @@ animation:wavePulse 2.2s ease-out forwards;}
 <div class="stage">
   <div class="background">
     <div class="galaxy"></div>
-    <div class="cosmic-rays" id="rays"></div>
     <div class="light-ring"></div>
     <div class="nebula-layer nebula1"></div>
     <div class="nebula-layer nebula2"></div>
@@ -132,16 +119,6 @@ function dynamicStars(){
 }
 dynamicStars();
 
-// Rays
-const rays=document.getElementById('rays');
-for(let i=0;i<18;i++){
-  const r=document.createElement('div');
-  r.className='ray';
-  r.style.animationDuration='30s'; // same speed for all rays
-  r.style.transform=`translate(-50%,-50%) rotate(${i*20}deg)`;
-  rays.appendChild(r);
-}
-
 // Star and Shield
 const star=document.getElementById('shield-star');
 const shield=document.querySelector('.shield-svg');
@@ -157,12 +134,13 @@ star.addEventListener('click',()=>{
     if(!lettersRevealed){
       shatterShield();
       spawnRadiation();
+      spawnSonicWaves();
       steelStarPulse();
       spawnSparks();
       setTimeout(()=>revealLetters(),900);
       lettersRevealed=true;
     } else {
-      steelStarPulse(); // subsequent clicks only spin star with pulse
+      steelStarPulse();
     }
   },500);
 });
@@ -217,6 +195,17 @@ function spawnRadiation(){
     wave.style.animationDelay=(i*0.2)+'s';
     stage.appendChild(wave);
     setTimeout(()=>wave.remove(),2500);
+  }
+}
+
+// Sonic Waves
+function spawnSonicWaves(){
+  for(let i=0;i<5;i++){
+    const wave=document.createElement('div');
+    wave.className='sonic-wave';
+    wave.style.animationDelay=(i*0.15)+'s';
+    stage.appendChild(wave);
+    setTimeout(()=>wave.remove(),2800);
   }
 }
 

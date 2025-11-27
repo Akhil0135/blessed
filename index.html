@@ -1,65 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMAX Nolan Avengers Birthday</title>
-
 <style>
-/* ------------------------------------------------------
-   GLOBAL RESET
------------------------------------------------------- */
-html, body {
+/* ---------- IMAX + NOLAN BACKGROUND ---------- */
+
+body {
   margin: 0;
-  padding: 0;
   overflow: hidden;
   background: black;
-  font-family: sans-serif;
 }
-
-/* ------------------------------------------------------
-   IMAX + NOLAN BACKGROUND
------------------------------------------------------- */
 
 #imax-bg {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  z-index: -10;
+  z-index: -5;
 }
 
-/* IMAX Rolling Gradient */
+/* --- IMAX Rolling Gradient --- */
 #imax-gradient {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     180deg,
-    #120430 0%,
-    #4A148C 45%,
-    #FF6F00 100%
+    #120430 0%,   /* IMAX deep violet */
+    #4A148C 45%,  /* cosmic purple */
+    #FF6F00 100%  /* sunrise orange */
   );
   background-size: 100% 300%;
   animation: imaxRoll 18s linear infinite;
-  opacity: 0.28;
+  opacity: 0.28; /* subtle, Nolan style */
 }
 
-/* Fog */
+/* --- Nolan Fog Layers --- */
 .fog {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle,
-      rgba(255,255,255,0.06) 0%,
-      rgba(255,255,255,0) 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255,255,255,0.06) 0%,
+    rgba(255,255,255,0) 70%
+  );
   animation: fogFloat 12s ease-in-out infinite;
   opacity: 0.18;
   filter: blur(80px);
 }
+
 .fog:nth-child(2) {
   animation-duration: 16s;
   opacity: 0.12;
 }
 
-/* Stars */
+/* --- IMAX Micro Particles --- */
 #stars {
   position: absolute;
   inset: 0;
@@ -68,98 +57,36 @@ html, body {
     radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.7), transparent),
     radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,0.7), transparent),
     radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.7), transparent);
+  background-size: 100% 100%;
   animation: starDrift 22s linear infinite;
   opacity: 0.38;
   filter: blur(0.4px);
 }
 
-/* Core Light */
+/* --- Nolan Radial Core Light --- */
 #core-light {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle,
-      rgba(90,0,150,0.45) 0%,
-      rgba(0,0,0,0) 75%);
+  background: radial-gradient(circle, 
+    rgba(90, 0, 150, 0.45) 0%, 
+    rgba(0,0,0,0) 70%
+  );
   filter: blur(100px);
   opacity: 0.35;
   animation: corePulse 6s ease-in-out infinite;
 }
 
-/* Flash (reserved) */
+/* --- Small IMAX Flash (for future trigger) --- */
 #imax-flash {
   position: absolute;
   inset: 0;
   background: white;
   opacity: 0;
   pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
-/* ------------------------------------------------------
-   AVENGERS SHIELD + STAR
------------------------------------------------------- */
-
-.container {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.shield {
-  position: relative;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, #ffffff 0%, #ffffff 20%, transparent 21%),
-    radial-gradient(circle, #d32f2f 22%, #d32f2f 38%, transparent 39%),
-    radial-gradient(circle, #ffffff 40%, #ffffff 55%, transparent 56%),
-    radial-gradient(circle, #d32f2f 57%, #d32f2f 75%, transparent 76%);
-  box-shadow: 0 0 40px rgba(255,255,255,0.3);
-}
-
-/* STAR */
-.star {
-  position: absolute;
-  width: 0;
-  height: 0;
-  opacity: 0;
-  border-left: 26px solid transparent;
-  border-right: 26px solid transparent;
-  border-bottom: 40px solid #ffffff;
-  transform: translate(-50%, -50%) scale(0.1);
-  left: 50%;
-  top: 50%;
-  filter: drop-shadow(0 0 12px #ffffff);
-  transition: all 1s ease-out;
-}
-
-/* after star evolves, shape complete */
-.star.revealed {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-.star:after {
-  content: "";
-  position: absolute;
-  top: 26px;
-  left: -26px;
-  width: 0;
-  height: 0;
-  border-left: 26px solid transparent;
-  border-right: 26px solid transparent;
-  border-top: 40px solid #ffffff;
-}
-
-/* SPIN */
-.spin {
-  animation: spinStar 0.6s cubic-bezier(.22,.61,.36,1) 1;
-}
-
-/* ------------------------------------------------------
-   KEYFRAMES
------------------------------------------------------- */
+/* ---------- KEYFRAMES ---------- */
 
 @keyframes imaxRoll {
   0% { background-position: 0% 0%; }
@@ -167,9 +94,9 @@ html, body {
 }
 
 @keyframes fogFloat {
-  0% { transform: translateY(0); }
+  0% { transform: translateY(0px); }
   50% { transform: translateY(-40px); }
-  100% { transform: translateY(0); }
+  100% { transform: translateY(0px); }
 }
 
 @keyframes starDrift {
@@ -182,47 +109,4 @@ html, body {
   50% { opacity: 0.45; }
   100% { opacity: 0.30; }
 }
-
-@keyframes spinStar {
-  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) scale(1) rotate(720deg); }
-}
-
 </style>
-</head>
-
-<body>
-
-<!-- IMAX Background -->
-<div id="imax-bg">
-  <div id="imax-gradient"></div>
-  <div class="fog"></div>
-  <div class="fog"></div>
-  <div id="stars"></div>
-  <div id="core-light"></div>
-  <div id="imax-flash"></div>
-</div>
-
-<!-- Shield + Star -->
-<div class="container">
-  <div class="shield">
-    <div id="star" class="star"></div>
-  </div>
-</div>
-
-<script>
-/* STAR EVOLUTION + SPIN */
-setTimeout(() => {
-  document.getElementById("star").classList.add("revealed");
-}, 800);
-
-document.getElementById("star").addEventListener("click", () => {
-  let s = document.getElementById("star");
-  s.classList.remove("spin");
-  void s.offsetWidth; 
-  s.classList.add("spin");
-});
-</script>
-
-</body>
-</html>

@@ -67,6 +67,7 @@ animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
 /* --- SHIELD --- */
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
+
 #shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;transition:filter 0.2s, transform 0.3s;fill:#b0b0b0;}
 
 /* --- RAYS --- */
@@ -112,33 +113,52 @@ animation:wavePulse 2.2s ease-out forwards;}
   100%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}
 }
 
-/* LETTERS */
+/* --- LETTERS METAL SHIMMER --- */
 .letter{
   position:absolute;
   font-size:5vmin;
   font-weight:800;
-  color:#cfcfcf;
+  background:linear-gradient(120deg,#cfcfcf,#ffffff,#cfcfcf);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer 2s infinite linear;
   text-shadow:0 0 12px #fff,0 0 25px #ccc;
   opacity:0;
   transform:translate(-50%,-50%) scale(0.2);
   pointer-events:none;
 }
+@keyframes shimmer{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+
+/* --- SPARKS --- */
+.spark{
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:rgba(255,255,255,0.9);
+  border-radius:50%;
+  pointer-events:none;
+  opacity:0;
+  animation:sparkFly 1s forwards;
+}
+@keyframes sparkFly{
+  0%{opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}
+}
 </style>
 </head>
-
 <body>
 <div class="stage">
   <div class="background">
     <div class="galaxy"></div>
     <div class="cosmic-rays" id="rays"></div>
     <div class="light-ring"></div>
-    <div class="supernova"></div>
     <div class="nebula-layer nebula1"></div>
     <div class="nebula-layer nebula2"></div>
     <div class="nebula-layer nebula3"></div>
-
     <div id="dynamic-stars-container"></div>
-
     <div class="stars"></div>
     <div class="particles"></div>
   </div>
@@ -207,25 +227,26 @@ const star=document.getElementById('shield-star');
 const shield=document.querySelector('.shield-svg');
 const stage=document.querySelector('.stage');
 
-// --- FIRST CLICK CONTROL ---
-let firstStarClick = true;
+let lettersRevealed=false;
 
-star.addEventListener('click', () => {
-  star.style.transition = 'transform 0.5s linear';
-  star.style.transform = 'scale(1.3) rotate(1080deg)';
-
-  setTimeout(() => {
-    star.style.transition = 'transform 1s cubic-bezier(0.22,1,0.36,1)';
-    star.style.transform = 'scale(1) rotate(0deg)';
-
-    if(firstStarClick){
-      firstStarClick = false;
+// Star click → spin + shatter + radiation + glow + letters (only once)
+star.addEventListener('click',()=>{
+  star.style.transition='transform 0.5s linear';
+  star.style.transform='scale(1.3) rotate(1080deg)';
+  setTimeout(()=>{
+    star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
+    star.style.transform='scale(1) rotate(0deg)';
+    if(!lettersRevealed){
       shatterShield();
       spawnRadiation();
       steelStarPulse();
-      setTimeout(()=>revealLetters(), 900);
+      spawnSparks();
+      setTimeout(()=>revealLetters(),900);
+      lettersRevealed=true;
+    } else {
+      steelStarPulse(); // only steel glow on subsequent clicks
     }
-  }, 500);
+  },500);
 });
 
 // Shield shatter
@@ -262,7 +283,7 @@ function shatterShield(){
       piece.setAttribute('fill',layer.fill);
       piece.setAttribute('d',`M ${x1} ${y1} L ${x2} ${y2} A ${R} ${R} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${r} ${r} 0 0 0 ${x1} ${y1}`);
       piece.style.transformOrigin='100px 100px';
-      piece.style.transition='transform 1.5s ease-out, opacity 1.5s ease-out';
+      piece.style.transition='transform 1.5s ease-out, opacity 1.5s ease-out, filter 1.5s ease-out';
       fragRoot.appendChild(piece);
 
       setTimeout(()=>{
@@ -270,6 +291,7 @@ function shatterShield(){
         const dy=(Math.random()-0.5)*400;
         const rot=(Math.random()-0.5)*1080;
         piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.85)`;
+        piece.style.filter='drop-shadow(0 0 12px #fff)';
         setTimeout(()=>piece.style.opacity=0,900);
       },50);
     }
@@ -290,19 +312,34 @@ function spawnRadiation(){
   }
 }
 
+// Sparks
+function spawnSparks(){
+  for(let i=0;i<20;i++){
+    const s=document.createElement('div');
+    s.className='spark';
+    const dx=(Math.random()-0.5)*300 + 'px';
+    const dy=(Math.random()-0.5)*300 + 'px';
+    s.style.setProperty('--dx',dx);
+    s.style.setProperty('--dy',dy);
+    s.style.left='50%';
+    s.style.top='50%';
+    stage.appendChild(s);
+    setTimeout(()=>s.remove(),1000);
+  }
+}
+
 // Star Steel Pulse
 function steelStarPulse(){
   star.style.animation='steelStarGlow 1.2s ease-in-out 4';
 }
 
-// Letters Reveal
+// Letter Reveal
 function revealLetters(){
   const letters="PRINCE".split("");
   const centerX=window.innerWidth/2;
   const startY=window.innerHeight/2 - 40;
   const finalY=window.innerHeight/2 + 160;
-
-  const spacing=80; // wide spacing
+  const spacing=80;
 
   letters.forEach((char,i)=>{
     const div=document.createElement("div");
@@ -311,7 +348,7 @@ function revealLetters(){
     document.body.appendChild(div);
 
     const fx=centerX + (i-2.5)*spacing;
-
+    
     setTimeout(()=>{
       div.style.transition="opacity 0.6s ease-out, transform 1.4s cubic-bezier(0.22,1,0.36,1)";
       div.style.opacity=1;

@@ -3,29 +3,22 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Cosmic Shield to Letters</title>
+<title>IMAX — Cosmic Shield → Letters (Video)</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:Inter,sans-serif;color:#fff}
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
-
-/* Background */
 .nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1}
 .nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,90,140,0.9), transparent 40%);animation-duration:120s;}
 .nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;}
 .nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;}
 @keyframes nebulaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(300px,-200px) scale(1.3)}100%{transform:translate(0,0) scale(1)}}
 
-/* Shield & Star */
+/* SHIELD & STAR */
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
 #shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;fill:#b0b0b0;transition:transform 0.3s}
 
-/* Sonic Waves */
-.wave{position:absolute;width:4vmin;height:4vmin;border:2px solid rgba(255,255,255,0.6);border-radius:50%;pointer-events:none;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);animation:wavePulse 2.2s ease-out forwards;}
-@keyframes wavePulse{0%{transform:translate(-50%,-50%) scale(0);opacity:1}50%{transform:translate(-50%,-50%) scale(2);opacity:0.4}100%{transform:translate(-50%,-50%) scale(3);opacity:0}}
-
-/* Letters */
+/* LETTERS with video mask */
 .letter{
   position:absolute;
   font-size:7vmin;
@@ -35,19 +28,11 @@ html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:In
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 4px #ff4d4d,0 0 6px #003366,0 0 10px rgba(255,255,255,0.3);
+  background: url('galaxy.mp4') center/cover no-repeat;
+  text-shadow: 0 0 6px rgba(0,0,0,0.8),0 0 8px rgba(255,255,255,0.6);
   opacity:0;
   transform:translate(-50%,-50%) scale(0.3);
   transition: transform 1s cubic-bezier(0.22,1,0.36,1), opacity 1s ease-out;
-}
-.letter.video{background:url('galaxy.mp4') center/cover no-repeat;}
-
-/* Star Steel Pulse */
-@keyframes steelStarGlow{
-  0%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}
-  30%{fill:#d0d0d0;filter:drop-shadow(0 0 35px #ccc);}
-  60%{fill:#909090;filter:drop-shadow(0 0 40px #fff);}
-  100%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}
 }
 </style>
 </head>
@@ -60,15 +45,8 @@ html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:In
   <div class="nebula-layer nebula2"></div>
   <div class="nebula-layer nebula3"></div>
 
-  <!-- Shield -->
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
-      <g id="rings" transform="translate(100,100)">
-        <circle r="92" fill="url(#metalRed)"/>
-        <circle r="76" fill="url(#metalWhite)"/>
-        <circle r="56" fill="url(#metalRed)"/>
-        <circle r="36" fill="url(#metalBlue)"/>
-      </g>
       <g id="starGroup" transform="translate(100,100)">
         <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8"/>
       </g>
@@ -78,53 +56,24 @@ html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:In
 
 <script>
 const star=document.getElementById('shield-star');
-const shield=document.querySelector('.shield-svg');
-const stage=document.querySelector('.stage');
 let lettersDone=false;
 
-// Star click
 star.addEventListener('click',()=>{
   star.style.transform='scale(1.3) rotate(1080deg)';
   setTimeout(()=>star.style.transform='scale(1) rotate(0deg)',500);
   if(!lettersDone){
-    shatterShield();
-    spawnWaves();
-    steelStarPulse();
     setTimeout(addLetters,900);
     lettersDone=true;
   }
 });
 
-// Shield shatter
-function shatterShield(){
-  const rings=document.getElementById('rings');
-  if(!rings) return;
-  rings.style.opacity=0;
-  setTimeout(()=>{ try{ rings.parentNode.removeChild(rings);}catch(e){} },1000);
-}
-
-// Sonic Waves
-function spawnWaves(){
-  for(let i=0;i<6;i++){
-    const wave=document.createElement('div');
-    wave.className='wave';
-    wave.style.animationDelay=(i*0.2)+'s';
-    stage.appendChild(wave);
-    setTimeout(()=>wave.remove(),2500);
-  }
-}
-
-// Star Steel Pulse
-function steelStarPulse(){ star.style.animation='steelStarGlow 1.2s ease-in-out 4'; }
-
-// Letters
 function addLetters(){
   const letters="PRINCE".split('');
   const cx=window.innerWidth/2;
   const cy=window.innerHeight/2;
   letters.forEach((ch,i)=>{
     const d=document.createElement('div');
-    d.className='letter video';
+    d.className='letter';
     d.textContent=ch;
     document.body.appendChild(d);
     d.style.left=cx+'px';

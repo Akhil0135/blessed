@@ -3,44 +3,29 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Steel Star Pulse & Letters</title>
+<title>IMAX — Cosmic Shield to Letters</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;margin:0;background:#000008;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
-
-/* --- STAGE --- */
+html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:Inter,sans-serif;color:#fff}
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
 
-/* --- BACKGROUND --- */
+/* Background */
 .nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1}
 .nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,90,140,0.9), transparent 40%);animation-duration:120s;}
 .nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;}
 .nebula3{background:radial-gradient(circle at 50% 50%, rgba(120,220,255,0.7), transparent 50%);animation-duration:180s;}
 @keyframes nebulaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(300px,-200px) scale(1.3)}100%{transform:translate(0,0) scale(1)}}
 
-/* --- PARTICLES --- */
-.particles{position:absolute;inset:0;z-index:4;pointer-events:none;}
-.particle{position:absolute;width:3px;height:3px;background:#fff;opacity:0.5;border-radius:50%;animation:particleDrift linear infinite;}
-@keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
-
-/* --- GALAXY FOG --- */
-.galaxy{position:absolute;inset:-20%;z-index:1;mix-blend-mode:screen;
-background:radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%),
-           radial-gradient(circle, rgba(160,120,255,0.25), transparent 60%),
-           radial-gradient(circle, rgba(120,180,255,0.25), transparent 65%);
-filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
-@keyframes galaxySpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-
-/* --- SHIELD --- */
+/* Shield & Star */
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
-#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;transition:transform 0.3s}
+#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;fill:#b0b0b0;transition:transform 0.3s}
 
-/* --- SONIC WAVES --- */
+/* Sonic Waves */
 .wave{position:absolute;width:4vmin;height:4vmin;border:2px solid rgba(255,255,255,0.6);border-radius:50%;pointer-events:none;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);animation:wavePulse 2.2s ease-out forwards;}
 @keyframes wavePulse{0%{transform:translate(-50%,-50%) scale(0);opacity:1}50%{transform:translate(-50%,-50%) scale(2);opacity:0.4}100%{transform:translate(-50%,-50%) scale(3);opacity:0}}
 
-/* --- LETTERS --- */
+/* Letters */
 .letter{
   position:absolute;
   font-size:7vmin;
@@ -55,8 +40,9 @@ filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
   transform:translate(-50%,-50%) scale(0.3);
   transition: transform 1s cubic-bezier(0.22,1,0.36,1), opacity 1s ease-out;
 }
+.letter.video{background:url('galaxy.mp4') center/cover no-repeat;}
 
-/* --- STAR PULSE --- */
+/* Star Steel Pulse */
 @keyframes steelStarGlow{
   0%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}
   30%{fill:#d0d0d0;filter:drop-shadow(0 0 35px #ccc);}
@@ -73,22 +59,15 @@ filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
   <div class="nebula-layer nebula1"></div>
   <div class="nebula-layer nebula2"></div>
   <div class="nebula-layer nebula3"></div>
-  <div class="particles"></div>
-  <div class="galaxy"></div>
 
-  <!-- SHIELD -->
+  <!-- Shield -->
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
-      <defs>
-        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#990000"/></radialGradient>
-        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#cccccc"/></radialGradient>
-        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4d90ff"/><stop offset="100%" stop-color="#003366"/></radialGradient>
-      </defs>
       <g id="rings" transform="translate(100,100)">
-        <circle r="92" fill="url(#metalRed)" />
-        <circle r="76" fill="url(#metalWhite)" />
-        <circle r="56" fill="url(#metalRed)" />
-        <circle r="36" fill="url(#metalBlue)" />
+        <circle r="92" fill="url(#metalRed)"/>
+        <circle r="76" fill="url(#metalWhite)"/>
+        <circle r="56" fill="url(#metalRed)"/>
+        <circle r="36" fill="url(#metalBlue)"/>
       </g>
       <g id="starGroup" transform="translate(100,100)">
         <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8"/>
@@ -99,6 +78,7 @@ filter:blur(120px);animation:galaxySpin 180s linear infinite;opacity:0.7}
 
 <script>
 const star=document.getElementById('shield-star');
+const shield=document.querySelector('.shield-svg');
 const stage=document.querySelector('.stage');
 let lettersDone=false;
 
@@ -144,7 +124,7 @@ function addLetters(){
   const cy=window.innerHeight/2;
   letters.forEach((ch,i)=>{
     const d=document.createElement('div');
-    d.className='letter';
+    d.className='letter video';
     d.textContent=ch;
     document.body.appendChild(d);
     d.style.left=cx+'px';

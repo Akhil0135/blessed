@@ -6,7 +6,7 @@
 <title>IMAX — Nolan Cosmic • Shield to Letters</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#000008;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
+html,body{height:100%;background:#000005;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
 
 /* --- STAGE --- */
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
@@ -41,7 +41,15 @@ animation:starDrift 200s linear infinite, starTwinkle 5s infinite alternate;}
 /* --- SHIELD --- */
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
-#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;transition:filter 0.2s, transform 0.3s;fill:#b0b0b0}
+#shield-star{
+  transform-box:fill-box;
+  transform-origin:center center;
+  opacity:1;
+  cursor:pointer;
+  z-index:20;
+  transition:filter 0.2s, transform 0.3s;
+  fill:#c8c8c8;
+}
 
 /* --- LIGHT RING --- */
 .light-ring{position:absolute;left:50%;top:50%;width:160vmin;height:160vmin;border-radius:50%;
@@ -59,32 +67,39 @@ animation:ringPulse 6s ease-in-out infinite;z-index:3;pointer-events:none;}
 }
 
 /* --- STAR PULSE STEEL --- */
-@keyframes steelStarGlow{0%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}30%{fill:#d0d0d0;filter:drop-shadow(0 0 35px #ccc);}60%{fill:#909090;filter:drop-shadow(0 0 40px #fff);}100%{fill:#b0b0b0;filter:drop-shadow(0 0 12px #fff);}}
+@keyframes steelStarGlow{
+  0%{fill:#c8c8c8;filter:drop-shadow(0 0 12px #fff);}
+  50%{fill:#e0e0e0;filter:drop-shadow(0 0 35px #ccc);}
+  100%{fill:#c8c8c8;filter:drop-shadow(0 0 12px #fff);}
+}
 
-/* --- LETTERS --- */
+/* --- GALAXY LETTER MASKING --- */
 .letter{
   position:absolute;
   font-size:5vmin;
-  font-weight:800;
-  background:linear-gradient(120deg,#ff4d4d,#003366);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:metalShimmer 2s infinite alternate;
+  font-weight:900;
+  width:120px;
+  height:140px;
+  background:url('https://cdn.pixabay.com/vimeo/239275902/galaxy-12506.mp4?width=1280&hash=4275ab2d54adbb40') center/cover no-repeat;
+  -webkit-mask-size:contain;
+  mask-size:contain;
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
   opacity:0;
   transform:translate(-50%,-50%) scale(0.2);
+  mix-blend-mode:screen;
+  filter:drop-shadow(0 0 20px #003366);
   pointer-events:none;
 }
-@keyframes metalShimmer{
-  0%{transform:translate(-50%,-50%) scale(0.9);filter:drop-shadow(0 0 6px #ff4d4d);}
-  25%{transform:translate(-50%,-50%) scale(1.02);filter:drop-shadow(0 0 12px #003366);}
-  50%{transform:translate(-50%,-50%) scale(1.05);filter:drop-shadow(0 0 14px #ff4d4d);}
-  75%{transform:translate(-50%,-50%) scale(1.02);filter:drop-shadow(0 0 10px #003366);}
-  100%{transform:translate(-50%,-50%) scale(1);filter:drop-shadow(0 0 8px #ff4d4d);}
-}
 
-/* --- SPARKS --- */
-.spark{position:absolute;width:2px;height:2px;background:rgba(255,255,255,0.9);border-radius:50%;pointer-events:none;opacity:0;animation:sparkFly 1s forwards}
-@keyframes sparkFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}}
+/* each letter mask */
+.letter[data-char="P"]{-webkit-mask-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='240'><text x='0' y='180' font-size='200' font-weight='900' fill='white'>P</text></svg>");}
+.letter[data-char="R"]{-webkit-mask-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='240'><text x='0' y='180' font-size='200' font-weight='900' fill='white'>R</text></svg>");}
+.letter[data-char="I"]{-webkit-mask-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='240'><text x='60' y='180' font-size='200' font-weight='900' fill='white'>I</text></svg>");}
+.letter[data-char="N"]{-webkit-mask-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='240'><text x='0' y='180' font-size='200' font-weight='900' fill='white'>N</text></svg>");}
+.letter[data-char="C"]{-webkit-mask-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='240'><text x='0' y='180' font-size='200' font-weight='900' fill='white'>C</text></svg>");}
+.letter[data-char="E"]{-webkit-mask-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='240'><text x='0' y='180' font-size='200' font-weight='900' fill='white'>E</text></svg>");}
+
 </style>
 </head>
 <body>
@@ -136,7 +151,7 @@ function dynamicStars(){
 }
 dynamicStars();
 
-// Star and Shield
+// Star & Shield control
 const star=document.getElementById('shield-star');
 const shield=document.querySelector('.shield-svg');
 const stage=document.querySelector('.stage');
@@ -145,9 +160,11 @@ let lettersRevealed=false;
 star.addEventListener('click',()=>{
   star.style.transition='transform 0.5s linear';
   star.style.transform='scale(1.3) rotate(1080deg)';
+
   setTimeout(()=>{
     star.style.transition='transform 1s cubic-bezier(0.22,1,0.36,1)';
     star.style.transform='scale(1) rotate(0deg)';
+
     if(!lettersRevealed){
       shatterShield();
       spawnSonicWaves();
@@ -161,10 +178,11 @@ star.addEventListener('click',()=>{
   },500);
 });
 
-// Shield shatter
+// Shield Shatter
 function shatterShield(){
   const rings=document.getElementById('rings');
   if(!rings) return;
+
   rings.style.opacity=0;
   const layers=[
     {r:92, fill:'url(#metalRed)', slices:8},
@@ -172,45 +190,51 @@ function shatterShield(){
     {r:56, fill:'url(#metalRed)', slices:6},
     {r:36, fill:'url(#metalBlue)', slices:4}
   ];
+
   const fragRoot=document.createElementNS('http://www.w3.org/2000/svg','g');
   shield.appendChild(fragRoot);
+
   layers.forEach(layer=>{
     for(let i=0;i<layer.slices;i++){
       const piece=document.createElementNS('http://www.w3.org/2000/svg','path');
-      const a1=i*(360/layer.slices);
-      const a2=a1+(360/layer.slices);
+      const a1=i*(360/layer.slices), a2=a1+(360/layer.slices);
       const R=layer.r, r=layer.r*0.6;
-      const x1=r*Math.cos(a1*Math.PI/180); const y1=r*Math.sin(a1*Math.PI/180);
-      const x2=R*Math.cos(a1*Math.PI/180); const y2=R*Math.sin(a1*Math.PI/180);
-      const x3=R*Math.cos(a2*Math.PI/180); const y3=R*Math.sin(a2*Math.PI/180);
-      const x4=r*Math.cos(a2*Math.PI/180); const y4=r*Math.sin(a2*Math.PI/180);
+
+      const x1=r*Math.cos(a1*Math.PI/180), y1=r*Math.sin(a1*Math.PI/180);
+      const x2=R*Math.cos(a1*Math.PI/180), y2=R*Math.sin(a1*Math.PI/180);
+      const x3=R*Math.cos(a2*Math.PI/180), y3=R*Math.sin(a2*Math.PI/180);
+      const x4=r*Math.cos(a2*Math.PI/180), y4=r*Math.sin(a2*Math.PI/180);
+
       piece.setAttribute('fill',layer.fill);
       piece.setAttribute('d',`M ${x1} ${y1} L ${x2} ${y2} A ${R} ${R} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${r} ${r} 0 0 0 ${x1} ${y1}`);
       piece.style.transformOrigin='100px 100px';
-      piece.style.transition='transform 1.5s ease-out, opacity 1.5s ease-out, filter 1.5s ease-out';
+      piece.style.transition='transform 1.5s ease-out, opacity 1.5s ease-out';
+
       fragRoot.appendChild(piece);
+
       setTimeout(()=>{
         const dx=(Math.random()-0.5)*400;
         const dy=(Math.random()-0.5)*400;
         const rot=(Math.random()-0.5)*1080;
+
         piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.85)`;
-        piece.style.filter='drop-shadow(0 0 12px #fff)';
         setTimeout(()=>piece.style.opacity=0,900);
-      },50);
+      },60);
     }
   });
-  setTimeout(()=>{ try{ rings.parentNode.removeChild(rings);}catch(e){} },2400);
-  setTimeout(()=>{ try{ fragRoot.parentNode.removeChild(fragRoot);}catch(e){} },3800);
+
+  setTimeout(()=>rings.remove(),2000);
+  setTimeout(()=>fragRoot.remove(),3600);
 }
 
 // Sonic Waves
 function spawnSonicWaves(){
   for(let i=0;i<5;i++){
-    const wave=document.createElement('div');
-    wave.className='sonic-wave';
-    wave.style.animationDelay=(i*0.15)+'s';
-    stage.appendChild(wave);
-    setTimeout(()=>wave.remove(),2800);
+    const w=document.createElement('div');
+    w.className='sonic-wave';
+    w.style.animationDelay=(i*0.15)+'s';
+    stage.appendChild(w);
+    setTimeout(()=>w.remove(),2600);
   }
 }
 
@@ -219,8 +243,8 @@ function spawnSparks(){
   for(let i=0;i<20;i++){
     const s=document.createElement('div');
     s.className='spark';
-    const dx=(Math.random()-0.5)*300 + 'px';
-    const dy=(Math.random()-0.5)*300 + 'px';
+    const dx=(Math.random()-0.5)*300+'px';
+    const dy=(Math.random()-0.5)*300+'px';
     s.style.setProperty('--dx',dx);
     s.style.setProperty('--dy',dy);
     s.style.left='50%';
@@ -230,29 +254,38 @@ function spawnSparks(){
   }
 }
 
-// Star Steel Pulse
-function steelStarPulse(){ star.style.animation='steelStarGlow 1.2s ease-in-out 4'; }
+// Star Pulse
+function steelStarPulse(){ star.style.animation='steelStarGlow 1.2s ease-in-out 3'; }
 
-// Letter Reveal
+// LETTER REVEAL — Galaxy Inside Letters
 function revealLetters(){
-  const letters="PRINCE".split("");
+  const text="PRINCE".split("");
   const centerX=window.innerWidth/2;
   const startY=window.innerHeight/2 - 40;
   const finalY=window.innerHeight/2 + 160;
-  const spacing=80;
-  letters.forEach((char,i)=>{
+  const spacing=110;
+
+  text.forEach((ch,i)=>{
     const div=document.createElement("div");
     div.className="letter";
-    div.textContent=char;
+    div.dataset.char = ch;
     document.body.appendChild(div);
-    const fx=centerX + (i-2.5)*spacing;
+
+    const finalX=centerX + (i - 2.5) * spacing;
+
     setTimeout(()=>{
-      div.style.transition="opacity 0.6s ease-out, transform 1.4s cubic-bezier(0.22,1,0.36,1)";
+      div.style.transition="opacity 0.8s ease-out, transform 1.3s cubic-bezier(0.22,1,0.36,1), left 1.3s, top 1.3s";
       div.style.opacity=1;
       div.style.left=centerX+"px";
       div.style.top=startY+"px";
-      setTimeout(()=>{div.style.transform=`translate(0,0) scale(1)`;div.style.left=fx+"px";div.style.top=finalY+"px";},80);
-    },i*140);
+
+      setTimeout(()=>{
+        div.style.transform="translate(-50%,-50%) scale(1)";
+        div.style.left=finalX+"px";
+        div.style.top=finalY+"px";
+      },80);
+
+    },i*160);
   });
 }
 </script>

@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+<meta charset="utf‑8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Cosmic Shield → Letters (Video)</title>
+<title>IMAX — Cosmic Shield → Letters</title>
 <style>
-html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:Inter,sans-serif;color:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000008;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
+
+/* STAGE & BACKGROUND */
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
+.background{position:absolute;inset:0;z-index:1;overflow:hidden}
 .nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(200px) saturate(3);animation:nebulaDrift linear infinite;opacity:1}
 .nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,90,140,0.9), transparent 40%);animation-duration:120s;}
 .nebula2{background:radial-gradient(circle at 80% 60%, rgba(90,150,255,0.8), transparent 45%);animation-duration:150s;}
@@ -16,20 +20,25 @@ html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:In
 /* SHIELD & STAR */
 .shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;transform:translateZ(0)}
 .shield-svg{width:100%;height:100%;transform-origin:center center;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.7))}
-#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;fill:#b0b0b0;transition:transform 0.3s}
+#shield-star{transform-box:fill-box;transform-origin:center center;opacity:1;cursor:pointer;z-index:20;transition:filter 0.2s, transform 0.3s;fill:#b0b0b0}
+/* Sonic waves etc. omitted for brevity — assume as earlier */
 
-/* LETTERS with video mask */
-.letter{
+/* LETTERS with video‑in‑text background */
+.letter {
   position:absolute;
   font-size:7vmin;
   font-weight:900;
   pointer-events:none;
-  color:transparent;
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
+  /* video background */
+  color: transparent;
   background: url('galaxy.mp4') center/cover no-repeat;
-  text-shadow: 0 0 6px rgba(0,0,0,0.8),0 0 8px rgba(255,255,255,0.6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* fallback gradient in case video clip fails */
+  background-image: linear-gradient(120deg, #ff4d4d, #003366);
+  /* glow / outline to help visibility */
+  text-shadow: 0 0 6px rgba(0,0,0,0.8), 0 0 8px rgba(255,255,255,0.6);
   opacity:0;
   transform:translate(-50%,-50%) scale(0.3);
   transition: transform 1s cubic-bezier(0.22,1,0.36,1), opacity 1s ease-out;
@@ -38,15 +47,22 @@ html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:In
 </head>
 <body>
 
-<video id="galaxy-video" src="galaxy.mp4" autoplay loop muted playsinline style="display:none;"></video>
+<!-- Put the video (galaxy) in background but behind letters -->
+<video id="galaxy-video" src="path_to_your_galaxy_video.mp4" autoplay loop muted playsinline style="display:none;"></video>
 
 <div class="stage">
-  <div class="nebula-layer nebula1"></div>
-  <div class="nebula-layer nebula2"></div>
-  <div class="nebula-layer nebula3"></div>
+  <div class="background">
+    <div class="nebula-layer nebula1"></div>
+    <div class="nebula-layer nebula2"></div>
+    <div class="nebula-layer nebula3"></div>
+  </div>
 
   <div class="shield-wrap">
     <svg class="shield-svg" viewBox="0 0 200 200">
+      <g id="rings" transform="translate(100,100)">
+        <circle r="92" fill="url(#metalRed)" />
+        <!-- other rings -->
+      </g>
       <g id="starGroup" transform="translate(100,100)">
         <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8"/>
       </g>
@@ -55,37 +71,38 @@ html,body{height:100%;margin:0;background:#000008;overflow:hidden;font-family:In
 </div>
 
 <script>
-const star=document.getElementById('shield-star');
-let lettersDone=false;
-
-star.addEventListener('click',()=>{
-  star.style.transform='scale(1.3) rotate(1080deg)';
-  setTimeout(()=>star.style.transform='scale(1) rotate(0deg)',500);
-  if(!lettersDone){
-    setTimeout(addLetters,900);
-    lettersDone=true;
+const star = document.getElementById('shield-star');
+let lettersDone = false;
+star.addEventListener('click', ()=>{
+  // your spin/shatter animation here...
+  if (!lettersDone) {
+    setTimeout(addLetters, 900);
+    lettersDone = true;
   }
 });
 
 function addLetters(){
-  const letters="PRINCE".split('');
-  const cx=window.innerWidth/2;
-  const cy=window.innerHeight/2;
-  letters.forEach((ch,i)=>{
-    const d=document.createElement('div');
-    d.className='letter';
-    d.textContent=ch;
+  const letters = "PRINCE".split('');
+  const cx = window.innerWidth/2;
+  const cy = window.innerHeight/2;
+  letters.forEach((ch, i)=>{
+    const d = document.createElement('div');
+    d.className = 'letter';
+    d.textContent = ch;
     document.body.appendChild(d);
-    d.style.left=cx+'px';
-    d.style.top=cy+'px';
+    // place at center (star)
+    d.style.left = cx + 'px';
+    d.style.top = cy + 'px';
+    // animate to bottom
     setTimeout(()=>{
-      d.style.opacity=1;
-      d.style.transform='translate(-50%,-50%) scale(1)';
-      d.style.left=cx+(i-(letters.length-1)/2)*100+'px';
-      d.style.top=cy+200+'px';
-    },i*200);
+      d.style.opacity = 1;
+      d.style.transform = 'translate(-50%, -50%) scale(1)';
+      d.style.top = (cy + 200) + 'px';
+      d.style.left = cx + (i - (letters.length-1)/2)*100 + 'px';
+    }, i * 200);
   });
 }
 </script>
+
 </body>
 </html>

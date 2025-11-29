@@ -1,182 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Moon → Sun → Star → Message</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Anime Sunset Scene</title>
 
 <style>
-/* ---------------- Base ---------------- */
-html,body{
-  margin:0;
-  height:100%;
-  background:#000010;
-  overflow:hidden;
-  font-family:Inter,system-ui,sans-serif;
-}
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-/* ---------------- Scene Container ---------------- */
-.scene{
-  width:100%;
-  height:100%;
-  position:relative;
-  overflow:hidden;
-  background:linear-gradient(to bottom, #060616, #140430);
-}
+  body {
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(#ff8b64, #ff6c9c, #5b2f80);
+    animation: camMove 10s ease-in-out infinite alternate;
+  }
 
-/* ---------------- Moon ---------------- */
-.moon{
-  position:absolute;
-  top:35%;
-  left:50%;
-  width:180px;
-  height:180px;
-  transform:translate(-50%, -50%);
-  border-radius:50%;
-  background:#cfd8ff;
-  box-shadow:0 0 120px #aabbff70;
-  opacity:1;
-  transition:2s ease;
-}
+  /* Camera drift */
+  @keyframes camMove {
+    0% { transform: scale(1) translateY(0px); }
+    100% { transform: scale(1.05) translateY(-15px); }
+  }
 
-/* ---------------- Sun ---------------- */
-.sun{
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:220px;
-  height:220px;
-  transform:translate(-50%, -50%) scale(0.1);
-  border-radius:50%;
-  background:radial-gradient(circle,#ffef9e,#ffb300);
-  box-shadow:0 0 140px #ffcc4d80;
-  opacity:0;
-  transition:3s ease;
-}
+  /* Sun */
+  .sun {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    width: 220px;
+    height: 220px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, #ffe6b3, #ffb86c, #ff7b54);
+    border-radius: 50%;
+    filter: blur(2px) brightness(1.2);
+    box-shadow: 0 0 120px #ffefc8, 0 0 200px #ffbd6f;
+  }
 
-/* ---------------- STAR (Fixed Version) ---------------- */
-.star{
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:160px;
-  height:160px;
-  transform:translate(-50%, -50%);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  pointer-events:none;
-}
+  /* Cloud layers */
+  .clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300%;
+    height: 100%;
+    pointer-events: none;
+    background-repeat: repeat-x;
+  }
 
-.star-inner{
-  width:160px;
-  height:160px;
-  transform-origin:50% 50%;
-  animation:
-    star-intro-spin 2.5s cubic-bezier(0.20,0.00,0.00,1.00) forwards,
-    star-loop-spin 10s linear infinite 2.5s;
-}
+  /* Cloud textures */
+  .c1 { background-image: url('https://i.imgur.com/QZ1Z8zZ.png'); opacity: 0.7; animation: move1 45s linear infinite; }
+  .c2 { background-image: url('https://i.imgur.com/QZ1Z8zZ.png'); opacity: 0.45; animation: move2 80s linear infinite; }
+  .c3 { background-image: url('https://i.imgur.com/QZ1Z8zZ.png'); opacity: 0.25; animation: move3 120s linear infinite; }
 
-/* Cinematic intro */
-@keyframes star-intro-spin{
-  0%   {transform:rotate(0deg) scale(1);}
-  100% {transform:rotate(45deg) scale(1);}
-}
+  /* Cloud motions (parallax) */
+  @keyframes move1 { from { transform: translateX(0); } to { transform: translateX(-33.33%); } }
+  @keyframes move2 { from { transform: translateX(0); } to { transform: translateX(-20%); } }
+  @keyframes move3 { from { transform: translateX(0); } to { transform: translateX(-10%); } }
 
-/* Infinite stable loop */
-@keyframes star-loop-spin{
-  0%   {transform:rotate(45deg);}
-  100% {transform:rotate(405deg);}
-}
+  /* Foreground silhouette (anime style mountains) */
+  .mountains {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40%;
+    background: url('https://i.imgur.com/0tYpXHW.png') repeat-x bottom;
+    background-size: cover;
+    animation: slowMove 30s linear infinite;
+    filter: brightness(0.8) saturate(1.2);
+  }
 
-/* ---------------- Message ---------------- */
-.message{
-  position:absolute;
-  bottom:8%;
-  width:100%;
-  text-align:center;
-  font-size:32px;
-  color:#ffeec0;
-  opacity:0;
-  letter-spacing:2px;
-  transition:2s ease;
-}
-
-/* ---------------- Click Here Button ---------------- */
-.btn{
-  position:absolute;
-  bottom:3%;
-  left:50%;
-  transform:translateX(-50%);
-  padding:14px 32px;
-  font-size:20px;
-  color:#fff;
-  border:2px solid #ffffff70;
-  background:transparent;
-  border-radius:14px;
-  cursor:pointer;
-  opacity:0;
-  transition:1.4s ease;
-}
-.btn:hover{
-  background:#ffffff15;
-}
-
+  @keyframes slowMove {
+    from { background-position-x: 0; }
+    to { background-position-x: -800px; }
+  }
 </style>
 </head>
 
 <body>
 
-<div class="scene">
-
-  <div class="moon"></div>
+  <!-- Sun -->
   <div class="sun"></div>
 
-  <div class="star">
-    <img src="star.png" class="star-inner">
-  </div>
+  <!-- Parallax Clouds -->
+  <div class="clouds c1"></div>
+  <div class="clouds c2"></div>
+  <div class="clouds c3"></div>
 
-  <div class="message">Happiest Birthday</div>
-
-  <button class="btn" id="nextBtn">Click Here</button>
-
-</div>
-
-<script>
-/* ---------------- MAIN SEQUENCE ---------------- */
-window.onload = () => {
-  const moon = document.querySelector(".moon");
-  const sun  = document.querySelector(".sun");
-  const msg  = document.querySelector(".message");
-  const btn  = document.getElementById("nextBtn");
-
-  /* Moon fades → Sun reveals */
-  setTimeout(()=>{
-    moon.style.opacity = 0;
-  },1200);
-
-  setTimeout(()=>{
-    sun.style.opacity = 1;
-    sun.style.transform = "translate(-50%, -50%) scale(1)";
-  },2600);
-
-  /* Message fade-in */
-  setTimeout(()=>{
-    msg.style.opacity = 1;
-  },4800);
-
-  /* Button appear */
-  setTimeout(()=>{
-    btn.style.opacity = 1;
-  },6200);
-};
-
-/* ---------------- Button → Phase 2 Transition ---------------- */
-document.getElementById("nextBtn").onclick = () => {
-  document.body.style.background = "#000";
-  alert("Phase 2 loaded (you can replace this with your birthday screen).");
-};
-</script>
+  <!-- Foreground Mountains -->
+  <div class="mountains"></div>
 
 </body>
 </html>

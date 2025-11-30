@@ -85,34 +85,162 @@ function animate(){
 }
 
 animate();
-// --- THUNDER / SHOOTING STAR IMPACT EFFECT ---
+// --- SHOOTING STAR IMPACT (Shield Break Only, Star Stays) ---
 
-const impactStar = document.createElement('div');
-impactStar.id = 'impactStar';
-impactStar.style.position = 'absolute';
-impactStar.style.width = '6px';
-impactStar.style.height = '180px';
-impactStar.style.background = 'white';
-impactStar.style.top = '-300px';
-impactStar.style.left = '-300px';
-impactStar.style.transform = 'rotate(45deg)';
-impactStar.style.filter = 'blur(2px) drop-shadow(0 0 20px white)';
-impactStar.style.opacity = '0';
-document.body.appendChild(impactStar);
+const shootingStar = document.createElement('div');
+shootingStar.id = 'shootingStar';
+shootingStar.style.position = 'absolute';
+shootingStar.style.width = '5px';
+shootingStar.style.height = '160px';
+shootingStar.style.background = 'white';
+shootingStar.style.top = '-300px';
+shootingStar.style.left = '-300px';
+shootingStar.style.transform = 'rotate(45deg)';
+shootingStar.style.filter = 'blur(1px) drop-shadow(0 0 25px white)';
+shootingStar.style.opacity = '0';
+document.body.appendChild(shootingStar);
 
 setTimeout(() => {
-  impactStar.style.transition = 'all 1.2s ease-out';
-  impactStar.style.opacity = '1';
-  impactStar.style.top = '35%';
-  impactStar.style.left = '35%';
+  shootingStar.style.transition = 'all 1.1s ease-out';
+  shootingStar.style.opacity = '1';
+  shootingStar.style.top = '50%';
+  shootingStar.style.left = '50%';
+  shootingStar.style.transform = 'translate(-50%, -50%) rotate(45deg)';
 }, 2000);
 
-impactStar.addEventListener('transitionend', () => {
+shootingStar.addEventListener('transitionend', () => {
   const shieldSVG = document.querySelector('#shield svg');
-  shieldSVG.style.transition = 'all 1.3s ease-out';
-  shieldSVG.style.filter = 'brightness(5) blur(6px)';
-  shieldSVG.style.opacity = '0';
+  const outerRings = shieldSVG.querySelectorAll('circle');
+  outerRings.forEach(ring => {
+    ring.style.transition = 'all 0.8s ease-out';
+    ring.style.filter = 'brightness(4) blur(6px)';
+    ring.style.opacity = '0';
+    ring.style.transform = 'scale(1.3)';
+  });
 });
+
+// --- CRACK SHATTER + SHIELD PIECES FLY APART ---
+
+function createCracks() {
+  const crack = document.createElement('div');
+  crack.className = 'crackLine';
+  crack.style.position = 'absolute';
+  crack.style.top = '50%';
+  crack.style.left = '50%';
+  crack.style.width = '2px';
+  crack.style.height = '180px';
+  crack.style.background = 'white';
+  crack.style.transform = 'translate(-50%, -50%) rotate(' + Math.random() * 180 + 'deg)';
+  crack.style.opacity = '0.7';
+  crack.style.filter = 'drop-shadow(0 0 10px white)';
+  document.body.appendChild(crack);
+
+  setTimeout(() => {
+    crack.style.transition = 'opacity 0.5s ease-out';
+    crack.style.opacity = '0';
+  }, 400);
+}
+
+shootingStar.addEventListener('transitionend', () => {
+  const shieldSVG = document.querySelector('#shield svg');
+  const outerRings = shieldSVG.querySelectorAll('circle');
+
+  // CRACK EFFECT
+  for (let i = 0; i < 6; i++) createCracks();
+
+  // SHIELD PIECES FLY OUT
+  outerRings.forEach((ring, i) => {
+    ring.style.transition = 'all 1.4s cubic-bezier(0.2, 0.8, 0.3, 1)';
+    ring.style.filter = 'brightness(5) blur(4px)';
+    ring.style.opacity = '0';
+    ring.style.transform = `translate(${(i-2)*60}px, ${(i-2)*40}px) scale(1.3)`;
+  });
+});
+
+// --- SHOCKWAVE + CAMERA SHAKE + PARTICLES + SOUND SYNC ---
+
+// Create Shockwave
+function createShockwave() {
+  const wave = document.createElement('div');
+  wave.id = 'shockwave';
+  wave.style.position = 'absolute';
+  wave.style.top = '50%';
+  wave.style.left = '50%';
+  wave.style.width = '20px';
+  wave.style.height = '20px';
+  wave.style.border = '3px solid white';
+  wave.style.borderRadius = '50%';
+  wave.style.transform = 'translate(-50%, -50%) scale(0)';
+  wave.style.opacity = '0.9';
+  wave.style.filter = 'blur(3px) drop-shadow(0 0 25px white)';
+  wave.style.transition = 'all 1.6s ease-out';
+  document.body.appendChild(wave);
+
+  setTimeout(() => {
+    wave.style.transform = 'translate(-50%, -50%) scale(20)';
+    wave.style.opacity = '0';
+  }, 10);
+}
+
+// CAMERA SHAKE
+function cameraShake() {
+  document.body.style.animation = 'shake 0.4s ease-out';
+  setTimeout(() => (document.body.style.animation = ''), 500);
+}
+
+// PARTICLE BURST
+function particleBurst() {
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.position = 'absolute';
+    p.style.top = '50%';
+    p.style.left = '50%';
+    p.style.width = '4px';
+    p.style.height = '4px';
+    p.style.background = 'white';
+    p.style.borderRadius = '50%';
+    p.style.filter = 'drop-shadow(0 0 10px white)';
+    p.style.transform = 'translate(-50%, -50%)';
+
+    document.body.appendChild(p);
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 150 + Math.random() * 150;
+
+    p.style.transition = 'all 1.2s ease-out';
+    p.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+    p.style.opacity = '0';
+
+    setTimeout(() => p.remove(), 1500);
+  }
+}
+
+// SOUND SYNC PLACEHOLDER (attach your sound later)
+function playImpactSound() {
+  console.log('IMAX Impact Sound Triggered');
+}
+
+// Enhance Existing Impact Event
+shootingStar.addEventListener('transitionend', () => {
+  createShockwave();
+  cameraShake();
+  particleBurst();
+  playImpactSound();
+});
+
+// CSS FOR CAMERA SHAKE + PARTICLES + WAVE
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(6px, -6px); }
+  50% { transform: translate(-6px, 4px); }
+  75% { transform: translate(4px, 6px); }
+ 100% { transform: translate(0, 0); }
+}
+`;
+document.head.appendChild(style);
 
 </script>
 <div id="shield"></div>

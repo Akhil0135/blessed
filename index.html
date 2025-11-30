@@ -46,30 +46,58 @@
   /* SHOOTING STAR */
   .shooting-star{
     position:absolute;
-    top:-10vh;
+    top:-12vh;
     left:50%;
-    width:6px;
-    height:6px;
-    background: radial-gradient(circle, #fff, #ffe9b3);
+    width:22px;
+    height:22px;
+    background: radial-gradient(circle, #ffffff 0%, #ffe7c7 40%, #ffcf80 70%, rgba(255, 200, 120, 0) 100%);
     border-radius:50%;
-    box-shadow:0 0 25px 10px #fff;
+    box-shadow:0 0 45px 20px #fff;
     transform:translateX(-50%);
-    animation:starFall 2.8s ease-in forwards;
+    animation:starFall 2.6s ease-in forwards;
   }
+
+  /* REAL SHOOTING STAR TAPERED TAIL */
   .shooting-star::after{
     content:"";
     position:absolute;
-    top:1px;
-    left:-260px;
-    width:260px;
-    height:6px;
-    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,240,200,1) 100%);
-    border-radius:50px;
-    filter:blur(1px);
+    top:7px;
+    left:-360px;
+    width:360px;
+    height:22px;
+    background:linear-gradient(90deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,240,200,0.4) 20%,
+      rgba(255,230,160,0.9) 70%,
+      rgba(255,230,160,1) 100%);
+    border-radius:0 50px 50px 0;
+    filter:blur(2px);
+    transform:skewY(-8deg);
   }
+
   @keyframes starFall{
     0%{ transform:translate(-50%, -10vh) rotate(25deg); opacity:1; }
     100%{ transform:translate(-15vw, 70vh) rotate(25deg); opacity:1; }
+  }
+  /* SHIELD EXPLOSION */
+  .explosion{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:20px;
+    height:20px;
+    background:radial-gradient(circle, #fff 0%, #ffddaa 40%, rgba(255,180,80,0.6) 70%, transparent 100%);
+    border-radius:50%;
+    transform:translate(-50%, -50%);
+    pointer-events:none;
+    animation:boom 0.6s ease-out forwards;
+    filter:blur(2px);
+  }
+  @keyframes boom{
+    0%{ transform:translate(-50%, -50%) scale(0.3); opacity:1; }
+    40%{ transform:translate(-50%, -50%) scale(4); opacity:0.9; filter:blur(4px); }
+    70%{ transform:translate(-50%, -50%) scale(7); opacity:0.6; filter:blur(8px); }
+    100%{ transform:translate(-50%, -50%) scale(10); opacity:0; filter:blur(18px); }
   }
 </style>
 </head>

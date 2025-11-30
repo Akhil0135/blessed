@@ -7,122 +7,99 @@
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body { width:100%; height:100%; overflow:hidden; background:#000; }
-  canvas { display:block; width:100%; height:100%; }
-  #overlay {
-    position:absolute;
-    width:100%;
-    height:100%;
-    background: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.95) 100%);
-    pointer-events:none;
-    mix-blend-mode:multiply;
-  }
+  canvas { display:block; }
 </style>
 </head>
 <body>
-
-<canvas id="imax"></canvas>
-<div id="overlay"></div>
+<canvas id="canvas"></canvas>
 
 <script>
-const canvas = document.getElementById('imax');
+const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 
+// Particle class
 class Particle {
-  constructor() {
-    this.reset();
-  }
-  reset() {
+  constructor(x, y){
     this.x = Math.random()*width;
     this.y = Math.random()*height;
-    this.vx = (Math.random()-0.5)*1.5;
-    this.vy = (Math.random()-0.5)*1.5;
+    this.vx = (Math.random()-0.5)*2;
+    this.vy = (Math.random()-0.5)*2;
     this.size = Math.random()*2+0.5;
-    this.color = `rgba(255,${Math.floor(Math.random()*200+55)},${Math.floor(Math.random()*200+55)},${Math.random()*0.6+0.4})`;
-    this.tx = null; // target x
-    this.ty = null; // target y
+    this.color = `rgba(255,${Math.floor(Math.random()*200+55)},${Math.floor(Math.random()*200+55)},${Math.random()*0.8+0.2})`;
+    this.tx = x; // target x
+    this.ty = y; // target y
   }
-  update() {
-    if(this.tx !== null && this.ty !== null){
-      // move toward text target
+  update(){
+    if(this.tx !== undefined && this.ty !== undefined){
+      // move toward target for text formation
       this.x += (this.tx - this.x) * 0.08;
       this.y += (this.ty - this.y) * 0.08;
     } else {
-      // free floating
+      // floating effect
       this.x += this.vx;
       this.y += this.vy;
       if(this.x<0 || this.x>width) this.vx*=-1;
       if(this.y<0 || this.y>height) this.vy*=-1;
     }
   }
-  draw() {
-    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size*2);
-    gradient.addColorStop(0,this.color);
-    gradient.addColorStop(0.7,'rgba(0,0,0,0.1)');
-    gradient.addColorStop(1,'rgba(0,0,0,0)');
+  draw(){
+    const grad = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*2);
+    grad.addColorStop(0,this.color);
+    grad.addColorStop(0.7,'rgba(0,0,0,0.1)');
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.fillStyle = gradient;
     ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
     ctx.fill();
   }
 }
 
-const particles = [];
-const particleCount = 1000;
-for(let i=0;i<particleCount;i++) particles.push(new Particle());
-
-// Text mapping
-let textPoints = [];
-function createTextPoints() {
+// Generate text points for "PRINCE"
+function getTextPoints(text){
   const tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
   const tempCtx = tempCanvas.getContext('2d');
+  tempCtx.fillStyle = 'white';
+  tempCtx.font = `bold ${Math.floor(width/8)}px Arial`;
+  tempCtx.textAlign = 'center';
+  tempCtx.textBaseline = 'middle';
+  tempCtx.fillText(text, width/2, height/2);
 
-  tempCtx.fillStyle='white';
-  tempCtx.font=`bold ${Math.floor(width/8)}px Arial`;
-  tempCtx.textAlign='center';
-  tempCtx.textBaseline='middle';
-  tempCtx.fillText('PRINCE', width/2, height/2);
-
-  const data = tempCtx.getImageData(0,0,width,height).data;
-  textPoints = [];
+  const imgData = tempCtx.getImageData(0,0,width,height).data;
+  const points = [];
   for(let y=0;y<height;y+=6){
     for(let x=0;x<width;x+=6){
       const idx = (y*width+x)*4;
-      if(data[idx+3]>128){
-        textPoints.push({x:x,y:y});
-      }
+      if(imgData[idx+3] > 128) points.push({x:x,y:y});
     }
   }
+  return points;
 }
-createTextPoints();
 
-// Assign particles to text on click
-canvas.addEventListener('click',()=>{
-  for(let i=0;i<particles.length;i++){
-    const p = particles[i];
-    const point = textPoints[i % textPoints.length];
-    p.tx = point.x;
-    p.ty = point.y;
-  }
-});
+const textPoints = getTextPoints('PRINCE');
+const particles = [];
+for(let i=0;i<textPoints.length;i++){
+  const p = new Particle(textPoints[i].x, textPoints[i].y);
+  particles.push(p);
+}
 
-// Animate
+// Animate function
 function animate(){
-  ctx.fillStyle='rgba(0,0,0,0.1)';
+  ctx.fillStyle = 'rgba(0,0,0,0.1)'; // cinematic trail
   ctx.fillRect(0,0,width,height);
 
-  // draw cosmic glow shafts
+  // subtle cosmic glow shafts
   for(let i=0;i<3;i++){
     const x = Math.random()*width;
     const y = Math.random()*height;
     const radius = Math.random()*200+100;
-    const gradient = ctx.createRadialGradient(x,y,0,x,y,radius);
-    gradient.addColorStop(0,'rgba(255,255,255,0.01)');
-    gradient.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle = gradient;
+    const grad = ctx.createRadialGradient(x,y,0,x,y,radius);
+    grad.addColorStop(0,'rgba(255,255,255,0.01)');
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
     ctx.fillRect(0,0,width,height);
   }
 
@@ -131,12 +108,11 @@ function animate(){
 }
 animate();
 
-window.addEventListener('resize',()=>{
-  width=canvas.width=window.innerWidth;
-  height=canvas.height=window.innerHeight;
-  createTextPoints();
+// Handle resize
+window.addEventListener('resize', ()=>{
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
 });
 </script>
-
 </body>
 </html>

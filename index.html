@@ -6,7 +6,7 @@
 <title>IMAX — Nolan Cosmic • Shield → Star → PRINCE</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#000006;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
+html,body{height:100%;background:#000000;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
 .background{position:absolute;inset:0;z-index:1;overflow:hidden}
 .nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(160px) saturate(2.2);opacity:1}
@@ -36,9 +36,6 @@ html,body{height:100%;background:#000006;font-family:Inter,system-ui,Segoe UI,Ro
 @keyframes galaxyDrift{0%{transform:translateY(0) translateX(0)}50%{transform:translateY(-6px) translateX(12px)}100%{transform:translateY(0) translateX(0)}}
 .letter.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 @media (max-width:600px){.letter{font-size:10vmin}.letters-layer{bottom:3vh;height:26vh;gap:1.2vw}}
-.shooting-star{position:absolute;width:24px;height:24px;background:radial-gradient(circle, #fff 0%, #ffe7c7 40%, #ffcf80 70%, rgba(255,180,120,0) 100%);border-radius:50%;box-shadow:0 0 50px 20px #fff;top:-50px;left:10%;transform:translateX(0);animation:shootStarMove 2.8s ease-in forwards}
-.shooting-star::after{content:'';position:absolute;top:8px;left:-400px;width:400px;height:24px;background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,240,200,0.4) 20%, rgba(255,230,160,0.9) 70%, rgba(255,230,160,1) 100%);border-radius:0 50px 50px 0;filter:blur(2px);transform:skewY(-8deg)}
-@keyframes shootStarMove{0%{ top:-50px; left:10%; opacity:1; }100%{ top:50%; left:50%; opacity:1; }}
 </style>
 </head>
 <body>
@@ -71,45 +68,24 @@ html,body{height:100%;background:#000006;font-family:Inter,system-ui,Segoe UI,Ro
       </g>
     </svg>
   </div>
-  <div class="shooting-star"></div>
 </div>
 <div class="letters-layer" id="lettersLayer" aria-hidden="true"></div>
 <script>
-const shootingStar = document.querySelector('.shooting-star');
-const star = document.getElementById('shield-star');
-const rings = document.getElementById('rings');
-const shieldSVG = document.querySelector('.shield-svg');
-const lettersLayer = document.getElementById('lettersLayer');
-
-shootingStar.addEventListener('animationend', ()=>{
-  // Explosion & Shatter
-  rings.style.opacity = 0;
-  const fragRoot = document.createElementNS('http://www.w3.org/2000/svg','g');
-  fragRoot.setAttribute('id','fragRoot');
-  shieldSVG.appendChild(fragRoot);
-  const layers = [{r:92,fill:'url(#metalRed)',slices:10},{r:76,fill:'url(#metalWhite)',slices:8},{r:56,fill:'url(#metalRed)',slices:8},{r:36,fill:'url(#metalBlue)',slices:6}];
-  layers.forEach(layer=>{
-    for(let i=0;i<layer.slices;i++){
-      const piece = document.createElementNS('http://www.w3.org/2000/svg','path');
-      const a1=i*(360/layer.slices),a2=a1+(360/layer.slices);
-      const R=layer.r,r=layer.r*0.62;
-      const x1=r*Math.cos(a1*Math.PI/180),y1=r*Math.sin(a1*Math.PI/180);
-      const x2=R*Math.cos(a1*Math.PI/180),y2=R*Math.sin(a1*Math.PI/180);
-      const x3=R*Math.cos(a2*Math.PI/180),y3=R*Math.sin(a2*Math.PI/180);
-      const x4=r*Math.cos(a2*Math.PI/180),y4=r*Math.sin(a2*Math.PI/180);
-      const d=`M ${x1} ${y1} L ${x2} ${y2} A ${R} ${R} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${r} ${r} 0 0 0 ${x1} ${y1}`;
-      piece.setAttribute('d',d);
-      piece.setAttribute('fill',layer.fill);
-      piece.setAttribute('class','shard');
-      piece.style.transformOrigin='100px 100px';
-      piece.style.transition='transform 1.6s cubic-bezier(.2,.9,.2,1), opacity 1.2s ease-out, filter 1.2s';
-      fragRoot.appendChild(piece);
-      setTimeout(()=>{const dx=(Math.random()-0.5)*(120+Math.random()*500),dy=(Math.random()-0.5)*(80+Math.random()*420),rot=(Math.random()-0.5)*1080;piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.88)`;piece.style.filter='drop-shadow(0 0 12px rgba(255,255,255,0.05))';setTimeout(()=>piece.style.opacity=0,850+Math.random()*300)},50+Math.random()*260);
-    }
-  });
-  setTimeout(()=>{try{rings.remove()}catch(e){}},1800);
-  setTimeout(()=>{try{fragRoot.remove()}catch(e){}},3200);
-});
+(function createStars(){
+  const container=document.getElementById('dynamic-stars-container');
+  for(let i=0;i<140;i++){
+    const s=document.createElement('div');
+    s.className='tw-star';
+    s.style.left=(Math.random()*100)+'%';
+    s.style.top=(Math.random()*100)+'%';
+    s.style.animationDelay=(Math.random()*3)+'s';
+    s.style.opacity=(0.05 + Math.random()*0.6).toFixed(2);
+    const sz = (0.8 + Math.random()*2.2)+'px';
+    s.style.width = sz; s.style.height = sz;
+    s.style.filter = 'blur(' + (Math.random()*0.6) + 'px)';
+    container.appendChild(s);
+  }
+})();
 </script>
 </body>
 </html>

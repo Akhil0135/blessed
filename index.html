@@ -1,407 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX — Nolan Cosmic • Shield → Star → PRINCE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMAX Nolan Cosmic Scene</title>
 <style>
-/* ---------------- Reset / Base ---------------- */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#000006;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#000; }
 
-/* ---------------- Stage ---------------- */
-.stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
+  canvas { display:block; width:100%; height:100%; }
 
-/* ---------------- Background layers ---------------- */
-.background{position:absolute;inset:0;z-index:1;overflow:hidden}
-.nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(160px) saturate(2.2);opacity:1}
-.nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,70,120,0.9), transparent 40%);animation:nebulaDrift 140s linear infinite;}
-.nebula2{background:radial-gradient(circle at 80% 60%, rgba(70,130,255,0.8), transparent 45%);animation:nebulaDrift 180s linear infinite;}
-.nebula3{background:radial-gradient(circle at 50% 50%, rgba(90,200,255,0.6), transparent 50%);animation:nebulaDrift 220s linear infinite;}
-@keyframes nebulaDrift{0%{transform:translate(0,0)}50%{transform:translate(200px,-140px) scale(1.12)}100%{transform:translate(0,0)}}
-
-/* twinkling stars (random positions created in JS) */
-#dynamic-stars-container{position:absolute;inset:0;z-index:3;pointer-events:none}
-.tw-star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;opacity:0.15;filter:blur(.2px);animation:twinkleStar 2.6s infinite ease-in-out}
-@keyframes twinkleStar{0%{opacity:0.08;transform:scale(1)}50%{opacity:1;transform:scale(1.8)}100%{opacity:0.12;transform:scale(1)}}
-
-/* subtle static star field */
-.stars{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:
-radial-gradient(#fff 1.1px, transparent 1px),
-radial-gradient(#fff 0.8px, transparent 1px);
-background-size:420px 420px,130px 130px;filter:blur(.45px);opacity:0.9;}
-
-/* particles floating */
-.particles{position:absolute;inset:0;z-index:4;pointer-events:none}
-.particle{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:0.35;animation:particleDrift linear infinite}
-@keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
-
-/* ---------------- Shield / Star container ---------------- */
-/* Use a stable container to ensure star never shifts */
-.shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:58vmin;height:58vmin;pointer-events:none}
-.shield-svg{width:100%;height:100%;transform-origin:center center;pointer-events:none;}
-
-/* Keep starGroup pointer-events enabled but anchored */
-#starGroup{pointer-events:auto}
-#shield-star{transform-box:fill-box;transform-origin:center center;cursor:pointer;fill:#bdbdbd;pointer-events:auto;transition:transform .6s, filter .3s;}
-
-/* ---------------- Sonic waves (reveal effect) ---------------- */
-.sonic-wave{position:absolute;left:50%;top:50%;width:4vmin;height:4vmin;border-radius:50%;
-  border:2px solid rgba(255,255,255,0.12);pointer-events:none;transform:translate(-50%,-50%) scale(0);animation:sonicPulse 2.4s cubic-bezier(.2,.9,.2,1) forwards;z-index:12}
-@keyframes sonicPulse{
-  0%{transform:translate(-50%,-50%) scale(0);opacity:0.9}
-  30%{transform:translate(-50%,-50%) scale(1.3);opacity:0.55}
-  60%{transform:translate(-50%,-50%) scale(2.2);opacity:0.35}
-  100%{transform:translate(-50%,-50%) scale(3.3);opacity:0}
-}
-
-/* ---------------- Shards (visual style) ---------------- */
-.shard{filter:drop-shadow(0 0 10px rgba(255,255,255,0.06));mix-blend-mode:screen;}
-
-/* ---------------- Sparks ---------------- */
-.spark{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,200,100,1);pointer-events:none;opacity:1;transform:translate(-50%,-50%);z-index:12;transition:opacity .9s linear}
-
-/* ---------------- Letters: metallic + galaxy fill ----------------
-   - letters use gradient for clear red/blue metal look (no white)
-   - a moving layered radial-gradient animation simulates a galaxy inside text
-*/
-.letters-layer{position:fixed;left:0;right:0;bottom:6vh;height:18vh;pointer-events:none;z-index:11;display:flex;justify-content:center;align-items:flex-end;gap:2.4vw}
-.letter{
-  font-size:6.5vmin;
-  font-weight:900;
-  line-height:1;
-  display:inline-block;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-  color:transparent;
-  opacity:0;
-  transform:translateY(6vh) scale(0.8);
-  transition:opacity .8s ease, transform 1.2s cubic-bezier(.2,.9,.2,1);
-  text-shadow:0 0 8px rgba(0,0,0,0.6);
-}
-
-/* metallic base gradient using shield colours (red -> blue) */
-.letter.metal{
-  background-image:
-    linear-gradient(120deg,#ff4d4d 0%, #ff7777 30%, #002b76 70%, #003366 100%);
-  -webkit-text-stroke: 0.6px rgba(0,0,0,0.35); /* subtle edge */
-  filter:drop-shadow(0 6px 18px rgba(0,0,0,0.6));
-}
-
-/* animated "galaxy" overlay by adding a pseudo-element that clips to text using mix-blend */
-.letter::before{
-  content:"";
-  position:absolute;
-  left:0;right:0;top:0;bottom:0;
-  background:
-    radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 6%, transparent 10%),
-    radial-gradient(ellipse at 70% 65%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 4%, transparent 10%),
-    radial-gradient(1200px 600px at 40% 50%, rgba(80,110,255,0.12), transparent 20%),
-    radial-gradient(900px 500px at 60% 30%, rgba(255,110,150,0.09), transparent 20%),
-    linear-gradient(90deg, rgba(0,0,0,0.0), rgba(0,0,0,0.0));
-  mix-blend-mode:screen;
-  pointer-events:none;
-  opacity:0.9;
-  transform:translateY(0);
-  animation:galaxyDrift 6s linear infinite;
-  -webkit-background-clip:text;
-  background-clip:text;
-  mask-image: linear-gradient(#000,#000); /* keep inside letter via stacking */
-}
-
-/* small independent subtle drift */
-@keyframes galaxyDrift{0%{transform:translateY(0) translateX(0)}50%{transform:translateY(-6px) translateX(12px)}100%{transform:translateY(0) translateX(0)}}
-
-/* revealed state */
-.letter.show{opacity:1;transform:translateY(0) scale(1)}
-
-/* ensure letter text stays crisp on dark background */
-.letters-layer .letter{backface-visibility:hidden; -webkit-font-smoothing:antialiased}
-
-/* ---------------- Responsive tweaks ---------------- */
-@media (max-width:600px){
-  .letter{font-size:10vmin}
-  .letters-layer{bottom:3vh;height:26vh;gap:1.2vw}
-}
+  /* Cinematic subtle overlay for depth & vignette */
+  #overlay {
+    position:absolute;
+    width:100%;
+    height:100%;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.95) 100%);
+    pointer-events:none;
+    mix-blend-mode:multiply;
+  }
 </style>
 </head>
 <body>
-<div class="stage">
-  <div class="background">
-    <div class="nebula-layer nebula1"></div>
-    <div class="nebula-layer nebula2"></div>
-    <div class="nebula-layer nebula3"></div>
 
-    <!-- twinkling stars container (filled by JS) -->
-    <div id="dynamic-stars-container"></div>
-
-    <div class="stars"></div>
-    <div class="particles"></div>
-  </div>
-
-  <!-- SHIELD (centered) -->
-  <div class="shield-wrap" aria-hidden="true">
-    <svg class="shield-svg" viewBox="0 0 200 200" role="img" aria-label="shield">
-      <defs>
-        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#990000"/></radialGradient>
-        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#cccccc"/></radialGradient>
-        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4d90ff"/><stop offset="100%" stop-color="#003366"/></radialGradient>
-      </defs>
-
-      <!-- Rings group (shatters) -->
-      <g id="rings" transform="translate(100,100)">
-        <circle r="92" fill="url(#metalRed)"/>
-        <circle r="76" fill="url(#metalWhite)"/>
-        <circle r="56" fill="url(#metalRed)"/>
-        <circle r="36" fill="url(#metalBlue)"/>
-      </g>
-
-      <!-- Star group sits at fixed center; pointer events handled on polygon -->
-      <g id="starGroup" transform="translate(100,100)">
-        <polygon id="shield-star"
-          points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8"
-          fill="#bdbdbd" />
-      </g>
-    </svg>
-  </div>
-</div>
-
-<!-- letters container (bottom) -->
-<div class="letters-layer" id="lettersLayer" aria-hidden="true"></div>
+<canvas id="imax"></canvas>
+<div id="overlay"></div>
 
 <script>
-/* ---------------- Utility: create twinkling stars ---------------- */
-(function createStars(){
-  const container=document.getElementById('dynamic-stars-container');
-  const count = 140;
-  for(let i=0;i<count;i++){
-    const s=document.createElement('div');
-    s.className='tw-star';
-    s.style.left=(Math.random()*100)+'%';
-    s.style.top=(Math.random()*100)+'%';
-    s.style.animationDelay=(Math.random()*3)+'s';
-    s.style.opacity=(0.05 + Math.random()*0.6).toFixed(2);
-    s.style.width=(0.8 + Math.random()*2.2)+'px';
-    s.style.height=s.style.width;
-    s.style.filter = 'blur(' + (Math.random()*0.6) + 'px)';
-    container.appendChild(s);
+const canvas = document.getElementById('imax');
+const ctx = canvas.getContext('2d');
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+// Particle class
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random()*width - width/2;
+    this.y = Math.random()*height - height/2;
+    this.z = Math.random()*width;
+    this.size = Math.random()*2+0.5;
+    this.speed = Math.random()*0.8+0.2;
+    this.color = `rgba(255,${Math.floor(Math.random()*200+55)},${Math.floor(Math.random()*200+55)},${Math.random()*0.6+0.4})`;
   }
-})();
-
-/* ---------------- Particles mild drift ---------------- */
-(function createParticles(){
-  const ct=document.querySelector('.particles');
-  for(let i=0;i<80;i++){
-    const p=document.createElement('div');
-    p.className='particle';
-    p.style.left=(Math.random()*100)+'%';
-    p.style.top=(Math.random()*100)+'%';
-    p.style.setProperty('--x', (Math.random()*700 - 350) + 'px');
-    p.style.setProperty('--y', (Math.random()*500 - 250) + 'px');
-    p.style.animationDuration = (80 + Math.random()*160) + 's';
-    ct.appendChild(p);
+  update() {
+    this.z -= this.speed;
+    if(this.z <= 1) this.reset();
   }
-})();
+  draw() {
+    const sx = (this.x * (width / this.z)) + width/2;
+    const sy = (this.y * (width / this.z)) + height/2;
+    const radius = this.size * (width / this.z);
 
-/* ---------------- Core elements ---------------- */
-const star = document.getElementById('shield-star');
-const rings = document.getElementById('rings');
-const shieldSVG = document.querySelector('.shield-svg');
-const lettersLayer = document.getElementById('lettersLayer');
-let lettersRevealed = false;
+    // Draw glowing particle
+    const gradient = ctx.createRadialGradient(sx, sy, 0, sx, sy, radius);
+    gradient.addColorStop(0, this.color);
+    gradient.addColorStop(0.7, 'rgba(0,0,0,0.1)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.fillStyle = gradient;
+    ctx.arc(sx, sy, radius, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
 
-/* keep the star anchored: ensure transform only uses rotation/scale (no translate) */
-star.style.transformOrigin = '100px 100px'; // center of svg viewBox (100,100)
-/* enable pointer events on the polygon (SVG group) */
-document.getElementById('starGroup').style.pointerEvents = 'auto';
+// Create particles
+const particleCount = 500;
+const particles = [];
+for(let i=0;i<particleCount;i++) particles.push(new Particle());
 
-/* ---------------- Handlers ---------------- */
-star.addEventListener('click', ()=> {
-  // spin star (scale up a bit and rotate multiple turns) — always allowed
-  star.style.transition = 'transform 0.6s linear';
-  star.style.transform = 'scale(1.28) rotate(1080deg)';
-  // small metal flash
-  star.style.filter = 'drop-shadow(0 0 26px rgba(255,255,255,0.06))';
-  setTimeout(()=> {
-    star.style.transition = 'transform 1s cubic-bezier(.2,.9,.2,1), filter .8s';
-    star.style.transform = 'scale(1) rotate(0deg)';
-    star.style.filter = '';
-    // only perform reveal & shatter once
-    if(!lettersRevealed){
-      shatterShield();
-      spawnSonicWaves();
-      spawnSparks(30);
-      steelPulse();
-      setTimeout(()=> revealLettersFromStar(), 850);
-      lettersRevealed = true;
-    } else {
-      // further clicks: simple steel pulse + small sonic echo
-      steelPulse();
-      spawnSonicWaves(1);
-    }
-  }, 600);
+// Camera movement
+let cameraScale = 1;
+let cameraOffsetX = 0;
+let cameraOffsetY = 0;
+let targetX = 0;
+let targetY = 0;
+
+document.addEventListener('mousemove', e => {
+  targetX = (e.clientX - width/2)/60;
+  targetY = (e.clientY - height/2)/60;
 });
 
-/* ---------------- Shatter logic (keeps star in place) ---------------- */
-function shatterShield(){
-  if(!rings) return;
-  // hide original rings immediately (but keep star)
-  rings.style.opacity = 0;
+// Animate scene
+function animate() {
+  ctx.fillStyle = 'rgba(0,0,0,0.1)'; // cinematic trail for motion blur
+  ctx.fillRect(0,0,width,height);
 
-  // layers configuration (match shield colours)
-  const layers = [
-    {r:92, fill:'url(#metalRed)', slices:10},
-    {r:76, fill:'url(#metalWhite)', slices:8},
-    {r:56, fill:'url(#metalRed)', slices:8},
-    {r:36, fill:'url(#metalBlue)', slices:6}
-  ];
+  cameraOffsetX += (targetX - cameraOffsetX) * 0.05;
+  cameraOffsetY += (targetY - cameraOffsetY) * 0.05;
+  cameraScale = 1 + Math.sin(Date.now()/7000)*0.02;
 
-  // create fragment root inside svg (so transforms are relative to same coordinate system)
-  const fragRoot = document.createElementNS('http://www.w3.org/2000/svg','g');
-  fragRoot.setAttribute('id','fragRoot');
-  shieldSVG.appendChild(fragRoot);
+  ctx.setTransform(cameraScale,0,0,cameraScale,cameraOffsetX,cameraOffsetY);
 
-  layers.forEach(layer=>{
-    const slices = layer.slices;
-    for(let i=0;i<slices;i++){
-      const piece = document.createElementNS('http://www.w3.org/2000/svg','path');
-      const a1 = i*(360/slices);
-      const a2 = a1 + (360/slices);
-      const R = layer.r, r = layer.r * 0.62;
-      const x1 = r*Math.cos(a1*Math.PI/180), y1 = r*Math.sin(a1*Math.PI/180);
-      const x2 = R*Math.cos(a1*Math.PI/180), y2 = R*Math.sin(a1*Math.PI/180);
-      const x3 = R*Math.cos(a2*Math.PI/180), y3 = R*Math.sin(a2*Math.PI/180);
-      const x4 = r*Math.cos(a2*Math.PI/180), y4 = r*Math.sin(a2*Math.PI/180);
-      const d = `M ${x1} ${y1} L ${x2} ${y2} A ${R} ${R} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${r} ${r} 0 0 0 ${x1} ${y1}`;
-      piece.setAttribute('d', d);
-      piece.setAttribute('fill', layer.fill);
-      piece.setAttribute('class','shard');
-      // position origin = same center; we'll move them using CSS transforms on the SVG element via style
-      piece.style.transformOrigin = '100px 100px';
-      piece.style.transition = 'transform 1.6s cubic-bezier(.2,.9,.2,1), opacity 1.2s ease-out, filter 1.2s';
-      fragRoot.appendChild(piece);
+  particles.forEach(p => { p.update(); p.draw(); });
 
-      // staggered explosion
-      setTimeout(()=>{
-        const dx = (Math.random()-0.5) * (120 + Math.random()*500);
-        const dy = (Math.random()-0.5) * (80 + Math.random()*420);
-        const rot = (Math.random()-0.5) * 1080;
-        piece.style.transform = `translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.88)`;
-        piece.style.filter = 'drop-shadow(0 0 12px rgba(255,255,255,0.05))';
-        // fade after brief moment
-        setTimeout(()=> piece.style.opacity = 0, 850 + Math.random()*300);
-      }, 50 + Math.random()*260);
-    }
-  });
-
-  // remove rings & fragments later to keep DOM clean
-  setTimeout(()=> { try { rings.remove(); } catch(e){} }, 1800);
-  setTimeout(()=> { try { fragRoot.remove(); } catch(e){} }, 3200);
-}
-
-/* ---------------- Sonic waves: create radial pulses from star ---------------- */
-function spawnSonicWaves(count=5){
-  for(let i=0;i<count;i++){
-    const w = document.createElement('div');
-    w.className = 'sonic-wave';
-    w.style.animationDelay = (i*0.14) + 's';
-    document.body.appendChild(w);
-    setTimeout(()=> w.remove(), 2700);
+  // Optional: subtle cosmic glow shafts
+  for(let i=0;i<5;i++){
+    const x = Math.random()*width;
+    const y = Math.random()*height;
+    const radius = Math.random()*200+100;
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    gradient.addColorStop(0,'rgba(255,255,255,0.02)');
+    gradient.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0,width,height);
   }
+
+  requestAnimationFrame(animate);
 }
 
-/* ---------------- Sparks: small glowing dots ---------------- */
-function spawnSparks(count=10){
-  for(let i=0;i<count;i++){
-    const s = document.createElement('div');
-    s.className = 'spark';
-    s.style.left = (window.innerWidth/2 + (Math.random()-0.5)*260) + 'px';
-    s.style.top  = (window.innerHeight/2 + (Math.random()-0.5)*220) + 'px';
-    const dx = (Math.random()-0.5)*220;
-    const dy = (Math.random()-0.5)*200;
-    s.style.setProperty('--dx', dx + 'px');
-    s.style.setProperty('--dy', dy + 'px');
-    s.style.transform = `translate(0,0)`;
-    s.style.opacity = 1;
-    document.body.appendChild(s);
-    // animate manual via setTimeout
-    setTimeout(()=> {
-      s.style.transition = 'transform 0.9s cubic-bezier(.2,.9,.2,1), opacity 0.9s linear';
-      s.style.transform = `translate(${dx}px,${dy}px) scale(.2)`;
-      s.style.opacity = 0;
-    }, 40 + Math.random()*60);
-    setTimeout(()=> { try{ s.remove(); }catch(e){} }, 1100);
-  }
-}
+animate();
 
-/* ---------------- steel pulse for star on every click ---------------- */
-function steelPulse(){
-  // subtle quick glow animation by toggling a class/animation property
-  star.style.animation = 'none';
-  // force reflow to restart animation
-  void star.offsetWidth;
-  star.style.animation = 'steelStarGlow 1.25s ease-in-out 3';
-}
-
-/* ---------------- Letter reveal — radiate from star and settle at bottom
-   - letters are metallic gradient (no white), have small galaxy overlay
-   - will reveal only once
-*/
-function revealLettersFromStar(){
-  const letters = ['P','R','I','N','C','E'];
-  lettersLayer.innerHTML = ''; // ensure empty
-  const centerX = window.innerWidth/2;
-  const centerY = window.innerHeight/2;
-  const finalY = window.innerHeight - Math.max(80, window.innerHeight*0.16); // settle above bottom
-  // create individual letter nodes
-  letters.forEach((ch,i)=>{
-    const d = document.createElement('div');
-    d.className = 'letter metal';
-    d.textContent = ch;
-    // position roughly at star center to begin with
-    d.style.left = centerX + 'px';
-    d.style.top  = centerY + 'px';
-    // ensure absolute positioning
-    d.style.position = 'fixed';
-    d.style.transform = 'translate(-50%,-50%) scale(0.82)';
-    d.style.opacity = 0;
-    document.body.appendChild(d);
-
-    // animate radiating out slightly then settle at bottom in order
-    setTimeout(()=>{
-      // first pop: appear and radiate out a little
-      d.style.transition = 'opacity .45s ease, transform 1s cubic-bezier(.2,.9,.2,1), left 1s linear, top 1s linear';
-      d.style.opacity = 1;
-      // small radial burst to separate letters
-      const angleDeg = (i - (letters.length-1)/2) * 18; // spread
-      const rad = angleDeg * Math.PI/180;
-      const burstRadius = 240 + (i%2)*22;
-      const burstX = centerX + Math.cos(rad)*burstRadius;
-      const burstY = centerY + Math.sin(rad)*(burstRadius*0.35);
-      d.style.left = burstX + 'px';
-      d.style.top  = burstY + 'px';
-      d.style.transform = 'translate(-50%,-50%) scale(1.02)';
-
-      // then settle down to final bottom row (in same left-to-right order)
-      setTimeout(()=>{
-        const spacing = Math.min(88, window.innerWidth*0.07);
-        const fx = centerX + (i - (letters.length-1)/2) * spacing;
-        d.style.left = fx + 'px';
-        d.style.top  = finalY + 'px';
-        d.style.transform = 'translate(-50%,-50%) scale(1)';
-        // after settle, reduce galaxy overlay motion slightly
-      }, 950 + i*120);
-    }, 140 + i*140);
-  });
-}
-
-/* ---------------- Prevent star move: ensure respond to clicks but no layout changes occur */
-window.addEventListener('resize', ()=> {
-  // nothing needed — star anchored to SVG coordinates; letters adapt on reveal by using window center
+// Handle resize
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
 });
-
-/* ---------------- End of script ---------------- */
 </script>
+
 </body>
 </html>

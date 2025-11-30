@@ -3,124 +3,221 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX Nolan Cinematic • Real Shooting Star + Shield</title>
+<title>IMAX — Nolan Cosmic • Shield → Star → PRINCE</title>
 <style>
-html, body { margin:0; padding:0; height:100%; background:#000; overflow:hidden; }
-canvas { width:100%; height:100%; display:block; background: radial-gradient(circle at center, #0a0a15, #000); }
+/* ---------------- Reset / Base ---------------- */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000006;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden}
 
-/* Shield Metallic Rings & Star */
-#shield svg { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%) scale(1.1); filter:drop-shadow(0 0 35px #ff000066); }
-#shield svg polygon { transform-origin:256px 256px; animation: starSpin 4s linear infinite; }
-@keyframes starSpin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+/* ---------------- Stage ---------------- */
+.stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
 
-/* Realistic Shooting Star */
-.shooting-star {
-  position:absolute;
-  width:30px;
-  height:30px;
-  background: radial-gradient(circle, #fff 0%, #ffe9b3 30%, #ffb347 60%, rgba(255,180,120,0) 100%);
-  border-radius:50%;
-  box-shadow:0 0 60px 25px #fff;
-  top:-50px;
-  left:10%;
-  transform:translateX(0);
-  animation:shootStarArc 2.8s ease-in forwards;
-}
-.shooting-star::after {
-  content:'';
-  position:absolute;
-  top:10px;
-  left:-400px;
-  width:400px;
-  height:10px;
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,240,200,0.4) 20%, rgba(255,230,160,0.9) 70%, rgba(255,230,160,0.0) 100%);
-  border-radius:0 50px 50px 0;
-  filter:blur(3px);
-  transform:skewY(-8deg);
-}
-@keyframes shootStarArc {
-  0%{ top:-50px; left:10%; opacity:1; transform:rotate(20deg);} 
-  100%{ top:50%; left:50%; opacity:1; transform:rotate(20deg); }
-}
+/* ---------------- Background layers ---------------- */
+.background{position:absolute;inset:0;z-index:1;overflow:hidden}
+.nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(160px) saturate(2.2);opacity:1}
+.nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,70,120,0.9), transparent 40%);animation:nebulaDrift 140s linear infinite;}
+.nebula2{background:radial-gradient(circle at 80% 60%, rgba(70,130,255,0.8), transparent 45%);animation:nebulaDrift 180s linear infinite;}
+.nebula3{background:radial-gradient(circle at 50% 50%, rgba(90,200,255,0.6), transparent 50%);animation:nebulaDrift 220s linear infinite;}
+@keyframes nebulaDrift{0%{transform:translate(0,0)}50%{transform:translate(200px,-140px) scale(1.12)}100%{transform:translate(0,0)}}
 
-/* Explosion */
-.explosion{
-  position:absolute;
-  top:50%; left:50%;
-  width:20px; height:20px;
-  background:radial-gradient(circle, #fff 0%, #ffddaa 40%, rgba(255,180,80,0.6) 70%, transparent 100%);
-  border-radius:50%;
-  transform:translate(-50%, -50%);
-  pointer-events:none;
-  animation:boom 0.6s ease-out forwards;
-  filter:blur(2px);
-}
-@keyframes boom{
-  0%{ transform:translate(-50%, -50%) scale(0.3); opacity:1; }
-  40%{ transform:translate(-50%, -50%) scale(4); opacity:0.9; filter:blur(4px); }
-  70%{ transform:translate(-50%, -50%) scale(7); opacity:0.6; filter:blur(8px); }
-  100%{ transform:translate(-50%, -50%) scale(10); opacity:0; filter:blur(18px); }
-}
+/* twinkling stars */
+#dynamic-stars-container{position:absolute;inset:0;z-index:3;pointer-events:none}
+.tw-star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;opacity:0.15;filter:blur(.2px);animation:twinkleStar 2.6s infinite ease-in-out}
+@keyframes twinkleStar{0%{opacity:0.08;transform:scale(1)}50%{opacity:1;transform:scale(1.8)}100%{opacity:0.12;transform:scale(1)}}
 
-/* Camera Shake */
-@keyframes shake { 0%{transform:translate(0,0);} 25%{transform:translate(6px,-6px);} 50%{transform:translate(-6px,4px);} 75%{transform:translate(4px,6px);} 100%{transform:translate(0,0);} }
+/* subtle static star field */
+.stars{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:
+radial-gradient(#fff 1.1px, transparent 1px),
+radial-gradient(#fff 0.8px, transparent 1px);
+background-size:420px 420px,130px 130px;filter:blur(.45px);opacity:0.9;}
+
+/* particles floating */
+.particles{position:absolute;inset:0;z-index:4;pointer-events:none}
+.particle{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:0.35;animation:particleDrift linear infinite}
+@keyframes particleDrift{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
+
+/* ---------------- Shield / Star ---------------- */
+.shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:58vmin;height:58vmin;pointer-events:none}
+.shield-svg{width:100%;height:100%;transform-origin:center center;pointer-events:none}
+#starGroup{pointer-events:auto}
+#shield-star{transform-box:fill-box;transform-origin:center center;cursor:pointer;fill:#bdbdbd;pointer-events:auto;transition:transform .6s, filter .3s}
+
+/* ---------------- Sonic waves ---------------- */
+.sonic-wave{position:absolute;left:50%;top:50%;width:4vmin;height:4vmin;border-radius:50%;border:2px solid rgba(255,255,255,0.12);pointer-events:none;transform:translate(-50%,-50%) scale(0);animation:sonicPulse 2.4s cubic-bezier(.2,.9,.2,1) forwards;z-index:12}
+@keyframes sonicPulse{0%{transform:translate(-50%,-50%) scale(0);opacity:0.9}30%{transform:translate(-50%,-50%) scale(1.3);opacity:0.55}60%{transform:translate(-50%,-50%) scale(2.2);opacity:0.35}100%{transform:translate(-50%,-50%) scale(3.3);opacity:0}}
+
+/* shards & sparks */
+.shard{filter:drop-shadow(0 0 10px rgba(255,255,255,0.06));mix-blend-mode:screen}
+.spark{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,200,100,1);pointer-events:none;opacity:1;transform:translate(-50%,-50%);z-index:12;transition:opacity .9s linear}
+
+/* letters: metallic + galaxy */
+.letters-layer{position:fixed;left:0;right:0;bottom:6vh;height:18vh;pointer-events:none;z-index:11;display:flex;justify-content:center;align-items:flex-end;gap:2.4vw}
+.letter{font-size:6.5vmin;font-weight:900;line-height:1;display:inline-block;position:fixed;transform:translate(-50%,-50%) scale(0.8);opacity:0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 8px rgba(0,0,0,0.6);transition:opacity .8s ease, transform 1.2s cubic-bezier(.2,.9,.2,1)}
+.letter.metal{background-image:linear-gradient(120deg,#ff4d4d 0%, #ff7777 30%, #002b76 70%, #003366 100%);-webkit-text-stroke:0.6px rgba(0,0,0,0.35);filter:drop-shadow(0 6px 18px rgba(0,0,0,0.6))}
+.letter::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;background:radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 6%, transparent 10%),radial-gradient(ellipse at 70% 65%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 4%, transparent 10%),radial-gradient(1200px 600px at 40% 50%, rgba(80,110,255,0.12), transparent 20%),radial-gradient(900px 500px at 60% 30%, rgba(255,110,150,0.09), transparent 20%),linear-gradient(90deg, rgba(0,0,0,0.0), rgba(0,0,0,0.0));mix-blend-mode:screen;pointer-events:none;opacity:0.9;transform:translateY(0);animation:galaxyDrift 6s linear infinite;-webkit-background-clip:text;background-clip:text}
+@keyframes galaxyDrift{0%{transform:translateY(0) translateX(0)}50%{transform:translateY(-6px) translateX(12px)}100%{transform:translateY(0) translateX(0)}}
+.letter.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+@media (max-width:600px){.letter{font-size:10vmin}.letters-layer{bottom:3vh;height:26vh;gap:1.2vw}}
 </style>
 </head>
 <body>
-<canvas id="cinema"></canvas>
-<div id="shield"></div>
-<div class="shooting-star"></div>
+<div class="stage">
+  <div class="background">
+    <div class="nebula-layer nebula1"></div>
+    <div class="nebula-layer nebula2"></div>
+    <div class="nebula-layer nebula3"></div>
+    <div id="dynamic-stars-container"></div>
+    <div class="stars"></div>
+    <div class="particles"></div>
+  </div>
+
+  <!-- SHIELD -->
+  <div class="shield-wrap" aria-hidden="true">
+    <svg class="shield-svg" viewBox="0 0 200 200" role="img" aria-label="shield">
+      <defs>
+        <radialGradient id="metalRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#990000"/></radialGradient>
+        <radialGradient id="metalWhite" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#cccccc"/></radialGradient>
+        <radialGradient id="metalBlue" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4d90ff"/><stop offset="100%" stop-color="#003366"/></radialGradient>
+      </defs>
+      <g id="rings" transform="translate(100,100)">
+        <circle r="92" fill="url(#metalRed)"/>
+        <circle r="76" fill="url(#metalWhite)"/>
+        <circle r="56" fill="url(#metalRed)"/>
+        <circle r="36" fill="url(#metalBlue)"/>
+      </g>
+      <g id="starGroup" transform="translate(100,100)">
+        <polygon id="shield-star" points="0,-28 6,-8 26,-6 10,6 14,26 0,14 -14,26 -10,6 -26,-6 -6,-8" fill="#bdbdbd"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="letters-layer" id="lettersLayer" aria-hidden="true"></div>
+
 <script>
-/* 3D Stars Background */
-const canvas = document.getElementById('cinema');
-const ctx = canvas.getContext('2d');
-canvas.width = innerWidth; canvas.height = innerHeight;
-let stars = Array.from({length:1500}, ()=>({x:(Math.random()-0.5)*2000,y:(Math.random()-0.5)*2000,z:Math.random()*2000}));
-function animate(){
-  ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
-  for(let s of stars){
-    s.z-=4; if(s.z<=1) s.z=2000;
-    let sx=(s.x/s.z)*800+canvas.width/2;
-    let sy=(s.y/s.z)*800+canvas.height/2;
-    let size=Math.max(0,2-s.z/1000);
-    ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(sx,sy,size,0,Math.PI*2); ctx.fill();
+/* ---------------- Stars ---------------- */
+(function createStars(){
+  const container=document.getElementById('dynamic-stars-container');
+  for(let i=0;i<140;i++){
+    const s=document.createElement('div');
+    s.className='tw-star';
+    s.style.left=(Math.random()*100)+'%';
+    s.style.top=(Math.random()*100)+'%';
+    s.style.animationDelay=(Math.random()*3)+'s';
+    s.style.opacity=(0.05 + Math.random()*0.6).toFixed(2);
+    const sz = (0.8 + Math.random()*2.2)+'px';
+    s.style.width = sz; s.style.height = sz;
+    s.style.filter = 'blur(' + (Math.random()*0.6) + 'px)';
+    container.appendChild(s);
   }
-  requestAnimationFrame(animate);
-}
-animate();
+})();
 
-/* Shield SVG */
-document.getElementById('shield').innerHTML=`<svg width="280" height="280" viewBox="0 0 512 512">
-<defs>
-<radialGradient id="metalRed" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#ff5555"/><stop offset="50%" stop-color="#b20000"/><stop offset="100%" stop-color="#4a0000"/></radialGradient>
-<linearGradient id="metalWhite" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="50%" stop-color="#d0d0d0"/><stop offset="100%" stop-color="#9e9e9e"/></linearGradient>
-<radialGradient id="metalBlue" cx="50%" cy="40%" r="70%"><stop offset="0%" stop-color="#4db8ff"/><stop offset="50%" stop-color="#004c97"/><stop offset="100%" stop-color="#001a33"/></radialGradient>
-<linearGradient id="starChrome" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="40%" stop-color="#e3e3e3"/><stop offset="80%" stop-color="#8f8f8f"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
-</defs>
-<circle cx="256" cy="256" r="250" fill="url(#metalRed)"/>
-<circle cx="256" cy="256" r="200" fill="url(#metalWhite)"/>
-<circle cx="256" cy="256" r="150" fill="url(#metalRed)"/>
-<circle cx="256" cy="256" r="100" fill="url(#metalBlue)"/>
-<polygon points="256,150 281,230 366,230 297,280 322,360 256,310 190,360 215,280 146,230 231,230" fill="url(#starChrome)"/>
-</svg>`;
+/* ---------------- Particles ---------------- */
+(function createParticles(){
+  const ct=document.querySelector('.particles');
+  for(let i=0;i<80;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    p.style.left=(Math.random()*100)+'%';
+    p.style.top=(Math.random()*100)+'%';
+    p.style.setProperty('--x', (Math.random()*700 - 350) + 'px');
+    p.style.setProperty('--y', (Math.random()*500 - 250) + 'px');
+    p.style.animationDuration = (80 + Math.random()*160) + 's';
+    ct.appendChild(p);
+  }
+})();
 
-/* Shooting Star Impact and Shield Explosion */
-const shootingStar = document.querySelector('.shooting-star');
-shootingStar.addEventListener('animationend', ()=>{
-  // Explosion
-  const exp = document.createElement('div'); exp.className='explosion'; document.body.appendChild(exp);
-  // Shield fade out
-  const shieldSVG = document.querySelector('#shield svg');
-  shieldSVG.style.transition='all 0.8s ease-out'; shieldSVG.style.opacity='0';
-  // Shockwave
-  const wave=document.createElement('div'); wave.style.position='absolute'; wave.style.top='50%'; wave.style.left='50%';
-  wave.style.width='20px'; wave.style.height='20px'; wave.style.border='3px solid white'; wave.style.borderRadius='50%';
-  wave.style.transform='translate(-50%,-50%) scale(0)'; wave.style.opacity='0.9'; wave.style.filter='blur(3px) drop-shadow(0 0 25px white)';
-  wave.style.transition='all 1.6s ease-out'; document.body.appendChild(wave);
-  setTimeout(()=>{wave.style.transform='translate(-50%,-50%) scale(20)'; wave.style.opacity='0';},10);
-  // Camera shake
-  document.body.style.animation='shake 0.4s ease-out'; setTimeout(()=>document.body.style.animation='',500);
+const star = document.getElementById('shield-star');
+const rings = document.getElementById('rings');
+const shieldSVG = document.querySelector('.shield-svg');
+const lettersLayer = document.getElementById('lettersLayer');
+let lettersRevealed = false;
+let rotation = 0;
+
+star.addEventListener('click', ()=>{
+  rotation += 1080;
+  star.style.transition = 'transform 0.6s linear';
+  star.style.transform = `scale(1.28) rotate(${rotation}deg)`;
+  star.style.filter = 'drop-shadow(0 0 26px rgba(255,255,255,0.06))';
+
+  setTimeout(()=>{
+    star.style.transition = 'transform 1s cubic-bezier(.2,.9,.2,1), filter .8s';
+    star.style.transform = `scale(1) rotate(${rotation}deg)`;
+    star.style.filter = '';
+    if(!lettersRevealed){
+      shatterShield();
+      spawnSonicWaves();
+      spawnSparks(30);
+      steelPulse();
+      setTimeout(revealLettersFromStar, 850);
+      lettersRevealed = true;
+    } else {
+      steelPulse();
+      spawnSonicWaves(1);
+    }
+  }, 600);
 });
-</script>
-</body>
-</html>
+
+/* ---------------- Shatter ---------------- */
+function shatterShield(){
+  if(!rings) return;
+  rings.style.opacity = 0;
+  const layers = [{r:92,fill:'url(#metalRed)',slices:10},{r:76,fill:'url(#metalWhite)',slices:8},{r:56,fill:'url(#metalRed)',slices:8},{r:36,fill:'url(#metalBlue)',slices:6}];
+  const fragRoot = document.createElementNS('http://www.w3.org/2000/svg','g');
+  fragRoot.setAttribute('id','fragRoot');
+  shieldSVG.appendChild(fragRoot);
+
+  layers.forEach(layer=>{
+    for(let i=0;i<layer.slices;i++){
+      const piece = document.createElementNS('http://www.w3.org/2000/svg','path');
+      const a1 = i*(360/layer.slices), a2 = a1+(360/layer.slices);
+      const R=layer.r, r=layer.r*0.62;
+      const x1=r*Math.cos(a1*Math.PI/180), y1=r*Math.sin(a1*Math.PI/180);
+      const x2=R*Math.cos(a1*Math.PI/180), y2=R*Math.sin(a1*Math.PI/180);
+      const x3=R*Math.cos(a2*Math.PI/180), y3=R*Math.sin(a2*Math.PI/180);
+      const x4=r*Math.cos(a2*Math.PI/180), y4=r*Math.sin(a2*Math.PI/180);
+      const d=`M ${x1} ${y1} L ${x2} ${y2} A ${R} ${R} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${r} ${r} 0 0 0 ${x1} ${y1}`;
+      piece.setAttribute('d',d);
+      piece.setAttribute('fill',layer.fill);
+      piece.setAttribute('class','shard');
+      piece.style.transformOrigin = '100px 100px';
+      piece.style.transition = 'transform 1.6s cubic-bezier(.2,.9,.2,1), opacity 1.2s ease-out, filter 1.2s';
+      fragRoot.appendChild(piece);
+      setTimeout(()=>{
+        const dx=(Math.random()-0.5)*(120+Math.random()*500);
+        const dy=(Math.random()-0.5)*(80+Math.random()*420);
+        const rot=(Math.random()-0.5)*1080;
+        piece.style.transform=`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.88)`;
+        piece.style.filter='drop-shadow(0 0 12px rgba(255,255,255,0.05))';
+        setTimeout(()=>piece.style.opacity=0,850+Math.random()*300);
+      },50+Math.random()*260);
+    }
+  });
+
+  setTimeout(()=>{try{rings.remove();}catch(e){}},1800);
+  setTimeout(()=>{try{fragRoot.remove();}catch(e){}},3200);
+}
+
+/* ---------------- Waves & Sparks ---------------- */
+function spawnSonicWaves(count=5){for(let i=0;i<count;i++){const w=document.createElement('div');w.className='sonic-wave';w.style.animationDelay=(i*0.14)+'s';document.body.appendChild(w);setTimeout(()=>w.remove(),2700);}}
+function spawnSparks(count=10){for(let i=0;i<count;i++){const s=document.createElement('div');s.className='spark';s.style.left=(window.innerWidth/2+(Math.random()-0.5)*260)+'px';s.style.top=(window.innerHeight/2+(Math.random()-0.5)*220)+'px';const dx=(Math.random()-0.5)*220,dy=(Math.random()-0.5)*200;s.style.transform=`translate(0,0)`;s.style.opacity=1;document.body.appendChild(s);setTimeout(()=>{s.style.transition='transform 0.9s cubic-bezier(.2,.9,.2,1), opacity 0.9s linear';s.style.transform=`translate(${dx}px,${dy}px) scale(.2)`;s.style.opacity=0;},40+Math.random()*60);setTimeout(()=>{try{s.remove()}catch(e){}},1100);}}
+
+function steelPulse(){star.style.animation='none';void star.offsetWidth;star.style.animation='steelStarGlow 1.25s ease-in-out 3';}
+
+/* ---------------- Letter Reveal ---------------- */
+function revealLettersFromStar(){
+  const letters = ['P','R','I','N','C','E'];
+  lettersLayer.innerHTML='';
+  const centerX = window.innerWidth/2, centerY = window.innerHeight/2;
+  const finalY = window.innerHeight - Math.max(80, window.innerHeight*0.16);
+  letters.forEach((ch,i)=>{
+    const d=document.createElement('div');
+    d.className='letter metal';
+    d.textContent = ch;
+    d.style.left=centerX+'px';
+    d.style.top=centerY+'px';
+    document.body.appendChild(d);
+
+    setTimeout(()=>{
+      d.style.transition='opacity .45s ease, transform 1s cubic-bezier(.2,.9,.2,

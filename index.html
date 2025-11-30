@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX Nolan Cinematic • Shield + Shooting Star</title>
+<title>IMAX Nolan Cinematic • Real Shooting Star + Shield</title>
 <style>
 html, body { margin:0; padding:0; height:100%; background:#000; overflow:hidden; }
 canvas { width:100%; height:100%; display:block; background: radial-gradient(circle at center, #0a0a15, #000); }
@@ -13,34 +13,34 @@ canvas { width:100%; height:100%; display:block; background: radial-gradient(cir
 #shield svg polygon { transform-origin:256px 256px; animation: starSpin 4s linear infinite; }
 @keyframes starSpin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 
-/* Shooting Star Proper */
+/* Realistic Shooting Star */
 .shooting-star {
   position:absolute;
-  width:24px;
-  height:24px;
-  background: radial-gradient(circle, #ffffff 0%, #ffe7c7 40%, #ffcf80 70%, rgba(255,180,120,0) 100%);
+  width:30px;
+  height:30px;
+  background: radial-gradient(circle, #fff 0%, #ffe9b3 30%, #ffb347 60%, rgba(255,180,120,0) 100%);
   border-radius:50%;
-  box-shadow:0 0 50px 20px #fff;
+  box-shadow:0 0 60px 25px #fff;
   top:-50px;
   left:10%;
   transform:translateX(0);
-  animation:shootStarMove 2.8s ease-in forwards;
+  animation:shootStarArc 2.8s ease-in forwards;
 }
 .shooting-star::after {
   content:'';
   position:absolute;
-  top:8px;
+  top:10px;
   left:-400px;
   width:400px;
-  height:24px;
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,240,200,0.4) 20%, rgba(255,230,160,0.9) 70%, rgba(255,230,160,1) 100%);
+  height:10px;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,240,200,0.4) 20%, rgba(255,230,160,0.9) 70%, rgba(255,230,160,0.0) 100%);
   border-radius:0 50px 50px 0;
-  filter:blur(2px);
+  filter:blur(3px);
   transform:skewY(-8deg);
 }
-@keyframes shootStarMove {
-  0%{ top:-50px; left:10%; opacity:1; }
-  100%{ top:50%; left:50%; opacity:1; }
+@keyframes shootStarArc {
+  0%{ top:-50px; left:10%; opacity:1; transform:rotate(20deg);} 
+  100%{ top:50%; left:50%; opacity:1; transform:rotate(20deg); }
 }
 
 /* Explosion */

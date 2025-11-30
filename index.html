@@ -1,107 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cinematic Anime Scene</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IMAX • Nolan Cinematic Vision</title>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-        background: #000;
-        overflow: hidden;
-        font-family: "Inter", sans-serif;
-    }
+  html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden;font-family:Inter,system-ui}
 
-    /* Background gradient (Shinkai style) */
-    #bg {
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        background: radial-gradient(circle at center,
-            #1a1a2e 0%, #0f0f1d 40%, #05050a 100%);
-        filter: blur(2px);
-    }
+  canvas{width:100%;height:100%;display:block;background:radial-gradient(circle at center,#0a0a15,#000);
+  }
 
-    /* Anime Character */
-    #character {
-        position: fixed;
-        width: 520px;
-        left: 50%;
-        bottom: 0;
-        transform: translateX(-50%) scale(1);
-        animation: breathe 4s ease-in-out infinite;
-        filter: drop-shadow(0 0 25px rgba(255,255,255,0.25));
-        pointer-events: none;
-    }
+  /* Cinematic Title */
+  .title{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    color:#fff;font-size:3vw;letter-spacing:0.4vw;font-weight:300;
+    opacity:0;animation:titleFade 6s ease forwards 4s;
+    text-shadow:0 0 20px #00aaff;
+  }
 
-    /* Gentle breathing */
-    @keyframes breathe {
-        0%   { transform: translateX(-50%) translateY(0) scale(1); }
-        50%  { transform: translateX(-50%) translateY(-8px) scale(1.02); }
-        100% { transform: translateX(-50%) translateY(0) scale(1); }
-    }
+  @keyframes titleFade{
+    0%{opacity:0;letter-spacing:2vw;filter:blur(20px)}
+    40%{opacity:1;letter-spacing:0.4vw;filter:blur(0px)}
+    100%{opacity:0;filter:blur(15px)}
+  }
+@keyframes shieldRotate {
+  0% { transform: translate(-50%, -50%) scale(1.1) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) scale(1.1) rotate(360deg); }
+}
 
-    /* Cinematic particles */
-    .particle {
-        position: fixed;
-        width: 4px;
-        height: 4px;
-        background: rgba(255,255,255,0.8);
-        border-radius: 50%;
-        filter: blur(2px);
-        animation: floatUp linear infinite;
-    }
+@keyframes starSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
-    @keyframes floatUp {
-        0% { opacity: 0; transform: translateY(20vh) scale(0.3); }
-        10% { opacity: 1; }
-        100% { opacity: 0; transform: translateY(-120vh) scale(1); }
-    }
+.shield-spin {
+  animation: shieldRotate 14s linear infinite;
+}
 
-    /* Slow IMAX zoom-in camera */
-    #camera {
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        animation: camZoom 18s ease-in-out infinite alternate;
-    }
-
-    @keyframes camZoom {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.12); }
-    }
+#shield svg polygon {
+  transform-origin: 256px 256px;
+  animation: starSpin 4s linear infinite;
+}
 
 </style>
 </head>
 <body>
-
-<div id="bg"></div>
-
-<div id="camera">
-    <img id="character" src="https://i.ibb.co/z77cM2D/anime-girl-realistic.png">
-</div>
+<canvas id="cinema"></canvas>
+<div class="title">IMAX • NOLAN VISION</div>
 
 <script>
-/* ---------- CREATE PARTICLES ---------- */
-function spawnParticle() {
-    const p = document.createElement("div");
-    p.classList.add("particle");
+/* ---------------- 3D Cinematic Space Simulation ---------------- */
+const canvas = document.getElementById('cinema');
+const ctx = canvas.getContext('2d');
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
-    const size = Math.random() * 3 + 1;
-    p.style.width = size + "px";
-    p.style.height = size + "px";
+let stars = Array.from({length:1500}, () => {
+  return {
+    x: (Math.random()-0.5)*2000,
+    y: (Math.random()-0.5)*2000,
+    z: Math.random()*2000,
+  };
+});
 
-    p.style.left = Math.random() * 100 + "vw";
-    p.style.animationDuration = (4 + Math.random() * 4) + "s";
+function animate(){
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    document.body.appendChild(p);
+  for(let s of stars){
+    s.z -= 4;
+    if(s.z <= 1) s.z = 2000;
 
-    setTimeout(() => p.remove(), 8000);
+    let sx = (s.x / s.z) * 800 + canvas.width/2;
+    let sy = (s.y / s.z) * 800 + canvas.height/2;
+    let size = Math.max(0, 2 - s.z/1000);
+
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(sx, sy, size, 0, Math.PI*2);
+    ctx.fill();
+  }
+  requestAnimationFrame(animate);
 }
 
-setInterval(spawnParticle, 120);
+animate();
 </script>
-
+<div id="shield"></div>
+<script>
+// Add Captain America Shield SVG in center
+const shield = document.getElementById('shield');
+shield.innerHTML = `
+<svg class="shield-spin" width="280" height="280" viewBox="0 0 512 512" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1.1);filter:drop-shadow(0 0 25px #ff0000aa)">
+  <circle cx="256" cy="256" r="250" fill="#c31f26"/>
+  <circle cx="256" cy="256" r="200" fill="#ffffff"/>
+  <circle cx="256" cy="256" r="150" fill="#c31f26"/>
+  <circle cx="256" cy="256" r="100" fill="#0a3d91"/>
+  <polygon points="256,150 281,230 366,230 297,280 322,360 256,310 190,360 215,280 146,230 231,230" fill="white"/>
+</svg>`;
+</script>
 </body>
 </html>

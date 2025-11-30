@@ -43,6 +43,34 @@
   animation: starSpin 4s linear infinite;
 }
 
+  /* SHOOTING STAR */
+  .shooting-star{
+    position:absolute;
+    top:-10vh;
+    left:50%;
+    width:6px;
+    height:6px;
+    background: radial-gradient(circle, #fff, #ffe9b3);
+    border-radius:50%;
+    box-shadow:0 0 25px 10px #fff;
+    transform:translateX(-50%);
+    animation:starFall 2.8s ease-in forwards;
+  }
+  .shooting-star::after{
+    content:"";
+    position:absolute;
+    top:1px;
+    left:-260px;
+    width:260px;
+    height:6px;
+    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,240,200,1) 100%);
+    border-radius:50px;
+    filter:blur(1px);
+  }
+  @keyframes starFall{
+    0%{ transform:translate(-50%, -10vh) rotate(25deg); opacity:1; }
+    100%{ transform:translate(-15vw, 70vh) rotate(25deg); opacity:1; }
+  }
 </style>
 </head>
 <body>

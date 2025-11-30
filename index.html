@@ -8,7 +8,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#000000;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#fff;overflow:hidden;}
 .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden;perspective:1800px;}
-.background{position:absolute;inset:0;z-index:1;overflow:hidden;transform-style:preserve-3d;}
+.background{position:absolute;inset:0;z-index:1;overflow:hidden;transform-style:preserve-3d;background:#000000;}
 .nebula-layer{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(160px) saturate(2.5);opacity:1;transform-style:preserve-3d;}
 .nebula1{background:radial-gradient(circle at 20% 40%, rgba(255,70,120,0.95), transparent 40%);animation:nebulaDrift 140s linear infinite;}
 .nebula2{background:radial-gradient(circle at 80% 60%, rgba(70,130,255,0.85), transparent 45%);animation:nebulaDrift 180s linear infinite;}
@@ -17,10 +17,10 @@ html,body{height:100%;background:#000000;font-family:Inter,system-ui,Segoe UI,Ro
 .particles{position:absolute;inset:0;z-index:4;pointer-events:none;transform-style:preserve-3d;}
 .particle{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:0.4;animation:particleDrift linear infinite;}
 @keyframes particleDrift{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(var(--x),var(--y),var(--z))}}
-.shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;pointer-events:none;transform-style:preserve-3d;}
+.shield-wrap{position:relative;z-index:10;display:grid;place-items:center;width:60vmin;height:60vmin;pointer-events:auto;transform-style:preserve-3d;cursor:pointer;}
 .shield-svg{width:100%;height:100%;transform-origin:center center;pointer-events:none;}
 #starGroup{pointer-events:auto}
-#shield-star{transform-box:fill-box;transform-origin:center center;fill:#bdbdbd;filter:drop-shadow(0 0 15px rgba(255,255,255,0.4))}
+#shield-star{transform-box:fill-box;transform-origin:center center;fill:#bdbdbd;filter:drop-shadow(0 0 15px rgba(255,255,255,0.4));transition:transform 1s cubic-bezier(.2,.9,.2,1);}
 .letters-layer{position:fixed;left:0;right:0;bottom:6vh;height:18vh;pointer-events:none;z-index:11;display:flex;justify-content:center;align-items:flex-end;gap:2.4vw;}
 .letter{font-size:6.5vmin;font-weight:900;line-height:1;display:inline-block;position:fixed;transform:translate(-50%,-50%) scale(0.8);opacity:0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 12px rgba(0,0,0,0.8);transition:opacity .8s ease, transform 1.2s cubic-bezier(.2,.9,.2,1);}
 .letter.metal{background-image:linear-gradient(120deg,#ff4d4d 0%, #ff7777 30%, #002b76 70%, #003366 100%);-webkit-text-stroke:0.6px rgba(0,0,0,0.35);filter:drop-shadow(0 6px 24px rgba(0,0,0,0.8))}
@@ -39,7 +39,7 @@ html,body{height:100%;background:#000000;font-family:Inter,system-ui,Segoe UI,Ro
     <div class="particles"></div>
   </div>
 
-  <div class="shield-wrap" aria-hidden="true">
+  <div class="shield-wrap" id="shieldWrap" aria-hidden="true">
     <svg class="shield-svg" viewBox="0 0 200 200" role="img" aria-label="shield">
       <defs>
         <radialGradient id="metalRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#990000"/></radialGradient>
@@ -74,6 +74,14 @@ html,body{height:100%;background:#000000;font-family:Inter,system-ui,Segoe UI,Ro
     ct.appendChild(p);
   }
 })();
+
+const shieldWrap = document.getElementById('shieldWrap');
+let rotation = 0;
+shieldWrap.addEventListener('click', ()=>{
+  rotation += 1080;
+  shieldWrap.style.transition = 'transform 2s cubic-bezier(.2,.9,.2,1)';
+  shieldWrap.style.transform = `rotateY(${rotation}deg) rotateX(${rotation/2}deg)`;
+});
 </script>
 </body>
 </html>

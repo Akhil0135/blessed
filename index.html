@@ -24,8 +24,8 @@ class Particle {
   constructor(x, y){
     this.x = Math.random()*width;
     this.y = Math.random()*height;
-    this.vx = (Math.random()-0.5)*1;
-    this.vy = (Math.random()-0.5)*1;
+    this.vx = (Math.random()-0.5)*0.3; // ultra slow floating
+    this.vy = (Math.random()-0.5)*0.3;
     this.size = Math.random()*2+0.5;
     this.color = `rgba(255,${Math.floor(Math.random()*200+55)},${Math.floor(Math.random()*200+55)},${Math.random()*0.8+0.2})`;
     this.tx = x;
@@ -34,10 +34,11 @@ class Particle {
   }
   update(){
     if(this.tx !== undefined && this.ty !== undefined){
-      // slow convergence to target
-      this.x += (this.tx - this.x) * 0.03;
-      this.y += (this.ty - this.y) * 0.03;
+      // ultra slow convergence
+      this.x += (this.tx - this.x) * 0.01;
+      this.y += (this.ty - this.y) * 0.01;
     } else {
+      // floating
       this.x += this.vx;
       this.y += this.vy;
       if(this.x<0 || this.x>width) this.vx*=-1;
@@ -45,7 +46,7 @@ class Particle {
     }
     // store position for trail
     this.history.push({x:this.x, y:this.y});
-    if(this.history.length>10) this.history.shift();
+    if(this.history.length>15) this.history.shift();
   }
   draw(){
     // draw trail
@@ -99,12 +100,12 @@ for(let i=0;i<textPoints.length;i++){
 
 // Animate
 function animate(){
-  // cinematic trailing background
-  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  // ultra slow cinematic trailing background
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
   ctx.fillRect(0,0,width,height);
 
   // subtle cosmic glow
-  for(let i=0;i<3;i++){
+  for(let i=0;i<2;i++){
     const x = Math.random()*width;
     const y = Math.random()*height;
     const radius = Math.random()*200+100;

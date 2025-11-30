@@ -47,7 +47,7 @@
 </head>
 <body>
 <canvas id="cinema"></canvas>
-<div class="title">IMAX • NOLAN VISION</div>
+
 
 <script>
 /* ---------------- 3D Cinematic Space Simulation ---------------- */
@@ -85,6 +85,35 @@ function animate(){
 }
 
 animate();
+// --- THUNDER / SHOOTING STAR IMPACT EFFECT ---
+
+const impactStar = document.createElement('div');
+impactStar.id = 'impactStar';
+impactStar.style.position = 'absolute';
+impactStar.style.width = '6px';
+impactStar.style.height = '180px';
+impactStar.style.background = 'white';
+impactStar.style.top = '-300px';
+impactStar.style.left = '-300px';
+impactStar.style.transform = 'rotate(45deg)';
+impactStar.style.filter = 'blur(2px) drop-shadow(0 0 20px white)';
+impactStar.style.opacity = '0';
+document.body.appendChild(impactStar);
+
+setTimeout(() => {
+  impactStar.style.transition = 'all 1.2s ease-out';
+  impactStar.style.opacity = '1';
+  impactStar.style.top = '35%';
+  impactStar.style.left = '35%';
+}, 2000);
+
+impactStar.addEventListener('transitionend', () => {
+  const shieldSVG = document.querySelector('#shield svg');
+  shieldSVG.style.transition = 'all 1.3s ease-out';
+  shieldSVG.style.filter = 'brightness(5) blur(6px)';
+  shieldSVG.style.opacity = '0';
+});
+
 </script>
 <div id="shield"></div>
 <script>

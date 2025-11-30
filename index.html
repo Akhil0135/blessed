@@ -29,87 +29,78 @@ const ctx = canvas.getContext('2d');
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 
-// Particle class
 class Particle {
-  constructor() { this.reset(); this.tx = this.x; this.ty = this.y; }
+  constructor() {
+    this.reset();
+  }
   reset() {
-    this.x = Math.random()*width - width/2;
-    this.y = Math.random()*height - height/2;
-    this.z = Math.random()*width;
+    this.x = Math.random()*width;
+    this.y = Math.random()*height;
+    this.vx = (Math.random()-0.5)*1.5;
+    this.vy = (Math.random()-0.5)*1.5;
     this.size = Math.random()*2+0.5;
-    this.speed = Math.random()*1.5 + 0.5;
     this.color = `rgba(255,${Math.floor(Math.random()*200+55)},${Math.floor(Math.random()*200+55)},${Math.random()*0.6+0.4})`;
+    this.tx = null; // target x
+    this.ty = null; // target y
   }
   update() {
-    if(this.tx !== undefined && this.ty !== undefined){
-      // move toward target (text formation)
-      this.x += (this.tx - this.x) * 0.08; // faster formation
+    if(this.tx !== null && this.ty !== null){
+      // move toward text target
+      this.x += (this.tx - this.x) * 0.08;
       this.y += (this.ty - this.y) * 0.08;
+    } else {
+      // free floating
+      this.x += this.vx;
+      this.y += this.vy;
+      if(this.x<0 || this.x>width) this.vx*=-1;
+      if(this.y<0 || this.y>height) this.vy*=-1;
     }
-    this.z -= this.speed*0.1;
-    if(this.z <= 1) this.reset();
   }
   draw() {
-    const sx = (this.x * (width / this.z)) + width/2;
-    const sy = (this.y * (width / this.z)) + height/2;
-    const radius = this.size * (width / this.z);
-
-    const gradient = ctx.createRadialGradient(sx, sy, 0, sx, sy, radius);
-    gradient.addColorStop(0, this.color);
-    gradient.addColorStop(0.7, 'rgba(0,0,0,0.1)');
-    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size*2);
+    gradient.addColorStop(0,this.color);
+    gradient.addColorStop(0.7,'rgba(0,0,0,0.1)');
+    gradient.addColorStop(1,'rgba(0,0,0,0)');
     ctx.beginPath();
     ctx.fillStyle = gradient;
-    ctx.arc(sx, sy, radius, 0, Math.PI*2);
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
     ctx.fill();
   }
 }
 
-// Create particles
-const particleCount = 1000; // more particles for dense letters
 const particles = [];
+const particleCount = 1000;
 for(let i=0;i<particleCount;i++) particles.push(new Particle());
 
-// Camera movement
-let cameraScale = 1;
-let cameraOffsetX = 0;
-let cameraOffsetY = 0;
-let targetX = 0;
-let targetY = 0;
-document.addEventListener('mousemove', e => {
-  targetX = (e.clientX - width/2)/60;
-  targetY = (e.clientY - height/2)/60;
-});
-
-// Generate text points for PRINCE centered
+// Text mapping
 let textPoints = [];
 function createTextPoints() {
   const tempCanvas = document.createElement('canvas');
-  const tempCtx = tempCanvas.getContext('2d');
   tempCanvas.width = width;
   tempCanvas.height = height;
+  const tempCtx = tempCanvas.getContext('2d');
 
-  tempCtx.fillStyle = 'white';
-  tempCtx.font = `bold ${Math.floor(width/8)}px Arial`;
-  tempCtx.textAlign = 'center';
-  tempCtx.textBaseline = 'middle';
+  tempCtx.fillStyle='white';
+  tempCtx.font=`bold ${Math.floor(width/8)}px Arial`;
+  tempCtx.textAlign='center';
+  tempCtx.textBaseline='middle';
   tempCtx.fillText('PRINCE', width/2, height/2);
 
-  const imageData = tempCtx.getImageData(0,0,width,height);
+  const data = tempCtx.getImageData(0,0,width,height).data;
   textPoints = [];
-  for(let y=0;y<height;y+=6){ // smaller step for denser points
+  for(let y=0;y<height;y+=6){
     for(let x=0;x<width;x+=6){
-      const idx = (y*width + x) * 4;
-      if(imageData.data[idx+3] > 128){
-        textPoints.push({x:x - width/2, y:y - height/2});
+      const idx = (y*width+x)*4;
+      if(data[idx+3]>128){
+        textPoints.push({x:x,y:y});
       }
     }
   }
 }
 createTextPoints();
 
-// Assign particles to text points on click
-canvas.addEventListener('click', () => {
+// Assign particles to text on click
+canvas.addEventListener('click',()=>{
   for(let i=0;i<particles.length;i++){
     const p = particles[i];
     const point = textPoints[i % textPoints.length];
@@ -118,38 +109,31 @@ canvas.addEventListener('click', () => {
   }
 });
 
-// Animate scene
-function animate() {
-  ctx.fillStyle = 'rgba(0,0,0,0.1)'; // cinematic trail
+// Animate
+function animate(){
+  ctx.fillStyle='rgba(0,0,0,0.1)';
   ctx.fillRect(0,0,width,height);
 
-  cameraOffsetX += (targetX - cameraOffsetX) * 0.05;
-  cameraOffsetY += (targetY - cameraOffsetY) * 0.05;
-  cameraScale = 1 + Math.sin(Date.now()/7000)*0.02;
-  ctx.setTransform(cameraScale,0,0,cameraScale,cameraOffsetX,cameraOffsetY);
-
-  particles.forEach(p => { p.update(); p.draw(); });
-
-  // subtle cosmic glow shafts
+  // draw cosmic glow shafts
   for(let i=0;i<3;i++){
     const x = Math.random()*width;
     const y = Math.random()*height;
     const radius = Math.random()*200+100;
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    const gradient = ctx.createRadialGradient(x,y,0,x,y,radius);
     gradient.addColorStop(0,'rgba(255,255,255,0.01)');
     gradient.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle = gradient;
     ctx.fillRect(0,0,width,height);
   }
 
+  particles.forEach(p=>{p.update();p.draw();});
   requestAnimationFrame(animate);
 }
 animate();
 
-// Handle resize
-window.addEventListener('resize', () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
+window.addEventListener('resize',()=>{
+  width=canvas.width=window.innerWidth;
+  height=canvas.height=window.innerHeight;
   createTextPoints();
 });
 </script>

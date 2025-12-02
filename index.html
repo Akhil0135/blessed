@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>IMAX Nolan — Moon → Sun → Big Cross → Birthday Reveal</title>
+<title>IMAX Nolan — Moon → Sun → Wooden Cross → Birthday Reveal</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-night-1:#070617;
     --bg-night-2:#120430;
     --text-color:#ffdFA0;
-    --cross-color:#fff8e8;
+    --cross-color:#8B5A2B; /* Wood brown */
   }
   html,body{
     margin:0;
@@ -43,7 +43,6 @@
     height:2px;
     border-radius:50%;
     background:rgba(255,255,255,0.8);
-    box-shadow:0 0 10px rgba(255,255,255,0.5),0 0 20px rgba(255,255,255,0.2);
     animation:twinkle 3s infinite alternate;
     transform: translateZ(0px);
   }
@@ -95,18 +94,17 @@
     transition:opacity .3s linear;
   }
 
-  /* big cross */
+  /* wooden cross */
   #cross{
     position:absolute;
     top:-400px;
     left:50%;
     transform:translateX(-50%) scale(0.3);
-    width:60px;
+    width:40px;
     height:200px;
     z-index:70;
     opacity:0;
     background-color:var(--cross-color);
-    box-shadow:0 0 40px 15px rgba(255,248,232,0.4),0 0 120px 40px rgba(255,248,232,0.2);
     transition: all 1.5s ease-in-out;
   }
   #cross::before{
@@ -115,10 +113,9 @@
     left:50%;
     top:40%;
     transform:translate(-50%,-50%);
-    width:140px;
-    height:40px;
+    width:120px;
+    height:30px;
     background-color:var(--cross-color);
-    box-shadow:0 0 40px 15px rgba(255,248,232,0.4),0 0 120px 40px rgba(255,248,232,0.2);
   }
 
   /* message */
@@ -145,8 +142,8 @@
     #moon{width:140px;height:140px;}
     #sun{width:200px;height:200px;}
     #message{font-size:14px;}
-    #cross{width:40px;height:140px;}
-    #cross::before{width:100px;height:28px;}
+    #cross{width:25px;height:140px;}
+    #cross::before{width:80px;height:20px;}
   }
 </style>
 </head>
@@ -181,7 +178,7 @@ for(let i=0;i<160;i++){
   s.style.top = Math.random()*80+'%';
   s.style.opacity = 0.2 + Math.random()*0.8;
   s.style.animationDuration = (2 + Math.random()*2)+'s';
-  s.style.transform = `translateZ(${Math.random()*400}px)`; // 3D depth effect
+  s.style.transform = `translateZ(${Math.random()*400}px)`;
   starsWrap.appendChild(s);
   stars.push(s);
 }
@@ -246,10 +243,10 @@ function updateScene(t){
     }
   }
 
-  // Show big cross softly after sun fully appears (t>0.95)
+  // Show wooden cross after sun fully appears (t>0.95)
   if(t>0.95){
     cross.style.top='10%';
-    cross.style.opacity=0.85;
+    cross.style.opacity=1;
     cross.style.transform='translateX(-50%) scale(1)';
   }
 }

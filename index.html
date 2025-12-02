@@ -1,132 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IMAX PRINCE</title>
+<title>IMAX PRINCE FIXED</title>
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background: black;
-    }
-    canvas { display: block; }
+    html,body { margin:0; padding:0; background:black; overflow:hidden; }
+    canvas { display:block; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
 <script>
-// --------------------- CANVAS SETUP ---------------------
+// -------------------- CANVAS --------------------
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    generateTextPoints();
+    generateText();
 }
 resize();
 window.onresize = resize;
 
 
-// --------------------- TEXT SETUP -----------------------
-const TEXT = "PRINCE";
-let textPoints = [];
+// -------------------- FIXED LETTER MAPPING --------------------
+let points = [];
 let particles = [];
+const TEXT = "PRINCE";
 
-function generateTextPoints() {
-    textPoints = [];
+function generateText() {
+
+    points = [];
     particles = [];
 
-    // Temp canvas
+    // *** SMALL GUARANTEED WORKING CANVAS ***
     const temp = document.createElement("canvas");
     const tctx = temp.getContext("2d");
 
-    temp.width = canvas.width;
-    temp.height = canvas.height;
+    temp.width = 900;     // fixed
+    temp.height = 300;    // fixed
 
-    // text size
-    const fontSize = canvas.width / 6;
-    tctx.font = `900 ${fontSize}px Arial`;
-    tctx.fillStyle = "#fff";
+    tctx.fillStyle = "white";
+    tctx.font = "bold 180px Arial";
     tctx.textAlign = "center";
     tctx.textBaseline = "middle";
-    tctx.fillText(TEXT, temp.width / 2, temp.height / 2);
+    tctx.fillText(TEXT, temp.width/2, temp.height/2);
 
-    const img = tctx.getImageData(0, 0, temp.width, temp.height).data;
+    const img = tctx.getImageData(0,0,temp.width,temp.height).data;
 
-    for (let y = 0; y < temp.height; y += 6) {
-        for (let x = 0; x < temp.width; x += 6) {
+    for (let y = 0; y < temp.height; y += 4) {
+        for (let x = 0; x < temp.width; x += 4) {
             const i = (y * temp.width + x) * 4;
-            if (img[i + 3] > 150) {
-                textPoints.push({ x, y });
+            if (img[i+3] > 200) {
+                // scale to screen center
+                const sx = (x / temp.width) * canvas.width;
+                const sy = (y / temp.height) * canvas.height;
+                points.push({x:sx, y:sy});
             }
         }
     }
 
-    // particle objects
-    textPoints.forEach(p => {
+    // particles
+    points.forEach(p => {
         particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
             tx: p.x,
             ty: p.y,
-            size: Math.random() * 1.5 + 1.2,
-            speed: Math.random() * 0.05 + 0.03
+            size: 1.5,
+            speed: 0.03
         });
     });
 }
 
 
-// --------------------- BACKGROUND STARS ----------------------
+// -------------------- STARS --------------------
 const stars = [];
-const STAR_COUNT = 140;
-
-for (let i = 0; i < STAR_COUNT; i++) {
+for (let i=0; i<150; i++){
     stars.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        size: Math.random() * 1.1 + 0.2,
-        tw: Math.random() * 0.02 + 0.002
+        x: Math.random()*window.innerWidth,
+        y: Math.random()*window.innerHeight,
+        s: Math.random()*1.2+0.2,
+        t: Math.random()*0.02 + 0.002
     });
 }
 
-function drawStars() {
-    stars.forEach(s => {
-        const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
+function drawStars(){
+    stars.forEach(s=>{
+        const glow = (Math.sin(Date.now()*s.t)+1)*0.5;
         ctx.fillStyle = `rgba(255,255,255,${glow})`;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.arc(s.x,s.y,s.s,0,Math.PI*2);
         ctx.fill();
     });
 }
 
 
-// --------------------- COLORFUL LETTER GRADIENT ----------------------
-function colorFor(x) {
-    const t = Date.now() * 0.001;
-    const r = Math.sin(t + x * 0.01) * 127 + 128;
-    const g = Math.sin(t + x * 0.02 + 2) * 127 + 128;
-    const b = Math.sin(t + x * 0.03 + 4) * 127 + 128;
+// -------------------- COLOR FUNCTION --------------------
+function rainbow(x){
+    const t = Date.now()*0.001;
+    const r = Math.sin(t + x*0.01)*127+128;
+    const g = Math.sin(t + x*0.02 +2)*127+128;
+    const b = Math.sin(t + x*0.03 +4)*127+128;
     return `rgb(${r},${g},${b})`;
 }
 
 
-// --------------------- ANIMATION LOOP ----------------------
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// -------------------- ANIMATION --------------------
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
     drawStars();
 
-    particles.forEach(p => {
+    particles.forEach(p=>{
         p.x += (p.tx - p.x) * p.speed;
         p.y += (p.ty - p.y) * p.speed;
 
-        ctx.fillStyle = colorFor(p.x);
+        ctx.fillStyle = rainbow(p.x);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
         ctx.fill();
     });
 

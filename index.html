@@ -3,155 +3,142 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IMAX PRINCE Cinematic</title>
+<title>IMAX PRINCE Ultimate Cinematic</title>
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background: #000;
-    }
-    canvas {
-        display: block;
-    }
+    html, body { margin: 0; padding: 0; overflow: hidden; background: #000; }
+    canvas { display: block; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-
 <script>
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
+function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); onresize = resize;
 
-function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-}
-resize();
-onresize = resize;
-
-// ------------------- BACKGROUND STAR FIELD -------------------
+// ------------ BACKGROUND TWINKLING STARS ------------
 const stars = [];
-const starCount = 180;
-
-for (let i = 0; i < starCount; i++) {
+const starCount = 200;
+for(let i=0;i<starCount;i++){
     stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 1.2 + 0.3,
-        tw: Math.random() * 0.015 + 0.003
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        size: Math.random()*1.2+0.3,
+        tw: Math.random()*0.015+0.003
     });
 }
-
-function drawStars() {
-    stars.forEach(s => {
-        let glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5 * 0.8;
+function drawStars(){
+    stars.forEach(s=>{
+        let glow = (Math.sin(Date.now()*s.tw)+1)*0.5*0.9;
         ctx.fillStyle = `rgba(255,255,255,${glow})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill();
     });
 }
 
-// ------------------- TEXT MAPPING (PRINCE) -------------------
+// ------------ MAP PRINCE TEXT ------------
 const text = "PRINCE";
-
 const tCanvas = document.createElement("canvas");
+tCanvas.width = canvas.width;
+tCanvas.height = canvas.height;
 const tCtx = tCanvas.getContext("2d");
-
-function mapText() {
-    let fontSize = canvas.width / 7;
-    tCanvas.width = canvas.width;
-    tCanvas.height = canvas.height;
-
-    tCtx.clearRect(0, 0, tCanvas.width, tCanvas.height);
-    tCtx.fillStyle = "#fff";
-    tCtx.font = "900 " + fontSize + "px Arial Black";
+function mapText(){
+    let fontSize = canvas.width/7;
+    tCtx.clearRect(0,0,tCanvas.width,tCanvas.height);
+    tCtx.fillStyle = "white";
+    tCtx.font = `900 ${fontSize}px Arial Black`;
     tCtx.textAlign = "center";
     tCtx.textBaseline = "middle";
-    tCtx.fillText(text, tCanvas.width / 2, tCanvas.height / 2);
+    tCtx.fillText(text,tCanvas.width/2,tCanvas.height/2);
 
-    let data = tCtx.getImageData(0, 0, tCanvas.width, tCanvas.height).data;
+    let data = tCtx.getImageData(0,0,tCanvas.width,tCanvas.height).data;
     const pts = [];
-
-    for (let y = 0; y < tCanvas.height; y += 6) {
-        for (let x = 0; x < tCanvas.width; x += 6) {
-            let i = (y * tCanvas.width + x) * 4;
-            if (data[i + 3] > 200) pts.push({ x, y });
+    for(let y=0;y<tCanvas.height;y+=6){
+        for(let x=0;x<tCanvas.width;x+=6){
+            let i=(y*tCanvas.width+x)*4;
+            if(data[i+3]>200) pts.push({x,y});
         }
     }
     return pts;
 }
-
 let points = mapText();
 
-// ------------------- PARTICLES FOR PRINCE -------------------
-const particles = points.map(p => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
+// ------------ PARTICLES FOR PRINCE ------------
+const particles = points.map(p=>({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
     tx: p.x,
     ty: p.y,
-    size: Math.random() * 2 + 1.3,
-    speed: Math.random() * 0.06 + 0.04,
-    hue: Math.random() * 360 // color
+    vx:0,
+    vy:0,
+    size: Math.random()*2+1.3,
+    speed: Math.random()*0.06+0.04,
+    hue: Math.random()*360
 }));
 
-// ------------------- IMAX FOG LAYER -------------------
-function drawFog() {
-    let gradient = ctx.createRadialGradient(
-        canvas.width / 2, canvas.height / 2, canvas.width * 0.1,
-        canvas.width / 2, canvas.height / 2, canvas.width * 0.8
+// ------------ FOG ------------
+function drawFog(){
+    let g = ctx.createRadialGradient(
+        canvas.width/2,canvas.height/2,canvas.width*0.1,
+        canvas.width/2,canvas.height/2,canvas.width*0.8
     );
-    gradient.addColorStop(0, "rgba(255,255,255,0.04)");
-    gradient.addColorStop(1, "rgba(0,0,0,0)");
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    g.addColorStop(0,"rgba(255,255,255,0.04)");
+    g.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 }
 
-// ------------------- CAMERA ZOOM-IN -------------------
+// ------------ CAMERA ROTATION + ZOOM ------------
 let zoom = 1;
-function applyZoom() {
-    zoom += 0.00015;
+let rotation = 0;
+function applyCamera(){
+    zoom += 0.00013;
+    rotation += 0.0002;
     ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.scale(zoom, zoom);
-    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    ctx.translate(canvas.width/2,canvas.height/2);
+    ctx.scale(zoom,zoom);
+    ctx.rotate(rotation);
+    ctx.translate(-canvas.width/2,-canvas.height/2);
 }
 
-// ------------------- ANIMATION -------------------
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// ------------ EXPLOSION + REFRACTION EFFECT ------------
+let explode = false;
+setTimeout(()=> explode=true, 2500);
 
-    // Camera Zoom layer
-    applyZoom();
+// ------------ ANIMATION ------------
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Background twinkling stars
+    applyCamera();
     drawStars();
 
-    // PRINCE glowing particles
-    particles.forEach(p => {
-        p.x += (p.tx - p.x) * p.speed;
-        p.y += (p.ty - p.y) * p.speed;
+    particles.forEach(p=>{
+        if(explode){
+            // explosion outward then return
+            p.vx += (Math.random()-0.5)*0.4;
+            p.vy += (Math.random()-0.5)*0.4;
+        }
+        // move back to target
+        p.vx += (p.tx - p.x)*p.speed*0.05;
+        p.vy += (p.ty - p.y)*p.speed*0.05;
+        p.x += p.vx;
+        p.y += p.vy;
 
-        let pulse = (Math.sin(Date.now() * 0.004) + 1) * 0.5 + 0.4;
+        let pulse = (Math.sin(Date.now()*0.004)+1)*0.5+0.4;
 
         ctx.beginPath();
         ctx.fillStyle = `hsla(${p.hue},100%,60%,${pulse})`;
         ctx.shadowColor = `hsla(${p.hue},100%,70%,1)`;
-        ctx.shadowBlur = 10;
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.shadowBlur = 12;
+        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
         ctx.fill();
     });
 
     ctx.restore();
-
-    // Fog layer
     drawFog();
 
     requestAnimationFrame(animate);
 }
-
 animate();
 </script>
 </body>

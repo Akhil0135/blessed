@@ -1,162 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>IMAX PRINCE</title>
 <style>
     html, body {
         margin: 0;
         padding: 0;
         overflow: hidden;
-        background: #000;
+        background: black;
     }
-
-    canvas {
-        display: block;
-    }
+    canvas { display: block; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
 <script>
-// ------------ SETUP ------------
+// --------------------- CANVAS SETUP ---------------------
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    mapLetters();       // regenerate letters on resize
+    generateTextPoints();
 }
 resize();
 window.onresize = resize;
 
 
-// ------------ BACKGROUND STARS (NOT TOUCHING LETTERS) ------------
-let bgStars = [];
-const bgStarCount = 160;
-
-// We'll fill bgStars AFTER mapping letters (so we avoid overlap)
-let letterMask = [];
-
-
-// ------------ LETTER PARTICLES ------------
-const text = "PRINCE";
-
-let letterPoints = [];
+// --------------------- TEXT SETUP -----------------------
+const TEXT = "PRINCE";
+let textPoints = [];
 let particles = [];
 
-// hidden canvas for reading letter pixels
-const temp = document.createElement("canvas");
-const tctx = temp.getContext("2d");
+function generateTextPoints() {
+    textPoints = [];
+    particles = [];
 
+    // Temp canvas
+    const temp = document.createElement("canvas");
+    const tctx = temp.getContext("2d");
 
-function mapLetters() {
     temp.width = canvas.width;
     temp.height = canvas.height;
 
+    // text size
     const fontSize = canvas.width / 6;
-
-    tctx.clearRect(0, 0, temp.width, temp.height);
+    tctx.font = `900 ${fontSize}px Arial`;
     tctx.fillStyle = "#fff";
-    tctx.font = "900 " + fontSize + "px Arial";
     tctx.textAlign = "center";
     tctx.textBaseline = "middle";
-    tctx.fillText(text, temp.width / 2, temp.height / 2);
+    tctx.fillText(TEXT, temp.width / 2, temp.height / 2);
 
     const img = tctx.getImageData(0, 0, temp.width, temp.height).data;
 
-    letterPoints = [];
-    letterMask = [];
-
-    for (let y = 0; y < temp.height; y += 5) {
-        for (let x = 0; x < temp.width; x += 5) {
-
-            let index = (y * temp.width + x) * 4;
-
-            if (img[index + 3] > 180) {
-                letterPoints.push({ x, y });
-                letterMask.push(`${x},${y}`);
+    for (let y = 0; y < temp.height; y += 6) {
+        for (let x = 0; x < temp.width; x += 6) {
+            const i = (y * temp.width + x) * 4;
+            if (img[i + 3] > 150) {
+                textPoints.push({ x, y });
             }
         }
     }
 
-    buildParticles();
-    buildStars();
-}
-
-
-// ------------ PARTICLES TARGETING LETTER SHAPE ------------
-function buildParticles() {
-    particles = [];
-
-    letterPoints.forEach(p => {
+    // particle objects
+    textPoints.forEach(p => {
         particles.push({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
             tx: p.x,
             ty: p.y,
-            size: Math.random() * 1.6 + 1.1,
-            speed: Math.random() * 0.08 + 0.05
+            size: Math.random() * 1.5 + 1.2,
+            speed: Math.random() * 0.05 + 0.03
         });
     });
 }
 
 
-// ------------ BUILD BACKGROUND STARS (AVOID LETTER AREA) ------------
-function buildStars() {
-    bgStars = [];
+// --------------------- BACKGROUND STARS ----------------------
+const stars = [];
+const STAR_COUNT = 140;
 
-    for (let i = 0; i < bgStarCount; i++) {
-        let x, y, key;
-
-        // ensure star is NOT on text shape
-        do {
-            x = Math.random() * canvas.width;
-            y = Math.random() * canvas.height;
-            key = `${Math.round(x/5)*5},${Math.round(y/5)*5}`;
-        } while (letterMask.includes(key));
-
-        bgStars.push({
-            x, y,
-            size: Math.random() * 1.1 + 0.3,
-            tw: Math.random() * 0.02 + 0.003
-        });
-    }
+for (let i = 0; i < STAR_COUNT; i++) {
+    stars.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 1.1 + 0.2,
+        tw: Math.random() * 0.02 + 0.002
+    });
 }
 
-
-// ------------ RAINBOW / NOLAN COLOR GRADIENT FOR LETTERS ------------
-function colorParticle(x) {
-    const t = Date.now() * 0.0007;
-    const r = Math.sin(t + x * 0.002) * 127 + 128;
-    const g = Math.sin(t + x * 0.004 + 2) * 127 + 128;
-    const b = Math.sin(t + x * 0.006 + 4) * 127 + 128;
-    return `rgb(${r},${g},${b})`;
-}
-
-
-// ------------ ANIMATION ------------
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // --- BACKGROUND TWINKLING STARS ---
-    bgStars.forEach(s => {
+function drawStars() {
+    stars.forEach(s => {
         const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
         ctx.fillStyle = `rgba(255,255,255,${glow})`;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
         ctx.fill();
     });
+}
 
-    // --- LETTER PARTICLES ---
+
+// --------------------- COLORFUL LETTER GRADIENT ----------------------
+function colorFor(x) {
+    const t = Date.now() * 0.001;
+    const r = Math.sin(t + x * 0.01) * 127 + 128;
+    const g = Math.sin(t + x * 0.02 + 2) * 127 + 128;
+    const b = Math.sin(t + x * 0.03 + 4) * 127 + 128;
+    return `rgb(${r},${g},${b})`;
+}
+
+
+// --------------------- ANIMATION LOOP ----------------------
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawStars();
+
     particles.forEach(p => {
         p.x += (p.tx - p.x) * p.speed;
         p.y += (p.ty - p.y) * p.speed;
 
-        ctx.fillStyle = colorParticle(p.x);
+        ctx.fillStyle = colorFor(p.x);
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
@@ -166,7 +134,6 @@ function animate() {
 }
 
 animate();
-
 </script>
 </body>
 </html>

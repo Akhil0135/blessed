@@ -19,45 +19,31 @@ const ctx = canvas.getContext('2d');
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 
-// Particle class with trail
+// Particle class without trail circles
 class Particle {
   constructor(x, y){
     this.x = Math.random()*width;
     this.y = Math.random()*height;
-    this.vx = (Math.random()-0.5)*0.3; // ultra slow floating
-    this.vy = (Math.random()-0.5)*0.3;
+    this.vx = (Math.random()-0.5)*2; // faster floating
+    this.vy = (Math.random()-0.5)*2;
     this.size = Math.random()*2+0.5;
-    this.color = `rgba(255,${Math.floor(Math.random()*200+55)},${Math.floor(Math.random()*200+55)},${Math.random()*0.8+0.2})`;
+    this.color = `rgba(255,${Math.floor(Math.random()*200+55)},${Math.floor(Math.random()*200+55)},${Math.random()*0.8+0.3})`;
     this.tx = x;
     this.ty = y;
-    this.history = []; // for trail
   }
   update(){
     if(this.tx !== undefined && this.ty !== undefined){
-      // ultra slow convergence
-      this.x += (this.tx - this.x) * 0.01;
-      this.y += (this.ty - this.y) * 0.01;
+      // faster convergence
+      this.x += (this.tx - this.x) * 0.08;
+      this.y += (this.ty - this.y) * 0.08;
     } else {
-      // floating
       this.x += this.vx;
       this.y += this.vy;
       if(this.x<0 || this.x>width) this.vx*=-1;
       if(this.y<0 || this.y>height) this.vy*=-1;
     }
-    // store position for trail
-    this.history.push({x:this.x, y:this.y});
-    if(this.history.length>15) this.history.shift();
   }
   draw(){
-    // draw trail
-    for(let i=0;i<this.history.length;i++){
-      const p = this.history[i];
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(255,255,255,${(i+1)/this.history.length*0.3})`;
-      ctx.arc(p.x,p.y,this.size*(i/5+0.5),0,Math.PI*2);
-      ctx.fill();
-    }
-    // draw particle
     const grad = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*2);
     grad.addColorStop(0,this.color);
     grad.addColorStop(0.7,'rgba(0,0,0,0.1)');
@@ -100,8 +86,7 @@ for(let i=0;i<textPoints.length;i++){
 
 // Animate
 function animate(){
-  // ultra slow cinematic trailing background
-  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.fillStyle = 'rgba(0,0,0,0.15)'; // cinematic trailing background
   ctx.fillRect(0,0,width,height);
 
   // subtle cosmic glow

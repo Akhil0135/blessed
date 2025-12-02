@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX PRINCE — Cinematic</title>
+<title>IMAX PRINCE</title>
 <style>
     html, body { margin: 0; padding: 0; overflow: hidden; background: #000; }
     canvas { display: block; }
@@ -11,7 +11,9 @@
 </head>
 <body>
 <canvas id="c"></canvas>
+
 <script>
+// ------------ SETUP ------------
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
@@ -23,95 +25,114 @@ function resize() {
 resize();
 window.onresize = resize;
 
-// Background stars
+// ------------ BACKGROUND TWINKLING STARS ------------
 const bgStars = [];
-for (let i=0;i<200;i++){
-    bgStars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*1.2+0.2,tw:Math.random()*0.02+0.003});
+const bgStarCount = 180;
+for (let i = 0; i < bgStarCount; i++) {
+    bgStars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 1.5 + 0.3,
+        tw: Math.random() * 0.02 + 0.003
+    });
 }
-function drawStars(){
-    bgStars.forEach(s=>{
-        const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
-        ctx.fillStyle=`rgba(255,255,255,${glow})`;
+function drawStarShape() {
+    bgStars.forEach(s => {
+        const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
+        ctx.fillStyle = `rgba(255,255,255,${glow})`;
         ctx.beginPath();
-        ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
         ctx.fill();
     });
 }
 
-// PRINCE letters
-const text="PRINCE";
+// ------------ PRINCE LETTER PARTICLES ------------
+const text = "PRINCE";
 const temp = document.createElement("canvas");
 const tctx = temp.getContext("2d");
-let letterPoints=[];
-function mapText(){
+let letterPoints = [];
+let particles = [];
+
+function mapText() {
     temp.width = canvas.width;
     temp.height = canvas.height;
-    tctx.clearRect(0,0,temp.width,temp.height);
-    tctx.font=`bold ${canvas.width/7}px Arial Black`;
-    tctx.textAlign="center";
-    tctx.textBaseline="middle";
-    tctx.fillStyle="#fff";
-    tctx.fillText(text,temp.width/2,temp.height/2);
-    const data=tctx.getImageData(0,0,temp.width,temp.height).data;
-    letterPoints=[];
-    for(let y=0;y<temp.height;y+=5){
-        for(let x=0;x<temp.width;x+=5){
-            const i=(y*temp.width+x)*4;
-            if(data[i+3]>200) letterPoints.push({x,y});
+    let fontSize = canvas.width / 7;
+    tctx.clearRect(0, 0, temp.width, temp.height);
+    tctx.fillStyle = "#fff";
+    tctx.font = "bold " + fontSize + "px Arial";
+    tctx.textAlign = "center";
+    tctx.textBaseline = "middle";
+    tctx.fillText(text, temp.width / 2, temp.height / 2);
+
+    const data = tctx.getImageData(0, 0, temp.width, temp.height).data;
+    letterPoints = [];
+    for (let y = 0; y < temp.height; y += 6) {
+        for (let x = 0; x < temp.width; x += 6) {
+            let index = (y * temp.width + x) * 4;
+            if (data[index + 3] > 200) letterPoints.push({x, y});
         }
     }
-    initParticles();
+    resetParticles();
 }
 
-// Particles
-let particles=[];
-function initParticles(){
-    particles = letterPoints.map(p=>({
-        x: p.x + (Math.random()-0.5)*60,
-        y: p.y + (Math.random()-0.5)*60,
+// ------------ PARTICLE SYSTEM ------------
+function resetParticles() {
+    particles = letterPoints.map(p => ({
+        x: p.x + (Math.random() - 0.5) * 150, // burst offset
+        y: p.y + (Math.random() - 0.5) * 150,
         tx: p.x,
         ty: p.y,
-        vx: (Math.random()-0.5)*3,
-        vy: (Math.random()-0.5)*3,
-        size: Math.random()*2+1.5,
-        speed: Math.random()*0.06+0.04,
-        hue: Math.random()*360,
-        spark: Math.random()
+        size: Math.random() * 2.5 + 1.5,
+        speed: Math.random() * 0.08 + 0.04,
+        vx: 0,
+        vy: 0,
+        hue: Math.random() * 360
     }));
 }
+mapText();
 
-// Hue shift
-function electricHue(base){
-    return (base + Math.sin(Date.now()*0.002)*120)%360;
-}
+// ------------ ANIMATION ------------
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// Animation
-let forming=false;
-setTimeout(()=>forming=true,1000);
+    // --- CAMERA EFFECT ---
+    const driftX = Math.sin(Date.now() * 0.0003) * 8;
+    const driftY = Math.cos(Date.now() * 0.00025) * 8;
+    ctx.save();
+    ctx.translate(canvas.width / 2 + driftX, canvas.height / 2 + driftY);
+    ctx.rotate(Math.sin(Date.now() * 0.0001) * 0.02);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
-function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    // --- DRAW STARS ---
+    drawStarShape();
 
-    drawStars();
-
-    particles.forEach(p=>{
-        if(forming){
-            p.vx += (p.tx - p.x)*p.speed;
-            p.vy += (p.ty - p.y)*p.speed;
-        }
+    // --- DRAW LETTER PARTICLES ---
+    particles.forEach(p => {
+        p.vx += (p.tx - p.x) * p.speed * 0.065 + (Math.random() - 0.5) * 0.3;
+        p.vy += (p.ty - p.y) * p.speed * 0.065 + (Math.random() - 0.5) * 0.3;
         p.x += p.vx;
         p.y += p.vy;
 
-        let hue = electricHue(p.hue);
-        let pulse = (Math.sin(Date.now()*0.02+p.spark*5)+1)*0.5+0.6;
-
+        // Sparkle pulse
+        const pulse = (Math.sin(Date.now() * 0.02 + p.x * 0.01) + 1) * 0.5 + 0.5;
+        const hue = (p.hue + Date.now() * 0.03) % 360;
         ctx.beginPath();
-        ctx.fillStyle = `hsla(${hue},100%,65%,${pulse})`;
-        ctx.shadowColor = `hsla(${hue},100%,75%,1)`;
-        ctx.shadowBlur = 20 + Math.sin(Date.now()*0.02+p.spark)*10;
-        ctx.arc(p.x,p.y,p.size + Math.sin(Date.now()*0.02+p.spark)*0.8,0,Math.PI*2);
+        ctx.fillStyle = `hsla(${hue}, 100%, 70%, ${pulse})`;
+        ctx.shadowBlur = 18 * pulse;
+        ctx.shadowColor = ctx.fillStyle;
+        ctx.arc(p.x, p.y, p.size * pulse, 0, Math.PI * 2);
         ctx.fill();
     });
+
+    ctx.restore();
+
+    // --- CINEMATIC FOG ---
+    const g = ctx.createRadialGradient(canvas.width/2, canvas.height/2, canvas.width*0.05,
+                                      canvas.width/2, canvas.height/2, canvas.width*0.9);
+    g.addColorStop(0, "rgba(255,255,255,0.05)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 
     requestAnimationFrame(animate);
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMAX Nolan Cosmic Scene — PRINCE</title>
+<title>IMAX Nolan Cosmic — PRINCE</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body { width:100%; height:100%; overflow:hidden; background:#000; }
@@ -11,106 +11,145 @@
 </style>
 </head>
 <body>
+
 <canvas id="canvas"></canvas>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 
-// Particle class without trail circles
+// ----------------------------------------------------
+// BACKGROUND FLOATING PARTICLES
+// ----------------------------------------------------
+const bgParticles = [];
+for(let i = 0; i < 250; i++){
+  bgParticles.push({
+    x: Math.random()*width,
+    y: Math.random()*height,
+    z: Math.random()*2 + 1,
+    size: Math.random()*1.5 + 0.5
+  });
+}
+
+
+// ----------------------------------------------------
+// PARTICLES THAT FORM PRINCE
+// ----------------------------------------------------
 class Particle {
   constructor(x, y){
     this.x = Math.random()*width;
     this.y = Math.random()*height;
-    this.vx = (Math.random()-0.5)*2; // faster floating
-    this.vy = (Math.random()-0.5)*2;
-    this.size = Math.random()*2+0.5;
-    this.color = `rgba(255,${Math.floor(Math.random()*200+55)},${Math.floor(Math.random()*200+55)},${Math.random()*0.8+0.3})`;
+    this.size = Math.random()*2+0.7;
+
+    // glowing color
+    this.color = `rgba(255,${Math.floor(Math.random()*150+105)},${Math.floor(Math.random()*150+105)},0.9)`;
+
+    // speed towards target
     this.tx = x;
     this.ty = y;
+    this.vx = (Math.random()-0.5)*3;
+    this.vy = (Math.random()-0.5)*3;
   }
   update(){
-    if(this.tx !== undefined && this.ty !== undefined){
-      // faster convergence
-      this.x += (this.tx - this.x) * 0.08;
-      this.y += (this.ty - this.y) * 0.08;
-    } else {
-      this.x += this.vx;
-      this.y += this.vy;
-      if(this.x<0 || this.x>width) this.vx*=-1;
-      if(this.y<0 || this.y>height) this.vy*=-1;
-    }
+    // fast formation
+    this.x += (this.tx - this.x) * 0.07;
+    this.y += (this.ty - this.y) * 0.07;
   }
   draw(){
-    const grad = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*2);
-    grad.addColorStop(0,this.color);
-    grad.addColorStop(0.7,'rgba(0,0,0,0.1)');
-    grad.addColorStop(1,'rgba(0,0,0,0)');
+    const grad = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*4);
+    grad.addColorStop(0, this.color);
+    grad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
     ctx.fill();
   }
 }
 
-// Generate text points for "PRINCE"
-function getTextPoints(text){
-  const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = width;
-  tempCanvas.height = height;
-  const tempCtx = tempCanvas.getContext('2d');
-  tempCtx.fillStyle = 'white';
-  tempCtx.font = `bold ${Math.floor(width/8)}px Arial`;
-  tempCtx.textAlign = 'center';
-  tempCtx.textBaseline = 'middle';
-  tempCtx.fillText(text, width/2, height/2);
 
-  const imgData = tempCtx.getImageData(0,0,width,height).data;
-  const points = [];
-  for(let y=0;y<height;y+=6){
-    for(let x=0;x<width;x+=6){
-      const idx = (y*width+x)*4;
-      if(imgData[idx+3] > 128) points.push({x:x,y:y});
+// ----------------------------------------------------
+// CREATE TEXT POINTS FOR PRINCE
+// ----------------------------------------------------
+function getTextPoints(text){
+  const tCanvas = document.createElement("canvas");
+  tCanvas.width = width;
+  tCanvas.height = height;
+  const tCtx = tCanvas.getContext("2d");
+
+  tCtx.fillStyle = "white";
+  tCtx.font = `bold ${Math.floor(width/7)}px Arial`;
+  tCtx.textAlign = "center";
+  tCtx.textBaseline = "middle";
+  tCtx.fillText(text, width/2, height/2);
+
+  const img = tCtx.getImageData(0,0,width,height).data;
+  const pts = [];
+
+  for(let y=0; y<height; y+=6){
+    for(let x=0; x<width; x+=6){
+      if(img[(y*width + x)*4 + 3] > 128){
+        pts.push({x,y});
+      }
     }
   }
-  return points;
+  return pts;
 }
 
-const textPoints = getTextPoints('PRINCE');
-const particles = [];
-for(let i=0;i<textPoints.length;i++){
-  particles.push(new Particle(textPoints[i].x, textPoints[i].y));
-}
+const textPoints = getTextPoints("PRINCE");
+const particles = textPoints.map(p => new Particle(p.x, p.y));
 
-// Animate
+
+// ----------------------------------------------------
+// ANIMATION LOOP
+// ----------------------------------------------------
+let zoom = 1;
 function animate(){
-  ctx.fillStyle = 'rgba(0,0,0,0.15)'; // cinematic trailing background
+  // black background with IMAX fade
+  ctx.fillStyle = "rgba(0,0,0,0.18)";
   ctx.fillRect(0,0,width,height);
 
-  // subtle cosmic glow
-  for(let i=0;i<2;i++){
-    const x = Math.random()*width;
-    const y = Math.random()*height;
-    const radius = Math.random()*200+100;
-    const grad = ctx.createRadialGradient(x,y,0,x,y,radius);
-    grad.addColorStop(0,'rgba(255,255,255,0.01)');
-    grad.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0,0,width,height);
-  }
+  // camera zoom effect
+  zoom += 0.0005;
+  ctx.save();
+  ctx.translate(width/2, height/2);
+  ctx.scale(zoom, zoom);
+  ctx.translate(-width/2, -height/2);
 
-  particles.forEach(p=>{p.update();p.draw();});
+  // background floating stars
+  bgParticles.forEach(p=>{
+    p.y -= p.z * 0.3;
+    if(p.y < 0){
+      p.y = height + Math.random()*50;
+      p.x = Math.random()*width;
+    }
+    ctx.fillStyle = "rgba(255,255,255,"+(p.z/3)+")";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // PRINCE star particles
+  particles.forEach(p=>{
+    p.update();
+    p.draw();
+  });
+
+  ctx.restore();
   requestAnimationFrame(animate);
 }
 animate();
 
-// Handle resize
-window.addEventListener('resize', ()=>{
+
+// ----------------------------------------------------
+// HANDLE RESIZE
+// ----------------------------------------------------
+window.addEventListener("resize", ()=>{
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
 });
 </script>
+
 </body>
 </html>

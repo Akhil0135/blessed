@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IMAX Nolan — Moon Reveal</title>
+<title>IMAX Nolan — Moon Reveal with Stars</title>
 
 <style>
     body{
@@ -15,73 +15,19 @@
         font-family: "Georgia", serif;
         position:relative;
 
-        /* Nolan-style vignette */
         box-shadow: inset 0 0 250px 100px #000;
     }
 
-    /* IMAX Space Gradient */
-    #bg{
-        position:absolute;
-        inset:0;
-        background: radial-gradient(circle at 30% 20%, #1a1a2f 0%, #050510 60%, #000 100%);
-        z-index:-3;
-    }
-
-    /* Haze / Nebula */
-    #haze{
-        position:absolute;
-        inset:0;
-        background: radial-gradient(circle at 40% 40%, rgba(120,120,255,0.08), transparent 60%);
-        mix-blend-mode: screen;
-        z-index:-2;
-    }
-
-    /* Subtle film grain */
-    #grain{
-        position:absolute;
-        inset:0;
-        background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2NkgIL/////BwAFeQKXc2PpWwAAAABJRU5ErkJggg==");
-        opacity:0.10;
-        pointer-events:none;
-        z-index:-1;
-    }
-
-    /* moon */
-    #moon{
-        position:absolute;
-        top:60px;
-        left:60px;
-        width:150px;
-        height:150px;
-        border-radius:50%;
-        
-        /* Detailed IMAX moon texture */
-        background: radial-gradient(circle,
-            #ffffff 0%,
-            #f2f2f2 25%,
-            #dcdcdc 60%,
-            #bfbfbf 100%);
-        
-        box-shadow: 
-            0 0 35px 25px rgba(255,255,255,0.25), /* halo */
-            0 0 80px 40px rgba(100,120,255,0.12); /* cinematic blue glow */
-
-        cursor:grab;
-        z-index:10;
-    }
-
-    /* message box */
     #msgBox{
         position:fixed;
         bottom:55px;
         left:50%;
         transform:translateX(-50%);
         white-space:nowrap;
-        font-size:22px;
+        font-size:20px;
         font-weight:bold;
-        color:#d8e2ff;  /* IMAX ice-blue */
+        color:#d8e2ff;
         letter-spacing:1.5px;
-        opacity:1; /* Always visible container */
         text-shadow: 0 0 8px rgba(150,190,255,0.7);
         z-index:50;
     }
@@ -94,33 +40,80 @@
     #msgBox span.show{
         opacity:1;
     }
-</style>
 
+    #moon{
+        position:absolute;
+        top:60px;
+        left:60px;
+        width:150px;
+        height:150px;
+        border-radius:50%;
+        background: radial-gradient(circle, #ffffff 0%, #f2f2f2 25%, #dcdcdc 60%, #bfbfbf 100%);
+        box-shadow: 0 0 35px 25px rgba(255,255,255,0.25),
+                    0 0 80px 40px rgba(100,120,255,0.12);
+        cursor:grab;
+        z-index:10;
+    }
+
+    canvas{
+        position:absolute;
+        inset:0;
+        z-index:-1;
+    }
+</style>
 </head>
 <body>
 
-<div id="bg"></div>
-<div id="haze"></div>
-<div id="grain"></div>
-
+<canvas id="starCanvas"></canvas>
 <div id="moon"></div>
-
 <div id="msgBox"></div>
 
 <script>
+// ------------------ STARS SETUP ------------------
+const canvas = document.getElementById("starCanvas");
+const ctx = canvas.getContext("2d");
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+window.addEventListener("resize", ()=>{
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+});
+
+const starCount = 250;
+const stars = [];
+for(let i=0;i<starCount;i++){
+    stars.push({
+        x: Math.random()*width,
+        y: Math.random()*height,
+        size: Math.random()*1.2+0.3,
+        twinkle: Math.random()*0.02+0.002,
+        baseAlpha: Math.random()*0.5+0.3
+    });
+}
+
+// ------------------ STAR DRAW ------------------
+function drawStars(){
+    stars.forEach(s=>{
+        const alpha = s.baseAlpha + Math.sin(Date.now()*s.twinkle)*0.5;
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+        ctx.fill();
+    });
+}
+
+// ------------------ MOON DRAG ------------------
 const moon = document.getElementById("moon");
 const msgBox = document.getElementById("msgBox");
-
 const text = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
 
-// Build letters
 msgBox.innerHTML = "";
 for(let c of text){
     let s = document.createElement("span");
     s.textContent = c;
     msgBox.appendChild(s);
 }
-
 const spans = msgBox.querySelectorAll("span");
 
 let dragging = false;
@@ -133,40 +126,55 @@ moon.addEventListener("mousedown", e=>{
     offsetX = e.clientX - moon.offsetLeft;
     moon.style.transition = "none";
 });
-
 window.addEventListener("mouseup", ()=> dragging = false);
-
 window.addEventListener("mousemove", e=>{
     if(!dragging) return;
 
     let x = e.clientX - offsetX;
-
     const maxX = window.innerWidth - moon.clientWidth - 20;
-    if(x < 20) x = 20;
-    if(x > maxX) x = maxX;
-
+    if(x<20) x=20;
+    if(x>maxX) x=maxX;
     moon.style.left = x + "px";
 
     if(!locked){
-        let progress = (x - 20) / (maxX - 20);
-        if(progress < 0) progress = 0;
-        if(progress > 1) progress = 1;
+        let progress = (x-20)/(maxX-20);
+        if(progress<0) progress=0;
+        if(progress>1) progress=1;
 
-        let target = Math.floor(progress * spans.length);
-
-        if(target > lastShown){
-            for(let i = lastShown; i < target; i++){
+        let target = Math.floor(progress*spans.length);
+        if(target>lastShown){
+            for(let i=lastShown;i<target;i++){
                 spans[i].classList.add("show");
             }
             lastShown = target;
-
-            if(lastShown >= spans.length){
-                locked = true; // No going back
-            }
+            if(lastShown >= spans.length) locked = true;
         }
     }
 });
-</script>
 
+// ------------------ ANIMATION ------------------
+function animate(){
+    // cinematic gradient
+    const bg = ctx.createLinearGradient(0,0,0,height);
+    bg.addColorStop(0,'#000010');
+    bg.addColorStop(1,'#000022');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,width,height);
+
+    // subtle drift for cinematic feeling
+    const driftX = Math.sin(Date.now()*0.0002)*20;
+    const driftY = Math.cos(Date.now()*0.00015)*15;
+    ctx.save();
+    ctx.translate(driftX, driftY);
+
+    drawStars();
+
+    ctx.restore();
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
 </body>
 </html>

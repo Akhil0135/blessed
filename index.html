@@ -3,163 +3,206 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>IMAX Nolan — Moon → Day → Birthday Reveal</title>
+<title>IMAX Nolan — Moon → Sun → Birthday Reveal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-night-1:#070617;
     --bg-night-2:#120430;
-    --text-contrast:#ffdFA0;
+    --text-color:#ffdFA0;
   }
   html,body{
-    height:100%;
     margin:0;
+    height:100%;
     background:var(--bg-night-1);
-    font-family:"Cinzel",serif;
+    font-family:"Cinzel", serif;
     overflow:hidden;
-    color:var(--text-contrast);
-    -webkit-font-smoothing:antialiased;
+    color:var(--text-color);
   }
 
-  #stage{position:relative;width:100%;height:100%;overflow:hidden;will-change:transform;transform-origin:50% 50%;perspective:1400px;transition:transform 1.6s cubic-bezier(.2,.9,.2,1);}
+  #stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    perspective:1400px;
+  }
 
-  #sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--bg-night-1),var(--bg-night-2) 55%);z-index:0;transition:background 1.4s ease}
-  .grade-overlay{position:absolute;inset:0;mix-blend-mode:screen;pointer-events:none;opacity:0.18;background:linear-gradient(180deg, rgba(12,8,30,0.0), rgba(10,6,20,0.28));z-index:70}
-  .grain{position:absolute;inset:0;pointer-events:none;z-index:700;opacity:0.06;background-image:radial-gradient(circle, rgba(255,255,255,0.02) 0.5px, transparent 0.5px);background-size:4px 4px;mix-blend-mode:overlay}
+  #sky{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg,var(--bg-night-1),var(--bg-night-2) 55%);
+    z-index:0;
+  }
 
-  .star{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.95);box-shadow:0 0 8px rgba(255,255,255,0.8);opacity:0.9;filter:blur(.8px);animation:twinkle var(--tw) infinite alternate}
-  @keyframes twinkle{0%{opacity:.2;transform:scale(.5)}50%{opacity:1;transform:scale(1.3)}100%{opacity:.25;transform:scale(.7)}}
-
-  #moon{position:absolute;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #ffffff, #f1e3b5 45%, #d8c08a 100%);top:18%;left:14%;box-shadow:0 0 120px rgba(255,245,200,0.14),0 0 260px rgba(255,240,200,0.06);cursor:grab;z-index:60;pointer-events:auto;transition:transform .08s linear,opacity .9s ease,left .28s ease,top .28s ease;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%) rotate(0deg);}
-  #moon:active{cursor:grabbing}
-  #moon .flare{position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,245,200,0));filter:blur(36px);pointer-events:none}
-
-  .cloud{position:absolute;width:420px;height:220px;border-radius:45%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.6) 30%, rgba(255,255,255,0.12) 60%, rgba(255,255,255,0) 100%);filter: blur(22px);opacity:0.6;mix-blend-mode:screen;z-index:30;pointer-events:none}
-
-  .fog{position:absolute;left:-10%;right:-10%;bottom:-10%;height:48%;background:linear-gradient(180deg, rgba(255,245,220,0.02) 0%, rgba(0,0,0,0.08) 100%);filter:blur(36px);z-index:40;mix-blend-mode:screen;opacity:0.36;pointer-events:none}
-
-  #sun{position:absolute;width:780px;height:780px;border-radius:50%;right:6vw; top:40px;background: radial-gradient(circle at 38% 34%, #fff8e8 0%, #ffd98f 12%, #ffb258 32%, #ff8a30 60%, rgba(200,80,30,0.6) 85%, rgba(200,80,30,0) 100%);box-shadow:0 0 280px 90px rgba(255,220,140,0.12),0 0 420px 260px rgba(255,180,90,0.04);pointer-events:none;z-index:55;}
-  .sun .corona{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:220%;height:220%;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.12), rgba(255,210,120,0.04), rgba(255,160,60,0)); filter:blur(20px);opacity:1;}
-
-  .sun-band{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:34vw;height:120vh;background:linear-gradient(180deg, rgba(255,245,200,0.06), rgba(255,230,160,0.02) 30%, rgba(255,230,160,0) 60%);mix-blend-mode:screen;filter:blur(16px);opacity:1;z-index:54;pointer-events:none;}
-  .anam{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:2200px;height:48px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,200,0.95) 30%, rgba(255,160,60,0.95) 70%, rgba(255,255,255,0) 100%);filter:blur(30px);opacity:1;mix-blend-mode:screen;pointer-events:none;z-index:56;}
-
-  #message{position:absolute;left:6%;right:6%;top:62%;text-align:center;z-index:80;font-size:34px;letter-spacing:2px;color:#f2d8ff;text-shadow:0 6px 24px rgba(40,10,60,0.45);pointer-events:none;transform:translateZ(0);font-weight:500;line-height:1.25}
-  .letter{display:inline-block;opacity:0;transform:translateY(12px);transition:opacity .12s ease, transform .12s ease}
-
+  /* stars */
   #stars{position:absolute;inset:0;z-index:20;pointer-events:none;}
+  .star{
+    position:absolute;
+    width:3px;
+    height:3px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.95);
+    box-shadow:0 0 8px rgba(255,255,255,0.8);
+    opacity:0.9;
+    filter:blur(.8px);
+  }
 
+  /* moon */
+  #moon{
+    position:absolute;
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffffff, #f1e3b5 45%, #d8c08a 100%);
+    top:18%;
+    left:14%;
+    box-shadow:0 0 120px rgba(255,245,200,0.14),0 0 260px rgba(255,240,200,0.06);
+    cursor:grab;
+    z-index:60;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:translate(-50%,-50%) rotate(0deg);
+    transition:opacity .2s linear;
+  }
+  #moon:active{cursor:grabbing}
+  #moon .flare{
+    position:absolute; inset:-40px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,245,200,0));
+    filter:blur(36px);
+    pointer-events:none;
+  }
+
+  /* sun */
+  #sun{
+    position:absolute;
+    width:400px;
+    height:400px;
+    border-radius:50%;
+    top:-220px;
+    right:-220px;
+    background: radial-gradient(circle at 38% 34%, #fff8e8 0%, #ffd98f 12%, #ffb258 32%, #ff8a30 60%, rgba(200,80,30,0.6) 85%, rgba(200,80,30,0) 100%);
+    box-shadow:0 0 280px 90px rgba(255,220,140,0.12),0 0 420px 260px rgba(255,180,90,0.04);
+    z-index:55;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .2s linear, transform .2s linear;
+  }
+
+  /* message */
+  #message{
+    position:absolute;
+    top:12%;
+    right:6%;
+    white-space:nowrap;
+    font-family:"IM Fell English SC", serif;
+    font-size:34px;
+    letter-spacing:2px;
+    color:#ffdFA0;
+    z-index:80;
+  }
+  .letter{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(12px);
+    transition:opacity .1s ease, transform .1s ease;
+  }
+
+  @media (max-width:720px){
+    #moon{width:140px;height:140px;}
+    #sun{width:280px;height:280px;}
+    #message{font-size:18px;}
+  }
 </style>
 </head>
 <body>
-  <div id="stage">
-    <div id="sky"></div>
-    <div class="grade-overlay"></div>
-    <div class="grain"></div>
-
-    <div id="stars"></div>
-    <div id="clouds"></div>
-    <div class="fog"></div>
-
-    <div id="moon"><div class="flare"></div></div>
-    <div id="sun"><div class="corona"></div></div>
-    <div class="sun-band"></div>
-    <div class="anam"></div>
-
-    <div id="message"></div>
-  </div>
+<div id="stage">
+  <div id="sky"></div>
+  <div id="stars"></div>
+  <div id="moon"><div class="flare"></div></div>
+  <div id="sun"></div>
+  <div id="message"></div>
+</div>
 
 <script>
 const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
-const ROTATION_NEEDED = 360;
-
 const stage = document.getElementById('stage');
 const moon = document.getElementById('moon');
 const sun = document.getElementById('sun');
 const starsWrap = document.getElementById('stars');
 const message = document.getElementById('message');
 
-let rotationDeg = 0;
 let dragging = false;
 let lastX = 0;
-let locked = false;
+let rotation = 0;
+const ROTATION_NEEDED = 360;
 
-// Create stars
+// Build stars
 for(let i=0;i<160;i++){
   const s = document.createElement('div');
   s.className='star';
-  s.style.setProperty('--tw', (1.2 + Math.random()*3.4) + 's');
-  s.style.left = (Math.random()*100) + '%';
-  s.style.top = (Math.random()*80) + '%';
-  s.style.opacity = (0.6 + Math.random()*0.4).toFixed(2);
-  s.dataset.baseOpacity = s.style.opacity;
+  s.style.left = Math.random()*100+'%';
+  s.style.top = Math.random()*80+'%';
+  s.style.opacity = 0.6 + Math.random()*0.4;
   starsWrap.appendChild(s);
 }
 
-// Message letters
-const letters = [];
-for (let i=0;i<fullText.length;i++){
-  const span = document.createElement('span');
+// Split message into letters
+const letters=[];
+for(let i=0;i<fullText.length;i++){
+  const span=document.createElement('span');
   span.className='letter';
   span.textContent = fullText[i]===' ' ? '\u00A0' : fullText[i];
   message.appendChild(span);
   letters.push(span);
 }
 
-// Drag handling
-function onPointerDown(e){
-  if(locked) return;
-  dragging = true;
-  lastX = e.clientX ?? (e.touches && e.touches[0].clientX) ?? 0;
-}
-function onPointerUp(){ dragging=false; }
-function onPointerMove(e){
-  if(!dragging || locked) return;
-  const clientX = e.clientX ?? (e.touches && e.touches[0].clientX) ?? lastX;
-  const dx = clientX - lastX;
-  lastX = clientX;
+// Drag handlers
+moon.addEventListener('pointerdown', e=>{
+  dragging=true;
+  lastX=e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+});
+document.addEventListener('pointerup', e=>dragging=false);
+document.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  const clientX=e.clientX ?? e.touches?.[0]?.clientX ?? lastX;
+  const dx=clientX-lastX;
+  lastX=clientX;
   if(dx<=0) return;
-  rotationDeg += dx*0.9;
-  if(rotationDeg>=ROTATION_NEEDED){
-    rotationDeg=ROTATION_NEEDED;
-    finishReveal();
-  }
-  updateScene(rotationDeg/ROTATION_NEEDED);
-}
-moon.addEventListener('pointerdown',onPointerDown);
-document.addEventListener('pointerup',onPointerUp);
-document.addEventListener('pointermove',onPointerMove);
+  rotation += dx*0.8;
+  if(rotation>ROTATION_NEEDED) rotation=ROTATION_NEEDED;
+  updateScene(rotation/ROTATION_NEEDED);
+});
 
-function finishReveal(){
-  if(locked) return;
-  locked=true;
-  updateScene(1);
-}
-
+// Update visuals based on progress t (0..1)
 function updateScene(t){
   t=Math.max(0,Math.min(1,t));
-
-  // Fade moon
-  moon.style.opacity = `${Math.max(0,1 - t*1.05)}`;
+  // Moon fade and move right
+  moon.style.opacity = 1-t;
   moon.style.left = 14 + t*46 + '%';
-  moon.style.transform = `translate(-50%,-50%) rotate(${-t*360}deg)`;
+  moon.style.transform=`translate(-50%,-50%) rotate(${-t*360}deg)`;
 
-  // Reveal letters
-  const lettersToShow = Math.floor(t*letters.length);
+  // Sun evolve from top-right
+  sun.style.opacity = t;
+  const sunOffset = -220 + t*220; // moves down to top-right corner
+  sun.style.transform = `translate(${sunOffset}px, ${sunOffset}px) scale(${0.6+t*0.8})`;
+
+  // Stars fade
+  starsWrap.querySelectorAll('.star').forEach(s=>{
+    s.style.opacity = Math.max(0, s.style.opacity*(1-t*1.2));
+  });
+
+  // Reveal message letters in single line
+  const lettersToShow=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
     if(i<lettersToShow){
       letters[i].style.opacity=1;
       letters[i].style.transform='translateY(0)';
-    }else{
+    } else {
       letters[i].style.opacity=0;
       letters[i].style.transform='translateY(12px)';
     }
   }
-
-  // Fade stars
-  starsWrap.querySelectorAll('.star').forEach(s=>{
-    const base = +s.dataset.baseOpacity || 1;
-    s.style.opacity = Math.max(0, base*(1 - t*1.2));
-  });
 }
 </script>
 </body>

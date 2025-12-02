@@ -100,7 +100,9 @@ function electricHue(base){ return (base + Math.sin(Date.now()*0.002)*120) % 360
 
 // ------------ 3D CAMERA MOVEMENT ------------
 let cam = { rot: 0, zoom: 1, tilt: 0 };
-function applyCamera(){
+function // DISABLE CAMERA FOR DEBUG
+//applyCamera
+function applyCamera(){}(){
     cam.rot += 0.00025;
     cam.zoom = 1 + Math.sin(Date.now()*0.0004)*0.03;
     cam.tilt = Math.sin(Date.now()*0.0003)*0.02;
@@ -120,6 +122,7 @@ setTimeout(()=> forming=true, 1800);
 // ------------ ANIMATION LOOP ------------
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.save();(0,0,canvas.width,canvas.height);
 
     applyCamera();
     drawStars();
@@ -145,7 +148,7 @@ function animate(){
         ctx.fill();
     });
 
-    ctx.restore();
+    ctx.restore();();
     requestAnimationFrame(animate);
 }
 animate();

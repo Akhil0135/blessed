@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>IMAX Nolan — Moon → Sun → Birthday Reveal</title>
+<title>IMAX Nolan — Moon → Sun → Cross → Birthday Reveal</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-night-1:#070617;
     --bg-night-2:#120430;
     --text-color:#ffdFA0;
+    --cross-color:#fff8e8;
   }
   html,body{
     margin:0;
@@ -94,6 +95,30 @@
     transition:opacity .3s linear;
   }
 
+  /* cross */
+  #cross{
+    position:absolute;
+    top:-200px;
+    left:50%;
+    transform:translateX(-50%) scale(0.2);
+    width:30px;
+    height:100px;
+    z-index:70;
+    opacity:0;
+    background-color:var(--cross-color);
+    transition: all 1s ease-in-out;
+  }
+  #cross::before{
+    content:'';
+    position:absolute;
+    left:50%;
+    top:40%;
+    transform:translate(-50%,-50%);
+    width:80px;
+    height:30px;
+    background-color:var(--cross-color);
+  }
+
   /* message */
   #message{
     position:absolute;
@@ -118,6 +143,8 @@
     #moon{width:140px;height:140px;}
     #sun{width:200px;height:200px;}
     #message{font-size:14px;}
+    #cross{width:20px;height:70px;}
+    #cross::before{width:60px;height:20px;}
   }
 </style>
 </head>
@@ -127,6 +154,7 @@
   <div id="stars"></div>
   <div id="moon"><div class="flare"></div></div>
   <div id="sun"></div>
+  <div id="cross"></div>
   <div id="message"></div>
 </div>
 
@@ -136,6 +164,7 @@ const moon = document.getElementById('moon');
 const sun = document.getElementById('sun');
 const starsWrap = document.getElementById('stars');
 const message = document.getElementById('message');
+const cross = document.getElementById('cross');
 
 let dragging = false;
 let lastX = 0;
@@ -213,6 +242,13 @@ function updateScene(t){
       letters[i].style.opacity=0;
       letters[i].style.transform='translateY(12px)';
     }
+  }
+
+  // Show cross softly after sun fully appears (t>0.95)
+  if(t>0.95){
+    cross.style.top='10%';
+    cross.style.opacity=0.85;
+    cross.style.transform='translateX(-50%) scale(1)';
   }
 }
 </script>

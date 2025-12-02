@@ -11,11 +11,7 @@
         overflow: hidden;
         background: #000;
     }
-
-    canvas {
-        display: block;
-    }
-
+    canvas { display: block; }
     #clickBtn {
         position: absolute;
         bottom: 40px;
@@ -56,7 +52,6 @@ window.onresize = resize;
 // ------------ BACKGROUND TWINKLING STARS ------------
 const bgStars = [];
 const bgStarCount = 180;
-
 for (let i = 0; i < bgStarCount; i++) {
     bgStars.push({
         x: Math.random() * canvas.width,
@@ -76,7 +71,7 @@ function drawStarShape() {
     });
 }
 
-// ------------ PARTICLES FUNCTION ------------
+// ------------ PARTICLE FUNCTION ------------
 function mapTextToPoints(textStr) {
     const temp = document.createElement("canvas");
     const tctx = temp.getContext("2d");
@@ -104,10 +99,9 @@ function mapTextToPoints(textStr) {
     return points;
 }
 
-// ------------ INITIAL LETTERS ------------
+// ------------ INITIAL PARTICLES ------------
 let currentText = "PRINCE";
 let letterPoints = mapTextToPoints(currentText);
-
 const particles = letterPoints.map(p => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
@@ -115,17 +109,35 @@ const particles = letterPoints.map(p => ({
     ty: p.y,
     speed: Math.random() * 0.08 + 0.04,
     size: Math.random() * 1.8 + 1.2,
-    color: null // null = rainbow, will become white for DAIVIK
+    color: null
 }));
+
+// ------------ CAMERA SETTINGS ------------
+let camera = { dx: 0, dy: 0, angle: 0, zoom: 1 };
+
+function applyCamera() {
+    camera.dx = Math.sin(Date.now() * 0.0003) * 15;
+    camera.dy = Math.cos(Date.now() * 0.00025) * 15;
+    camera.angle += 0.0005;
+    camera.zoom = 1 + 0.02 * Math.sin(Date.now() * 0.0002);
+
+    ctx.save();
+    ctx.translate(canvas.width / 2 + camera.dx, canvas.height / 2 + camera.dy);
+    ctx.scale(camera.zoom, camera.zoom);
+    ctx.rotate(camera.angle);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+}
 
 // ------------ ANIMATION LOOP ------------
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    applyCamera();
     drawStarShape();
 
     const time = Date.now();
 
     particles.forEach(p => {
+        // Smooth lerp transition
         p.x += (p.tx - p.x) * p.speed;
         p.y += (p.ty - p.y) * p.speed;
 
@@ -141,6 +153,7 @@ function animate() {
         ctx.fill();
     });
 
+    ctx.restore();
     requestAnimationFrame(animate);
 }
 
@@ -153,12 +166,11 @@ setTimeout(() => {
 
 // ------------ CLICK EVENT TO CHANGE TEXT ------------
 btn.addEventListener("click", () => {
-    btn.style.display = "none"; // hide button
-
+    btn.style.display = "none"; 
     const newText = "DAIVIK";
     const newPoints = mapTextToPoints(newText);
 
-    // Reassign particle targets (reuse existing particles)
+    // Reassign particle targets with smooth lerp
     particles.forEach((p, i) => {
         const np = newPoints[i % newPoints.length];
         p.tx = np.x;

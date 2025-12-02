@@ -37,7 +37,6 @@
 <button id="clickBtn">Click Here</button>
 
 <script>
-// ------------ SETUP ------------
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 const btn = document.getElementById("clickBtn");
@@ -49,7 +48,7 @@ function resize() {
 resize();
 window.onresize = resize;
 
-// ------------ BACKGROUND TWINKLING STARS ------------
+// Background twinkling stars
 const bgStars = [];
 const bgStarCount = 180;
 for (let i = 0; i < bgStarCount; i++) {
@@ -71,7 +70,7 @@ function drawStarShape() {
     });
 }
 
-// ------------ PARTICLE FUNCTION ------------
+// Map text to particles
 function mapTextToPoints(textStr) {
     const temp = document.createElement("canvas");
     const tctx = temp.getContext("2d");
@@ -99,7 +98,7 @@ function mapTextToPoints(textStr) {
     return points;
 }
 
-// ------------ INITIAL PARTICLES ------------
+// Initial particles
 let currentText = "PRINCE";
 let letterPoints = mapTextToPoints(currentText);
 const particles = letterPoints.map(p => ({
@@ -112,23 +111,20 @@ const particles = letterPoints.map(p => ({
     color: null
 }));
 
-// ------------ CAMERA SETTINGS ------------
-let camera = { dx: 0, dy: 0, angle: 0, zoom: 1 };
-
+// Camera drift (no rotation)
+let camera = { dx: 0, dy: 0, zoom: 1 };
 function applyCamera() {
     camera.dx = Math.sin(Date.now() * 0.0003) * 15;
     camera.dy = Math.cos(Date.now() * 0.00025) * 15;
-    camera.angle += 0.0005;
     camera.zoom = 1 + 0.02 * Math.sin(Date.now() * 0.0002);
 
     ctx.save();
     ctx.translate(canvas.width / 2 + camera.dx, canvas.height / 2 + camera.dy);
     ctx.scale(camera.zoom, camera.zoom);
-    ctx.rotate(camera.angle);
     ctx.translate(-canvas.width / 2, -canvas.height / 2);
 }
 
-// ------------ ANIMATION LOOP ------------
+// Animation loop
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     applyCamera();
@@ -137,7 +133,6 @@ function animate() {
     const time = Date.now();
 
     particles.forEach(p => {
-        // Smooth lerp transition
         p.x += (p.tx - p.x) * p.speed;
         p.y += (p.ty - p.y) * p.speed;
 
@@ -159,23 +154,20 @@ function animate() {
 
 animate();
 
-// ------------ SHOW BUTTON AFTER 3 SECONDS ------------
-setTimeout(() => {
-    btn.style.opacity = 1;
-}, 3000);
+// Show button after 3 seconds
+setTimeout(() => { btn.style.opacity = 1; }, 3000);
 
-// ------------ CLICK EVENT TO CHANGE TEXT ------------
+// Click event to change text
 btn.addEventListener("click", () => {
-    btn.style.display = "none"; 
+    btn.style.display = "none";
     const newText = "DAIVIK";
     const newPoints = mapTextToPoints(newText);
 
-    // Reassign particle targets with smooth lerp
     particles.forEach((p, i) => {
         const np = newPoints[i % newPoints.length];
         p.tx = np.x;
         p.ty = np.y;
-        p.color = "#fff"; // White for DAIVIK
+        p.color = "#fff"; // White shining letters
     });
 });
 </script>

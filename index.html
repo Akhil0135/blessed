@@ -1,155 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMAX Nolan Cosmic — PRINCE</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IMAX PRINCE</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html, body { width:100%; height:100%; overflow:hidden; background:#000; }
-  canvas { display:block; }
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #000;
+    }
+
+    canvas {
+        display: block;
+    }
 </style>
 </head>
 <body>
-
-<canvas id="canvas"></canvas>
+<canvas id="c"></canvas>
 
 <script>
-const canvas = document.getElementById("canvas");
+// ------------ SETUP ------------
+const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
 
-// ----------------------------------------------------
-// BACKGROUND FLOATING PARTICLES
-// ----------------------------------------------------
-const bgParticles = [];
-for(let i = 0; i < 250; i++){
-  bgParticles.push({
-    x: Math.random()*width,
-    y: Math.random()*height,
-    z: Math.random()*2 + 1,
-    size: Math.random()*1.5 + 0.5
-  });
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.onresize = resize;
+
+// ------------ BACKGROUND TWINKLING STARS ------------
+const bgStars = [];
+const bgStarCount = 180;
+
+for (let i = 0; i < bgStarCount; i++) {
+    bgStars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 1.1 + 0.2,
+        tw: Math.random() * 0.02 + 0.003   // ultra slow twinkle
+    });
+}
+
+// STAR SHAPE (background stars)
+function drawStarShape() {
+    bgStars.forEach(s => {
+        const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
+        ctx.fillStyle = `rgba(255,255,255,${glow})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+    });
 }
 
 
-// ----------------------------------------------------
-// PARTICLES THAT FORM PRINCE
-// ----------------------------------------------------
-class Particle {
-  constructor(x, y){
-    this.x = Math.random()*width;
-    this.y = Math.random()*height;
-    this.size = Math.random()*2+0.7;
+// ------------ PRINCE LETTER PARTICLES ------------
+const text = "PRINCE";
 
-    // glowing color
-    this.color = `rgba(255,${Math.floor(Math.random()*150+105)},${Math.floor(Math.random()*150+105)},0.9)`;
+// Draw letters to hidden canvas to grab pixel map
+const temp = document.createElement("canvas");
+const tctx = temp.getContext("2d");
 
-    // speed towards target
-    this.tx = x;
-    this.ty = y;
-    this.vx = (Math.random()-0.5)*3;
-    this.vy = (Math.random()-0.5)*3;
-  }
-  update(){
-    // fast formation
-    this.x += (this.tx - this.x) * 0.07;
-    this.y += (this.ty - this.y) * 0.07;
-  }
-  draw(){
-    const grad = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size*4);
-    grad.addColorStop(0, this.color);
-    grad.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-    ctx.fill();
-  }
-}
+function mapText() {
+    const fontSize = canvas.width / 7;
+    temp.width = canvas.width;
+    temp.height = canvas.height;
 
+    tctx.clearRect(0, 0, temp.width, temp.height);
+    tctx.fillStyle = "#fff";
+    tctx.font = "bold " + fontSize + "px Arial";
+    tctx.textAlign = "center";
+    tctx.textBaseline = "middle";
+    tctx.fillText(text, temp.width / 2, temp.height / 2);
 
-// ----------------------------------------------------
-// CREATE TEXT POINTS FOR PRINCE
-// ----------------------------------------------------
-function getTextPoints(text){
-  const tCanvas = document.createElement("canvas");
-  tCanvas.width = width;
-  tCanvas.height = height;
-  const tCtx = tCanvas.getContext("2d");
+    const imageData = tctx.getImageData(0, 0, temp.width, temp.height).data;
 
-  tCtx.fillStyle = "white";
-  tCtx.font = `bold ${Math.floor(width/7)}px Arial`;
-  tCtx.textAlign = "center";
-  tCtx.textBaseline = "middle";
-  tCtx.fillText(text, width/2, height/2);
-
-  const img = tCtx.getImageData(0,0,width,height).data;
-  const pts = [];
-
-  for(let y=0; y<height; y+=6){
-    for(let x=0; x<width; x+=6){
-      if(img[(y*width + x)*4 + 3] > 128){
-        pts.push({x,y});
-      }
+    const points = [];
+    for (let y = 0; y < temp.height; y += 6) {
+        for (let x = 0; x < temp.width; x += 6) {
+            let index = (y * temp.width + x) * 4;
+            if (imageData[index + 3] > 200) {
+                points.push({ x, y });
+            }
+        }
     }
-  }
-  return pts;
+    return points;
 }
 
-const textPoints = getTextPoints("PRINCE");
-const particles = textPoints.map(p => new Particle(p.x, p.y));
+let letterPoints = mapText();
 
-
-// ----------------------------------------------------
-// ANIMATION LOOP
-// ----------------------------------------------------
-let zoom = 1;
-function animate(){
-  // black background with IMAX fade
-  ctx.fillStyle = "rgba(0,0,0,0.18)";
-  ctx.fillRect(0,0,width,height);
-
-  // camera zoom effect
-  zoom += 0.0005;
-  ctx.save();
-  ctx.translate(width/2, height/2);
-  ctx.scale(zoom, zoom);
-  ctx.translate(-width/2, -height/2);
-
-  // background floating stars
-  bgParticles.forEach(p=>{
-    p.y -= p.z * 0.3;
-    if(p.y < 0){
-      p.y = height + Math.random()*50;
-      p.x = Math.random()*width;
-    }
-    ctx.fillStyle = "rgba(255,255,255,"+(p.z/3)+")";
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  // PRINCE star particles
-  particles.forEach(p=>{
-    p.update();
-    p.draw();
-  });
-
-  ctx.restore();
-  requestAnimationFrame(animate);
-}
-animate();
-
-
-// ----------------------------------------------------
-// HANDLE RESIZE
-// ----------------------------------------------------
-window.addEventListener("resize", ()=>{
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
+// Particle system
+const particles = [];
+letterPoints.forEach(p => {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        tx: p.x,
+        ty: p.y,
+        speed: Math.random() * 0.08 + 0.04,   // faster
+        size: Math.random() * 1.8 + 1.2
+    });
 });
-</script>
 
+
+// ------------ ANIMATION ------------
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // --- Background Twinkling Star Shape ---
+    drawStarShape();
+
+    // --- PRINCE Particles ---
+    particles.forEach(p => {
+        p.x += (p.tx - p.x) * p.speed;
+        p.y += (p.ty - p.y) * p.speed;
+
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
 </body>
 </html>

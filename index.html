@@ -43,8 +43,13 @@
     border-radius:50%;
     background:rgba(255,255,255,0.95);
     box-shadow:0 0 8px rgba(255,255,255,0.8);
-    opacity:0.9;
     filter:blur(.8px);
+    animation:twinkle 2s infinite alternate;
+  }
+  @keyframes twinkle{
+    0%{opacity:0.2;}
+    50%{opacity:0.9;}
+    100%{opacity:0.3;}
   }
 
   /* moon */
@@ -76,11 +81,11 @@
   /* sun */
   #sun{
     position:absolute;
-    width:400px;
-    height:400px;
+    width:300px;
+    height:300px;
     border-radius:50%;
-    top:-220px;
-    right:-220px;
+    top:0;
+    right:0;
     background: radial-gradient(circle at 38% 34%, #fff8e8 0%, #ffd98f 12%, #ffb258 32%, #ff8a30 60%, rgba(200,80,30,0.6) 85%, rgba(200,80,30,0) 100%);
     box-shadow:0 0 280px 90px rgba(255,220,140,0.12),0 0 420px 260px rgba(255,180,90,0.04);
     z-index:55;
@@ -92,11 +97,12 @@
   /* message */
   #message{
     position:absolute;
-    top:12%;
-    right:6%;
+    bottom:6%;
+    left:50%;
+    transform:translateX(-50%);
     white-space:nowrap;
     font-family:"IM Fell English SC", serif;
-    font-size:34px;
+    font-size:22px;
     letter-spacing:2px;
     color:#ffdFA0;
     z-index:80;
@@ -110,8 +116,8 @@
 
   @media (max-width:720px){
     #moon{width:140px;height:140px;}
-    #sun{width:280px;height:280px;}
-    #message{font-size:18px;}
+    #sun{width:200px;height:200px;}
+    #message{font-size:14px;}
   }
 </style>
 </head>
@@ -126,7 +132,6 @@
 
 <script>
 const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
-const stage = document.getElementById('stage');
 const moon = document.getElementById('moon');
 const sun = document.getElementById('sun');
 const starsWrap = document.getElementById('stars');
@@ -134,16 +139,15 @@ const message = document.getElementById('message');
 
 let dragging = false;
 let lastX = 0;
-let rotation = 0;
-const ROTATION_NEEDED = 360;
+let progress = 0; // 0..1
 
-// Build stars
+// Create stars
 for(let i=0;i<160;i++){
   const s = document.createElement('div');
   s.className='star';
   s.style.left = Math.random()*100+'%';
   s.style.top = Math.random()*80+'%';
-  s.style.opacity = 0.6 + Math.random()*0.4;
+  s.style.opacity = 0.3 + Math.random()*0.6;
   starsWrap.appendChild(s);
 }
 
@@ -169,30 +173,33 @@ document.addEventListener('pointermove', e=>{
   const dx=clientX-lastX;
   lastX=clientX;
   if(dx<=0) return;
-  rotation += dx*0.8;
-  if(rotation>ROTATION_NEEDED) rotation=ROTATION_NEEDED;
-  updateScene(rotation/ROTATION_NEEDED);
+  progress += dx*0.0025;
+  if(progress>1) progress=1;
+  updateScene(progress);
 });
 
-// Update visuals based on progress t (0..1)
+// Update scene based on progress
 function updateScene(t){
   t=Math.max(0,Math.min(1,t));
+
   // Moon fade and move right
   moon.style.opacity = 1-t;
   moon.style.left = 14 + t*46 + '%';
   moon.style.transform=`translate(-50%,-50%) rotate(${-t*360}deg)`;
 
-  // Sun evolve from top-right
+  // Sun appear fully at top-right
   sun.style.opacity = t;
-  const sunOffset = -220 + t*220; // moves down to top-right corner
-  sun.style.transform = `translate(${sunOffset}px, ${sunOffset}px) scale(${0.6+t*0.8})`;
 
-  // Stars fade
+  // Stars fade gradually as sun rises
   starsWrap.querySelectorAll('.star').forEach(s=>{
-    s.style.opacity = Math.max(0, s.style.opacity*(1-t*1.2));
+    if(t<1){
+      s.style.opacity = 0.3 + Math.random()*0.6; // twinkle
+    } else {
+      s.style.opacity = 0;
+    }
   });
 
-  // Reveal message letters in single line
+  // Reveal message letters
   const lettersToShow=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
     if(i<lettersToShow){

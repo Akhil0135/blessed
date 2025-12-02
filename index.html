@@ -58,7 +58,6 @@
     align-items:center;
     justify-content:center;
     transform:translate(-50%,-50%) rotate(0deg);
-    touch-action: none;
   }
   #moon:active{cursor:grabbing}
   #moon .flare{position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,245,200,0));filter:blur(36px);pointer-events:none}
@@ -128,7 +127,7 @@
     filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
   }
 
-  /* shooting */
+  /* shooting (missing style fixed) */
   .shoot{
     position:absolute;
     width:3px;
@@ -212,8 +211,6 @@ let lastX = 0;
 let phaseTwoReady = false;
 let phaseTwoStarted = false;
 let clickCount = 0;
-let fireworksTimer = null;
-let fireworksActive = false;
 
 /* ---------------- Build scene: stars & clouds ---------------- */
 function makeStars(n=160){
@@ -253,90 +250,291 @@ for (let i=0;i<fullText.length;i++){
   letters.push(span);
 }
 
-/* ---------------- Drag & pointer handling ---------------- */
-function getClientX(e){ return (e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX) ?? lastX);}
-function onPointerDown(e){ if(locked) return; dragging=true; lastX=getClientX(e); try{ e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId);}catch{} }
-function onPointerUp(e){ dragging=false; try{ e.target.releasePointerCapture && e.target.releasePointerCapture(e.pointerId);}catch{}}
-function onPointerMove(e){ if(!dragging||locked) return; const clientX=getClientX(e); const dx=clientX-lastX; lastX=clientX; if(dx<=0) return; rotationDeg+=dx*0.9; if(rotationDeg>=ROTATION_NEEDED){rotationDeg=ROTATION_NEEDED; finishReveal();} updateSceneByRotation(rotationDeg/ROTATION_NEEDED); }
+/* ---------------- Shooting stars ---------------- */
+function spawnShootingCorner(){
+  const s = mk('div','shoot');
+  const corner = Math.random();
+  let startLeft;
+  if(corner < 0.4) startLeft = Math.random()*18 + '%';
+  else if (corner < 0.8) startLeft = (82 + Math.random()*18) + '%';
+  else startLeft = (40 + Math.random()*20) + '%';
+  s.style.left = startLeft;
+  s.style.top = '-6%';
+  s.style.opacity = 0.95;
+  s.style.transform = 'rotate(' + (20 + Math.random()*40) + 'deg)';
+  document.getElementById('stage').appendChild(s);
+  const duration = 1400 + Math.random()*1700;
+  const tx = (Math.random()*1.6 - 0.8) * window.innerWidth;
+  s.animate([
+    { transform: s.style.transform + ' translate(0,0)', opacity:1 },
+    { transform: s.style.transform + ` translate(${tx}px, ${window.innerHeight + 200}px)`, opacity:0 }
+  ], { duration, easing:'cubic-bezier(.2,.7,.2,1)', iterations:1, fill:'forwards' });
+  setTimeout(()=> s.remove(), duration+80);
+}
+setInterval(spawnShootingCorner, 1100 + Math.random()*800);
 
-moon.addEventListener('pointerdown',onPointerDown);
-document.addEventListener('pointerup',onPointerUp);
-document.addEventListener('pointermove',onPointerMove);
+/* ---------------- Drag handling (left-to-right only) ---------------- */
+function onPointerDown(e){
+  if (locked) return;
+  dragging = true;
+  lastX = e.clientX ?? (e.touches && e.touches[0].clientX) ?? 0;
+  try{ e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId); }catch(err){}
+}
+function onPointerUp(){
+  dragging = false;
+}
+function onPointerMove(e){
+  if (!dragging || locked) return;
+  const clientX = e.clientX ?? (e.touches && e.touches[0].clientX) ?? lastX;
+  const dx = clientX - lastX;
+  lastX = clientX;
+  if (dx <= 0) return;
+  rotationDeg += dx * 0.9;
+  if (rotationDeg >= ROTATION_NEEDED) {
+    rotationDeg = ROTATION_NEEDED;
+    finishReveal();
+  }
+  updateSceneByRotation(rotationDeg / ROTATION_NEEDED);
+}
 
-/* ---------------- Scene update ---------------- */
+moon.addEventListener('pointerdown', onPointerDown);
+document.addEventListener('pointerup', onPointerUp);
+document.addEventListener('pointermove', onPointerMove);
+
+/* ---------------- finish reveal (shows first button after hold) ---------------- */
+function finishReveal(){
+  if (locked) return;
+  locked = true;
+  updateSceneByRotation(1);
+  // small delay for dramatic reveal
+  setTimeout(()=> {
+    clickBtn.style.opacity = 1;
+    clickBtn.disabled = false;
+    clickBtn.setAttribute('aria-hidden','false');
+    clickBtn.focus();
+  }, 1800);
+}
+
+/* ---------------- update visuals by progress (t:0..1) ---------------- */
 function updateSceneByRotation(t){
-  t = Math.min(1,t);
-  // rotate moon
-  moon.style.transform = `translate(-50%,-50%) rotate(${t*360}deg)`;
-  // stars fade slowly
-  starsWrap.style.opacity = `${1-t*0.48}`;
-  // sun – subtle in phase 1
-  sun.style.opacity = `${Math.min(0.28, t*0.28)}`;
-  sun.style.transform = `scale(${0.5 + 0.3*t})`;
-  sunCorona.style.opacity = `${Math.min(0.12, t*0.12)}`;
-  sunBand.style.opacity = `${Math.min(0.14, t*0.14)}`;
-  anam.style.opacity = `${Math.min(0.16, t*0.16)}`;
+  t = Math.max(0, Math.min(1, t));
+  // moon movement & fade
+  const deg = t * 360;
+  const moonLeft = 14 + t*46;
+  moon.style.left = moonLeft + '%';
+  moon.style.transform = `translate(-50%,-50%) rotate(${-deg}deg)`;
+  moon.style.opacity = `${Math.max(0, 1 - t*1.05)}`;
 
-  // cross – dominant throughout
-  cross.style.opacity = `${Math.min(1, t*1.2)}`;
-  cross.style.transform = `translateX(-50%) scale(${0.75 + 0.25*t})`;
+  // reveal letters
+  const lettersToShow = Math.floor(t * letters.length);
+  for (let i=0;i<letters.length;i++){
+    if (i < lettersToShow){
+      letters[i].style.opacity = 1;
+      letters[i].style.transform = 'translateY(0)';
+      letters[i].style.transitionDelay = (i*6/1000) + 's';
+    } else {
+      letters[i].style.opacity = 0;
+      letters[i].style.transform = 'translateY(12px)';
+      letters[i].style.transitionDelay = '0s';
+    }
+  }
 
-  // message letters animation
-  letters.forEach((l,i)=>{
-    if(t*fullText.length > i) l.style.opacity=1;
-    else l.style.opacity=0;
+  // sun
+  sun.style.opacity = `${Math.min(1, t*1.05)}`;
+  const startTop = -260;
+  const endTop = -80;
+  sun.style.top = `${startTop + (endTop - startTop)*t}px`;
+  const scale = 0.6 + 0.8*t;
+  sun.style.transform = `scale(${scale})`;
+  sunCorona.style.opacity = Math.min(1, t*1.1);
+  sunBand.style.opacity = Math.min(1, t*0.95);
+  anam.style.opacity = Math.min(1, Math.pow(t,0.9) * 0.95);
+
+  // stars fade
+  starsWrap.querySelectorAll('.star').forEach(s => {
+    const base = +s.dataset.baseOpacity || 1;
+    s.style.opacity = Math.max(0, base * (1 - t*1.1));
   });
 
-  // progress bar
-  rotFill.style.width = `${t*100}%`;
+  // sky warm shift
+  if (t > 0.06){
+    const r = Math.min(255, 8 + Math.floor(t*120));
+    const g = Math.min(255, 6 + Math.floor(t*115));
+    const b = Math.max(0, 60 - Math.floor(t*20));
+    document.getElementById('sky').style.background = `linear-gradient(180deg, rgba(8,6,24,1), rgba(${r},${g},${b},1) 60%)`;
+  }
+
+  // clouds
+  cloudsWrap.querySelectorAll('.cloud').forEach((c, idx) => {
+    c.style.opacity = `${0.55 - 0.35 * t + (idx%2)*0.02}`;
+    const existing = c.style.transform.match(/scale\(([\d.]+)\)/);
+    const scaleVal = existing ? parseFloat(existing[1]) : 1;
+    const lateral = (t*8) + (Math.sin((Date.now()/4000) + idx) * 1.6);
+    c.style.transform = `translateX(${lateral}px) scale(${scaleVal})`;
+  });
+
+  rotFill.style.width = `${Math.min(100, t*100)}%`;
+
+  // cinematic camera breathing near end
+  if (t > 0.88){
+    const local = (t - 0.88) / 0.12;
+    const camScale = 1 + (local * 0.02);
+    stage.style.transform = `scale(${camScale})`;
+    document.querySelector('.vign').style.opacity = 0.6 + local*0.08;
+  } else {
+    stage.style.transform = 'scale(1)';
+    document.querySelector('.vign').style.opacity = 0.6;
+  }
+
+  if (t === 1) phaseTwoReady = true;
 }
 
-/* ---------------- Finish reveal ---------------- */
-function finishReveal(){
-  if(locked) return;
-  locked=true;
-  phaseTwoReady=true;
-  clickBtn.disabled=false;
-  clickBtn.style.opacity=1;
-}
+/* ---------------- First-button click: reveal cross (top-center) then birthday flow ---------------- */
+clickBtn.addEventListener('click', () => {
+  if (clickCount !== 0) {
+    return;
+  }
+  if (!phaseTwoReady && !locked) return; // only after reveal complete
 
-/* ---------------- Click to next phase ---------------- */
-clickBtn.addEventListener('click',()=>{
-  if(!phaseTwoReady || phaseTwoStarted) return;
-  phaseTwoStarted=true;
-  clickBtn.disabled=true;
-  clickBtn.style.opacity=0;
+  // hide button gracefully
+  clickBtn.style.opacity = 0;
+  clickBtn.disabled = true;
+  clickBtn.style.pointerEvents = 'none';
 
-  // sun fully rises in phase 2
-  sun.style.transition='opacity 1.4s ease, transform 1.4s ease, top 1.8s cubic-bezier(.2,.9,.2,1)';
-  sun.style.opacity=1;
-  sun.style.transform='scale(1.2)';
-  sun.style.top='12%';
-  sunCorona.style.opacity=0.48;
-  sunBand.style.opacity=0.36;
-  anam.style.opacity=0.28;
+  // Cinematic breathing before cross reveal
+  setTimeout(() => {
+    // reveal cross at top-center with slow Nolan push
+    cross.style.opacity = 1;
+    cross.style.transform = 'translateX(-50%) scale(1)';
+    // slight camera push-in (Nolan camera push)
+    stage.style.transition = 'transform 2.4s cubic-bezier(.2,.9,.2,1)';
+    stage.style.transform = 'scale(1.04)';
+    // subtle film bloom increase (simulate grade tweak)
+    document.querySelector('.grade-overlay').style.opacity = 0.28;
+  }, 600);
 
-  // reveal birthday overlay
-  birthdayOverlay.style.opacity=1;
-  happy.style.opacity=1;
-  happy.style.transform='translate(-50%,-50%) scale(1)';
+  // After cross has been shown and held, re-show button for birthday
+  setTimeout(() => {
+    clickBtn.innerText = "Click Here for Birthday!";
+    clickBtn.style.display = 'block';
+    clickBtn.style.opacity = 1;
+    clickBtn.disabled = false;
+    clickBtn.setAttribute('aria-hidden','false');
+    clickCount = 1;
+  }, 3600);
+});
 
-  // optional fireworks
-  startFireworks();
+/* ---------------- Second-button click: birthday overlay, fireworks ---------------- */
+clickBtn.addEventListener('click', (e) => {
+  if (clickCount !== 1) return;
+  if (phaseTwoStarted) return;
+  phaseTwoStarted = true;
+
+  // hide button
+  clickBtn.style.opacity = 0;
+  clickBtn.disabled = true;
+  setTimeout(()=> clickBtn.style.display='none', 600);
+
+  // gently fade main scene elements but KEEP cross visible
+  sun.style.opacity = 0;
+  document.querySelectorAll('.letter').forEach(l => { l.style.opacity = 0; l.style.transform = 'translateY(18px)'; });
+  starsWrap.querySelectorAll('.star').forEach(s => { s.style.opacity = 0; });
+  moon.style.opacity = 0;
+
+  // reveal birthday overlay and happy text after cross presence
+  setTimeout(()=> {
+    birthdayOverlay.style.opacity = 1;
+    birthdayOverlay.style.background = 'linear-gradient(180deg,#fffaf0,#fff1cc 40%, #ffe2b6 100%)';
+    happy.style.opacity = 1;
+    happy.style.transform = 'translate(-50%,-50%) scale(1)';
+  }, 900);
+
+  // start fireworks loop
+  const fireLoop = setInterval(()=> spawnFireworksBurst(), 420);
+
+  // keep fireworks running — optional stop could be added
 });
 
 /* ---------------- Fireworks ---------------- */
-function startFireworks(){
-  if(fireworksActive) return;
-  fireworksActive=true;
-  fireworksTimer=setInterval(()=>{
-    const fw=mk('div','fw');
-    fw.style.left=Math.random()*100+'%';
-    fw.style.top=Math.random()*40+'%';
-    document.body.appendChild(fw);
-    setTimeout(()=>fw.remove(),2000+Math.random()*2000);
-  },140);
+function spawnFireworksBurst(){
+  const cx = window.innerWidth * (0.2 + Math.random()*0.6);
+  const cy = window.innerHeight * (0.25 + Math.random()*0.25);
+  const colors = ['#ff0055','#ffd200','#00f7ff','#ff7b00','#c200ff'];
+  const particles = 12 + Math.floor(Math.random()*12);
+  for(let i=0;i<particles;i++){
+    const p = mk('div','fw');
+    const c = colors[Math.floor(Math.random()*colors.length)];
+    p.style.background = c;
+    p.style.left = (cx - 4) + 'px';
+    p.style.top = (cy - 4) + 'px';
+    document.getElementById('stage').appendChild(p);
+    const angle = Math.random()*Math.PI*2;
+    const dist = 80 + Math.random()*260;
+    const dx = Math.cos(angle)*dist;
+    const dy = Math.sin(angle)*dist;
+    const dur = 700 + Math.random()*800;
+    p.animate([
+      { transform: 'translate(0,0) scale(0.3)', opacity:1, offset:0 },
+      { transform: `translate(${dx}px, ${dy}px) scale(1.2)`, opacity:0.2, offset:0.7 },
+      { transform: `translate(${dx*1.15}px, ${dy*1.15}px) scale(0.2)`, opacity:0 }
+    ], { duration: dur, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards' });
+    setTimeout(()=> p.remove(), dur + 40);
+  }
 }
+
+/* ---------------- Minor animation loops ---------------- */
+setInterval(()=> {
+  cloudsWrap.querySelectorAll('.cloud').forEach((c, idx) => {
+    let left = parseFloat(c.style.left) || 0;
+    left += (0.03 + (idx%3)*0.02);
+    if (left > 120) left = -40;
+    c.style.left = left + '%';
+  });
+}, 60);
+
+setInterval(()=> {
+  starsWrap.querySelectorAll('.star').forEach((s,i) => {
+    if (parseFloat(s.style.opacity || 1) > 0.02) {
+      s.style.transform = `scale(${0.8 + 0.6*Math.abs(Math.sin((Date.now()/1200) + i))})`;
+    }
+  });
+}, 200);
+
+/* sun breathe */
+setInterval(()=> {
+  if (rotationDeg > 0) {
+    const t = Math.min(1, rotationDeg/ROTATION_NEEDED);
+    const breathe = 1 + Math.sin(Date.now()/900)*0.006 * t;
+    sun.style.transform = `scale(${(0.6 + 0.8*t) * breathe})`;
+    anam.style.transform = `translate(-50%,-50%) rotate(${Math.sin(Date.now()/1200)*0.3}deg) scale(${1 + 0.06*t})`;
+  }
+}, 90);
+
+/* initial hint pulse on moon */
+moon.animate([
+  { transform: 'translate(-50%,-50%) scale(1)' },
+  { transform: 'translate(-50%,-50%) scale(1.035)' },
+  { transform: 'translate(-50%,-50%) scale(1)' }
+], { duration:2200, easing:'ease-in-out', iterations:Infinity });
+
+/* keyboard accessibility */
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    if (!locked) {
+      rotationDeg = ROTATION_NEEDED;
+      finishReveal();
+      updateSceneByRotation(1);
+    } else if (phaseTwoReady && clickCount === 0) {
+      clickBtn.click();
+    } else if (clickCount === 1 && !phaseTwoStarted) {
+      clickBtn.click();
+    }
+  }
+});
+
+/* responsive safety */
+window.addEventListener('resize', ()=>{ /* no heavy work */ });
+
 </script>
 </body>
 </html>

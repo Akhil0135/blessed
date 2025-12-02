@@ -24,7 +24,7 @@
         padding: 15px 30px;
         font-size: 20px;
         font-weight: bold;
-        background: linear-gradient(90deg, #ff0066, #ffcc00, #00ccff);
+        background: linear-gradient(90deg, #ffffff, #dddddd);
         border: none;
         border-radius: 10px;
         cursor: pointer;
@@ -55,13 +55,13 @@ window.onresize = resize;
 
 // ------------ BACKGROUND TWINKLING STARS ------------
 const bgStars = [];
-const bgStarCount = 180;
+const bgStarCount = 200;
 
 for (let i = 0; i < bgStarCount; i++) {
     bgStars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 1.1 + 0.2,
+        size: Math.random() * 1.2 + 0.2,
         tw: Math.random() * 0.02 + 0.003
     });
 }
@@ -93,8 +93,8 @@ function mapTextToPoints(textStr) {
 
     const imageData = tctx.getImageData(0, 0, temp.width, temp.height).data;
     const points = [];
-    for (let y = 0; y < temp.height; y += 6) {
-        for (let x = 0; x < temp.width; x += 6) {
+    for (let y = 0; y < temp.height; y += 5) {
+        for (let x = 0; x < temp.width; x += 5) {
             let index = (y * temp.width + x) * 4;
             if (imageData[index + 3] > 200) {
                 points.push({ x, y });
@@ -113,48 +113,76 @@ const particles = letterPoints.map(p => ({
     y: Math.random() * canvas.height,
     tx: p.x,
     ty: p.y,
+    vx: 0,
+    vy: 0,
     speed: Math.random() * 0.08 + 0.04,
     size: Math.random() * 1.8 + 1.2
 }));
 
+// ------------ CAMERA DRIFT FOR IMAX EFFECT ------------
+let driftX = 0, driftY = 0, zoom = 1, rotation = 0;
+function applyCamera() {
+    driftX = Math.sin(Date.now()*0.0003)*8;
+    driftY = Math.cos(Date.now()*0.00025)*8;
+    zoom = 1 + Math.sin(Date.now()*0.0002)*0.02;
+    rotation = Math.sin(Date.now()*0.00015)*0.002;
+
+    ctx.save();
+    ctx.translate(canvas.width/2 + driftX, canvas.height/2 + driftY);
+    ctx.scale(zoom, zoom);
+    ctx.rotate(rotation);
+    ctx.translate(-canvas.width/2, -canvas.height/2);
+}
+
+// ------------ PARTICLE BURST EFFECT ------------
+let burst = false;
+
 // ------------ ANIMATION LOOP ------------
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    applyCamera();
     drawStarShape();
 
     particles.forEach(p => {
-        p.x += (p.tx - p.x) * p.speed;
-        p.y += (p.ty - p.y) * p.speed;
+        if(burst) {
+            p.vx += (Math.random()-0.5)*0.8;
+            p.vy += (Math.random()-0.5)*0.8;
+        }
+        p.vx += (p.tx - p.x) * p.speed * 0.065;
+        p.vy += (p.ty - p.y) * p.speed * 0.065;
+        p.x += p.vx;
+        p.y += p.vy;
 
-        const hue = (p.x + p.y) % 360;
-        ctx.fillStyle = `hsl(${hue}, 90%, 70%)`;
-        ctx.shadowBlur = 18;
-        ctx.shadowColor = ctx.fillStyle;
-
+        const pulse = (Math.sin(Date.now()*0.004)+1)*0.5+0.4;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(0,0%,100%,${pulse})`; // white shining
+        ctx.shadowColor = `hsla(0,0%,100%,1)`;
+        ctx.shadowBlur = 18;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
         ctx.fill();
     });
 
+    ctx.restore();
     requestAnimationFrame(animate);
 }
 
 animate();
 
 // ------------ SHOW BUTTON AFTER 3 SECONDS ------------
-setTimeout(() => {
-    btn.style.opacity = 1;
-}, 3000);
+setTimeout(() => { btn.style.opacity = 1; }, 3000);
 
-// ------------ CLICK EVENT TO CHANGE TEXT ------------
+// ------------ CLICK EVENT TO CHANGE TEXT WITH BURST ------------
 btn.addEventListener("click", () => {
-    btn.style.display = "none"; // hide button
+    btn.style.display = "none";
+
+    burst = true;
+    setTimeout(() => { burst = false; }, 600); // short burst
 
     // Map new text
     const newText = "DAIVIK";
     const newPoints = mapTextToPoints(newText);
 
-    // Reassign particle targets (reuse existing particles)
+    // Reassign particle targets
     particles.forEach((p, i) => {
         const np = newPoints[i % newPoints.length];
         p.tx = np.x;

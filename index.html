@@ -3,39 +3,29 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX PRINCE</title>
+<title>IMAX PRINCE — Electric Cinematic</title>
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background: #000;
-    }
-
-    canvas {
-        display: block;
-    }
+    html, body { margin: 0; padding: 0; overflow: hidden; background: #000; }
+    canvas { display: block; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-
 <script>
-// ------------ SETUP ------------
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    mapText();
 }
 resize();
 window.onresize = resize;
 
-// ------------ BACKGROUND TWINKLING STARS ------------
+// ----------------- BACKGROUND STARS -----------------
 const bgStars = [];
-const bgStarCount = 180;
-
+const bgStarCount = 200;
 for (let i = 0; i < bgStarCount; i++) {
     bgStars.push({
         x: Math.random() * canvas.width,
@@ -44,8 +34,7 @@ for (let i = 0; i < bgStarCount; i++) {
         tw: Math.random() * 0.02 + 0.003
     });
 }
-
-function drawStarShape() {
+function drawStars() {
     bgStars.forEach(s => {
         const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
         ctx.fillStyle = `rgba(255,255,255,${glow})`;
@@ -55,78 +44,100 @@ function drawStarShape() {
     });
 }
 
-// ------------ PRINCE LETTER PARTICLES ------------
+// ----------------- PRINCE LETTER PARTICLES -----------------
 const text = "PRINCE";
-
 const temp = document.createElement("canvas");
 const tctx = temp.getContext("2d");
-
+let letterPoints = [];
 function mapText() {
-    const fontSize = canvas.width / 7;
     temp.width = canvas.width;
     temp.height = canvas.height;
-
-    tctx.clearRect(0, 0, temp.width, temp.height);
-    tctx.fillStyle = "#fff";
-    tctx.font = "bold " + fontSize + "px Arial";
+    tctx.clearRect(0,0,temp.width,temp.height);
+    const fontSize = canvas.width / 7;
+    tctx.font = `bold ${fontSize}px Arial Black`;
     tctx.textAlign = "center";
     tctx.textBaseline = "middle";
-    tctx.fillText(text, temp.width / 2, temp.height / 2);
-
-    const imageData = tctx.getImageData(0, 0, temp.width, temp.height).data;
-
-    const points = [];
-    for (let y = 0; y < temp.height; y += 6) {
-        for (let x = 0; x < temp.width; x += 6) {
-            let index = (y * temp.width + x) * 4;
-            if (imageData[index + 3] > 200) {
-                points.push({ x, y });
-            }
+    tctx.fillStyle = "white";
+    tctx.fillText(text,temp.width/2,temp.height/2);
+    const data = tctx.getImageData(0,0,temp.width,temp.height).data;
+    letterPoints = [];
+    for(let y=0;y<temp.height;y+=5){
+        for(let x=0;x<temp.width;x+=5){
+            const i=(y*temp.width+x)*4;
+            if(data[i+3]>200) letterPoints.push({x,y});
         }
     }
-    return points;
+    initParticles();
 }
 
-let letterPoints = mapText();
-
-const particles = [];
-letterPoints.forEach(p => {
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+// ----------------- PARTICLES -----------------
+let particles = [];
+function initParticles(){
+    particles = letterPoints.map(p=>({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
         tx: p.x,
         ty: p.y,
-        speed: Math.random() * 0.08 + 0.04,
-        size: Math.random() * 1.8 + 1.2
-    });
-});
+        vx: (Math.random()-0.5)*6, // burst effect
+        vy: (Math.random()-0.5)*6,
+        size: Math.random()*2+1.5,
+        speed: Math.random()*0.08+0.04,
+        hue: Math.random()*360,
+        spark: Math.random()*1
+    }));
+}
 
-// ------------ ANIMATION ------------
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// ----------------- CAMERA 3D -----------------
+let cam = {rot:0,zoom:1,tilt:0};
+function applyCamera(){
+    cam.rot += 0.0002;
+    cam.zoom = 1+Math.sin(Date.now()*0.0004)*0.03;
+    cam.tilt = Math.sin(Date.now()*0.0003)*0.02;
+    ctx.save();
+    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.rotate(cam.rot);
+    ctx.transform(1, cam.tilt, cam.tilt, 1, 0, 0);
+    ctx.scale(cam.zoom,cam.zoom);
+    ctx.translate(-canvas.width/2,-canvas.height/2);
+}
 
-    // Background
-    drawStarShape();
+// ----------------- ELECTRIC HUE -----------------
+function electricHue(base){
+    return (base + Math.sin(Date.now()*0.002)*120)%360;
+}
 
-    // PRINCE particles
-    particles.forEach(p => {
-        p.x += (p.tx - p.x) * p.speed;
-        p.y += (p.ty - p.y) * p.speed;
+// ----------------- ANIMATION -----------------
+let forming=false;
+setTimeout(()=>forming=true,1800);
 
-        const hue = (p.x + p.y) % 360;
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        ctx.fillStyle = `hsl(${hue}, 90%, 70%)`;
-        ctx.shadowBlur = 18;
-        ctx.shadowColor = ctx.fillStyle;
+    applyCamera();
+    drawStars();
+
+    particles.forEach(p=>{
+        if(forming){
+            p.vx += (p.tx - p.x)*p.speed*0.08;
+            p.vy += (p.ty - p.y)*p.speed*0.08;
+        }
+        p.x += p.vx;
+        p.y += p.vy;
+
+        let hue = electricHue(p.hue);
+        let pulse = (Math.sin(Date.now()*0.01+p.spark*5)+1)*0.5+0.6;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${hue},100%,65%,${pulse})`;
+        ctx.shadowColor = `hsla(${hue},100%,75%,1)`;
+        ctx.shadowBlur = 20 + Math.sin(Date.now()*0.02+p.spark)*12;
+        ctx.arc(p.x,p.y,p.size + Math.sin(Date.now()*0.02+p.spark)*0.8,0,Math.PI*2);
         ctx.fill();
     });
 
+    ctx.restore();
     requestAnimationFrame(animate);
 }
-
 animate();
 </script>
 </body>

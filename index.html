@@ -1,321 +1,123 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX Nolan — Moon Drag Reveal</title>
-
-<!-- Load font (placed correctly) -->
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moon Reveal — Working Base</title>
 
 <style>
-  :root{
-    --msg-size: clamp(14px, 1.9vw, 22px);
-    --gold1: #fff9ea;
-    --gold2: #ffd26a;
-    --gold3: #ffdb98;
-  }
+    body{
+        margin:0;
+        height:100vh;
+        background:#000;
+        overflow:hidden;
+        font-family: serif;
+        color:white;
+        user-select:none;
+    }
 
-  html,body{
-    height:100%;
-    margin:0;
-    background: radial-gradient(1200px 600px at 50% 30%, #040510 0%, #000007 45%, #000000 100%);
-    overflow:hidden;
-    font-family: "Cinzel", serif;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    user-select:none;
-    touch-action: none;
-  }
+    /* moon */
+    #moon{
+        position:absolute;
+        top:40px;
+        left:40px;
+        width:120px;
+        height:120px;
+        border-radius:50%;
+        background:white;
+        cursor:grab;
+        z-index:10;
+    }
 
-  /* stars are simple divs */
-  .star{
-    position:absolute;
-    width:2px;height:2px;border-radius:50%;
-    background:rgba(255,255,255,0.9);
-    transform-origin:center;
-    filter: drop-shadow(0 0 1px rgba(255,255,255,0.2));
-    will-change: transform, opacity;
-    animation: twinkle linear infinite alternate;
-  }
-  @keyframes twinkle{
-    from { opacity:0.15; transform:scale(1); }
-    to   { opacity:1;    transform:scale(1.8); }
-  }
+    /* message */
+    #msgBox{
+        position:fixed;
+        bottom:40px;
+        left:50%;
+        transform:translateX(-50%);
+        white-space:nowrap;
+        font-size:20px;
+        font-weight:bold;
+        color:white;
+        opacity:1; /* ALWAYS VISIBLE NOW */
+        letter-spacing:1px;
+    }
 
-  /* moon - DOM element */
-  #moon{
-    position:absolute;
-    top:40px;
-    left:40px;
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    cursor:grab;
-    z-index:50;
-    box-shadow: 0 0 36px rgba(255,255,240,0.35), inset -6px -6px 18px rgba(0,0,0,0.12);
-    background:
-      radial-gradient(circle at 30% 28%, rgba(255,255,245,1) 0%, rgba(245,242,230,0.85) 28%, rgba(230,225,210,0.6) 60%, rgba(200,190,170,0.08) 100%),
-      radial-gradient(circle at 70% 70%, rgba(255,255,255,0.12), rgba(255,255,255,0));
-    transition: box-shadow .18s ease;
-    touch-action: none;
-  }
-  #moon:active{ cursor:grabbing; box-shadow: 0 0 46px rgba(255,255,240,0.45); }
+    #msgBox span{
+        opacity:0;
+        transition:opacity .2s linear;
+    }
 
-  /* vignette */
-  .vignette{
-    pointer-events:none;
-    position:fixed; inset:0; z-index:120;
-    background: radial-gradient(1200px 600px at 50% 40%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.06) 55%, rgba(0,0,0,0.45) 100%);
-    mix-blend-mode: multiply;
-  }
-
-  /* message container - centered bottom */
-  #msgWrap{
-    position:fixed;
-    left:50%;
-    bottom:44px;
-    transform:translateX(-50%);
-    z-index:60;
-    width:88%;
-    text-align:center;
-    pointer-events:none;
-    overflow:hidden;
-  }
-
-  #message{
-    display:inline-block;
-    white-space:nowrap;
-    font-size:var(--msg-size);
-    color:transparent;
-    background: linear-gradient(90deg, var(--gold1), var(--gold2), var(--gold3), var(--gold1));
-    -webkit-background-clip:text;
-    background-clip:text;
-    text-shadow: 0 0 10px rgba(255,235,200,0.55), 0 0 28px rgba(255,200,100,0.12);
-    letter-spacing:1.2px;
-    opacity:0; /* becomes visible as letters start */
-    transition: opacity .2s linear;
-  }
-
-  /* per-letter span: hidden by default (transparent, small glow when visible) */
-  #message span{
-    opacity:0;
-    transition: opacity .12s linear, transform .18s ease;
-    transform: translateY(6px);
-    display:inline-block;
-    will-change:opacity,transform;
-  }
-  #message span.show{
-    opacity:1;
-    transform: translateY(0);
-    text-shadow: 0 0 10px rgba(255,250,240,0.8), 0 0 26px rgba(255,190,70,0.15);
-  }
-
-  /* responsive tweak */
-  @media (max-width:420px){
-    #moon{ width:92px;height:92px; top:26px; left:20px; }
-    #message{ font-size:14px; letter-spacing:0.8px; }
-  }
+    #msgBox span.show{
+        opacity:1;
+    }
 </style>
+
 </head>
 <body>
 
-<!-- Stars will be appended here -->
-<div id="starsContainer" aria-hidden="true"></div>
+<div id="moon"></div>
 
-<!-- Moon -->
-<div id="moon" role="button" aria-label="Drag moon"></div>
-
-<!-- Message -->
-<div id="msgWrap"><div id="message" aria-hidden="true"></div></div>
-
-<!-- subtle vignette -->
-<div class="vignette"></div>
+<div id="msgBox"></div>
 
 <script>
-(function(){
-  const starsContainer = document.getElementById('starsContainer');
-  const moon = document.getElementById('moon');
-  const message = document.getElementById('message');
-  const msgWrap = document.getElementById('msgWrap');
+    const moon = document.getElementById("moon");
+    const msgBox = document.getElementById("msgBox");
 
-  const fullText = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-  // Build letter spans
-  function buildMessageSpans(){
-    message.innerHTML = '';
-    for(let ch of fullText){
-      const sp = document.createElement('span');
-      sp.textContent = ch;
-      message.appendChild(sp);
+    const text = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+
+    // build spans
+    msgBox.innerHTML = "";
+    for(let c of text){
+        let sp = document.createElement("span");
+        sp.textContent = c;
+        msgBox.appendChild(sp);
     }
-  }
-  buildMessageSpans();
 
-  // Stars: create and place
-  const STAR_COUNT = Math.max(120, Math.floor(window.innerWidth * 0.18));
-  const stars = [];
-  function makeStars(){
-    starsContainer.innerHTML = '';
-    stars.length = 0;
-    for(let i=0;i<STAR_COUNT;i++){
-      const s = document.createElement('div');
-      s.className = 'star';
-      const x = Math.random()*window.innerWidth;
-      const y = Math.random()*window.innerHeight;
-      const size = Math.random()*1.4 + 0.35;
-      const tw = 1.8 + Math.random()*1.8;
-      s.style.left = x + 'px';
-      s.style.top = y + 'px';
-      s.style.width = (size*1.6) + 'px';
-      s.style.height = (size*1.6) + 'px';
-      s.style.opacity = (0.15 + Math.random()*0.6).toFixed(2);
-      s.style.animationDuration = (tw).toFixed(2) + 's';
-      s.style.animationDelay = (Math.random()*2)+'s';
-      starsContainer.appendChild(s);
-      stars.push({el:s, x, y, size});
-    }
-  }
-  makeStars();
+    const spans = msgBox.querySelectorAll("span");
 
-  // Responsive
-  window.addEventListener('resize', () => {
-    makeStars();
-    clampMoon();
-  });
+    let dragging = false;
+    let offsetX = 0;
+    let lastShown = 0;
+    let locked = false;
 
-  // Place moon initial
-  function clampMoon(){
-    const pad = 12;
-    const mw = moon.offsetWidth;
-    const mh = moon.offsetHeight;
-    // keep near top-left start
-    moon.style.top = Math.max(24, Math.round(window.innerHeight*0.06)) + 'px';
-    if(!moon.dataset.init){
-      moon.style.left = Math.max(24, Math.round(window.innerWidth*0.06)) + 'px';
-      moon.dataset.init = '1';
-    } else {
-      // clamp existing left
-      let lx = parseFloat(moon.style.left || 40);
-      const minX = pad;
-      const maxX = window.innerWidth - mw - pad;
-      if(lx < minX) lx = minX;
-      if(lx > maxX) lx = maxX;
-      moon.style.left = lx + 'px';
-    }
-  }
-  clampMoon();
+    moon.addEventListener("mousedown", e=>{
+        dragging = true;
+        offsetX = e.clientX - moon.offsetLeft;
+        moon.style.transition = "none";
+    });
 
-  // Pointer handling for drag (works for mouse + touch)
-  let dragging = false;
-  let startOffsetX = 0;
-  let lastRevealCount = 0;
-  let lockedRevealed = false; // once fully revealed, lock
+    window.addEventListener("mouseup", ()=>{
+        dragging = false;
+    });
 
-  function getBounds(){
-    const mw = moon.offsetWidth;
-    const minX = 8;
-    const maxX = window.innerWidth - mw - 8;
-    return {minX, maxX};
-  }
+    window.addEventListener("mousemove", e=>{
+        if(!dragging) return;
 
-  function setMoonLeft(x){
-    const {minX,maxX} = getBounds();
-    x = Math.max(minX, Math.min(maxX, x));
-    moon.style.left = Math.round(x) + 'px';
-    // subtle parallax for stars
-    const centerShift = (x - window.innerWidth*0.06) / (window.innerWidth*0.8); // -..1
-    for(let s of stars){
-      // tiny translate based on star size
-      const tx = centerShift * (s.size*0.8);
-      s.el.style.transform = `translateX(${tx}px)`;
-    }
-    // drive reveal
-    handleReveal(x, minX, maxX);
-  }
+        let x = e.clientX - offsetX;
+        if(x < 10) x = 10;
+        if(x > window.innerWidth - 130) x = window.innerWidth - 130;
 
-  function handleReveal(x, minX, maxX){
-    if(lockedRevealed) return;
-    // progress mapped 0..1
-    const raw = (x - minX) / (maxX - minX);
-    const progress = Math.max(0, Math.min(1, raw));
-    // determine letters to show (only increase)
-    const total = fullText.length;
-    const target = Math.floor(progress * total);
-    if(target > lastRevealCount){
-      // reveal up to target
-      const spans = message.querySelectorAll('span');
-      for(let i = lastRevealCount; i < target && i < spans.length; i++){
-        spans[i].classList.add('show');
-      }
-      lastRevealCount = target;
-      // make container visible as soon as any letter shows
-      if(lastRevealCount > 0) message.style.opacity = 1;
-      // fully revealed?
-      if(lastRevealCount >= total){
-        lockedRevealed = true;
-        // ensure all letters visible
-        for(let sp of message.querySelectorAll('span')) sp.classList.add('show');
-        message.style.opacity = 1;
-      }
-    }
-  }
+        moon.style.left = x+"px";
 
-  // pointer events
-  function onPointerDown(e){
-    e.preventDefault();
-    dragging = true;
-    const rect = moon.getBoundingClientRect();
-    const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
-    startOffsetX = clientX - rect.left;
-    moon.style.transition = 'none';
-  }
-  function onPointerMove(e){
-    if(!dragging) return;
-    const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
-    const left = clientX - startOffsetX;
-    setMoonLeft(left);
-  }
-  function onPointerUp(e){
-    if(!dragging) return;
-    dragging = false;
-    moon.style.transition = ''; // restore CSS transitions
-  }
+        // reveal progress
+        if(!locked){
+            let progress = x / (window.innerWidth - 140);
+            let target = Math.floor(progress * spans.length);
 
-  moon.addEventListener('mousedown', onPointerDown);
-  window.addEventListener('mousemove', onPointerMove);
-  window.addEventListener('mouseup', onPointerUp);
+            if(target > lastShown){
+                for(let i = lastShown; i < target; i++){
+                    spans[i].classList.add("show");
+                }
+                lastShown = target;
 
-  moon.addEventListener('touchstart', onPointerDown, {passive:false});
-  window.addEventListener('touchmove', onPointerMove, {passive:false});
-  window.addEventListener('touchend', onPointerUp);
-
-  // keyboard accessibility: left/right arrows move moon (progress)
-  window.addEventListener('keydown', (e) => {
-    if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
-      const rect = moon.getBoundingClientRect();
-      const step = (window.innerWidth * 0.02) * (e.key === 'ArrowRight' ? 1 : -1);
-      setMoonLeft(rect.left + step);
-    }
-  });
-
-  // initial gentle star animation via requestAnimationFrame to avoid layout thrash
-  (function starFlicker(){
-    for(let s of stars){
-      // randomly adjust animation-duration slightly
-      s.el.style.animationDuration = (1.6 + Math.random()*2.2).toFixed(2) + 's';
-      s.el.style.animationDelay = (Math.random()*2) + 's';
-    }
-  })();
-
-  // ensure moon initial position and responsiveness
-  window.addEventListener('load', () => {
-    clampMoon();
-  });
-  window.addEventListener('resize', () => {
-    clampMoon();
-  });
-
-})();
+                if(lastShown >= spans.length){
+                    locked = true;
+                }
+            }
+        }
+    });
 </script>
+
 </body>
 </html>

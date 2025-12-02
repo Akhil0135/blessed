@@ -11,28 +11,25 @@
         overflow: hidden;
         background: #000;
     }
+    canvas { display: block; }
 
-    canvas {
-        display: block;
-    }
-
+    /* Click Here Button */
     #clickBtn {
         position: absolute;
-        bottom: 40px;
         left: 50%;
+        bottom: 60px;
         transform: translateX(-50%);
-        padding: 15px 30px;
-        font-size: 20px;
+        padding: 14px 28px;
+        font-size: 22px;
         font-weight: bold;
-        background: linear-gradient(90deg, #ffffff, #dddddd);
+        background: #fff;
+        color: #000;
         border: none;
-        border-radius: 10px;
+        border-radius: 12px;
         cursor: pointer;
-        box-shadow: 0 0 20px rgba(255,255,255,0.6);
-        color: #fff;
         opacity: 0;
-        transition: opacity 1s ease;
-        z-index: 1000;
+        transition: opacity 0.8s;
+        box-shadow: 0 0 20px rgba(255,255,255,0.8);
     }
 </style>
 </head>
@@ -41,91 +38,88 @@
 <button id="clickBtn">Click Here</button>
 
 <script>
-// ------------ SETUP ------------
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
-const btn = document.getElementById("clickBtn");
 
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    mapText();
 }
 resize();
 window.onresize = resize;
 
-// ------------ BACKGROUND TWINKLING STARS ------------
+// ------------ Background Twinkling Stars ------------
 const bgStars = [];
-const bgStarCount = 200;
-
+const bgStarCount = 180;
 for (let i = 0; i < bgStarCount; i++) {
     bgStars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 1.2 + 0.2,
+        size: Math.random() * 1.2 + 0.3,
         tw: Math.random() * 0.02 + 0.003
     });
 }
 
-function drawStarShape() {
+function drawStars() {
     bgStars.forEach(s => {
         const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
         ctx.fillStyle = `rgba(255,255,255,${glow})`;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
         ctx.fill();
     });
 }
 
-// ------------ PARTICLES FUNCTION ------------
-function mapTextToPoints(textStr) {
-    const temp = document.createElement("canvas");
-    const tctx = temp.getContext("2d");
-    temp.width = canvas.width;
-    temp.height = canvas.height;
+// ------------ Letter Particles ------------
+let currentText = "PRINCE";
+const tempCanvas = document.createElement("canvas");
+const tempCtx = tempCanvas.getContext("2d");
+let points = [];
 
+function mapText() {
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
     const fontSize = canvas.width / 7;
-    tctx.clearRect(0, 0, temp.width, temp.height);
-    tctx.fillStyle = "#fff";
-    tctx.font = "bold " + fontSize + "px Arial";
-    tctx.textAlign = "center";
-    tctx.textBaseline = "middle";
-    tctx.fillText(textStr, temp.width / 2, temp.height / 2);
 
-    const imageData = tctx.getImageData(0, 0, temp.width, temp.height).data;
-    const points = [];
-    for (let y = 0; y < temp.height; y += 5) {
-        for (let x = 0; x < temp.width; x += 5) {
-            let index = (y * temp.width + x) * 4;
-            if (imageData[index + 3] > 200) {
-                points.push({ x, y });
-            }
+    tempCtx.clearRect(0,0,tempCanvas.width,tempCanvas.height);
+    tempCtx.fillStyle = "#fff";
+    tempCtx.font = "bold " + fontSize + "px Arial";
+    tempCtx.textAlign = "center";
+    tempCtx.textBaseline = "middle";
+    tempCtx.fillText(currentText, tempCanvas.width/2, tempCanvas.height/2);
+
+    const data = tempCtx.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
+    points = [];
+    for(let y=0; y<tempCanvas.height; y+=6){
+        for(let x=0; x<tempCanvas.width; x+=6){
+            const i = (y*tempCanvas.width + x)*4;
+            if(data[i+3] > 200) points.push({x, y});
         }
     }
-    return points;
+
+    resetParticles();
 }
 
-// ------------ INITIAL LETTERS ------------
-let currentText = "PRINCE";
-let letterPoints = mapTextToPoints(currentText);
+let particles = [];
+function resetParticles() {
+    particles = points.map(p => ({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        tx: p.x,
+        ty: p.y,
+        size: Math.random()*2 + 1.5,
+        speed: Math.random()*0.08 + 0.04
+    }));
+}
 
-const particles = letterPoints.map(p => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    tx: p.x,
-    ty: p.y,
-    vx: 0,
-    vy: 0,
-    speed: Math.random() * 0.08 + 0.04,
-    size: Math.random() * 1.8 + 1.2
-}));
-
-// ------------ CAMERA DRIFT FOR IMAX EFFECT ------------
-let driftX = 0, driftY = 0, zoom = 1, rotation = 0;
+// ------------ Camera (IMAX Nolan Drift) ------------
+let zoom=1, rotation=0, driftX=0, driftY=0;
 function applyCamera() {
+    zoom += 0.0001;
+    rotation += 0.00012;
     driftX = Math.sin(Date.now()*0.0003)*8;
     driftY = Math.cos(Date.now()*0.00025)*8;
-    zoom = 1 + Math.sin(Date.now()*0.0002)*0.02;
-    rotation = Math.sin(Date.now()*0.00015)*0.002;
 
     ctx.save();
     ctx.translate(canvas.width/2 + driftX, canvas.height/2 + driftY);
@@ -134,23 +128,24 @@ function applyCamera() {
     ctx.translate(-canvas.width/2, -canvas.height/2);
 }
 
-// ------------ ANIMATION LOOP ------------
+// ------------ Animation Loop ------------
 function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     applyCamera();
-    drawStarShape();
+    drawStars();
 
     particles.forEach(p => {
-        p.vx += (p.tx - p.x) * p.speed * 0.065;
-        p.vy += (p.ty - p.y) * p.speed * 0.065;
-        p.x += p.vx;
-        p.y += p.vy;
+        // Smooth movement to target
+        p.x += (p.tx - p.x) * p.speed;
+        p.y += (p.ty - p.y) * p.speed;
 
-        const pulse = (Math.sin(Date.now()*0.004)+1)*0.5+0.4;
-        ctx.beginPath();
-        ctx.fillStyle = `hsla(0,0%,100%,${pulse})`; // white shining
-        ctx.shadowColor = `hsla(0,0%,100%,1)`;
+        // White shining glow
+        const pulse = (Math.sin(Date.now()*0.004)+1)*0.5 + 0.4;
+        ctx.fillStyle = `rgba(255,255,255,${pulse})`;
         ctx.shadowBlur = 18;
+        ctx.shadowColor = "#fff";
+
+        ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
         ctx.fill();
     });
@@ -158,24 +153,16 @@ function animate() {
     ctx.restore();
     requestAnimationFrame(animate);
 }
-
 animate();
 
-// ------------ SHOW BUTTON AFTER 3 SECONDS ------------
+// ------------ Click Here Button Handling ------------
+const btn = document.getElementById("clickBtn");
 setTimeout(() => { btn.style.opacity = 1; }, 3000);
 
-// ------------ CLICK EVENT TO CHANGE TEXT ------------
-btn.addEventListener("click", () => {
-    btn.style.display = "none";
-    const newText = "DAIVIK";
-    const newPoints = mapTextToPoints(newText);
-
-    particles.forEach((p, i) => {
-        const np = newPoints[i % newPoints.length];
-        p.tx = np.x;
-        p.ty = np.y;
-    });
-});
+btn.onclick = () => {
+    currentText = "DAIVIK";
+    mapText();
+};
 </script>
 </body>
 </html>

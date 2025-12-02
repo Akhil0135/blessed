@@ -41,11 +41,10 @@ for (let i = 0; i < bgStarCount; i++) {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         size: Math.random() * 1.1 + 0.2,
-        tw: Math.random() * 0.02 + 0.003   // ultra slow twinkle
+        tw: Math.random() * 0.02 + 0.003
     });
 }
 
-// STAR SHAPE (background stars)
 function drawStarShape() {
     bgStars.forEach(s => {
         const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
@@ -56,11 +55,9 @@ function drawStarShape() {
     });
 }
 
-
 // ------------ PRINCE LETTER PARTICLES ------------
 const text = "PRINCE";
 
-// Draw letters to hidden canvas to grab pixel map
 const temp = document.createElement("canvas");
 const tctx = temp.getContext("2d");
 
@@ -92,7 +89,6 @@ function mapText() {
 
 let letterPoints = mapText();
 
-// Particle system
 const particles = [];
 letterPoints.forEach(p => {
     particles.push({
@@ -100,25 +96,29 @@ letterPoints.forEach(p => {
         y: Math.random() * canvas.height,
         tx: p.x,
         ty: p.y,
-        speed: Math.random() * 0.08 + 0.04,   // faster
+        speed: Math.random() * 0.08 + 0.04,
         size: Math.random() * 1.8 + 1.2
     });
 });
-
 
 // ------------ ANIMATION ------------
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // --- Background Twinkling Star Shape ---
+    // Background
     drawStarShape();
 
-    // --- PRINCE Particles ---
+    // PRINCE particles
     particles.forEach(p => {
         p.x += (p.tx - p.x) * p.speed;
         p.y += (p.ty - p.y) * p.speed;
 
-        ctx.fillStyle = "white";
+        const hue = (p.x + p.y) % 360;
+
+        ctx.fillStyle = `hsl(${hue}, 90%, 70%)`;
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = ctx.fillStyle;
+
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();

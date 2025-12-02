@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX PRINCE</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IMAX PRINCE Cinematic</title>
 <style>
     html, body {
         margin: 0;
@@ -11,7 +11,6 @@
         overflow: hidden;
         background: #000;
     }
-
     canvas {
         display: block;
     }
@@ -21,34 +20,32 @@
 <canvas id="c"></canvas>
 
 <script>
-// ------------ SETUP ------------
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
 function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 }
 resize();
-window.onresize = resize;
+onresize = resize;
 
-// ------------ BACKGROUND TWINKLING STARS ------------
-const bgStars = [];
-const bgStarCount = 180;
+// ------------------- BACKGROUND STAR FIELD -------------------
+const stars = [];
+const starCount = 180;
 
-for (let i = 0; i < bgStarCount; i++) {
-    bgStars.push({
+for (let i = 0; i < starCount; i++) {
+    stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 1.1 + 0.2,
-        tw: Math.random() * 0.02 + 0.003   // ultra slow twinkle
+        size: Math.random() * 1.2 + 0.3,
+        tw: Math.random() * 0.015 + 0.003
     });
 }
 
-// STAR SHAPE (background stars)
-function drawStarShape() {
-    bgStars.forEach(s => {
-        const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
+function drawStars() {
+    stars.forEach(s => {
+        let glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5 * 0.8;
         ctx.fillStyle = `rgba(255,255,255,${glow})`;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
@@ -56,73 +53,101 @@ function drawStarShape() {
     });
 }
 
-
-// ------------ PRINCE LETTER PARTICLES ------------
+// ------------------- TEXT MAPPING (PRINCE) -------------------
 const text = "PRINCE";
 
-// Draw letters to hidden canvas to grab pixel map
-const temp = document.createElement("canvas");
-const tctx = temp.getContext("2d");
+const tCanvas = document.createElement("canvas");
+const tCtx = tCanvas.getContext("2d");
 
 function mapText() {
-    const fontSize = canvas.width / 7;
-    temp.width = canvas.width;
-    temp.height = canvas.height;
+    let fontSize = canvas.width / 7;
+    tCanvas.width = canvas.width;
+    tCanvas.height = canvas.height;
 
-    tctx.clearRect(0, 0, temp.width, temp.height);
-    tctx.fillStyle = "#fff";
-    tctx.font = "bold " + fontSize + "px Arial";
-    tctx.textAlign = "center";
-    tctx.textBaseline = "middle";
-    tctx.fillText(text, temp.width / 2, temp.height / 2);
+    tCtx.clearRect(0, 0, tCanvas.width, tCanvas.height);
+    tCtx.fillStyle = "#fff";
+    tCtx.font = "900 " + fontSize + "px Arial Black";
+    tCtx.textAlign = "center";
+    tCtx.textBaseline = "middle";
+    tCtx.fillText(text, tCanvas.width / 2, tCanvas.height / 2);
 
-    const imageData = tctx.getImageData(0, 0, temp.width, temp.height).data;
+    let data = tCtx.getImageData(0, 0, tCanvas.width, tCanvas.height).data;
+    const pts = [];
 
-    const points = [];
-    for (let y = 0; y < temp.height; y += 6) {
-        for (let x = 0; x < temp.width; x += 6) {
-            let index = (y * temp.width + x) * 4;
-            if (imageData[index + 3] > 200) {
-                points.push({ x, y });
-            }
+    for (let y = 0; y < tCanvas.height; y += 6) {
+        for (let x = 0; x < tCanvas.width; x += 6) {
+            let i = (y * tCanvas.width + x) * 4;
+            if (data[i + 3] > 200) pts.push({ x, y });
         }
     }
-    return points;
+    return pts;
 }
 
-let letterPoints = mapText();
+let points = mapText();
 
-// Particle system
-const particles = [];
-letterPoints.forEach(p => {
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        tx: p.x,
-        ty: p.y,
-        speed: Math.random() * 0.08 + 0.04,   // faster
-        size: Math.random() * 1.8 + 1.2
-    });
-});
+// ------------------- PARTICLES FOR PRINCE -------------------
+const particles = points.map(p => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    tx: p.x,
+    ty: p.y,
+    size: Math.random() * 2 + 1.3,
+    speed: Math.random() * 0.06 + 0.04,
+    hue: Math.random() * 360 // color
+}));
 
+// ------------------- IMAX FOG LAYER -------------------
+function drawFog() {
+    let gradient = ctx.createRadialGradient(
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.1,
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.8
+    );
+    gradient.addColorStop(0, "rgba(255,255,255,0.04)");
+    gradient.addColorStop(1, "rgba(0,0,0,0)");
 
-// ------------ ANIMATION ------------
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+// ------------------- CAMERA ZOOM-IN -------------------
+let zoom = 1;
+function applyZoom() {
+    zoom += 0.00015;
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.scale(zoom, zoom);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+}
+
+// ------------------- ANIMATION -------------------
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // --- Background Twinkling Star Shape ---
-    drawStarShape();
+    // Camera Zoom layer
+    applyZoom();
 
-    // --- PRINCE Particles ---
+    // Background twinkling stars
+    drawStars();
+
+    // PRINCE glowing particles
     particles.forEach(p => {
         p.x += (p.tx - p.x) * p.speed;
         p.y += (p.ty - p.y) * p.speed;
 
-        ctx.fillStyle = "white";
+        let pulse = (Math.sin(Date.now() * 0.004) + 1) * 0.5 + 0.4;
+
         ctx.beginPath();
+        ctx.fillStyle = `hsla(${p.hue},100%,60%,${pulse})`;
+        ctx.shadowColor = `hsla(${p.hue},100%,70%,1)`;
+        ctx.shadowBlur = 10;
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
     });
+
+    ctx.restore();
+
+    // Fog layer
+    drawFog();
 
     requestAnimationFrame(animate);
 }

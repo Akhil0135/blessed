@@ -4,11 +4,12 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>IMAX Nolan — Moon → Sun → Text Reveal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-night-1:#070617;
     --bg-night-2:#120430;
-    --text-contrast:#ffdFA0;
+    --text-contrast:#FFDFA0;
   }
   html,body{
     height:100%;
@@ -60,12 +61,12 @@
     height:780px;
     border-radius:50%;
     right:6vw; 
-    top:-260px;
+    top:20px; /* fixed at top */
     background: radial-gradient(circle at 38% 34%, #fff8e8 0%, #ffd98f 12%, #ffb258 32%, #ff8a30 60%, rgba(200,80,30,0.6) 85%, rgba(200,80,30,0) 100%);
     box-shadow:0 0 280px 90px rgba(255,220,140,0.12),0 0 420px 260px rgba(255,180,90,0.04);
     opacity:0;
     z-index:55;
-    transition:top 1.8s cubic-bezier(.2,.9,.2,1),opacity 1.6s ease, transform 1.6s ease;
+    transition:opacity 1.6s ease, transform 1.6s ease;
   }
 
   #message{
@@ -75,15 +76,16 @@
     top:62%;
     text-align:center;
     z-index:80;
-    font-size:34px;
+    font-size:38px;
     letter-spacing:2px;
-    color:#f2d8ff;
-    text-shadow:0 6px 24px rgba(40,10,60,0.45);
+    color:#FFDFA0;
+    text-shadow:0 6px 24px rgba(40,10,60,0.65);
     pointer-events:none;
     transform:translateZ(0);
-    font-weight:500;
-    line-height:1.25;
+    font-weight:700;
+    line-height:1.3;
     font-family:"Cinzel",serif;
+    text-transform:uppercase; /* ALL CAPS */
   }
   .letter{display:inline-block;opacity:0;transform:translateY(12px);transition:opacity .12s ease, transform .12s ease}
 
@@ -102,7 +104,7 @@
 
 <script>
 /* ---------------- Config ---------------- */
-const fullText = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
 const ROTATION_NEEDED = 360;
 
 /* ---------------- Utils ---------------- */
@@ -187,17 +189,14 @@ function updateSceneByRotation(t){
     }
   }
 
-  // Sun evolve
+  // Sun appear (fixed top-right)
   sun.style.opacity = `${Math.min(1, t*1.05)}`;
-  const startTop = -260;
-  const endTop = 80;
-  sun.style.top = `${startTop + (endTop-startTop)*t}px`;
-  sun.style.transform = `scale(${0.6+0.8*t})`;
+  sun.style.transform = `scale(${0.8+0.6*t})`;
 
   // Stars fade
   starsWrap.querySelectorAll('.star').forEach(s=>{
     const base = +s.dataset.baseOpacity || 1;
-    s.style.opacity = Math.max(0, base*(1-t*1.1));
+    s.style.opacity = Math.max(0, base*(1-t*1.2));
   });
 }
 

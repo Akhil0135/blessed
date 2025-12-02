@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>IMAX Nolan — Moon → Sun → Cross → Birthday Reveal</title>
+<title>IMAX Nolan — Moon → Sun → Big Cross → Birthday Reveal</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -95,18 +95,19 @@
     transition:opacity .3s linear;
   }
 
-  /* cross */
+  /* big cross */
   #cross{
     position:absolute;
-    top:-200px;
+    top:-400px;
     left:50%;
-    transform:translateX(-50%) scale(0.2);
-    width:30px;
-    height:100px;
+    transform:translateX(-50%) scale(0.3);
+    width:60px;
+    height:200px;
     z-index:70;
     opacity:0;
     background-color:var(--cross-color);
-    transition: all 1s ease-in-out;
+    box-shadow:0 0 40px 15px rgba(255,248,232,0.4),0 0 120px 40px rgba(255,248,232,0.2);
+    transition: all 1.5s ease-in-out;
   }
   #cross::before{
     content:'';
@@ -114,9 +115,10 @@
     left:50%;
     top:40%;
     transform:translate(-50%,-50%);
-    width:80px;
-    height:30px;
+    width:140px;
+    height:40px;
     background-color:var(--cross-color);
+    box-shadow:0 0 40px 15px rgba(255,248,232,0.4),0 0 120px 40px rgba(255,248,232,0.2);
   }
 
   /* message */
@@ -127,7 +129,7 @@
     transform:translateX(-50%);
     white-space:nowrap;
     font-family:"IM Fell English SC", serif;
-    font-size:20px;
+    font-size:18px;
     letter-spacing:2px;
     color:#ffdFA0;
     z-index:80;
@@ -143,8 +145,8 @@
     #moon{width:140px;height:140px;}
     #sun{width:200px;height:200px;}
     #message{font-size:14px;}
-    #cross{width:20px;height:70px;}
-    #cross::before{width:60px;height:20px;}
+    #cross{width:40px;height:140px;}
+    #cross::before{width:100px;height:28px;}
   }
 </style>
 </head>
@@ -244,7 +246,7 @@ function updateScene(t){
     }
   }
 
-  // Show cross softly after sun fully appears (t>0.95)
+  // Show big cross softly after sun fully appears (t>0.95)
   if(t>0.95){
     cross.style.top='10%';
     cross.style.opacity=0.85;

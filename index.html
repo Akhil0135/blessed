@@ -23,43 +23,36 @@ function resize() {
 resize();
 window.onresize = resize;
 
-// ----------------- BACKGROUND TWINKLING STARS -----------------
+// Background stars
 const bgStars = [];
-const bgStarCount = 200;
-for(let i=0;i<bgStarCount;i++){
-    bgStars.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        size: Math.random()*1.2+0.2,
-        tw: Math.random()*0.02+0.003
-    });
+for (let i=0;i<200;i++){
+    bgStars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*1.2+0.2,tw:Math.random()*0.02+0.003});
 }
 function drawStars(){
     bgStars.forEach(s=>{
-        const glow = (Math.sin(Date.now()*s.tw)+1)*0.5;
-        ctx.fillStyle = `rgba(255,255,255,${glow})`;
+        const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
+        ctx.fillStyle=`rgba(255,255,255,${glow})`;
         ctx.beginPath();
         ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
         ctx.fill();
     });
 }
 
-// ----------------- PRINCE LETTER PARTICLES -----------------
-const text = "PRINCE";
+// PRINCE letters
+const text="PRINCE";
 const temp = document.createElement("canvas");
 const tctx = temp.getContext("2d");
-let letterPoints = [];
+let letterPoints=[];
 function mapText(){
     temp.width = canvas.width;
     temp.height = canvas.height;
     tctx.clearRect(0,0,temp.width,temp.height);
-    const fontSize = canvas.width/7;
-    tctx.font = `bold ${fontSize}px Arial Black`;
-    tctx.textAlign = "center";
-    tctx.textBaseline = "middle";
-    tctx.fillStyle = "#fff";
+    tctx.font=`bold ${canvas.width/7}px Arial Black`;
+    tctx.textAlign="center";
+    tctx.textBaseline="middle";
+    tctx.fillStyle="#fff";
     tctx.fillText(text,temp.width/2,temp.height/2);
-    const data = tctx.getImageData(0,0,temp.width,temp.height).data;
+    const data=tctx.getImageData(0,0,temp.width,temp.height).data;
     letterPoints=[];
     for(let y=0;y<temp.height;y+=5){
         for(let x=0;x<temp.width;x+=5){
@@ -70,12 +63,12 @@ function mapText(){
     initParticles();
 }
 
-// ----------------- PARTICLES WITH BURST -----------------
+// Particles
 let particles=[];
 function initParticles(){
     particles = letterPoints.map(p=>({
-        x: p.x + (Math.random()-0.5)*50, // burst start
-        y: p.y + (Math.random()-0.5)*50,
+        x: p.x + (Math.random()-0.5)*60,
+        y: p.y + (Math.random()-0.5)*60,
         tx: p.x,
         ty: p.y,
         vx: (Math.random()-0.5)*3,
@@ -83,16 +76,16 @@ function initParticles(){
         size: Math.random()*2+1.5,
         speed: Math.random()*0.06+0.04,
         hue: Math.random()*360,
-        spark: Math.random()*1
+        spark: Math.random()
     }));
 }
 
-// ----------------- ELECTRIC HUE FUNCTION -----------------
+// Hue shift
 function electricHue(base){
     return (base + Math.sin(Date.now()*0.002)*120)%360;
 }
 
-// ----------------- ANIMATION -----------------
+// Animation
 let forming=false;
 setTimeout(()=>forming=true,1000);
 

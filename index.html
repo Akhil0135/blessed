@@ -91,7 +91,7 @@
     z-index:55;
     pointer-events:none;
     opacity:0;
-    transition:opacity .2s linear, transform .2s linear;
+    transition:opacity .2s linear;
   }
 
   /* message */
@@ -142,6 +142,7 @@ let lastX = 0;
 let progress = 0; // 0..1
 
 // Create stars
+const stars = [];
 for(let i=0;i<160;i++){
   const s = document.createElement('div');
   s.className='star';
@@ -149,6 +150,7 @@ for(let i=0;i<160;i++){
   s.style.top = Math.random()*80+'%';
   s.style.opacity = 0.3 + Math.random()*0.6;
   starsWrap.appendChild(s);
+  stars.push(s);
 }
 
 // Split message into letters
@@ -190,16 +192,16 @@ function updateScene(t){
   // Sun appear fully at top-right
   sun.style.opacity = t;
 
-  // Stars fade gradually as sun rises
-  starsWrap.querySelectorAll('.star').forEach(s=>{
-    if(t<1){
+  // Stars fade after moon gone
+  stars.forEach((s)=>{
+    if(t<0.95){
       s.style.opacity = 0.3 + Math.random()*0.6; // twinkle
     } else {
       s.style.opacity = 0;
     }
   });
 
-  // Reveal message letters
+  // Reveal message letters in parallel
   const lettersToShow=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
     if(i<lettersToShow){

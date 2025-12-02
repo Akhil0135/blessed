@@ -1,223 +1,342 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IMAX Nolan Phase 1 → 2 Day Evolution</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IMAX Nolan — Moon → Day → Divine Cross → Birthday (Final Fixed)</title>
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        user-select: none;
-        background: #000;
-        font-family: "Georgia", serif;
-    }
-    canvas {
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-    }
-    #moon {
-        position: absolute;
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        background: radial-gradient(circle, #fff 0%, #e0e0e0 30%, #bfbfbf 80%);
-        box-shadow: 0 0 60px 20px rgba(255,255,255,0.25),
-                    0 0 120px 50px rgba(100,120,255,0.12);
-        top: 60px;
-        left: 60px;
-        cursor: grab;
-        z-index: 10;
-        transition: opacity 2s ease;
-    }
-    #msgBox {
-        position: fixed;
-        bottom: 55px;
-        left: 50%;
-        transform: translateX(-50%);
-        white-space: nowrap;
-        font-size: 16px;
-        font-weight: bold;
-        color: #d8e2ff;
-        letter-spacing: 1.5px;
-        text-shadow: 0 0 12px rgba(150,190,255,0.7);
-        z-index: 50;
-    }
-    #msgBox span {
-        opacity: 0;
-        transition: opacity 0.22s ease, color 2s ease;
-    }
-    #msgBox span.show {
-        opacity: 1;
-    }
+  :root{
+    --bg-night-1:#070617;
+    --bg-night-2:#120430;
+    --text-contrast:#ffdFA0;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--bg-night-1);
+    font-family:"Cinzel",serif;
+    overflow:hidden;
+    color:var(--text-contrast);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  #stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    will-change:transform;
+    transform-origin:50% 50%;
+    perspective:1400px;
+    transition:transform 1.6s cubic-bezier(.2,.9,.2,1);
+  }
+
+  /* sky & grade */
+  #sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--bg-night-1),var(--bg-night-2) 55%);z-index:0;transition:background 1.4s ease}
+  .grade-overlay{position:absolute;inset:0;mix-blend-mode:screen;pointer-events:none;opacity:0.18;background:linear-gradient(180deg, rgba(12,8,30,0.0), rgba(10,6,20,0.28));z-index:70}
+  .grain{position:absolute;inset:0;pointer-events:none;z-index:700;opacity:0.06;background-image:radial-gradient(circle, rgba(255,255,255,0.02) 0.5px, transparent 0.5px);background-size:4px 4px;mix-blend-mode:overlay}
+
+  /* stars */
+  .star{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.95);box-shadow:0 0 8px rgba(255,255,255,0.8);opacity:0.9;filter:blur(.8px);animation:twinkle var(--tw) infinite alternate}
+  @keyframes twinkle{0%{opacity:.2;transform:scale(.5)}50%{opacity:1;transform:scale(1.3)}100%{opacity:.25;transform:scale(.7)}}
+
+  /* moon */
+  #moon{
+    position:absolute;
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffffff, #f1e3b5 45%, #d8c08a 100%);
+    top:18%;
+    left:14%;
+    box-shadow:0 0 120px rgba(255,245,200,0.14),0 0 260px rgba(255,240,200,0.06);
+    cursor:grab;
+    z-index:60;
+    pointer-events:auto;
+    transition:transform .08s linear,opacity .9s ease,left .28s ease,top .28s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:translate(-50%,-50%) rotate(0deg);
+    touch-action: none;
+  }
+  #moon:active{cursor:grabbing}
+  #moon .flare{position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle, rgba(255,245,200,0.12), rgba(255,245,200,0));filter:blur(36px);pointer-events:none}
+
+  /* clouds */
+  .cloud{position:absolute;width:420px;height:220px;border-radius:45%;background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.6) 30%, rgba(255,255,255,0.12) 60%, rgba(255,255,255,0) 100%);filter: blur(22px);opacity:0.6;mix-blend-mode:screen;z-index:30;pointer-events:none}
+
+  /* fog */
+  .fog{position:absolute;left:-10%;right:-10%;bottom:-10%;height:48%;background:linear-gradient(180deg, rgba(255,245,220,0.02) 0%, rgba(0,0,0,0.08) 100%);filter:blur(36px);z-index:40;mix-blend-mode:screen;opacity:0.36;pointer-events:none}
+
+  /* sun */
+  #sun{position:absolute;width:780px;height:780px;border-radius:50%;right:6vw; top:-260px;background: radial-gradient(circle at 38% 34%, #fff8e8 0%, #ffd98f 12%, #ffb258 32%, #ff8a30 60%, rgba(200,80,30,0.6) 85%, rgba(200,80,30,0) 100%);box-shadow:0 0 280px 90px rgba(255,220,140,0.12),0 0 420px 260px rgba(255,180,90,0.04);opacity:0;pointer-events:none;z-index:55;transition:top 1.8s cubic-bezier(.2,.9,.2,1),opacity 1.6s ease, transform 1.6s ease;will-change:transform,opacity,top}
+  .sun .corona{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:220%;height:220%;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.12), rgba(255,210,120,0.04), rgba(255,160,60,0)); filter:blur(20px);opacity:0;transition:opacity 0.9s ease}
+
+  .sun-band{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:34vw;height:120vh;background:linear-gradient(180deg, rgba(255,245,200,0.06), rgba(255,230,160,0.02) 30%, rgba(255,230,160,0) 60%);mix-blend-mode:screen;filter:blur(16px);opacity:0;z-index:54;pointer-events:none;transition:opacity .9s ease}
+  .anam{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:2200px;height:48px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,200,0.95) 30%, rgba(255,160,60,0.95) 70%, rgba(255,255,255,0) 100%);filter:blur(30px);opacity:0;mix-blend-mode:screen;pointer-events:none;z-index:56;transition:opacity .9s ease, transform 1.2s ease;}
+
+  /* message */
+  #message{position:absolute;left:6%;right:6%;top:62%;text-align:center;z-index:80;font-size:34px;letter-spacing:2px;color:#f2d8ff;text-shadow:0 6px 24px rgba(40,10,60,0.45);pointer-events:none;transform:translateZ(0);font-weight:500;line-height:1.25}
+  .letter{display:inline-block;opacity:0;transform:translateY(12px);transition:opacity .12s ease, transform .12s ease}
+
+  /* button */
+  #clickBtn{position:absolute;left:50%;transform:translateX(-50%);bottom:6%;padding:14px 28px;border-radius:14px;border:none;font-weight:800;font-size:18px;background:linear-gradient(90deg,#2822ff,#9b00ff);color:white;box-shadow:0 14px 40px rgba(20,6,80,0.5);cursor:pointer;z-index:95;opacity:0;transition:opacity .8s ease, transform .32s cubic-bezier(.2,.9,.2,1);pointer-events:auto;will-change:opacity,transform}
+  #clickBtn:active{transform:translateX(-50%) scale(.98)}
+  #clickBtn[disabled]{opacity:0.18;cursor:default}
+
+  /* rot progress */
+  #rotTrack{position:absolute;left:50%;transform:translateX(-50%);bottom:2%;width:80%;height:8px;background:rgba(255,255,255,0.04);border-radius:6px;z-index:90;pointer-events:none}
+  #rotFill{height:100%;width:0%;background:linear-gradient(90deg,#ffdFA0,#ffd27f);border-radius:6px;box-shadow:0 4px 18px rgba(255,200,120,0.12);transition:width .06s linear}
+
+  /* birthday */
+  #birthdayOverlay{position:absolute;inset:0;z-index:200;opacity:0;pointer-events:none;transition:opacity 1.4s ease;background:linear-gradient(180deg,#fff7e0,#ffe4c2)}
+  #happy{position:absolute;top:36%;left:50%;transform:translate(-50%,-50%) scale(.75);font-size:84px;font-weight:900;letter-spacing:6px;z-index:210;opacity:0;transition:opacity 1s ease, transform 1s ease; text-shadow:0 10px 50px rgba(255,180,80,0.35); background:linear-gradient(90deg,#ff2b6d,#ffd800,#29f1ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+  .fw{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:215;filter:blur(0.6px);box-shadow:0 0 12px rgba(255,255,255,0.85)}
+  .vign{position:absolute;inset:0;pointer-events:none;z-index:300;background:radial-gradient(ellipse at 45% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5) 100%);opacity:0.6}
+
+  /* ---------- CROSS (TOP-CENTER) ---------- */
+  #cross {
+    position: absolute;
+    top: 14%;
+    left: 50%;
+    width: 4px;
+    height: 160px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 2px;
+    transform: translateX(-50%) scale(0.75);
+    opacity: 0;
+    transition: opacity 1.6s ease, transform 1.6s ease;
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.65))
+            drop-shadow(0 0 28px rgba(255,255,255,0.55))
+            brightness(1.2);
+    z-index:120;
+    pointer-events:none;
+  }
+
+  #cross::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 38%;
+    width: 80px;
+    height: 4px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+  }
+
+  /* shooting */
+  .shoot{
+    position:absolute;
+    width:3px;
+    height:18px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.6));
+    border-radius:2px;
+    box-shadow:0 0 10px rgba(255,255,255,0.9);
+    z-index:95;
+    pointer-events:none;
+    transform-origin:center;
+    filter:blur(.6px);
+  }
+
+  @media (max-width:720px){
+    #sun{width:520px;height:520px;right:6vw;top:-200px}
+    #moon{width:140px;height:140px}
+    #message{font-size:18px;top:64%}
+    #happy{font-size:44px;top:34%}
+    #cross{height:120px}
+    #cross::before{width:56px}
+  }
 </style>
 </head>
 <body>
+  <div id="stage" role="application" aria-label="Cinematic moon to day birthday reveal" tabindex="0">
+    <div id="sky" aria-hidden="true"></div>
+    <div class="grade-overlay" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
 
-<canvas id="starCanvas"></canvas>
-<div id="moon"></div>
-<div id="msgBox"></div>
+    <div id="stars" style="position:absolute;inset:0;z-index:20;pointer-events:none" aria-hidden="true"></div>
+    <div id="clouds" style="position:absolute;inset:0;z-index:30;pointer-events:none" aria-hidden="true"></div>
+    <div class="fog" aria-hidden="true"></div>
+
+    <div id="moon" title="Drag me to reveal the day" role="button" aria-label="Drag moon to reveal day" tabindex="0"><div class="flare" aria-hidden="true"></div></div>
+    <div id="sun" aria-hidden="true"><div class="corona"></div></div>
+    <div class="sun-band" aria-hidden="true"></div>
+    <div class="anam" aria-hidden="true"></div>
+
+    <div id="message" aria-hidden="true"></div>
+
+    <div id="rotTrack" aria-hidden="true"><div id="rotFill"></div></div>
+
+    <button id="clickBtn" aria-hidden="true" disabled aria-label="Reveal next stage">CLICK HERE</button>
+
+    <div id="cross" aria-hidden="true"></div>
+
+    <div id="birthdayOverlay" aria-hidden="true"></div>
+    <div id="happy" aria-hidden="true">🎉 Happy Birthday! 🎉</div>
+
+    <div class="vign" aria-hidden="true"></div>
+  </div>
 
 <script>
-// ------------------ Canvas & Stars ------------------
-const canvas = document.getElementById("starCanvas");
-const ctx = canvas.getContext("2d");
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
+/* ---------------- Config ---------------- */
+const fullText = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
+const ROTATION_NEEDED = 360;
 
-window.addEventListener("resize", ()=>{
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-});
+/* ---------------- Utils & refs ---------------- */
+const $ = s => document.querySelector(s);
+const mk = (t,c='') => { const e=document.createElement(t); if(c) e.className=c; return e; };
 
-const starCount = 300;
-const stars = [];
-for(let i=0;i<starCount;i++){
-    stars.push({
-        x: Math.random()*width,
-        y: Math.random()*height,
-        size: Math.random()*1.5+0.3,
-        twinkle: Math.random()*0.02+0.002,
-        baseAlpha: Math.random()*0.5+0.3,
-        depth: Math.random()*0.7+0.3
-    });
-}
+const stage = $('#stage');
+const moon = $('#moon');
+const sun = $('#sun');
+const sunCorona = sun.querySelector('.corona');
+const sunBand = document.querySelector('.sun-band');
+const anam = document.querySelector('.anam');
+const message = $('#message');
+const starsWrap = $('#stars');
+const cloudsWrap = $('#clouds');
+const clickBtn = $('#clickBtn');
+const cross = $('#cross');
+const rotFill = $('#rotFill');
+const birthdayOverlay = $('#birthdayOverlay');
+const happy = $('#happy');
 
-// ------------------ Message Setup ------------------
-const moon = document.getElementById("moon");
-const msgBox = document.getElementById("msgBox");
-const text = "On this calm birthday eve so new, God softly whispers, my plans are made for you.";
-
-msgBox.innerHTML = "";
-for(let c of text){
-    let s = document.createElement("span");
-    s.textContent = c;
-    msgBox.appendChild(s);
-}
-const spans = msgBox.querySelectorAll("span");
-
-let dragging = false;
-let offsetX = 0;
-let lastShown = 0;
 let locked = false;
-let transitionPhase2 = false;
-let moonOpacity = 1;
-let starOpacity = 1;
-let sunProgress = 0;
+let rotationDeg = 0;
+let dragging = false;
+let lastX = 0;
+let phaseTwoReady = false;
+let phaseTwoStarted = false;
+let clickCount = 0;
+let fireworksTimer = null;
+let fireworksActive = false;
 
-// ------------------ Moon Drag ------------------
-moon.addEventListener("mousedown", e=>{
-    dragging = true;
-    offsetX = e.clientX - moon.offsetLeft;
-    moon.style.transition = "none";
-});
-window.addEventListener("mouseup", ()=> dragging = false);
-window.addEventListener("mousemove", e=>{
-    if(!dragging) return;
-    let x = e.clientX - offsetX;
-    const maxX = window.innerWidth - moon.clientWidth - 20;
-    if(x<20) x=20;
-    if(x>maxX) x=maxX;
-    moon.style.left = x + "px";
-
-    // Reveal text progressively
-    if(!locked){
-        let progress = (x-20)/(maxX-20);
-        if(progress<0) progress=0;
-        if(progress>1) progress=1;
-        let target = Math.floor(progress*spans.length);
-        if(target>lastShown){
-            for(let i=lastShown;i<target;i++){
-                spans[i].classList.add("show");
-            }
-            lastShown = target;
-            if(lastShown >= spans.length) locked = true;
-        }
+/* ---------------- Build scene: stars & clouds ---------------- */
+function makeStars(n=160){
+  for(let i=0;i<n;i++){
+    const s = mk('div','star');
+    s.style.setProperty('--tw', (1.2 + Math.random()*3.4) + 's');
+    s.style.left = (Math.random()*100) + '%';
+    s.style.top = (Math.random()*80) + '%';
+    s.style.opacity = (0.6 + Math.random()*0.4).toFixed(2);
+    s.dataset.baseOpacity = s.style.opacity;
+    starsWrap.appendChild(s);
+  }
+}
+function makeClouds(){
+  const counts = [4,5];
+  counts.forEach((cnt, layerIdx) => {
+    for(let i=0;i<cnt;i++){
+      const c = mk('div','cloud');
+      const top = 8 + i*14 + (layerIdx*6) + (Math.random()*8 - 4);
+      c.style.top = top + '%';
+      c.style.left = (i*20 + (layerIdx*6) + Math.random()*10 - 6) + '%';
+      c.style.opacity = 0.28 + layerIdx*0.25 + Math.random()*0.18;
+      c.style.transform = 'scale(' + (0.8 + Math.random()*0.8) + ')';
+      cloudsWrap.appendChild(c);
     }
+  });
+}
+makeStars();
+makeClouds();
 
-    // Start transition when moon reaches the far right
-    if(x >= maxX && !transitionPhase2){
-        transitionPhase2 = true;
-    }
-});
-
-// ------------------ Animate ------------------
-function animate(){
-    // ---------------- Background ----------------
-    let bg;
-    if(transitionPhase2){
-        const t = sunProgress;
-        // bluish-white sky gradient
-        const topColor = `rgba(${200 + 55*(1-t)},${225 + 30*(1-t)},${255},1)`;
-        const bottomColor = `rgba(${180 + 75*(1-t)},${220 + 30*(1-t)},${255},1)`;
-        bg = ctx.createLinearGradient(0,0,0,height);
-        bg.addColorStop(0, topColor);
-        bg.addColorStop(1, bottomColor);
-    } else {
-        bg = ctx.createLinearGradient(0,0,0,height);
-        bg.addColorStop(0,'#000010');
-        bg.addColorStop(1,'#000022');
-    }
-    ctx.fillStyle = bg;
-    ctx.fillRect(0,0,width,height);
-
-    // ---------------- Stars ----------------
-    stars.forEach(s=>{
-        let alpha = s.baseAlpha + Math.sin(Date.now()*s.twinkle)*0.5;
-        if(transitionPhase2){
-            alpha *= starOpacity;
-        }
-        ctx.fillStyle = `rgba(255,255,255,${alpha*s.depth})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-        ctx.fill();
-    });
-
-    // ---------------- Sun ----------------
-    if(transitionPhase2){
-        sunProgress += 0.004;
-        if(sunProgress>1) sunProgress=1;
-
-        // Bigger, cinematic sun
-        const sunRadius = sunProgress*Math.min(width,height)*0.25; // big sun
-        const sunX = width*0.8;
-        const sunY = height*0.25;
-
-        const halo = ctx.createRadialGradient(sunX, sunY, sunRadius*0.2, sunX, sunY, sunRadius*2.5);
-        halo.addColorStop(0,'rgba(255,220,130,0.9)');
-        halo.addColorStop(1,'rgba(255,150,50,0)');
-        ctx.fillStyle = halo;
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, sunRadius*2.5,0,Math.PI*2);
-        ctx.fill();
-
-        ctx.fillStyle = "#ffc966";
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, sunRadius,0,Math.PI*2);
-        ctx.fill();
-
-        // Text color transition to dark blue
-        const colorVal = Math.floor(216*(1-sunProgress));
-        msgBox.querySelectorAll("span").forEach(s=>{
-            s.style.color = `rgb(0,0,${50+colorVal})`;
-        });
-    }
-
-    // ---------------- Fade moon & stars ----------------
-    if(transitionPhase2){
-        moonOpacity -= 0.01;
-        starOpacity -= 0.008;
-        if(moonOpacity<0) moonOpacity=0;
-        if(starOpacity<0) starOpacity=0;
-        moon.style.opacity = moonOpacity;
-    }
-
-    requestAnimationFrame(animate);
+/* ---------------- Message letters ---------------- */
+const letters = [];
+for (let i=0;i<fullText.length;i++){
+  const span = mk('span','letter');
+  span.textContent = fullText[i] === ' ' ? '\u00A0' : fullText[i];
+  message.appendChild(span);
+  letters.push(span);
 }
 
-animate();
+/* ---------------- Drag & pointer handling ---------------- */
+function getClientX(e){ return (e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX) ?? lastX);}
+function onPointerDown(e){ if(locked) return; dragging=true; lastX=getClientX(e); try{ e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId);}catch{} }
+function onPointerUp(e){ dragging=false; try{ e.target.releasePointerCapture && e.target.releasePointerCapture(e.pointerId);}catch{}}
+function onPointerMove(e){ if(!dragging||locked) return; const clientX=getClientX(e); const dx=clientX-lastX; lastX=clientX; if(dx<=0) return; rotationDeg+=dx*0.9; if(rotationDeg>=ROTATION_NEEDED){rotationDeg=ROTATION_NEEDED; finishReveal();} updateSceneByRotation(rotationDeg/ROTATION_NEEDED); }
+
+moon.addEventListener('pointerdown',onPointerDown);
+document.addEventListener('pointerup',onPointerUp);
+document.addEventListener('pointermove',onPointerMove);
+
+/* ---------------- Scene update ---------------- */
+function updateSceneByRotation(t){
+  t = Math.min(1,t);
+  // rotate moon
+  moon.style.transform = `translate(-50%,-50%) rotate(${t*360}deg)`;
+  // stars fade slowly
+  starsWrap.style.opacity = `${1-t*0.48}`;
+  // sun – subtle in phase 1
+  sun.style.opacity = `${Math.min(0.28, t*0.28)}`;
+  sun.style.transform = `scale(${0.5 + 0.3*t})`;
+  sunCorona.style.opacity = `${Math.min(0.12, t*0.12)}`;
+  sunBand.style.opacity = `${Math.min(0.14, t*0.14)}`;
+  anam.style.opacity = `${Math.min(0.16, t*0.16)}`;
+
+  // cross – dominant throughout
+  cross.style.opacity = `${Math.min(1, t*1.2)}`;
+  cross.style.transform = `translateX(-50%) scale(${0.75 + 0.25*t})`;
+
+  // message letters animation
+  letters.forEach((l,i)=>{
+    if(t*fullText.length > i) l.style.opacity=1;
+    else l.style.opacity=0;
+  });
+
+  // progress bar
+  rotFill.style.width = `${t*100}%`;
+}
+
+/* ---------------- Finish reveal ---------------- */
+function finishReveal(){
+  if(locked) return;
+  locked=true;
+  phaseTwoReady=true;
+  clickBtn.disabled=false;
+  clickBtn.style.opacity=1;
+}
+
+/* ---------------- Click to next phase ---------------- */
+clickBtn.addEventListener('click',()=>{
+  if(!phaseTwoReady || phaseTwoStarted) return;
+  phaseTwoStarted=true;
+  clickBtn.disabled=true;
+  clickBtn.style.opacity=0;
+
+  // sun fully rises in phase 2
+  sun.style.transition='opacity 1.4s ease, transform 1.4s ease, top 1.8s cubic-bezier(.2,.9,.2,1)';
+  sun.style.opacity=1;
+  sun.style.transform='scale(1.2)';
+  sun.style.top='12%';
+  sunCorona.style.opacity=0.48;
+  sunBand.style.opacity=0.36;
+  anam.style.opacity=0.28;
+
+  // reveal birthday overlay
+  birthdayOverlay.style.opacity=1;
+  happy.style.opacity=1;
+  happy.style.transform='translate(-50%,-50%) scale(1)';
+
+  // optional fireworks
+  startFireworks();
+});
+
+/* ---------------- Fireworks ---------------- */
+function startFireworks(){
+  if(fireworksActive) return;
+  fireworksActive=true;
+  fireworksTimer=setInterval(()=>{
+    const fw=mk('div','fw');
+    fw.style.left=Math.random()*100+'%';
+    fw.style.top=Math.random()*40+'%';
+    document.body.appendChild(fw);
+    setTimeout(()=>fw.remove(),2000+Math.random()*2000);
+  },140);
+}
 </script>
 </body>
 </html>

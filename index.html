@@ -66,13 +66,19 @@ function drawStars() {
 }
 
 function drawMoon() {
-    const gradient = ctx.createRadialGradient(moon.x, moon.y, moon.radius*0.3, moon.x, moon.y, moon.radius);
-    gradient.addColorStop(0, 'rgba(255,255,230,1)');
-    gradient.addColorStop(0.5, 'rgba(255,255,210,0.6)');
-    gradient.addColorStop(1, 'rgba(255,255,210,0)');
-    ctx.fillStyle = gradient;
+    // Clear, sharp moon surface
+    ctx.fillStyle = '#ffffff';
     ctx.beginPath();
     ctx.arc(moon.x, moon.y, moon.radius, 0, Math.PI*2);
+    ctx.fill();
+
+    // Subtle cinematic halo
+    const halo = ctx.createRadialGradient(moon.x, moon.y, moon.radius*0.9, moon.x, moon.y, moon.radius*1.6);
+    halo.addColorStop(0, 'rgba(255,255,255,0.2)');
+    halo.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(moon.x, moon.y, moon.radius*1.6, 0, Math.PI*2);
     ctx.fill();
 }
 
@@ -93,7 +99,7 @@ function animate() {
     ctx.translate(driftX, driftY);
     ctx.scale(zoom, zoom);
 
-    // Draw stars and moon
+    // Draw stars and clear moon
     drawStars();
     drawMoon();
 

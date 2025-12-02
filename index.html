@@ -114,7 +114,8 @@ const particles = letterPoints.map(p => ({
     tx: p.x,
     ty: p.y,
     speed: Math.random() * 0.08 + 0.04,
-    size: Math.random() * 1.8 + 1.2
+    size: Math.random() * 1.8 + 1.2,
+    color: null // null = rainbow
 }));
 
 // ------------ ANIMATION LOOP ------------
@@ -126,8 +127,7 @@ function animate() {
         p.x += (p.tx - p.x) * p.speed;
         p.y += (p.ty - p.y) * p.speed;
 
-        const hue = (p.x + p.y) % 360;
-        ctx.fillStyle = `hsl(${hue}, 90%, 70%)`;
+        ctx.fillStyle = p.color || `hsl(${(p.x + p.y) % 360}, 90%, 70%)`;
         ctx.shadowBlur = 18;
         ctx.shadowColor = ctx.fillStyle;
 
@@ -150,7 +150,6 @@ setTimeout(() => {
 btn.addEventListener("click", () => {
     btn.style.display = "none"; // hide button
 
-    // Map new text
     const newText = "DAIVIK";
     const newPoints = mapTextToPoints(newText);
 
@@ -159,6 +158,7 @@ btn.addEventListener("click", () => {
         const np = newPoints[i % newPoints.length];
         p.tx = np.x;
         p.ty = np.y;
+        p.color = "#fff"; // Make all DAIVIK letters white
     });
 });
 </script>

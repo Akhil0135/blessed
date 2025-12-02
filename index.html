@@ -5,16 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Phase 1 – IMAX Nolan Night</title>
 
+<!-- Ben-Hur Style Cinematic Font -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
     body {
         margin: 0;
         overflow: hidden;
-        background: radial-gradient(ellipse at center, #02020A 0%, #000000 80%);
+        background: radial-gradient(ellipse at center, #04040E 0%, #000000 85%);
         height: 100vh;
-        font-family: "Inter", sans-serif;
+        font-family: "Cinzel", serif;
     }
 
-    /* Twinkling IMAX stars */
+    /* IMAX twinkling stars */
     .star {
         position: absolute;
         width: 2px;
@@ -22,12 +25,12 @@
         background: white;
         border-radius: 50%;
         opacity: 0.3;
-        animation: twinkle 2s infinite ease-in-out alternate;
+        animation: twinkle 2.2s infinite ease-in-out alternate;
     }
 
     @keyframes twinkle {
-        from { opacity: 0.2; transform: scale(1); }
-        to   { opacity: 1;   transform: scale(1.6); }
+        from { opacity: 0.15; transform: scale(1); }
+        to   { opacity: 1;   transform: scale(1.7); }
     }
 
     /* Moon */
@@ -37,44 +40,41 @@
         left: 40px;
         width: 130px;
         height: 130px;
-        background: radial-gradient(circle at 30% 30%, #FFFFFF, #CFCFCF 40%, #9A9A9A 70%, #5A5A5A 100%);
+        background: radial-gradient(circle at 30% 30%, #FFFFFF, #D8D8D8 40%, #9B9B9B 70%, #4B4B4B 100%);
         border-radius: 50%;
-        box-shadow: 0 0 40px rgba(255,255,255,0.4);
+        box-shadow: 0 0 45px rgba(255,255,255,0.35);
         cursor: grab;
         transition: box-shadow 0.3s ease;
     }
 
-    /* Message Reveal */
+    /* Text Reveal */
     #message {
         position: absolute;
-        bottom: 60px;
+        bottom: 70px;
         width: 100%;
         text-align: center;
-        color: #EDEDED;
-        font-size: 26px;
-        font-weight: 300;
-        letter-spacing: 1px;
+        font-size: 32px;
+        font-weight: 600;
         opacity: 0;
-        transition: opacity 2s ease;
-        white-space: pre-line;
-        text-shadow: 0 0 8px rgba(255,255,255,0.7);
+        letter-spacing: 1.5px;
+        color: #F5F2E9;
+        text-shadow: 0 0 18px rgba(255,255,255,0.7), 0 0 40px rgba(200,200,255,0.4);
+        transition: opacity 0.1s linear;
+        white-space: nowrap;
     }
 </style>
 </head>
 <body>
 
-<!-- Moon -->
 <div id="moon"></div>
 
-<!-- Message -->
 <div id="message">
-On this calm birthday eve so new,
-God softly whispers, my plans are made for you
+On this calm birthday eve so new, God softly whispers, my plans are made for you.
 </div>
 
 <script>
-/* ------------------ STARS GENERATION ------------------ */
-for (let i = 0; i < 180; i++) {
+/* ------------------ STARS ------------------ */
+for (let i = 0; i < 170; i++) {
     let s = document.createElement("div");
     s.className = "star";
     s.style.left = Math.random() * window.innerWidth + "px";
@@ -83,7 +83,7 @@ for (let i = 0; i < 180; i++) {
     document.body.appendChild(s);
 }
 
-/* ------------------ MOON DRAGGING ------------------ */
+/* ------------------ MOON DRAG ------------------ */
 const moon = document.getElementById("moon");
 const message = document.getElementById("message");
 
@@ -106,16 +106,17 @@ document.addEventListener("mousemove", e => {
 
     let newX = e.clientX - offsetX;
 
-    // Keep moon within screen
-    if (newX < 20) newX = 20;
-    if (newX > window.innerWidth - 150) newX = window.innerWidth - 150;
+    const minX = 20;
+    const maxX = window.innerWidth - 150;
+
+    if (newX < minX) newX = minX;
+    if (newX > maxX) newX = maxX;
 
     moon.style.left = newX + "px";
 
-    // Reveal message when moon reaches 70% width
-    if (newX > window.innerWidth * 0.65) {
-        message.style.opacity = 1;
-    }
+    /* Parallel text reveal */
+    let progress = (newX - minX) / (maxX - minX);  // 0 to 1 scale
+    message.style.opacity = progress * 1.1;        // Smooth IMAX fade
 });
 </script>
 

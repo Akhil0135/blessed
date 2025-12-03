@@ -1,178 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMAX COSMIC — MOON → SUN → CROSS</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IMAX Nolan — Moon → Sun → Galactic Cross</title>
 
 <style>
-    body {
-        margin: 0;
-        overflow: hidden;
-        background: black;
-        height: 100vh;
-        font-family: 'Cinzel', serif;
-    }
+:root{
+  --night-1:#05031a;
+  --night-2:#0a0436;
+  --deep-blue:#000a3d;
+  --gold:#ffd87a;
+}
 
-    /* STARRY BACKGROUND */
-    #stars {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at center, #0a0a24, #000);
-        overflow: hidden;
-        z-index: 1;
-    }
+/* base */
+html,body{
+  margin:0;
+  height:100%;
+  overflow:hidden;
+  background:var(--night-1);
+  font-family:"Cinzel", serif;
+  color:var(--gold);
+}
 
-    .star {
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: white;
-        border-radius: 50%;
-        opacity: 0;
-        animation: twinkle 2s infinite ease-in-out;
-    }
+#stage{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
 
-    @keyframes twinkle {
-        0%,100% { opacity: 0.1; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.8); }
-    }
+/* SKY */
+#sky{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,var(--night-1),var(--night-2) 60%);
+  transition:background 2.4s ease-in-out;
+  z-index:0;
+}
 
-    /* MOON (NOW FULLY VISIBLE + FIXED CENTER POSITION) */
-    #moon {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 180px;
-        height: 180px;
-        transform: translate(-50%, -50%); /* FIX: keeps moon centered */
-        background: radial-gradient(circle, #ffffff, #b8b8b8, #6f6f6f);
-        border-radius: 50%;
-        box-shadow: 0 0 35px #fff8;
-        z-index: 3;
-        cursor: grab;
-        transition: opacity 2s ease-in-out;
-    }
+/* STARS */
+#stars{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+}
+.star{
+  position:absolute;
+  width:2px;
+  height:2px;
+  border-radius:50%;
+  background:white;
+  opacity:0.6;
+  animation:twinkle 3s infinite ease-in-out;
+}
+@keyframes twinkle{
+  0%{opacity:0.2;transform:scale(0.8);}
+  50%{opacity:1;transform:scale(1.4);}
+  100%{opacity:0.2;transform:scale(0.9);}
+}
 
-    /* SUN AT TOP RIGHT */
-    #sun {
-        position: absolute;
-        top: 30px;
-        right: 40px;
-        width: 120px;
-        height: 120px;
-        background: radial-gradient(circle, #ffdf70, #ffb300, #d98a00);
-        border-radius: 50%;
-        opacity: 0;
-        z-index: 2;
-        transition: opacity 2s ease-in-out;
-        box-shadow: 0 0 60px #ffdd66aa;
-    }
+/* MOON */
+#moon{
+  position:absolute;
+  width:200px;
+  height:200px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #ffffff, #e9e0c2 45%, #b49f72 100%);
+  top:50%;
+  left:40%;
+  transform:translate(-50%,-50%);
+  cursor:grab;
+  z-index:50;
+  transition:opacity .4s linear, left .4s linear;
+  box-shadow:0 0 100px rgba(255,245,200,0.26);
+}
+#moon:active{cursor:grabbing}
 
-    /* TEXT IN SINGLE LINE */
-    #message {
-        position: absolute;
-        bottom: 60px;
-        width: 100%;
-        text-align: center;
-        font-size: 26px;
-        letter-spacing: 3px;
-        font-weight: bold;
-        opacity: 0;
-        color: gold;
-        z-index: 5;
-        transition: opacity 2.5s ease-in-out;
-    }
+/* SUN */
+#sun{
+  position:absolute;
+  width:280px;
+  height:280px;
+  top:10%;
+  right:10%;
+  border-radius:50%;
+  opacity:0;
+  pointer-events:none;
+  background:radial-gradient(circle at 38% 34%, #fff8e8 0%, #ffd98f 14%, #ffb258 30%, #ff8a30 60%, rgba(200,80,30,0.5) 85%, rgba(200,80,30,0) 100%);
+  box-shadow:0 0 260px 60px rgba(255,220,140,0.18);
+  z-index:40;
+  transition:opacity 2s linear;
+}
 
-    /* CROSS — ROYAL DARK VIOLET */
-    #cross {
-        position: absolute;
-        top: -300px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 200px;
-        background: linear-gradient(#2d0051, #1a0033);
-        z-index: 6;
-        opacity: 0;
-        transition: 2.5s ease-in-out;
-    }
+/* GALACTIC CROSS */
+#cross{
+  position:absolute;
+  top:-330px;
+  left:50%;
+  transform:translateX(-50%);
+  width:55px;
+  height:260px;
+  background:linear-gradient(180deg,#35006b,#1a0033,#0e001e);
+  border-radius:8px;
+  opacity:0;
+  z-index:90;
+  box-shadow:
+    inset 0 0 25px rgba(180,90,255,0.45),
+    0 0 55px rgba(90,0,160,0.55);
+  transition:all 2s cubic-bezier(.17,.84,.44,1);
+}
 
-    #cross::after {
-        content: "";
-        position: absolute;
-        top: 70px;
-        left: -60px;
-        width: 160px;
-        height: 40px;
-        background: inherit;
-    }
+/* HORIZONTAL BAR — moved UP */
+#cross::after{
+  content:"";
+  position:absolute;
+  top:60px; /* 🔥 YOU ASKED — lifted upward */
+  left:-70px;
+  width:200px;
+  height:55px;
+  background:linear-gradient(180deg,#35006b,#1a0033,#0e001e);
+  border-radius:8px;
+  box-shadow:
+    inset 0 0 25px rgba(180,90,255,0.45),
+    0 0 55px rgba(90,0,160,0.55);
+}
+
+/* MESSAGE */
+#message{
+  position:absolute;
+  bottom:7%;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:20px;
+  letter-spacing:3px;
+  white-space:nowrap;
+  opacity:0;
+  color:var(--gold);
+  text-shadow:0 0 12px rgba(255,200,100,0.55);
+  z-index:95;
+  transition:opacity 1.6s ease-in-out;
+}
+
+@media(max-width:720px){
+  #moon{width:150px;height:150px;}
+  #sun{width:200px;height:200px;}
+  #message{font-size:14px;}
+}
 </style>
 </head>
 
 <body>
+<div id="stage">
 
-<div id="stars"></div>
-<div id="moon"></div>
-<div id="sun"></div>
-<div id="message">HAPPY FIRST BIRTHDAY MY LITTLE PRINCE</div>
-<div id="cross"></div>
+  <div id="sky"></div>
+
+  <div id="stars"></div>
+
+  <div id="moon"></div>
+
+  <div id="sun"></div>
+
+  <div id="cross"></div>
+
+  <div id="message">ON THIS CALM BIRTHDAY EVE, GOD WHISPERS — MY PLANS ARE MADE FOR YOU.</div>
+
+</div>
 
 <script>
-/* GENERATE STARS */
-const starsContainer = document.getElementById("stars");
-for (let i = 0; i < 150; i++) {
-    let s = document.createElement("div");
-    s.className = "star";
-    s.style.top = Math.random() * 100 + "%";
-    s.style.left = Math.random() * 100 + "%";
-    s.style.animationDelay = Math.random() * 2 + "s";
-    starsContainer.appendChild(s);
+const moon = document.getElementById("moon");
+const sun = document.getElementById("sun");
+const sky = document.getElementById("sky");
+const stars = document.getElementById("stars");
+const msg = document.getElementById("message");
+const cross = document.getElementById("cross");
+
+let dragging=false;
+let lastX=0;
+let progress=0;
+
+/* STARS */
+for(let i=0;i<170;i++){
+  let s=document.createElement("div");
+  s.className="star";
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*3+"s";
+  stars.appendChild(s);
 }
 
-/* DRAGGABLE MOON WITHOUT MOVING THE SCENE */
-let moon = document.getElementById("moon");
-let sun = document.getElementById("sun");
-let stars = document.getElementById("stars");
-let msg = document.getElementById("message");
-let cross = document.getElementById("cross");
+/* DRAG */
+moon.addEventListener("pointerdown", e=>{
+  dragging=true;
+  lastX=e.clientX;
+});
+document.addEventListener("pointerup",()=> dragging=false);
 
-let isDragging = false;
+document.addEventListener("pointermove",e=>{
+  if(!dragging) return;
+  const dx = e.clientX - lastX;
+  lastX = e.clientX;
 
-moon.addEventListener("mousedown", () => {
-    isDragging = true;
+  if(dx<=0) return;
+
+  progress += dx * 0.003;
+  if(progress>1) progress=1;
+
+  updateScene(progress);
 });
 
-window.addEventListener("mouseup", () => {
-    if (isDragging) {
-        moon.style.opacity = 0;
+function updateScene(t){
+  t=Math.max(0,Math.min(1,t));
 
-        /* STARS FADE AFTER MOON */
-        setTimeout(() => {
-            stars.style.transition = "2s ease-in-out";
-            stars.style.opacity = 0;
-            stars.style.background = "linear-gradient(#000428, #004e92)";
-        }, 700);
+  /* Moon fade & stay stable on screen */
+  moon.style.opacity = 1-t*1.2;
+  moon.style.left = (40 + t*45) + "%";
+  moon.style.transform = `translate(-50%,-50%) rotate(${-t*360}deg)`;
 
-        /* SUN APPEARS */
-        setTimeout(() => {
-            sun.style.opacity = 1;
-        }, 1500);
+  /* sky → dark blue */
+  if(t>0.2){
+    sky.style.background = `linear-gradient(180deg, var(--deep-blue), #00032b)`;
+  }
 
-        /* MESSAGE APPEARS */
-        setTimeout(() => {
-            msg.style.opacity = 1;
-        }, 2500);
+  /* Sun appears */
+  sun.style.opacity = t;
 
-        /* CROSS DESCENDS */
-        setTimeout(() => {
-            cross.style.opacity = 1;
-            cross.style.top = "120px";
-        }, 3500);
-    }
-    isDragging = false;
-});
+  /* fade stars */
+  if(t>0.9){
+    stars.style.opacity = 0;
+  }
+
+  /* message appears */
+  if(t>0.85){
+    msg.style.opacity = 1;
+  }
+
+  /* cross descends */
+  if(t>0.95){
+    cross.style.opacity = 1;
+    cross.style.top = "9%";
+  }
+}
 </script>
 
 </body>

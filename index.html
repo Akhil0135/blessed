@@ -9,14 +9,13 @@
     background: black;
     overflow: hidden;
     font-family: 'Cinzel', serif;
+    transition: background 2s linear;
   }
 
-  /* Container */
   #scene {
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
   }
 
   /* Moon */
@@ -46,10 +45,10 @@
     height: 420px;
     border-radius: 50%;
     background: radial-gradient(circle,
-        #ffecb3 0%,
+        #ffe8a0 0%,
         #ffcc33 40%,
         #ff8800 75%,
-        #442200 100%);
+        #4a2200 100%);
     opacity: 0;
     transition: opacity 1.8s ease-in-out, top 2s ease-out, right 2s ease-out;
     pointer-events: none;
@@ -85,7 +84,7 @@
     font-family: 'Cinzel', serif;
   }
 
-  /* DARKER GALACTIC CROSS */
+  /* ROYAL DARK VIOLET CROSS */
   #cross {
     position: absolute;
     top: -400px;
@@ -97,18 +96,17 @@
     transition: opacity 1.8s ease-out, top 2.4s ease-out;
   }
 
-  /* Cross vertical + horizontal bars */
   #cross:before,
   #cross:after {
     content: "";
     position: absolute;
     background: linear-gradient(to bottom,
-      #0a0a0a 0%,
-      #131313 40%,
-      #0d0d0d 75%,
-      #000000 100%
+      #2a0048 0%, 
+      #3b0068 40%, 
+      #21003a 75%, 
+      #150024 100%
     );
-    box-shadow: 0 0 45px rgba(0,0,0,0.8);
+    box-shadow: 0 0 45px rgba(20,0,40,0.7);
   }
 
   /* Vertical bar */
@@ -136,9 +134,7 @@
 
 <div id="moon"></div>
 <div id="sun"></div>
-
 <div id="msg"></div>
-
 <div id="cross"></div>
 
 <script>
@@ -150,7 +146,7 @@ const scene = document.getElementById("scene");
 
 let stars = [];
 
-/* Generate IMAX stars */
+/* Generate stars */
 for (let i = 0; i < 160; i++) {
   let s = document.createElement("div");
   s.className = "star";
@@ -161,10 +157,7 @@ for (let i = 0; i < 160; i++) {
   stars.push(s);
 }
 
-/* Text */
 const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU";
-
-let revealed = 0;
 
 moon.addEventListener("mousedown", startDrag);
 
@@ -185,18 +178,35 @@ function drag(e) {
 
   moon.style.opacity = 1 - p;
 
+  /* Background turns dark blue */
+  if (p > 0.2) {
+    document.body.style.background =
+      "radial-gradient(circle at center, #001a3d 0%, #000814 100%)";
+  }
+
+  /* Text reveal */
   let lettersToShow = Math.floor(fullText.length * p);
   msg.textContent = fullText.substring(0, lettersToShow);
   msg.style.opacity = 1;
 
+  /* As sun comes → text becomes gold */
+  if (p > 0.75) {
+    msg.style.color = "#ffd77a";
+  }
+
+  /* Sun evolves */
   if (p > 0.75) {
     sun.style.opacity = 1;
     sun.style.top = "40px";
     sun.style.right = "40px";
+  }
 
+  /* Stars fade away when sun comes */
+  if (p > 0.8) {
     stars.forEach(s => s.style.opacity = 0);
   }
 
+  /* Cross arrives */
   if (p > 0.92) {
     cross.style.opacity = 1;
     cross.style.top = "20px";

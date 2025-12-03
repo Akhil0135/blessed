@@ -64,7 +64,7 @@ html, body{
 .cloud.layer4{width:1000px;height:250px;top:70%;left:-1000px;animation:cloudMove 200s linear infinite;opacity:0.04;}
 @keyframes cloudMove{0%{transform:translateX(0);}100%{transform:translateX(120vw);}}
 
-/* FOG — cinematic volumetric layers */
+/* FOG */
 .fog{
   position:absolute;
   width:200vw;
@@ -81,6 +81,26 @@ html, body{
 .fog.layer2{top:50%;animation-duration:200s;opacity:0.06;}
 .fog.layer3{top:40%;animation-duration:240s;opacity:0.04;}
 @keyframes fogDrift{0%{transform:translateX(0);}100%{transform:translateX(120vw);}}
+
+/* LIGHT BEAMS (Volumetric) */
+.light-beam{
+  position:absolute;
+  width:15px;
+  height:800px;
+  background:linear-gradient(to bottom, rgba(255,235,180,0.15), transparent 70%);
+  top:-200px;
+  left:50%;
+  transform:translateX(-50%) rotate(0deg);
+  filter:blur(24px);
+  opacity:0;
+  pointer-events:none;
+  animation:beamRotate 40s linear infinite;
+  z-index:5;
+}
+.light-beam.layer1{animation-duration:45s;}
+.light-beam.layer2{animation-duration:50s;opacity:0.12;}
+.light-beam.layer3{animation-duration:60s;opacity:0.08;}
+@keyframes beamRotate{0%{transform:translateX(-50%) rotate(0deg);}100%{transform:translateX(-50%) rotate(360deg);}}
 
 /* MOON */
 #moon{
@@ -127,23 +147,6 @@ html, body{
   transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
 }
 
-/* SUN RAYS */
-.sun-ray{
-  position:absolute;
-  width:20px;
-  height:600px;
-  background:linear-gradient(to bottom, rgba(255,235,150,0.6), transparent);
-  top:-150px;
-  left:50%;
-  transform:translateX(-50%) rotate(0deg);
-  filter:blur(16px);
-  opacity:0;
-  pointer-events:none;
-  z-index:10;
-  animation:rayRotate 25s linear infinite;
-}
-@keyframes rayRotate{0%{transform:translateX(-50%) rotate(0deg);}100%{transform:translateX(-50%) rotate(360deg);}}
-
 /* MESSAGE */
 #message{
   position:absolute;
@@ -176,9 +179,11 @@ html, body{
   <div class="fog layer1"></div>
   <div class="fog layer2"></div>
   <div class="fog layer3"></div>
+  <div class="light-beam layer1"></div>
+  <div class="light-beam layer2"></div>
+  <div class="light-beam layer3"></div>
   <div id="moon"><div class="flare"></div></div>
   <div id="sun"></div>
-  <div class="sun-ray"></div>
   <div id="message"></div>
 </div>
 
@@ -189,7 +194,7 @@ const moon=document.getElementById("moon");
 const sun=document.getElementById("sun");
 const starsWrap=document.getElementById("stars");
 const message=document.getElementById("message");
-const ray=document.querySelector(".sun-ray");
+const beams=document.querySelectorAll(".light-beam");
 
 let dragging=false;
 let lastX=0;
@@ -237,7 +242,7 @@ function update(t){
   moon.style.opacity=1-t;
   moon.style.left=(10 + t*50)+"%";
 
-  // Background black → deep blue
+  // Background
   if(t<0.4){
     document.body.style.background="linear-gradient(to bottom, #000000 0%, #001122 100%)";
   } else {
@@ -246,7 +251,7 @@ function update(t){
 
   // Sun appear
   sun.style.opacity=t;
-  if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; ray.style.opacity=0.7; }
+  if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
 
   // Stars fade
   [...starsWrap.children].forEach(s=>{
@@ -261,6 +266,15 @@ function update(t){
   // Fog drift effect
   document.querySelectorAll(".fog").forEach((f,i)=>{
     f.style.left=`${-50 + t*120 + i*5}vw`;
+  });
+
+  // Light beams appear
+  beams.forEach((b,i)=>{
+    if(t>0.6){ 
+      b.style.opacity=0.05 + i*0.02 + t*0.2; 
+    } else {
+      b.style.opacity=0;
+    }
   });
 
   // Message reveal

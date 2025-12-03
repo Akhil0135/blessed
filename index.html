@@ -111,7 +111,7 @@ html, body {
   transition:color 2s ease-out;
 }
 
-/* CROSS — TRUE CHRISTIAN CROSS */
+/* CROSS — CHRISTIAN CROSS WITH BEVELED EDGES */
 #cross{
   position:absolute;
   top:-460px;
@@ -119,23 +119,23 @@ html, body {
   transform:translateX(-50%);
   opacity:0;
   pointer-events:none;
-  width:50px;  /* vertical bar width */
+  width:50px;  
   height:400px;
   background: var(--cross-color);
-  border-radius:6px;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 30px rgba(75,0,111,0.6);
+  border-radius:8px; /* slight bevel on vertical */
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.6), 0 0 28px rgba(75,0,111,0.5);
 }
 #cross:after{
   content:"";
   position:absolute;
-  width:180px;  /* horizontal bar length */
-  height:40px;   /* thickness */
-  top:120px;     /* positioned ~1/3 from top for Christian cross */
+  width:180px;  
+  height:40px;   
+  top:120px;     
   left:50%;
   transform:translateX(-50%);
   background: var(--cross-color);
-  border-radius:6px;
-  box-shadow: inset 0 0 18px rgba(0,0,0,0.5), 0 0 30px rgba(75,0,111,0.5);
+  border-radius:8px; /* slight bevel on horizontal */
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 0 25px rgba(75,0,111,0.5);
 }
 </style>
 </head>

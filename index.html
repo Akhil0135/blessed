@@ -82,7 +82,7 @@ html, body{
 .fog.layer3{top:40%;animation-duration:240s;opacity:0.04;}
 @keyframes fogDrift{0%{transform:translateX(0);}100%{transform:translateX(120vw);}}
 
-/* LIGHT BEAMS (Volumetric) */
+/* LIGHT BEAMS */
 .light-beam{
   position:absolute;
   width:15px;
@@ -101,6 +101,18 @@ html, body{
 .light-beam.layer2{animation-duration:50s;opacity:0.12;}
 .light-beam.layer3{animation-duration:60s;opacity:0.08;}
 @keyframes beamRotate{0%{transform:translateX(-50%) rotate(0deg);}100%{transform:translateX(-50%) rotate(360deg);}}
+
+/* DUST PARTICLES */
+.dust{
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:rgba(255,235,180,0.12);
+  border-radius:50%;
+  filter:blur(1px);
+  pointer-events:none;
+  opacity:0;
+}
 
 /* MOON */
 #moon{
@@ -189,7 +201,6 @@ html, body{
 
 <script>
 const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
-
 const moon=document.getElementById("moon");
 const sun=document.getElementById("sun");
 const starsWrap=document.getElementById("stars");
@@ -199,6 +210,8 @@ const beams=document.querySelectorAll(".light-beam");
 let dragging=false;
 let lastX=0;
 let progress=0;
+let mouseX=0;
+let mouseY=0;
 
 /* STARS */
 for(let i=0;i<170;i++){
@@ -220,6 +233,17 @@ for(let i=0;i<fullText.length;i++){
   letters.push(L);
 }
 
+/* DUST PARTICLES */
+const dustParticles=[];
+for(let i=0;i<60;i++){
+  const d=document.createElement("div");
+  d.className="dust";
+  d.style.left=Math.random()*100+"%";
+  d.style.top=(40 + Math.random()*60)+"%";
+  document.getElementById("stage").appendChild(d);
+  dustParticles.push(d);
+}
+
 /* DRAG LOGIC */
 moon.addEventListener("pointerdown", e=>{
   dragging=true;
@@ -234,6 +258,15 @@ document.addEventListener("pointermove", e=>{
   progress+=dx*0.0025;
   if(progress>1) progress=1;
   update(progress);
+});
+
+/* MOUSE MOVE PARALLAX */
+document.addEventListener("mousemove", e=>{
+  mouseX = (e.clientX/window.innerWidth - 0.5) * 40; // rotate max ±20deg
+  mouseY = (e.clientY/window.innerHeight - 0.5) * 20; // tilt max ±10deg
+  beams.forEach((b,i)=>{
+    b.style.transform = `translateX(-50%) rotate(${mouseX + i*15}deg) skewY(${mouseY}deg)`;
+  });
 });
 
 /* UPDATE SCENE */
@@ -275,6 +308,15 @@ function update(t){
     } else {
       b.style.opacity=0;
     }
+  });
+
+  // Dust particles float in beams
+  dustParticles.forEach(d=>{
+    if(t>0.6){
+      d.style.opacity=0.02 + Math.random()*0.05;
+      d.style.top=parseFloat(d.style.top) - 0.15 + "%";
+      if(parseFloat(d.style.top)<10) d.style.top=80 + "%";
+    } else d.style.opacity=0;
   });
 
   // Message reveal

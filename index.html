@@ -24,13 +24,15 @@ html, body{
   transition:background 2s ease-in-out;
 }
 
-/* STAGE */
+/* STAGE WITH DOLLY-ZOOM */
 #stage{
   position:relative;
   width:100%;
   height:100%;
   perspective:1600px;
   overflow:hidden;
+  transform-origin:center center;
+  transition:transform 0.05s linear;
 }
 
 /* STARS */
@@ -145,7 +147,7 @@ html, body{
   transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
 }
 
-/* SUN LENS FLARES */
+/* SUN FLARES */
 .sun-flare{
   position:absolute;
   width:160px;
@@ -160,7 +162,6 @@ html, body{
   opacity:0;
   transition:opacity 1.6s ease-in-out;
 }
-.sun-flare.layer1{width:160px;height:160px;}
 .sun-flare.layer2{width:280px;height:280px;opacity:0.05;}
 .sun-flare.layer3{width:420px;height:420px;opacity:0.03;}
 
@@ -243,6 +244,7 @@ const message=document.getElementById("message");
 const beams=document.querySelectorAll(".light-beam");
 const flares=document.querySelectorAll(".sun-flare");
 const godRays=document.querySelectorAll(".god-ray");
+const stage=document.getElementById("stage");
 
 let dragging=false;
 let lastX=0;
@@ -283,6 +285,12 @@ document.addEventListener("pointermove", e=>{
   if(progress>1) progress=1;
   update(progress);
 });
+
+/* DOLLY-ZOOM */
+function dollyZoom(t){
+  let scale = 1 + t*0.08; // subtle zoom
+  stage.style.transform = `scale(${scale})`;
+}
 
 /* MOUSE MOVE PARALLAX */
 document.addEventListener("mousemove", e=>{
@@ -332,6 +340,9 @@ function update(t){
     if(i<show){ letters[i].style.opacity=1; letters[i].style.transform="translateY(0)"; }
   }
   if(t>0.7){ message.style.color="var(--gold)"; message.style.opacity=1; }
+
+  // Dolly zoom effect
+  dollyZoom(t);
 }
 </script>
 </body>

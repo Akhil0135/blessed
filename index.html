@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IMAX Nolan Sunrise — Akhil Sir</title>
+<title>IMAX Nolan Sunrise with God Rays — Akhil Sir</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -101,6 +101,25 @@ html, body{
 .light-beam.layer2{animation-duration:50s;opacity:0.12;}
 .light-beam.layer3{animation-duration:60s;opacity:0.08;}
 @keyframes beamRotate{0%{transform:translateX(-50%) rotate(0deg);}100%{transform:translateX(-50%) rotate(360deg);}}
+
+/* GOD RAYS */
+.god-ray{
+  position:absolute;
+  width:10px;
+  height:1000px;
+  background:linear-gradient(to bottom, rgba(255,235,200,0.15), transparent 80%);
+  top:-200px;
+  left:50%;
+  filter:blur(24px);
+  pointer-events:none;
+  opacity:0;
+  animation:rayDrift 50s linear infinite;
+}
+.god-ray.layer1{transform:rotate(-5deg);}
+.god-ray.layer2{transform:rotate(10deg);opacity:0.08;}
+.god-ray.layer3{transform:rotate(-15deg);opacity:0.06;}
+.god-ray.layer4{transform:rotate(20deg);opacity:0.05;}
+@keyframes rayDrift{0%{transform:translateX(0);}100%{transform:translateX(120vw);}}
 
 /* SUN */
 #sun{
@@ -203,6 +222,10 @@ html, body{
   <div class="light-beam layer1"></div>
   <div class="light-beam layer2"></div>
   <div class="light-beam layer3"></div>
+  <div class="god-ray layer1"></div>
+  <div class="god-ray layer2"></div>
+  <div class="god-ray layer3"></div>
+  <div class="god-ray layer4"></div>
   <div class="sun-flare layer1"></div>
   <div class="sun-flare layer2"></div>
   <div class="sun-flare layer3"></div>
@@ -219,12 +242,11 @@ const starsWrap=document.getElementById("stars");
 const message=document.getElementById("message");
 const beams=document.querySelectorAll(".light-beam");
 const flares=document.querySelectorAll(".sun-flare");
+const godRays=document.querySelectorAll(".god-ray");
 
 let dragging=false;
 let lastX=0;
 let progress=0;
-let mouseX=0;
-let mouseY=0;
 
 /* STARS */
 for(let i=0;i<170;i++){
@@ -264,8 +286,8 @@ document.addEventListener("pointermove", e=>{
 
 /* MOUSE MOVE PARALLAX */
 document.addEventListener("mousemove", e=>{
-  mouseX = (e.clientX/window.innerWidth - 0.5) * 40; // rotate max ±20deg
-  mouseY = (e.clientY/window.innerHeight - 0.5) * 20; // tilt max ±10deg
+  let mouseX = (e.clientX/window.innerWidth - 0.5) * 40;
+  let mouseY = (e.clientY/window.innerHeight - 0.5) * 20;
   beams.forEach((b,i)=>{
     b.style.transform = `translateX(-50%) rotate(${mouseX + i*15}deg) skewY(${mouseY}deg)`;
   });
@@ -287,10 +309,16 @@ function update(t){
   sun.style.opacity=t;
   if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
 
-  // Sun flares appear
+  // Sun flares
   flares.forEach(f=>{
     if(t>0.7) f.style.opacity=0.05 + t*0.15;
     else f.style.opacity=0;
+  });
+
+  // God rays
+  godRays.forEach(r=>{
+    if(t>0.7) r.style.opacity=0.05 + t*0.15;
+    else r.style.opacity=0;
   });
 
   // Stars fade

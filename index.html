@@ -102,16 +102,68 @@ html, body{
 .light-beam.layer3{animation-duration:60s;opacity:0.08;}
 @keyframes beamRotate{0%{transform:translateX(-50%) rotate(0deg);}100%{transform:translateX(-50%) rotate(360deg);}}
 
-/* DUST PARTICLES */
-.dust{
+/* SUN */
+#sun{
   position:absolute;
-  width:2px;
-  height:2px;
-  background:rgba(255,235,180,0.12);
+  width:360px;
+  height:360px;
   border-radius:50%;
-  filter:blur(1px);
-  pointer-events:none;
+  top:-200px;
+  right:-200px;
   opacity:0;
+  pointer-events:none;
+  background:radial-gradient(circle at 38% 34%,
+      #fffbe8 0%,
+      #ffe79c 14%,
+      #ffbe55 38%,
+      #ff8e2d 58%,
+      rgba(180,60,10,0.4) 80%,
+      rgba(150,40,0,0) 100%);
+  box-shadow:
+    0 0 280px 80px rgba(255,180,80,0.2),
+    0 0 600px 120px rgba(255,150,60,0.15),
+    0 0 900px 180px rgba(255,120,40,0.08);
+  transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
+}
+
+/* SUN LENS FLARES */
+.sun-flare{
+  position:absolute;
+  width:160px;
+  height:160px;
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(255,245,180,0.15), transparent 60%);
+  filter:blur(60px);
+  opacity:0;
+  transition:opacity 1.6s ease-in-out;
+}
+.sun-flare.layer1{width:160px;height:160px;}
+.sun-flare.layer2{width:280px;height:280px;opacity:0.05;}
+.sun-flare.layer3{width:420px;height:420px;opacity:0.03;}
+
+/* MESSAGE */
+#message{
+  position:absolute;
+  bottom:6%;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  font-size:19px;
+  letter-spacing:3px;
+  font-family:"IM Fell English SC", serif;
+  color:white;
+  opacity:0;
+  transition:color 2s ease-out, opacity 2s ease-out;
+}
+.letter{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .12s ease, transform .12s ease;
 }
 
 /* MOON */
@@ -136,49 +188,6 @@ html, body{
   background:radial-gradient(circle, rgba(255,240,200,0.1), transparent 70%);
   filter:blur(60px);
 }
-
-/* SUN */
-#sun{
-  position:absolute;
-  width:360px;
-  height:360px;
-  border-radius:50%;
-  top:-200px;
-  right:-200px;
-  opacity:0;
-  pointer-events:none;
-  background:radial-gradient(circle at 38% 34%,
-      #fffbe8 0%,
-      #ffe79c 14%,
-      #ffbe55 38%,
-      #ff8e2d 58%,
-      rgba(180,60,10,0.4) 80%,
-      rgba(150,40,0,0) 100%);
-  box-shadow:0 0 230px 50px rgba(255,180,80,0.14),
-             0 0 480px 120px rgba(255,150,60,0.08);
-  transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
-}
-
-/* MESSAGE */
-#message{
-  position:absolute;
-  bottom:6%;
-  left:50%;
-  transform:translateX(-50%);
-  white-space:nowrap;
-  font-size:19px;
-  letter-spacing:3px;
-  font-family:"IM Fell English SC", serif;
-  color:white;
-  opacity:0;
-  transition:color 2s ease-out, opacity 2s ease-out;
-}
-.letter{
-  display:inline-block;
-  opacity:0;
-  transform:translateY(10px);
-  transition:opacity .12s ease, transform .12s ease;
-}
 </style>
 </head>
 <body>
@@ -194,6 +203,9 @@ html, body{
   <div class="light-beam layer1"></div>
   <div class="light-beam layer2"></div>
   <div class="light-beam layer3"></div>
+  <div class="sun-flare layer1"></div>
+  <div class="sun-flare layer2"></div>
+  <div class="sun-flare layer3"></div>
   <div id="moon"><div class="flare"></div></div>
   <div id="sun"></div>
   <div id="message"></div>
@@ -206,6 +218,7 @@ const sun=document.getElementById("sun");
 const starsWrap=document.getElementById("stars");
 const message=document.getElementById("message");
 const beams=document.querySelectorAll(".light-beam");
+const flares=document.querySelectorAll(".sun-flare");
 
 let dragging=false;
 let lastX=0;
@@ -231,17 +244,6 @@ for(let i=0;i<fullText.length;i++){
   L.textContent = fullText[i]===" "?"\u00A0":fullText[i];
   message.appendChild(L);
   letters.push(L);
-}
-
-/* DUST PARTICLES */
-const dustParticles=[];
-for(let i=0;i<60;i++){
-  const d=document.createElement("div");
-  d.className="dust";
-  d.style.left=Math.random()*100+"%";
-  d.style.top=(40 + Math.random()*60)+"%";
-  document.getElementById("stage").appendChild(d);
-  dustParticles.push(d);
 }
 
 /* DRAG LOGIC */
@@ -271,7 +273,6 @@ document.addEventListener("mousemove", e=>{
 
 /* UPDATE SCENE */
 function update(t){
-  // Moon fade and move
   moon.style.opacity=1-t;
   moon.style.left=(10 + t*50)+"%";
 
@@ -286,37 +287,15 @@ function update(t){
   sun.style.opacity=t;
   if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
 
+  // Sun flares appear
+  flares.forEach(f=>{
+    if(t>0.7) f.style.opacity=0.05 + t*0.15;
+    else f.style.opacity=0;
+  });
+
   // Stars fade
   [...starsWrap.children].forEach(s=>{
     s.style.opacity=Math.max(0, 0.3*(1-t*1.2));
-  });
-
-  // Clouds fade softly
-  document.querySelectorAll(".cloud").forEach(c=>{
-    c.style.opacity=Math.max(0.01, 0.08*(1-t*1.2));
-  });
-
-  // Fog drift effect
-  document.querySelectorAll(".fog").forEach((f,i)=>{
-    f.style.left=`${-50 + t*120 + i*5}vw`;
-  });
-
-  // Light beams appear
-  beams.forEach((b,i)=>{
-    if(t>0.6){ 
-      b.style.opacity=0.05 + i*0.02 + t*0.2; 
-    } else {
-      b.style.opacity=0;
-    }
-  });
-
-  // Dust particles float in beams
-  dustParticles.forEach(d=>{
-    if(t>0.6){
-      d.style.opacity=0.02 + Math.random()*0.05;
-      d.style.top=parseFloat(d.style.top) - 0.15 + "%";
-      if(parseFloat(d.style.top)<10) d.style.top=80 + "%";
-    } else d.style.opacity=0;
   });
 
   // Message reveal

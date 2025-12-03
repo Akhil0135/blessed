@@ -147,33 +147,6 @@ html, body{
   transform:translateY(10px);
   transition:opacity .12s ease, transform .12s ease;
 }
-
-/* CROSS */
-#cross{
-  position:absolute;
-  top:-460px;
-  left:50%;
-  transform:translateX(-50%) scale(1);
-  opacity:0;
-  width:58px;
-  height:450px;
-  pointer-events:none;
-  transition:opacity 1.8s ease-out, top 2.5s ease-out;
-}
-#cross:before,
-#cross:after{
-  content:"";
-  position:absolute;
-  background:linear-gradient(180deg,
-      #28004a 0%,
-      #3d0070 28%,
-      #2e0054 55%,
-      #1a002f 90%);
-  border-radius:8px;
-  box-shadow: inset 0 0 22px rgba(0,0,0,0.7), 0 0 48px rgba(80,0,120,0.65);
-}
-#cross:before{width:58px; height:450px; left:50%; transform:translateX(-50%);}
-#cross:after{width:220px; height:58px; top:145px; left:50%; transform:translateX(-50%);}
 </style>
 </head>
 <body>
@@ -185,7 +158,6 @@ html, body{
   <div id="moon"><div class="flare"></div></div>
   <div id="sun"></div>
   <div id="sun-rays"></div>
-  <div id="cross"></div>
   <div id="message"></div>
 </div>
 
@@ -197,7 +169,6 @@ const moon=document.getElementById("moon");
 const sun=document.getElementById("sun");
 const starsWrap=document.getElementById("stars");
 const message=document.getElementById("message");
-const cross=document.getElementById("cross");
 const sunRays=document.getElementById("sun-rays");
 
 let dragging=false;
@@ -252,35 +223,35 @@ document.addEventListener("pointermove", e=>{
 
 /* UPDATE SCENE */
 function update(t){
+  // Moon fade and move
   moon.style.opacity=1-t;
   moon.style.left=(10 + t*50)+"%";
 
-  /* Background */
+  // Background transition
   if(t<0.4){
     document.body.style.background="radial-gradient(circle at center, #000000 0%, #001122 60%, #000000 100%)";
   } else {
     document.body.style.background="radial-gradient(circle at center, #001637 0%, #0b3d91 45%, #000000 100%)";
   }
 
-  /* Sun */
+  // Sun appear
   sun.style.opacity=t;
   if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
 
-  /* Sun Rays */
+  // Sun Rays
   rays.forEach(r=>r.style.opacity=t*0.6);
 
-  /* Stars fade */
-  if(t>0.9){ [...starsWrap.children].forEach(s=>s.style.opacity=0); }
+  // Stars fade as sun rises
+  [...starsWrap.children].forEach(s=>{
+    s.style.opacity=Math.max(0, 0.3*(1-t*1.2));
+  });
 
-  /* Message reveal */
+  // Message reveal
   let show=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
     if(i<show){ letters[i].style.opacity=1; letters[i].style.transform="translateY(0)"; }
   }
   if(t>0.7){ message.style.color="var(--gold)"; message.style.opacity=1; }
-
-  /* Cross */
-  if(t>0.92){ cross.style.opacity=1; cross.style.top="30px"; }
 }
 </script>
 </body>

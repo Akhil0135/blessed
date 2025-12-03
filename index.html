@@ -10,6 +10,7 @@
 <style>
 :root{
   --gold:#ffd46b;
+  --cross-color:#4b006f; /* royal dark violet */
 }
 
 /* BASE */
@@ -110,31 +111,31 @@ html, body {
   transition:color 2s ease-out;
 }
 
-/* CROSS — RECTANGULAR ROYAL VIOLET */
+/* CROSS — TRUE CHRISTIAN CROSS */
 #cross{
   position:absolute;
   top:-460px;
   left:50%;
-  transform:translateX(-50%) scale(1);
+  transform:translateX(-50%);
   opacity:0;
-  width:60px;  /* vertical bar */
-  height:400px;
   pointer-events:none;
-  background: linear-gradient(180deg, #2b004a, #3d0070, #2e0054);
-  border-radius:8px;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 0 40px rgba(80,0,120,0.6);
+  width:50px;  /* vertical bar width */
+  height:400px;
+  background: var(--cross-color);
+  border-radius:6px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 30px rgba(75,0,111,0.6);
 }
 #cross:after{
   content:"";
   position:absolute;
-  width:200px; /* horizontal bar */
-  height:40px;
-  top:140px; /* slightly raised */
+  width:180px;  /* horizontal bar length */
+  height:40px;   /* thickness */
+  top:120px;     /* positioned ~1/3 from top for Christian cross */
   left:50%;
   transform:translateX(-50%);
-  background: linear-gradient(180deg, #2b004a, #3d0070, #2e0054);
+  background: var(--cross-color);
   border-radius:6px;
-  box-shadow: inset 0 0 18px rgba(0,0,0,0.5), 0 0 30px rgba(80,0,120,0.5);
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.5), 0 0 30px rgba(75,0,111,0.5);
 }
 </style>
 </head>

@@ -10,14 +10,14 @@
 <style>
 :root{
   --gold:#ffd46b;
-  --cross-color:#4b006f; /* cross untouched */
+  --cross-color:#4b006f;
 }
 
 /* BASE */
 html, body {
   margin: 0;
   height: 100%;
-  background: black; /* moon phase background */
+  background: black;
   font-family:"Cinzel", serif;
   overflow:hidden;
   color:var(--gold);
@@ -40,15 +40,11 @@ html, body {
   border-radius:50%;
   background:white;
   opacity:0.15;
-  animation:tw1 2.4s infinite alternate ease-in-out;
   filter:blur(0.4px);
+  transform: translateZ(0px);
 }
-.star.depth2{opacity:0.4; transform:scale(1.6); animation:tw2 3.1s infinite alternate;}
-.star.depth3{opacity:0.9; transform:scale(2.2); animation:tw3 4s infinite alternate;}
-
-@keyframes tw1{0%{opacity:0.05;}100%{opacity:0.3;}}
-@keyframes tw2{0%{opacity:0.15;}100%{opacity:0.5;}}
-@keyframes tw3{0%{opacity:0.3;}100%{opacity:1;}}
+.star.depth2{opacity:0.4; transform:scale(1.6);}
+.star.depth3{opacity:0.9; transform:scale(2.2);}
 
 /* MOON */
 #moon{
@@ -137,17 +133,21 @@ const message=document.getElementById("message");
 const cross=document.getElementById("cross");
 
 let dragging=false, lastX=0, progress=0;
+const stars=[];
 
-/* STAR GENERATION */
+/* STAR GENERATION WITH DEPTH */
 for(let i=0;i<170;i++){
   const s=document.createElement("div");
   let depth = Math.random();
   if(depth<0.33) s.className="star depth1";
   else if(depth<0.66) s.className="star depth2";
   else s.className="star depth3";
+
   s.style.left=Math.random()*100+"%";
   s.style.top=Math.random()*80+"%";
+  s.dataset.z = (depth+0.5)*400; // for 3D movement
   starsWrap.appendChild(s);
+  stars.push(s);
 }
 
 /* MESSAGE LETTERS */
@@ -182,7 +182,7 @@ function update(t){
   moon.style.opacity=1-t;
   moon.style.left = (10 + t*50)+"%";
 
-  /* background transition black → dark blue → cinematic */
+  /* background transition black → dark blue */
   if(t>0.1){
     document.body.style.background=
       "radial-gradient(circle at center, #000c1e 0%, #001833 50%, #00040a 100%)";
@@ -196,12 +196,16 @@ function update(t){
     sun.style.transform=`scale(${0.8 + 0.2*t})`;
   }
 
-  /* Stars fade near sun */
-  if(t>0.9){
-    [...starsWrap.children].forEach(s=>s.style.opacity=0);
-  }
+  /* Stars 3D parallax */
+  stars.forEach(s=>{
+    const z = parseFloat(s.dataset.z);
+    const moveX = t*50*(z/400);
+    const moveY = t*30*(z/400);
+    s.style.transform = `translate(${moveX}px, ${moveY}px) translateZ(${z}px)`;
+    if(t>0.9) s.style.opacity=0;
+  });
 
-  /* Gold message reveal with shimmer */
+  /* Gold message reveal */
   let show=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
     if(i<show){ 

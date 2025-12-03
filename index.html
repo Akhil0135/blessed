@@ -91,28 +91,41 @@ html, body{
       #ff8e2d 58%,
       rgba(180,60,10,0.4) 80%,
       rgba(150,40,0,0) 100%);
-  box-shadow:0 0 230px 50px rgba(255,180,80,0.14),0 0 480px 120px rgba(255,150,60,0.08);
+  box-shadow:0 0 230px 50px rgba(255,180,80,0.14),
+             0 0 480px 120px rgba(255,150,60,0.08);
   transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
+}
+
+/* SUN RAYS / GOD LIGHT */
+#sun-rays{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:50;
+}
+.ray{
+  position:absolute;
+  width:200%;
+  height:4px;
+  background:linear-gradient(to right, rgba(255,220,150,0.4), rgba(255,220,150,0));
+  top:50%;
+  left:-50%;
+  transform-origin:left center;
+  opacity:0;
 }
 
 /* CLOUDS */
 .cloud{
   position:absolute;
-  width:300px;
-  height:80px;
-  background:rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.06);
   border-radius:50%;
-  top:20%;
-  left:-400px;
-  filter:blur(6px);
-  animation:cloudMove 60s linear infinite;
+  filter:blur(12px);
+  pointer-events:none;
 }
-.cloud:nth-child(2){top:35%; width:400px; animation-duration:80s; opacity:0.08;}
-.cloud:nth-child(3){top:50%; width:500px; animation-duration:100s; opacity:0.06;}
-@keyframes cloudMove{
-  0%{left:-500px;}
-  100%{left:110%;}
-}
+.cloud.layer1{width:500px; height:120px; top:15%; left:-600px; animation:cloudMove 120s linear infinite;}
+.cloud.layer2{width:650px; height:150px; top:35%; left:-700px; animation:cloudMove 150s linear infinite; opacity:0.08;}
+.cloud.layer3{width:800px; height:200px; top:50%; left:-800px; animation:cloudMove 180s linear infinite; opacity:0.06;}
+@keyframes cloudMove{0%{transform:translateX(0);}100%{transform:translateX(120vw);}}
 
 /* MESSAGE */
 #message{
@@ -161,17 +174,17 @@ html, body{
 }
 #cross:before{width:58px; height:450px; left:50%; transform:translateX(-50%);}
 #cross:after{width:220px; height:58px; top:145px; left:50%; transform:translateX(-50%);}
-
 </style>
 </head>
 <body>
 <div id="stage">
   <div id="stars"></div>
-  <div class="cloud"></div>
-  <div class="cloud"></div>
-  <div class="cloud"></div>
+  <div class="cloud layer1"></div>
+  <div class="cloud layer2"></div>
+  <div class="cloud layer3"></div>
   <div id="moon"><div class="flare"></div></div>
   <div id="sun"></div>
+  <div id="sun-rays"></div>
   <div id="cross"></div>
   <div id="message"></div>
 </div>
@@ -185,6 +198,7 @@ const sun=document.getElementById("sun");
 const starsWrap=document.getElementById("stars");
 const message=document.getElementById("message");
 const cross=document.getElementById("cross");
+const sunRays=document.getElementById("sun-rays");
 
 let dragging=false;
 let lastX=0;
@@ -194,7 +208,7 @@ let progress=0;
 for(let i=0;i<170;i++){
   const s=document.createElement("div");
   let depth=Math.random();
-  s.className=depth<0.33?"star":"depth2";
+  s.className=depth<0.33?"star":"star depth2";
   s.style.left=Math.random()*100+"%";
   s.style.top=Math.random()*80+"%";
   starsWrap.appendChild(s);
@@ -208,6 +222,16 @@ for(let i=0;i<fullText.length;i++){
   L.textContent = fullText[i]===" "?"\u00A0":fullText[i];
   message.appendChild(L);
   letters.push(L);
+}
+
+/* SUN RAYS GENERATION */
+const rays=[];
+for(let i=0;i<12;i++){
+  const ray=document.createElement("div");
+  ray.className="ray";
+  ray.style.transform=`rotate(${i*30}deg)`;
+  sunRays.appendChild(ray);
+  rays.push(ray);
 }
 
 /* DRAG LOGIC */
@@ -242,29 +266,21 @@ function update(t){
   sun.style.opacity=t;
   if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
 
+  /* Sun Rays */
+  rays.forEach(r=>r.style.opacity=t*0.6);
+
   /* Stars fade */
-  if(t>0.9){
-    [...starsWrap.children].forEach(s=>s.style.opacity=0);
-  }
+  if(t>0.9){ [...starsWrap.children].forEach(s=>s.style.opacity=0); }
 
   /* Message reveal */
   let show=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
-    if(i<show){
-      letters[i].style.opacity=1;
-      letters[i].style.transform="translateY(0)";
-    }
+    if(i<show){ letters[i].style.opacity=1; letters[i].style.transform="translateY(0)"; }
   }
-  if(t>0.7){
-    message.style.color="var(--gold)";
-    message.style.opacity=1;
-  }
+  if(t>0.7){ message.style.color="var(--gold)"; message.style.opacity=1; }
 
   /* Cross */
-  if(t>0.92){
-    cross.style.opacity=1;
-    cross.style.top="30px";
-  }
+  if(t>0.92){ cross.style.opacity=1; cross.style.top="30px"; }
 }
 </script>
 </body>

@@ -8,32 +8,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 
 <style>
-/* -----------------------------------------------------
-   CINEMATIC ROOT COLORS
------------------------------------------------------- */
 :root{
   --gold:#ffd46b;
 }
 
-/* -----------------------------------------------------
-   BASE
------------------------------------------------------- */
+/* BASE */
 html, body {
   margin: 0;
   height: 100%;
-  background: radial-gradient(circle at center,
-              #00132b 0%,   /* dark blue core */
-              #000b1a 50%,  /* deeper blue */
-              #000006 100%);/* near black edges */
+  background: black; /* moon phase background */
   font-family:"Cinzel", serif;
   overflow:hidden;
   color:var(--gold);
   transition: background 2s ease-in-out;
 }
 
-/* -----------------------------------------------------
-   STAGE
------------------------------------------------------- */
+/* STAGE */
 #stage{
   position:relative;
   width:100%;
@@ -41,9 +31,7 @@ html, body {
   perspective:1600px;
 }
 
-/* -----------------------------------------------------
-   STARS — IMAX UPGRADE
------------------------------------------------------- */
+/* STARS */
 .star{
   position:absolute;
   width:2px;
@@ -61,9 +49,7 @@ html, body {
 @keyframes tw2{0%{opacity:0.15;}100%{opacity:0.5;}}
 @keyframes tw3{0%{opacity:0.3;}100%{opacity:1;}}
 
-/* -----------------------------------------------------
-   MOON
------------------------------------------------------- */
+/* MOON */
 #moon{
   position:absolute;
   width:180px;
@@ -86,9 +72,7 @@ html, body {
   filter:blur(60px);
 }
 
-/* -----------------------------------------------------
-   SUN
------------------------------------------------------- */
+/* SUN */
 #sun{
   position:absolute;
   width:360px;
@@ -98,7 +82,7 @@ html, body {
   right:-200px;
   opacity:0;
   pointer-events:none;
-  background:radial-gradient(circle at 38% 34%,
+  background: radial-gradient(circle at 38% 34%,
       #fffbe8 0%,
       #ffe79c 14%,
       #ffbe55 38%,
@@ -111,9 +95,7 @@ html, body {
   transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
 }
 
-/* -----------------------------------------------------
-   MESSAGE
------------------------------------------------------- */
+/* MESSAGE */
 #message{
   position:absolute;
   bottom:6%;
@@ -128,51 +110,32 @@ html, body {
   transition:color 2s ease-out;
 }
 
-/* -----------------------------------------------------
-   CROSS — ROYAL GALACTIC VIOLET
------------------------------------------------------- */
+/* CROSS — RECTANGULAR ROYAL VIOLET */
 #cross{
   position:absolute;
   top:-460px;
   left:50%;
   transform:translateX(-50%) scale(1);
   opacity:0;
-  width:190px;
-  height:450px;
+  width:60px;  /* vertical bar */
+  height:400px;
   pointer-events:none;
-  transition:opacity 1.8s ease-out, top 2.5s ease-out;
+  background: linear-gradient(180deg, #2b004a, #3d0070, #2e0054);
+  border-radius:8px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 0 40px rgba(80,0,120,0.6);
 }
-
-#cross:before,
 #cross:after{
   content:"";
   position:absolute;
-  background:linear-gradient(180deg,
-      #28004a 0%,
-      #3d0070 28%,
-      #2e0054 55%,
-      #1a002f 90%);
-  border-radius:8px;
-  box-shadow:
-    inset 0 0 22px rgba(0,0,0,0.7),
-    0 0 48px rgba(80,0,120,0.65);
-}
-/* vertical */
-#cross:before{
-  width:58px;
-  height:450px;
+  width:200px; /* horizontal bar */
+  height:40px;
+  top:140px; /* slightly raised */
   left:50%;
   transform:translateX(-50%);
+  background: linear-gradient(180deg, #2b004a, #3d0070, #2e0054);
+  border-radius:6px;
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.5), 0 0 30px rgba(80,0,120,0.5);
 }
-/* horizontal */
-#cross:after{
-  width:220px;
-  height:58px;
-  top:140px; /* raised horizontal bar */
-  left:50%;
-  transform:translateX(-50%);
-}
-
 </style>
 </head>
 
@@ -199,9 +162,7 @@ let dragging=false;
 let lastX=0;
 let progress=0;
 
-/* -----------------------------------------------------
-   STAR GENERATION
------------------------------------------------------- */
+/* STAR GENERATION */
 for(let i=0;i<170;i++){
   const s=document.createElement("div");
   let depth = Math.random();
@@ -214,9 +175,7 @@ for(let i=0;i<170;i++){
   starsWrap.appendChild(s);
 }
 
-/* -----------------------------------------------------
-   MESSAGE LETTERS
------------------------------------------------------- */
+/* MESSAGE LETTERS */
 const letters=[];
 for(let i=0;i<fullText.length;i++){
   const L=document.createElement("span");
@@ -230,9 +189,7 @@ for(let i=0;i<fullText.length;i++){
   letters.push(L);
 }
 
-/* -----------------------------------------------------
-   DRAG LOGIC
------------------------------------------------------- */
+/* DRAG LOGIC */
 moon.addEventListener("pointerdown", e=>{
   dragging=true;
   lastX=e.clientX;
@@ -250,12 +207,16 @@ document.addEventListener("pointermove", e=>{
   update(progress);
 });
 
-/* -----------------------------------------------------
-   UPDATE SCENE
------------------------------------------------------- */
+/* UPDATE SCENE */
 function update(t){
   moon.style.opacity=1-t;
   moon.style.left = (10 + t*50)+"%";
+
+  /* background changes from black → dark blue */
+  if(t>0.1){
+    document.body.style.background=
+      "radial-gradient(circle at center, #00132b 0%, #000b1a 45%, #000006 100%)";
+  }
 
   /* Sun appear */
   sun.style.opacity=t;

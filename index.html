@@ -8,29 +8,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 
 <style>
+/* -----------------------------------------------------
+   CINEMATIC ROOT COLORS
+------------------------------------------------------ */
 :root{
-  --night-deep:#000714;
-  --night-blue:#001637;
-  --night-royal:#00112c;
   --gold:#ffd46b;
-  --cross-darkviolet:#2b003f;
 }
 
-/* BASE */
-html,body{
-  margin:0;
-  height:100%;
+/* -----------------------------------------------------
+   BASE
+------------------------------------------------------ */
+html, body {
+  margin: 0;
+  height: 100%;
   background: radial-gradient(circle at center,
-              var(--night-blue) 0%,
-              var(--night-royal) 50%,
-              black 100%);
+              #00132b 0%,   /* dark blue core */
+              #000b1a 50%,  /* deeper blue */
+              #000006 100%);/* near black edges */
   font-family:"Cinzel", serif;
   overflow:hidden;
   color:var(--gold);
-  transition:background 2s ease-in-out;
+  transition: background 2s ease-in-out;
 }
 
-/* STAGE */
+/* -----------------------------------------------------
+   STAGE
+------------------------------------------------------ */
 #stage{
   position:relative;
   width:100%;
@@ -38,7 +41,9 @@ html,body{
   perspective:1600px;
 }
 
-/* STARS */
+/* -----------------------------------------------------
+   STARS — IMAX UPGRADE
+------------------------------------------------------ */
 .star{
   position:absolute;
   width:2px;
@@ -56,7 +61,9 @@ html,body{
 @keyframes tw2{0%{opacity:0.15;}100%{opacity:0.5;}}
 @keyframes tw3{0%{opacity:0.3;}100%{opacity:1;}}
 
-/* MOON */
+/* -----------------------------------------------------
+   MOON
+------------------------------------------------------ */
 #moon{
   position:absolute;
   width:180px;
@@ -79,7 +86,9 @@ html,body{
   filter:blur(60px);
 }
 
-/* SUN */
+/* -----------------------------------------------------
+   SUN
+------------------------------------------------------ */
 #sun{
   position:absolute;
   width:360px;
@@ -102,7 +111,9 @@ html,body{
   transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
 }
 
-/* MESSAGE */
+/* -----------------------------------------------------
+   MESSAGE
+------------------------------------------------------ */
 #message{
   position:absolute;
   bottom:6%;
@@ -117,7 +128,9 @@ html,body{
   transition:color 2s ease-out;
 }
 
-/* CROSS — DARK VIOLET */
+/* -----------------------------------------------------
+   CROSS — ROYAL GALACTIC VIOLET
+------------------------------------------------------ */
 #cross{
   position:absolute;
   top:-460px;
@@ -129,12 +142,13 @@ html,body{
   pointer-events:none;
   transition:opacity 1.8s ease-out, top 2.5s ease-out;
 }
+
 #cross:before,
 #cross:after{
   content:"";
   position:absolute;
   background:linear-gradient(180deg,
-      var(--cross-darkviolet) 0%,
+      #28004a 0%,
       #3d0070 28%,
       #2e0054 55%,
       #1a002f 90%);
@@ -143,15 +157,22 @@ html,body{
     inset 0 0 22px rgba(0,0,0,0.7),
     0 0 48px rgba(80,0,120,0.65);
 }
-#cross:before{width:58px; height:450px; left:50%; transform:translateX(-50%);}
-#cross:after{width:220px; height:58px; top:140px; left:50%; transform:translateX(-50%);}
-
-/* MEDIA */
-@media (max-width:720px){
-  #moon{width:140px;height:140px;}
-  #sun{width:200px;height:200px;}
-  #message{font-size:14px;}
+/* vertical */
+#cross:before{
+  width:58px;
+  height:450px;
+  left:50%;
+  transform:translateX(-50%);
 }
+/* horizontal */
+#cross:after{
+  width:220px;
+  height:58px;
+  top:140px; /* raised horizontal bar */
+  left:50%;
+  transform:translateX(-50%);
+}
+
 </style>
 </head>
 
@@ -178,19 +199,24 @@ let dragging=false;
 let lastX=0;
 let progress=0;
 
-/* STARS */
+/* -----------------------------------------------------
+   STAR GENERATION
+------------------------------------------------------ */
 for(let i=0;i<170;i++){
   const s=document.createElement("div");
   let depth = Math.random();
   if(depth<0.33) s.className="star depth1";
   else if(depth<0.66) s.className="star depth2";
   else s.className="star depth3";
+
   s.style.left=Math.random()*100+"%";
   s.style.top=Math.random()*80+"%";
   starsWrap.appendChild(s);
 }
 
-/* MESSAGE LETTERS */
+/* -----------------------------------------------------
+   MESSAGE LETTERS
+------------------------------------------------------ */
 const letters=[];
 for(let i=0;i<fullText.length;i++){
   const L=document.createElement("span");
@@ -204,7 +230,9 @@ for(let i=0;i<fullText.length;i++){
   letters.push(L);
 }
 
-/* DRAGGING */
+/* -----------------------------------------------------
+   DRAG LOGIC
+------------------------------------------------------ */
 moon.addEventListener("pointerdown", e=>{
   dragging=true;
   lastX=e.clientX;
@@ -218,19 +246,16 @@ document.addEventListener("pointermove", e=>{
 
   progress += dx*0.0025;
   if(progress>1) progress=1;
+
   update(progress);
 });
 
-/* UPDATE SCENE */
+/* -----------------------------------------------------
+   UPDATE SCENE
+------------------------------------------------------ */
 function update(t){
   moon.style.opacity=1-t;
   moon.style.left = (10 + t*50)+"%";
-
-  /* Background dark blue */
-  if(t>0.15){
-    document.body.style.background=
-      "radial-gradient(circle at center, #000e26 0%, #001839 45%, #00040a 100%)";
-  }
 
   /* Sun appear */
   sun.style.opacity=t;
@@ -239,12 +264,12 @@ function update(t){
     sun.style.right="40px";
   }
 
-  /* Stars fade off */
+  /* Stars fade off near sunlight */
   if(t>0.9){
     [...starsWrap.children].forEach(s=>s.style.opacity=0);
   }
 
-  /* Golden message */
+  /* Golden text reveal */
   let show=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
     if(i<show){
@@ -257,12 +282,13 @@ function update(t){
     message.style.opacity=1;
   }
 
-  /* Cross appear */
+  /* Cross arrival */
   if(t>0.92){
     cross.style.opacity=1;
     cross.style.top="30px";
   }
 }
 </script>
+
 </body>
 </html>

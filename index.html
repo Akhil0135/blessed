@@ -1,287 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>IMAX Nolan — Moon → Sun → Galactic Cross → Birthday Reveal</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8">
+<title>IMAX Nolan Vision</title>
 <style>
-:root{
-  --bg-night-1:#070617;
-  --bg-night-2:#120430;
-  --text-color:#ffdFA0;
-}
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+  }
 
-/* base */
-html,body{
-  margin:0;
-  height:100%;
-  background:var(--bg-night-1);
-  font-family:"Cinzel", serif;
-  overflow:hidden;
-  color:var(--text-color);
-}
+  /* Container */
+  #scene {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
 
-#stage{
-  position:relative;
-  width:100%;
-  height:100%;
-  perspective:1400px;
-}
+  /* Moon */
+  #moon {
+    position: absolute;
+    top: 40%;
+    left: 5%;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+        #ffffff 0%,
+        #d9d9d9 40%,
+        #8c8c8c 70%,
+        #3a3a3a 100%);
+    box-shadow: 0 0 80px rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: opacity 0.4s ease-out;
+  }
 
-/* sky */
-#sky{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg,var(--bg-night-1),var(--bg-night-2) 55%);
-  z-index:0;
-}
+  /* Sun */
+  #sun {
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+        #ffecb3 0%,
+        #ffcc33 40%,
+        #ff8800 75%,
+        #442200 100%);
+    opacity: 0;
+    transition: opacity 1.8s ease-in-out, top 2s ease-out, right 2s ease-out;
+    pointer-events: none;
+  }
 
-/* STARS */
-#stars{
-  position:absolute;
-  inset:0;
-  z-index:20;
-  pointer-events:none;
-}
-.star{
-  position:absolute;
-  width:2px;
-  height:2px;
-  border-radius:50%;
-  background:white;
-  opacity:0.7;
-  animation:twinkle 3s infinite alternate;
-}
-@keyframes twinkle{
-  0%{opacity:0.2; transform:scale(0.8);}
-  50%{opacity:1; transform:scale(1.25);}
-  100%{opacity:0.2; transform:scale(0.9);}
-}
+  /* Stars */
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 2s infinite ease-in-out alternate;
+  }
 
-/* MOON */
-#moon{
-  position:absolute;
-  width:190px;
-  height:190px;
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, #ffffff, #f1e3b5 45%, #d8c08a 100%);
-  top:20%;
-  left:14%;
-  box-shadow:0 0 120px rgba(255,245,200,0.14);
-  cursor:grab;
-  z-index:60;
-  transform:translate(-50%,-50%);
-  transition:opacity .2s linear;
-}
-#moon:active{cursor:grabbing}
-#moon .flare{
-  position:absolute;
-  inset:-40px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(255,245,200,0.12), transparent);
-  filter:blur(36px);
-}
+  @keyframes twinkle {
+    from { opacity: 0.2; transform: scale(1); }
+    to   { opacity: 1; transform: scale(1.7); }
+  }
 
-/* SUN */
-#sun{
-  position:absolute;
-  width:300px;
-  height:300px;
-  border-radius:50%;
-  top:5%;
-  right:5%;
-  opacity:0;
-  pointer-events:none;
-  z-index:55;
-  background: radial-gradient(circle at 38% 34%, #fff8e8 0%, #ffd98f 12%, #ffb258 32%, #ff8a30 60%, rgba(200,80,30,0.6) 85%, rgba(200,80,30,0) 100%);
-  box-shadow:0 0 280px 90px rgba(255,220,140,0.12);
-  transition:opacity .3s linear;
-}
+  /* Text */
+  #msg {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: white;
+    opacity: 0;
+    transition: color 2s ease-out;
+    font-family: 'Cinzel', serif;
+  }
 
-/* GALACTIC CROSS */
-#cross{
-  position:absolute;
-  top:-350px;
-  left:50%;
-  transform:translateX(-50%) scale(1);
-  opacity:0;
-  z-index:85;
-  pointer-events:none;
-  transition:all 1.6s cubic-bezier(.17,.84,.44,1);
-}
-.cross-vertical-galaxy{
-  position:absolute;
-  width:58px;
-  height:280px;
-  left:50%;
-  transform:translateX(-50%);
-  border-radius:8px;
-  background:radial-gradient(circle at 50% 30%, 
-    #ffffff 0%, 
-    #a6c8ff 10%, 
-    #6ea8ff 28%, 
-    #3f67ff 48%, 
-    #1d2b82 70%, 
-    #0b1039 100%);
-  box-shadow:
-    inset 0 0 25px rgba(255,255,255,0.45),
-    0 0 60px rgba(130,150,255,0.55),
-    0 0 160px rgba(60,80,255,0.45);
-}
-.cross-horizontal-galaxy{
-  position:absolute;
-  width:190px;
-  height:55px;
-  top:105px;
-  left:50%;
-  transform:translateX(-50%);
-  border-radius:8px;
-  background:radial-gradient(circle at 50% 40%, 
-    #ffffff 0%, 
-    #a6c8ff 10%, 
-    #6ea8ff 28%, 
-    #3f67ff 48%, 
-    #1d2b82 70%, 
-    #0b1039 100%);
-  box-shadow:
-    inset 0 0 25px rgba(255,255,255,0.45),
-    0 0 60px rgba(130,150,255,0.55),
-    0 0 160px rgba(60,80,255,0.45);
-}
+  /* DARKER GALACTIC CROSS */
+  #cross {
+    position: absolute;
+    top: -400px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 420px;
+    opacity: 0;
+    transition: opacity 1.8s ease-out, top 2.4s ease-out;
+  }
 
-/* MESSAGE */
-#message{
-  position:absolute;
-  bottom:6%;
-  left:50%;
-  transform:translateX(-50%);
-  white-space:nowrap;
-  font-family:"IM Fell English SC", serif;
-  font-size:18px;
-  letter-spacing:3px;
-  color:#ffdFA0;
-  z-index:90;
-}
-.letter{
-  display:inline-block;
-  opacity:0;
-  transform:translateY(12px);
-  transition:opacity .12s ease, transform .12s ease;
-}
+  /* Cross vertical + horizontal bars */
+  #cross:before,
+  #cross:after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(to bottom,
+      #0a0a0a 0%,
+      #131313 40%,
+      #0d0d0d 75%,
+      #000000 100%
+    );
+    box-shadow: 0 0 45px rgba(0,0,0,0.8);
+  }
 
-@media (max-width:720px){
-  #moon{width:140px;height:140px;}
-  #sun{width:200px;height:200px;}
-  #message{font-size:14px;}
-}
+  /* Vertical bar */
+  #cross:before {
+    width: 45px;
+    height: 420px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Horizontal bar */
+  #cross:after {
+    width: 200px;
+    height: 45px;
+    top: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
 </style>
 </head>
-
 <body>
-<div id="stage">
 
-  <div id="sky"></div>
-  <div id="stars"></div>
+<div id="scene"></div>
 
-  <div id="moon"><div class="flare"></div></div>
+<div id="moon"></div>
+<div id="sun"></div>
 
-  <div id="sun"></div>
+<div id="msg"></div>
 
-  <div id="cross">
-    <div class="cross-vertical-galaxy"></div>
-    <div class="cross-horizontal-galaxy"></div>
-  </div>
-
-  <div id="message"></div>
-
-</div>
+<div id="cross"></div>
 
 <script>
-const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
-
 const moon = document.getElementById("moon");
 const sun = document.getElementById("sun");
-const starsWrap = document.getElementById("stars");
-const message = document.getElementById("message");
+const msg = document.getElementById("msg");
 const cross = document.getElementById("cross");
+const scene = document.getElementById("scene");
 
-let dragging=false;
-let lastX=0;
-let progress=0;
+let stars = [];
 
-/* STARS */
-for(let i=0;i<160;i++){
-  const s=document.createElement("div");
-  s.className="star";
-  s.style.left=Math.random()*100+"%";
-  s.style.top=Math.random()*80+"%";
-  starsWrap.appendChild(s);
+/* Generate IMAX stars */
+for (let i = 0; i < 160; i++) {
+  let s = document.createElement("div");
+  s.className = "star";
+  s.style.top = Math.random() * 100 + "vh";
+  s.style.left = Math.random() * 100 + "vw";
+  s.style.animationDuration = (1.5 + Math.random() * 2) + "s";
+  scene.appendChild(s);
+  stars.push(s);
 }
 
-/* MESSAGE LETTER SPLIT */
-const letters=[];
-for(let i=0;i<fullText.length;i++){
-  const span=document.createElement("span");
-  span.className="letter";
-  span.textContent = fullText[i]===" " ? "\u00A0" : fullText[i];
-  message.appendChild(span);
-  letters.push(span);
+/* Text */
+const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU";
+
+let revealed = 0;
+
+moon.addEventListener("mousedown", startDrag);
+
+function startDrag(e) {
+  e.preventDefault();
+  document.addEventListener("mousemove", drag);
+  document.addEventListener("mouseup", endDrag);
 }
 
-/* DRAGGING */
-moon.addEventListener("pointerdown", e=>{
-  dragging=true;
-  lastX=e.clientX;
-});
-document.addEventListener("pointerup", ()=> dragging=false);
-document.addEventListener("pointermove", e=>{
-  if(!dragging) return;
-  const clientX=e.clientX;
-  const dx=clientX-lastX;
-  lastX=clientX;
-  if(dx<=0) return;
-  progress += dx*0.0025;
-  if(progress>1) progress=1;
-  updateScene(progress);
-});
+function drag(e) {
+  let x = e.clientX - 80;
+  if (x < 0) x = 0;
+  if (x > window.innerWidth - 160) x = window.innerWidth - 160;
 
-/* UPDATE SCENE */
-function updateScene(t){
-  t=Math.max(0,Math.min(1,t));
+  moon.style.left = x + "px";
 
-  /* moon fade + move */
-  moon.style.opacity = 1-t;
-  moon.style.left = 14 + t*46 + "%";
-  moon.style.transform=`translate(-50%,-50%) rotate(${-t*360}deg)`;
+  let p = x / (window.innerWidth - 160);
 
-  /* sun */
-  sun.style.opacity = t;
+  moon.style.opacity = 1 - p;
 
-  /* stars fade */
-  [...starsWrap.children].forEach(s=>{
-    if(t<0.95) s.style.opacity = 1;
-    else s.style.opacity = 0;
-  });
+  let lettersToShow = Math.floor(fullText.length * p);
+  msg.textContent = fullText.substring(0, lettersToShow);
+  msg.style.opacity = 1;
 
-  /* text reveal */
-  const showCount=Math.floor(t*letters.length);
-  letters.forEach((L,i)=>{
-    if(i<showCount){
-      L.style.opacity=1;
-      L.style.transform="translateY(0)";
-    } else {
-      L.style.opacity=0;
-    }
-  });
+  if (p > 0.75) {
+    sun.style.opacity = 1;
+    sun.style.top = "40px";
+    sun.style.right = "40px";
 
-  /* cross at end */
-  if(t>0.95){
-    cross.style.top="7%";
-    cross.style.opacity=1;
+    stars.forEach(s => s.style.opacity = 0);
   }
+
+  if (p > 0.92) {
+    cross.style.opacity = 1;
+    cross.style.top = "20px";
+  }
+}
+
+function endDrag() {
+  document.removeEventListener("mousemove", drag);
+  document.removeEventListener("mouseup", endDrag);
 }
 </script>
 

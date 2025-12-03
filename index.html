@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>IMAX Cosmic Vision — Akhil Sir</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 
 <style>
 :root{
+  --night-black:#000000;
+  --night-deep:#001122;
+  --day-blue:#0b3d91;
   --gold:#ffd46b;
-  --cross-color:#4b006f;
 }
 
 /* BASE */
-html, body {
-  margin: 0;
-  height: 100%;
-  background: black;
+html, body{
+  margin:0;
+  height:100%;
+  background:var(--night-black);
   font-family:"Cinzel", serif;
   overflow:hidden;
   color:var(--gold);
-  transition: background 2s ease-in-out;
+  transition:background 2s ease-in-out;
 }
 
 /* STAGE */
@@ -39,12 +41,15 @@ html, body {
   height:2px;
   border-radius:50%;
   background:white;
-  opacity:0.15;
-  filter:blur(0.4px);
-  transform: translateZ(0px);
+  opacity:0.2;
+  animation:twinkle 3s infinite alternate ease-in-out;
+  filter:blur(0.3px);
 }
-.star.depth2{opacity:0.4; transform:scale(1.6);}
-.star.depth3{opacity:0.9; transform:scale(2.2);}
+.star.depth2{opacity:0.5; animation:twinkle2 3.8s infinite alternate;}
+.star.depth3{opacity:0.8; animation:twinkle3 4.2s infinite alternate;}
+@keyframes twinkle{0%{opacity:0.05;}100%{opacity:0.25;}}
+@keyframes twinkle2{0%{opacity:0.2;}100%{opacity:0.6;}}
+@keyframes twinkle3{0%{opacity:0.3;}100%{opacity:1;}}
 
 /* MOON */
 #moon{
@@ -52,10 +57,10 @@ html, body {
   width:180px;
   height:180px;
   border-radius:50%;
-  background:radial-gradient(circle at 40% 34%, #ffffff, #ebdfc0 45%, #bca887 80%, #4b3d2e 100%);
+  background:radial-gradient(circle at 40% 34%, #ffffff, #000000 80%);
   top:28%;
   left:10%;
-  box-shadow:0 0 100px rgba(255,245,200,0.25);
+  box-shadow:0 0 80px rgba(255,245,200,0.2);
   cursor:grab;
   transform:translate(-50%,-50%);
   transition:opacity 0.25s linear;
@@ -65,9 +70,8 @@ html, body {
   position:absolute;
   inset:-50px;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(255,240,200,0.15), transparent 70%);
-  filter:blur(65px);
-  transition: all 1s ease-out;
+  background:radial-gradient(circle, rgba(255,240,200,0.1), transparent 70%);
+  filter:blur(60px);
 }
 
 /* SUN */
@@ -76,21 +80,38 @@ html, body {
   width:360px;
   height:360px;
   border-radius:50%;
-  top:-220px;
-  right:-220px;
+  top:-200px;
+  right:-200px;
   opacity:0;
   pointer-events:none;
-  background: radial-gradient(circle at 38% 34%,
+  background:radial-gradient(circle at 38% 34%,
       #fffbe8 0%,
       #ffe79c 14%,
       #ffbe55 38%,
       #ff8e2d 58%,
       rgba(180,60,10,0.4) 80%,
       rgba(150,40,0,0) 100%);
-  box-shadow:
-    0 0 280px 60px rgba(255,180,80,0.18),
-    0 0 500px 140px rgba(255,150,60,0.1);
-  transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out, transform 2s ease-in-out;
+  box-shadow:0 0 230px 50px rgba(255,180,80,0.14),0 0 480px 120px rgba(255,150,60,0.08);
+  transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
+}
+
+/* CLOUDS */
+.cloud{
+  position:absolute;
+  width:300px;
+  height:80px;
+  background:rgba(255,255,255,0.05);
+  border-radius:50%;
+  top:20%;
+  left:-400px;
+  filter:blur(6px);
+  animation:cloudMove 60s linear infinite;
+}
+.cloud:nth-child(2){top:35%; width:400px; animation-duration:80s; opacity:0.08;}
+.cloud:nth-child(3){top:50%; width:500px; animation-duration:100s; opacity:0.06;}
+@keyframes cloudMove{
+  0%{left:-500px;}
+  100%{left:110%;}
 }
 
 /* MESSAGE */
@@ -105,18 +126,50 @@ html, body {
   font-family:"IM Fell English SC", serif;
   color:white;
   opacity:0;
-  transition: color 2s ease-out, text-shadow 2s ease-out;
+  transition:color 2s ease-out, opacity 2s ease-out;
+}
+.letter{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .12s ease, transform .12s ease;
 }
 
-/* CROSS untouched */
-#cross{position:absolute;top:-460px;left:50%;transform:translateX(-50%);opacity:0;width:50px;height:400px;pointer-events:none;}
-#cross:after{content:"";position:absolute;width:180px;height:40px;top:120px;left:50%;transform:translateX(-50%);}
+/* CROSS */
+#cross{
+  position:absolute;
+  top:-460px;
+  left:50%;
+  transform:translateX(-50%) scale(1);
+  opacity:0;
+  width:58px;
+  height:450px;
+  pointer-events:none;
+  transition:opacity 1.8s ease-out, top 2.5s ease-out;
+}
+#cross:before,
+#cross:after{
+  content:"";
+  position:absolute;
+  background:linear-gradient(180deg,
+      #28004a 0%,
+      #3d0070 28%,
+      #2e0054 55%,
+      #1a002f 90%);
+  border-radius:8px;
+  box-shadow: inset 0 0 22px rgba(0,0,0,0.7), 0 0 48px rgba(80,0,120,0.65);
+}
+#cross:before{width:58px; height:450px; left:50%; transform:translateX(-50%);}
+#cross:after{width:220px; height:58px; top:145px; left:50%; transform:translateX(-50%);}
+
 </style>
 </head>
-
 <body>
 <div id="stage">
   <div id="stars"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
   <div id="moon"><div class="flare"></div></div>
   <div id="sun"></div>
   <div id="cross"></div>
@@ -124,7 +177,8 @@ html, body {
 </div>
 
 <script>
-const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
+const fullText =
+"ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
 
 const moon=document.getElementById("moon");
 const sun=document.getElementById("sun");
@@ -132,22 +186,18 @@ const starsWrap=document.getElementById("stars");
 const message=document.getElementById("message");
 const cross=document.getElementById("cross");
 
-let dragging=false, lastX=0, progress=0;
-const stars=[];
+let dragging=false;
+let lastX=0;
+let progress=0;
 
-/* STAR GENERATION WITH DEPTH */
+/* STARS */
 for(let i=0;i<170;i++){
   const s=document.createElement("div");
-  let depth = Math.random();
-  if(depth<0.33) s.className="star depth1";
-  else if(depth<0.66) s.className="star depth2";
-  else s.className="star depth3";
-
+  let depth=Math.random();
+  s.className=depth<0.33?"star":"depth2";
   s.style.left=Math.random()*100+"%";
   s.style.top=Math.random()*80+"%";
-  s.dataset.z = (depth+0.5)*400; // for 3D movement
   starsWrap.appendChild(s);
-  stars.push(s);
 }
 
 /* MESSAGE LETTERS */
@@ -155,24 +205,23 @@ const letters=[];
 for(let i=0;i<fullText.length;i++){
   const L=document.createElement("span");
   L.className="letter";
-  L.textContent = fullText[i]===" " ? "\u00A0" : fullText[i];
-  L.style.opacity=0;
-  L.style.transition="opacity .12s ease, transform .12s ease";
-  L.style.display="inline-block";
-  L.style.transform="translateY(10px)";
+  L.textContent = fullText[i]===" "?"\u00A0":fullText[i];
   message.appendChild(L);
   letters.push(L);
 }
 
 /* DRAG LOGIC */
-moon.addEventListener("pointerdown", e=>{ dragging=true; lastX=e.clientX; });
+moon.addEventListener("pointerdown", e=>{
+  dragging=true;
+  lastX=e.clientX;
+});
 document.addEventListener("pointerup", ()=>dragging=false);
 document.addEventListener("pointermove", e=>{
   if(!dragging) return;
   let dx=e.clientX-lastX;
   lastX=e.clientX;
   if(dx<=0) return;
-  progress += dx*0.0025;
+  progress+=dx*0.0025;
   if(progress>1) progress=1;
   update(progress);
 });
@@ -180,38 +229,30 @@ document.addEventListener("pointermove", e=>{
 /* UPDATE SCENE */
 function update(t){
   moon.style.opacity=1-t;
-  moon.style.left = (10 + t*50)+"%";
+  moon.style.left=(10 + t*50)+"%";
 
-  /* background transition black → dark blue */
-  if(t>0.1){
-    document.body.style.background=
-      "radial-gradient(circle at center, #000c1e 0%, #001833 50%, #00040a 100%)";
+  /* Background */
+  if(t<0.4){
+    document.body.style.background="radial-gradient(circle at center, #000000 0%, #001122 60%, #000000 100%)";
+  } else {
+    document.body.style.background="radial-gradient(circle at center, #001637 0%, #0b3d91 45%, #000000 100%)";
   }
 
-  /* Sun appear with subtle scaling */
+  /* Sun */
   sun.style.opacity=t;
-  if(t>0.7){
-    sun.style.top="40px";
-    sun.style.right="40px";
-    sun.style.transform=`scale(${0.8 + 0.2*t})`;
+  if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
+
+  /* Stars fade */
+  if(t>0.9){
+    [...starsWrap.children].forEach(s=>s.style.opacity=0);
   }
 
-  /* Stars 3D parallax */
-  stars.forEach(s=>{
-    const z = parseFloat(s.dataset.z);
-    const moveX = t*50*(z/400);
-    const moveY = t*30*(z/400);
-    s.style.transform = `translate(${moveX}px, ${moveY}px) translateZ(${z}px)`;
-    if(t>0.9) s.style.opacity=0;
-  });
-
-  /* Gold message reveal */
+  /* Message reveal */
   let show=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
-    if(i<show){ 
+    if(i<show){
       letters[i].style.opacity=1;
       letters[i].style.transform="translateY(0)";
-      letters[i].style.textShadow="0 0 8px rgba(255,210,107,0.7)";
     }
   }
   if(t>0.7){
@@ -219,7 +260,7 @@ function update(t){
     message.style.opacity=1;
   }
 
-  /* Cross untouched */
+  /* Cross */
   if(t>0.92){
     cross.style.opacity=1;
     cross.style.top="30px";

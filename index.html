@@ -1,137 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Phase 1 — IMAX Cinematic Night</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PHASE 1 — IMAX Nolan Cinematic Scene</title>
 
 <style>
-    body {
-        margin: 0;
-        overflow: hidden;
-        background: radial-gradient(circle at center, #02010a, #000000 70%);
-        font-family: "Cinzel", serif;
-    }
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Cinzel', serif;
+}
 
-    /* -------- TWINKLING STARS -------- */
-    .star {
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: white;
-        border-radius: 50%;
-        opacity: 0;
-        animation: twinkle 2s infinite ease-in-out;
-        filter: drop-shadow(0 0 6px white);
-    }
+/* IMAX letterbox bars */
+#letterbox {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+}
+#letterbox::before,
+#letterbox::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 14%;
+    background: rgba(0,0,0,0.9);
+    left: 0;
+}
+#letterbox::before { top: 0; }
+#letterbox::after { bottom: 0; }
 
-    @keyframes twinkle {
-        0%,100% { opacity: 0.1; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.8); }
-    }
+/* Message cinematic text */
+#message {
+    position: absolute;
+    bottom: 12%;
+    width: 100%;
+    text-align: center;
+    font-size: 26px;    /* reduced font size */
+    color: #ffdca8;
+    letter-spacing: 4px;
+    text-shadow: 0 0 14px #ffcc88;
+    opacity: 0;
+    white-space: nowrap;
+    z-index: 50;
+}
 
-    /* -------- MOON -------- */
-    #moon {
-        position: absolute;
-        top: 40px;
-        left: 40px;
-        width: 140px;
-        height: 140px;
-        background: radial-gradient(circle, #ffffff, #d9d9d9 60%, #8d8d8d 100%);
-        border-radius: 50%;
-        box-shadow: 0 0 40px #ffffffaa;
-        cursor: grab;
-        transition: opacity 1.5s ease-out;
-    }
+/* Moon + Sun images */
+#moon, #sun {
+    position: absolute;
+    width: 180px;
+    filter: drop-shadow(0 0 45px #ffffffaa);
+    cursor: grab;
+    z-index: 100;
+    transition: opacity 1.5s ease;
+}
 
-    /* -------- SUN -------- */
-    #sun {
-        position: absolute;
-        top: -200px;
-        right: -200px;
-        width: 220px;
-        height: 220px;
-        background: radial-gradient(circle, #fff1a3, #ffcc33, #ff9a00);
-        border-radius: 50%;
-        box-shadow: 0 0 50px #ffb300aa;
-        opacity: 0;
-        transition: all 2s ease-out;
-    }
+#sun { 
+    opacity: 0;
+    top: -250px;
+    right: 50px;
+    width: 260px;
+    filter: drop-shadow(0 0 55px #ffdd77);
+}
 
-    /* -------- MESSAGE -------- */
-    #message {
-        position: absolute;
-        bottom: 50px;
-        width: 100%;
-        text-align: center;
-        font-size: 20px;   /* REDUCED FONT SIZE */
-        letter-spacing: 2px;
-        color: #ffdca8;
-        text-shadow: 0 0 22px #ffebc2;
-        opacity: 0;
-    }
+/* Film grain (Nolan style) */
+#grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: url('https://i.imgur.com/Ou7YjG0.png');
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+    z-index: 99999;
+}
 </style>
 </head>
 
 <body>
 
-<div id="moon"></div>
-<div id="sun"></div>
-<div id="message"></div>
+<!-- Cinematic overlays -->
+<div id="letterbox"></div>
+<div id="grain"></div>
+
+<!-- Moon -->
+<img id="moon" src="https://i.imgur.com/8Q0ZP9s.png" style="top:60px; left:60px;">
+
+<!-- Sun -->
+<img id="sun" src="https://i.imgur.com/6Nqd08q.png">
+
+<!-- Cinematic message -->
+<div id="message">
+    ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.
+</div>
+
+<canvas id="starCanvas"></canvas>
 
 <script>
-/* -------- CREATE 3D TWINKLING STARS -------- */
-for (let i = 0; i < 150; i++) {
-    let s = document.createElement("div");
-    s.className = "star";
-    s.style.top = Math.random() * window.innerHeight + "px";
-    s.style.left = Math.random() * window.innerWidth + "px";
-    s.style.animationDelay = (Math.random() * 3) + "s";
-    document.body.appendChild(s);
+/* ----------------------------------------------------
+   IMAX STARFIELD — TRUE 3D DEPTH (foreground / mid / far)
+---------------------------------------------------- */
+const canvas = document.getElementById("starCanvas");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+function makeStars(count, depth) {
+    const arr = [];
+    for (let i=0; i<count; i++) {
+        arr.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            z: depth,
+            size: Math.random()*1.8 + 0.2,
+            tw: Math.random()*0.02 + 0.005
+        });
+    }
+    return arr;
 }
 
-/* -------- DRAG MOON -------- */
-let moon = document.getElementById("moon");
-let message = document.getElementById("message");
-let sun = document.getElementById("sun");
+let farStars  = makeStars(160, 3);
+let midStars  = makeStars(120, 2);
+let nearStars = makeStars(70,  1);
 
-let msgText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
-let revealIndex = 0;
-let dragging = false;
+let fadeFactor = 1;  // stars fade as moon drags
 
-moon.addEventListener("mousedown", () => dragging = true);
-document.addEventListener("mouseup", () => dragging = false);
+function drawStars() {
+    const time = Date.now();
+    ctx.clearRect(0,0,canvas.width, canvas.height);
 
-document.addEventListener("mousemove", (e) => {
-    if (dragging) {
-        moon.style.left = e.pageX - 60 + "px";
-        moon.style.top = e.pageY - 60 + "px";
-
-        // fade stars based on drag X position
-        let fadeAmount = Math.min(1, e.pageX / window.innerWidth);
-
-        document.querySelectorAll(".star").forEach(star => {
-            star.style.opacity = (1 - fadeAmount);
+    function drawLayer(stars, depthScale) {
+        stars.forEach(s => {
+            const glow = (Math.sin(time * s.tw) + 1) * 0.5;
+            ctx.fillStyle = `rgba(255,255,255,${glow*fadeFactor})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size*depthScale, 0, 2*Math.PI);
+            ctx.fill();
         });
-
-        // reveal message letter by letter
-        if (revealIndex < msgText.length) {
-            message.style.opacity = 1;
-            message.textContent = msgText.substring(0, revealIndex++);
-        }
-
-        // after message finishes
-        if (revealIndex >= msgText.length) {
-            moon.style.opacity = 0;  // moon fades
-            setTimeout(() => {
-                sun.style.opacity = 1;
-                sun.style.top = "40px";
-                sun.style.right = "40px";
-            }, 1200);
-        }
     }
-});
-</script>
 
+    drawLayer(farStars, 0.7);
+    drawLayer(midStars, 1.0);
+    drawLayer(nearStars, 1.5);
+
+    requestAnimationFrame(drawStars);
+}
+drawStars();
+
+
+/* ----------------------------------------------------
+   IMAX CAMERA — slow zoom in
+---------------------------------------------------- */
+let zoom = 1;
+function imaxZoom() {
+    zoom += 0.00015;
+    canvas.style.transform = `scale(${zoom})`;
+    requestAnimationFrame(imaxZoom);
+}
+imaxZoom();
+
+
+/* ----------------------------------------------------
+   MOON DRAGGING — stars fade + message typing
+---------------------------------------------------- */
+const moon = document.getElementById("moon");
+const sun  = document.getElementById("sun");
+const msg  = document.getElementById("message");
+
+let dragging = false;
+let offsetX, offsetY;
+
+let fullText = msg.textContent.trim();
+msg.textContent = "";
+let revealIndex = 0;
+
+moon.onmousedown = e => {
+    dragging = true;
+    offsetX = e.clientX - moon.offsetLeft;
+    offsetY = e.clientY - moon.offsetTop;
+    moon.style.cursor = "grabbing";
+};
+
+onmouseup = () => { dragging = false; moon.style.cursor = "grab"; };
+onmousemove = e => {
+    if (!dragging) return;
+
+    moon.style.left = (e.clientX - offsetX) + "px";
+    moon.style.top  = (e.clientY - offsetY) + "px";
+
+    // Fade stars
+    fadeFactor = Math.max(0, 1 - (moon.offsetLeft / (innerWidth*0.8)));
+
+    // Reveal message letter-by-letter
+    let progress = 1 - fadeFactor; 
+    let lettersToShow = Math.floor(progress * fullText.length);
+
+    if (lettersToShow > revealIndex) {
+        revealIndex = lettersToShow;
+        msg.textContent = fullText.substring(0, revealIndex);
+        msg.style.opacity = 1;
+    }
+
+    // When message fully revealed → moon fades, sun enters
+    if (revealIndex >= fullText.length) {
+        moon.style.opacity = 0;
+
+        setTimeout(() => {
+            sun.style.transition = "all 2s ease";
+            sun.style.opacity = 1;
+            sun.style.top = "80px";
+        }, 800);
+    }
+};
+</script>
 </body>
 </html>

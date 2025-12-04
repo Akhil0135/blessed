@@ -253,8 +253,6 @@ for(let i=0;i<300;i++){
   s.className=depth<0.33?"star depth3":depth<0.67?"star depth2":"star";
   let top=Math.random()*90;
   let left=Math.random()*100;
-  s.style.left = left + "%";
-  s.style.top = top + "%";
   starsWrap.appendChild(s);
   stars.push({el:s, top:top, left:left, depth:depth});
 }
@@ -319,7 +317,7 @@ function update(t){
     r.style.opacity = t>0.7 ? (t-0.7)*0.4 : 0;
   });
 
-  /* Clouds & Fog reacting to sunrise */
+  /* Clouds & Fog */
   document.querySelectorAll(".cloud").forEach(c=>{
     c.style.opacity = 0.04 + t*0.08;
   });
@@ -327,22 +325,23 @@ function update(t){
     f.style.opacity = 0.03 + t*0.04;
   });
 
-  /* Stars — fade completely away */
+  /* Stars — fade and drift */
   stars.forEach(s=>{
-    s.el.style.opacity = Math.max(0, 1 - t*2); // fully gone by t=0.5
+    s.el.style.opacity = Math.max(0, 1 - t*2); // disappear by t~0.5
     let depthFactor = 1 - s.depth*0.7;
     s.el.style.top = s.top - t*150*depthFactor + "%";
-    s.el.style.left = s.left + t*30*(0.5-s.depth) + "%";
+    s.el.style.left = s.left + t*50*(0.5-s.depth) + "%"; // gentle drift
   });
 
-  /* LETTERS */
-  let show=Math.floor(t*letters.length);
-  for(let i=0;i<letters.length;i++){
-    if(i<show){
-      letters[i].style.opacity=1;
-      letters[i].style.transform="translateY(0)";
+  /* LETTERS — sequential */
+  let revealCount = Math.floor(t * letters.length);
+  letters.forEach((l, i) => {
+    if(i <= revealCount){
+      l.style.opacity = 1;
+      l.style.transform = "translateY(0)";
     }
-  }
+  });
+
   if(t>0.72){
     message.style.color="var(--gold)";
     message.style.opacity=1;
@@ -351,6 +350,5 @@ function update(t){
   dollyZoom(t);
 }
 </script>
-
 </body>
 </html>

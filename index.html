@@ -1,166 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMAX • Nolan Vision</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IMAX Cosmic — Moon → Sun (Final Best Version)</title>
 
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow: hidden;
-        background: black;
-        font-family: "Trajan Pro", serif;
-    }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;background:#000;}
 
-    /* Scene Container */
-    #scene {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        background: radial-gradient(circle at center, #000010, #000000);
-        transition: background 2s linear;
-    }
+  body{
+    background:#000;
+    transition:background 3s ease-in-out;
+    position:relative;
+    font-family:Inter,system-ui;
+  }
 
-    /* Stars */
-    .star {
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: white;
-        border-radius: 50%;
-        opacity: 0;
-        animation: twinkle 3s infinite ease-in-out;
-    }
+  /* --- Background Cosmic Gradient (IMAX) --- */
+  body.sunrise{
+    background: radial-gradient(circle at center,
+      #00122b 0%,
+      #000a18 40%,
+      #000008 100%
+    );
+  }
 
-    @keyframes twinkle {
-        0% { opacity: 0.1; transform: scale(1); }
-        50%{ opacity: 0.8; transform: scale(1.7); }
-        100%{ opacity: 0.1; transform: scale(1); }
-    }
+  /* ----- Stars ----- */
+  .star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    animation:twinkle 2.5s infinite ease-in-out;
+    opacity:0.8;
+  }
 
-    /* Moon */
-    #moon {
-        position: absolute;
-        top: 45%;
-        left: 10%;
-        width: 160px;
-        height: 160px;
-        background: radial-gradient(circle, #ffffff, #bbbbbb, #777777);
-        border-radius: 50%;
-        cursor: grab;
-        transition: opacity 1.5s ease-out;
-    }
+  @keyframes twinkle{
+    0%{opacity:0.2;transform:scale(1);}
+    50%{opacity:1;transform:scale(1.8);}
+    100%{opacity:0.2;transform:scale(1);}
+  }
 
-    /* Sun */
-    #sun {
-        position: absolute;
-        top: 8%;
-        right: 8%;
-        width: 260px;
-        height: 260px;
-        background: radial-gradient(circle, #ffdd77, #ff9900, #cc5500);
-        border-radius: 50%;
-        opacity: 0;
-        transform: scale(0.2);
-        transition: opacity 2s ease-out, transform 3s ease-out;
-        filter: blur(2px);
-    }
+  body.sunrise .star{
+    transition:opacity 2s ease-out;
+    opacity:0;
+  }
 
-    /* Message */
-    #message {
-        position: absolute;
-        bottom: 40px;
-        width: 100%;
-        text-align: center;
-        font-size: 32px;
-        letter-spacing: 4px;
-        color: gold;
-        opacity: 0;
-        text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-        transition: color 2s linear;
-        font-weight: bold;
-    }
+  /* --- Moon --- */
+  #moon{
+    position:absolute;
+    top:30%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #fff, #888, #444);
+    box-shadow:0 0 50px #fff5;
+    transition:opacity 3s ease-out, transform 3s ease-out;
+  }
+
+  body.sunrise #moon{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(0.7);
+  }
+
+  /* --- Sun --- */
+  #sun{
+    position:absolute;
+    top:-120px;
+    right:-120px;
+    width:260px;
+    height:260px;
+    background: radial-gradient(circle, #ffdd88, #ffbb33, #cc8211);
+    border-radius:50%;
+    box-shadow:0 0 60px #ffdd66aa;
+    opacity:0;
+    transition:opacity 3s ease-out, transform 3.5s ease-out;
+    transform:translate(40px,40px) scale(0.7);
+  }
+
+  body.sunrise #sun{
+    opacity:1;
+    transform:translate(0,0) scale(1);
+  }
+
+  /* --- Message Text (Gold) --- */
+  #msg{
+    position:absolute;
+    bottom:40px;
+    width:100%;
+    text-align:center;
+    font-size:32px;
+    font-weight:700;
+    letter-spacing:4px;
+    opacity:0;
+    transition:opacity 2.5s ease-out;
+    color:#d1a646;
+    text-shadow:0 0 15px #000, 0 0 30px #000;
+  }
+
+  body.sunrise #msg{
+    opacity:1;
+  }
+
 </style>
-
 </head>
+
 <body>
 
-<div id="scene"></div>
 <div id="moon"></div>
 <div id="sun"></div>
-<div id="message"></div>
+
+<!-- BEST gold message -->
+<div id="msg">HIS DIVINE LIGHT WILL ALWAYS GUIDE YOUR PATH</div>
 
 <script>
-/* Create Twinkling Stars */
-const scene = document.getElementById("scene");
-
-for (let i = 0; i < 120; i++) {
-    const star = document.createElement("div");
-    star.classList.add("star");
-    star.style.top = Math.random() * 100 + "%";
-    star.style.left = Math.random() * 100 + "%";
-    star.style.animationDelay = (Math.random() * 3) + "s";
-    scene.appendChild(star);
+/* ---- Create BEST (Medium) IMAX Stars ---- */
+function createStars(count){
+  for(let i=0;i<count;i++){
+    let s=document.createElement("div");
+    s.className="star";
+    s.style.left=Math.random()*100+"vw";
+    s.style.top=Math.random()*100+"vh";
+    s.style.animationDuration=(1.5+Math.random()*2)+"s";
+    document.body.appendChild(s);
+  }
 }
+createStars(130); // BEST DENSITY
 
-/* Text Reveal Setup */
-const fullMsg = "HAPPY BIRTHDAY MY LITTLE PRINCE";
-let revealed = 0;
-
-/* Elements */
-const moon = document.getElementById("moon");
-const sun = document.getElementById("sun");
-const stars = document.getElementsByClassName("star");
-const message = document.getElementById("message");
-
-let dragging = false;
-
-moon.addEventListener("mousedown", () => dragging = true);
-document.addEventListener("mouseup", () => dragging = false);
-
-/* Moon Drag */
-document.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
-
-    let x = e.clientX - 80;
-    let y = e.clientY - 80;
-
-    moon.style.left = x + "px";
-    moon.style.top = y + "px";
-
-    /* Reveal Text Letter-by-Letter */
-    if (revealed < fullMsg.length) {
-        message.style.opacity = 1;
-        message.innerHTML = fullMsg.substring(0, revealed + 1);
-        revealed++;
-    }
-
-    /* Gradually fade moon */
-    moon.style.opacity -= 0.008;
-
-    /* Switch Background from Night → Dawn → Day */
-    let fade = 1 - moon.style.opacity;
-
-    if (fade < 0.5) {
-        scene.style.background = `radial-gradient(circle, #000020, #000000)`;
-    } else {
-        scene.style.background = `radial-gradient(circle, #002060, #001030, #000010)`;
-    }
-
-    /* Fade stars */
-    for (let s of stars) {
-        s.style.opacity = Math.max(0, 1 - fade * 1.4);
-    }
-
-    /* Sun Starts Appearing */
-    if (fade > 0.4) {
-        sun.style.opacity = fade;
-        sun.style.transform = `scale(${0.2 + fade})`;
-    }
-});
+/* --- Trigger Sunrise (No Day Sky) --- */
+setTimeout(()=>{
+  document.body.classList.add("sunrise");
+},2000);
 </script>
 
 </body>

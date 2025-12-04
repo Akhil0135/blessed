@@ -243,8 +243,8 @@ let dragging=false;
 let lastX=0;
 let progress=0;
 
-/* STARS */
-for(let i=0;i<180;i++){
+/* STARS — 350 for epic sky */
+for(let i=0;i<350;i++){
   const s=document.createElement("div");
   let depth=Math.random();
   s.className=depth<0.33?"star depth3":depth<0.67?"star depth2":"star";
@@ -277,10 +277,7 @@ document.addEventListener("pointermove", e=>{
 });
 
 /* IMAX DOLLY ZOOM */
-function dollyZoom(t){
-  let scale = 1 + t*0.10;
-  stage.style.transform = `scale(${scale})`;
-}
+function dollyZoom(t){ stage.style.transform = `scale(${1 + t*0.10})`; }
 
 /* UPDATE */
 function update(t){
@@ -288,22 +285,18 @@ function update(t){
   moon.style.left = (12 + t*50)+"%";
 
   /* Background shift: black → deep → pre-dawn → dark blue */
-  if(t<0.4){
-    document.body.style.background = "linear-gradient(to bottom, #000000 0%, #00101d 100%)";
-  } else if(t<0.7){
-    document.body.style.background = "linear-gradient(to bottom, #00101d 0%, #011c38 100%)";
-  } else {
-    document.body.style.background = "linear-gradient(to bottom, #011c38 0%, #022b57 100%)";
-  }
+  if(t<0.4) document.body.style.background = "linear-gradient(to bottom, #000000 0%, #00101d 100%)";
+  else if(t<0.7) document.body.style.background = "linear-gradient(to bottom, #00101d 0%, #011c38 100%)";
+  else document.body.style.background = "linear-gradient(to bottom, #011c38 0%, #022b57 100%)";
 
   /* Sun rising and glow */
   sun.style.opacity=t;
   if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
 
-  /* Sun flares */
-  flares.forEach(f=>{ 
-    f.style.opacity = t>0.7 ? 0.08 + t*0.25 : 0; 
-    f.style.transform = `translate(-50%,-50%) rotate(${t*15}deg) scale(${1 + t*0.05})`;
+  /* Sun flares with subtle movement */
+  flares.forEach(f=>{
+    f.style.opacity = t>0.7 ? 0.08 + t*0.25 : 0;
+    f.style.transform = `translate(-50%,-50%) rotate(${t*20}deg) scale(${1 + t*0.05})`;
   });
 
   /* God Rays */
@@ -311,7 +304,7 @@ function update(t){
 
   /* Stars fade fully */
   [...starsWrap.children].forEach(s=>{
-    s.style.opacity = Math.max(0, 0.4*(1-t*1.7));
+    s.style.opacity = Math.max(0, 0.4*(1-t*1.8));
   });
 
   /* Clouds and fog dim slightly */

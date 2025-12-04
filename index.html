@@ -22,7 +22,7 @@ html, body{
   font-family:"Cinzel", serif;
   overflow:hidden;
   color:var(--gold);
-  transition:background 0.5s linear;
+  transition:background 2s ease-in-out;
 }
 
 #stage{
@@ -53,7 +53,7 @@ html, body{
 @keyframes twinkle2{ from{opacity:0.2;} to{opacity:0.6;} }
 @keyframes twinkle3{ from{opacity:0.3;} to{opacity:1;} }
 
-/* -------------------- CLOUDS -------------------- */
+/* -------------------- IMAX COSMIC CLOUDS -------------------- */
 .cloud{
   position:absolute;
   background:rgba(255,255,255,0.05);
@@ -71,7 +71,7 @@ html, body{
   100%{ transform:translateX(130vw); }
 }
 
-/* -------------------- FOG -------------------- */
+/* -------------------- COSMIC FOG -------------------- */
 .fog{
   position:absolute;
   width:250vw;
@@ -245,14 +245,14 @@ let progress=0;
 
 /* STARS */
 const stars = [];
-for(let i=0;i<300;i++){
+for(let i=0;i<300;i++){ // more stars
   const s=document.createElement("div");
   let depth=Math.random();
   s.className=depth<0.33?"star depth3":depth<0.67?"star depth2":"star";
   s.style.left=Math.random()*100+"%";
   s.style.top=Math.random()*90+"%";
   starsWrap.appendChild(s);
-  stars.push({el: s, top: parseFloat(s.style.top)});
+  stars.push({el:s, top:parseFloat(s.style.top)});
 }
 
 /* MESSAGE LETTERS */
@@ -294,8 +294,15 @@ function update(t){
   moon.style.opacity = 1-t;
   moon.style.left = (12 + t*50)+"%";
 
-  /* Background shift: black -> dark blue */
-  document.body.style.background = `linear-gradient(to bottom, #000000 0%, #00142a ${t*100}%)`;
+  /* Background shift - black to dark blue */
+  let bgColor = `linear-gradient(to bottom, #000000 0%, #00101d 100%)`;
+  if(t>0.5){
+    let p = (t-0.5)/0.5;
+    let top = Math.floor(0 + p*34);
+    let bottom = Math.floor(16 + p*56);
+    bgColor = `linear-gradient(to bottom, rgb(${top},${top},${top+29}) 0%, rgb(${bottom},${bottom+5},${bottom+86}) 100%)`;
+  }
+  document.body.style.background = bgColor;
 
   /* Sun rising */
   sun.style.opacity=t;
@@ -316,10 +323,10 @@ function update(t){
     else r.style.opacity=0;
   });
 
-  /* Stars fade & move with moon drag */
+  /* Stars fade and move off screen completely */
   stars.forEach(s=>{
-    s.el.style.opacity = Math.max(0, 1 - t*2); // fade
-    s.el.style.top = s.top + t*50 + "%"; // move down gradually
+    s.el.style.opacity = Math.max(0, 1 - t*3); // faster fade
+    s.el.style.top = s.top - t*150 + "%"; // move upwards completely off-screen
   });
 
   /* Reveal text */

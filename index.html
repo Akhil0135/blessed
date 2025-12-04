@@ -3,222 +3,362 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PHASE 1 — IMAX Nolan Cinematic Scene</title>
-
+<title>Phase 1 — IMAX Nolan (Fixed)</title>
 <style>
-html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background: #000;
-    font-family: 'Cinzel', serif;
-}
+  :root{
+    --bg0:#02020a;
+    --bg1:#030417;
+    --grade-shadow: rgba(0,0,0,0.5);
+    --warm:#ffda9a;
+    --gold:#ffdca8;
+  }
 
-/* IMAX letterbox bars */
-#letterbox {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9999;
-}
-#letterbox::before,
-#letterbox::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 14%;
-    background: rgba(0,0,0,0.9);
-    left: 0;
-}
-#letterbox::before { top: 0; }
-#letterbox::after { bottom: 0; }
+  html,body{
+    height:100%;
+    margin:0;
+    background: radial-gradient(circle at 40% 30%, #02132a 0%, #000 50%, #000 100%);
+    color:var(--gold);
+    font-family:"Cinzel", serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow:hidden;
+  }
 
-/* Message cinematic text */
-#message {
-    position: absolute;
-    bottom: 12%;
-    width: 100%;
-    text-align: center;
-    font-size: 26px;    /* reduced font size */
-    color: #ffdca8;
-    letter-spacing: 4px;
-    text-shadow: 0 0 14px #ffcc88;
-    opacity: 0;
-    white-space: nowrap;
-    z-index: 50;
-}
+  /* Scene wrapper: apply slow zoom here */
+  #scene{
+    position:relative;
+    width:100%;
+    height:100%;
+    transform-origin:center center;
+    will-change:transform;
+    z-index:1;
+    touch-action:none;
+  }
 
-/* Moon + Sun images */
-#moon, #sun {
-    position: absolute;
-    width: 180px;
-    filter: drop-shadow(0 0 45px #ffffffaa);
-    cursor: grab;
-    z-index: 100;
-    transition: opacity 1.5s ease;
-}
+  /* Canvas behind everything */
+  canvas#stars {
+    position:absolute;
+    inset:0;
+    display:block;
+    z-index:2;
+    width:100%;
+    height:100%;
+  }
 
-#sun { 
-    opacity: 0;
-    top: -250px;
-    right: 50px;
-    width: 260px;
-    filter: drop-shadow(0 0 55px #ffdd77);
-}
+  /* IMAX letterbox bars for 2.39:1 */
+  .letterbox::before,
+  .letterbox::after {
+    content:"";
+    position:fixed;
+    left:0;
+    width:100%;
+    height:12.5vh;            /* ~2.39:1 cinematic top/bottom bars */
+    background:linear-gradient(180deg, rgba(0,0,0,0.95), rgba(0,0,0,0.85));
+    z-index:9998;
+    pointer-events:none;
+  }
+  .letterbox::before{ top:0; }
+  .letterbox::after{ bottom:0; }
 
-/* Film grain (Nolan style) */
-#grain {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: url('https://i.imgur.com/Ou7YjG0.png');
-    opacity: 0.15;
-    mix-blend-mode: overlay;
-    z-index: 99999;
-}
+  /* subtle procedural film grain overlay (no external image) */
+  #grain{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    pointer-events:none;
+    opacity:0.07;
+    mix-blend-mode:overlay;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.02) 1px, transparent 1px),
+      radial-gradient(circle, rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size: 3px 3px, 6px 6px;
+    filter:contrast(0.9) saturate(0.95);
+  }
+
+  /* Moon and Sun (CSS shapes) */
+  .planet{
+    position:absolute;
+    width:170px;
+    height:170px;
+    border-radius:50%;
+    z-index:120;
+    transform:translate(-50%,-50%);
+    pointer-events:auto;
+    transition:opacity 1.8s ease, transform 1.6s ease;
+    will-change:transform, opacity;
+    box-shadow: 0 0 48px rgba(255,230,180,0.08), 0 0 18px rgba(255,255,255,0.06) inset;
+  }
+
+  #moon{
+    left:72px; top:72px;
+    background:
+      radial-gradient(circle at 30% 28%, #fffaf0 0%, #f0f0f0 20%, #cfcfcf 55%, #8f8f8f 100%);
+    filter:drop-shadow(0 0 30px rgba(255,240,200,0.12));
+    cursor:grab;
+    z-index:130;
+  }
+
+  #sun{
+    right: -260px; top: -260px;
+    width:260px; height:260px;
+    background:
+      radial-gradient(circle at 40% 40%, #fff6d0 0%, #ffd36f 30%, #ff9b2b 65%, rgba(255,120,35,0.85) 80%);
+    filter: drop-shadow(0 0 70px rgba(255,170,70,0.14));
+    z-index:110;
+    opacity:0;
+    transform:translate(-50%,-50%) scale(0.95);
+  }
+
+  /* Cinematic message (one single line) */
+  #message{
+    position:absolute;
+    bottom:10vh;
+    left:50%;
+    transform:translateX(-50%);
+    white-space:nowrap; /* force single line */
+    font-size:20px;     /* reduced for IMAX widescreen */
+    letter-spacing:3px;
+    color:var(--gold);
+    text-shadow:0 0 18px rgba(255,200,140,0.12);
+    z-index:150;
+    opacity:0;
+    transition:opacity 0.35s linear;
+    font-weight:600;
+  }
+
+  /* subtle vignette to push center forward */
+  #vignette{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9997;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%);
+    mix-blend-mode:multiply;
+    opacity:0.9;
+  }
+
+  /* responsiveness */
+  @media (min-width:1600px){
+    #message{ font-size:22px; letter-spacing:4px; }
+    .planet{ width:190px; height:190px; }
+    #sun{ width:320px; height:320px; }
+  }
 </style>
 </head>
-
 <body>
+  <div id="scene">
+    <canvas id="stars"></canvas>
 
-<!-- Cinematic overlays -->
-<div id="letterbox"></div>
-<div id="grain"></div>
+    <!-- planets -->
+    <div id="moon" class="planet" role="button" aria-label="Draggable moon"></div>
+    <div id="sun" class="planet" aria-hidden="true"></div>
 
-<!-- Moon -->
-<img id="moon" src="https://i.imgur.com/8Q0ZP9s.png" style="top:60px; left:60px;">
-
-<!-- Sun -->
-<img id="sun" src="https://i.imgur.com/6Nqd08q.png">
-
-<!-- Cinematic message -->
-<div id="message">
-    ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.
-</div>
-
-<canvas id="starCanvas"></canvas>
+    <!-- message / overlays -->
+    <div id="message" aria-live="polite"></div>
+    <div id="vignette" aria-hidden="true"></div>
+    <div class="letterbox" aria-hidden="true"></div>
+    <div id="grain" aria-hidden="true"></div>
+  </div>
 
 <script>
-/* ----------------------------------------------------
-   IMAX STARFIELD — TRUE 3D DEPTH (foreground / mid / far)
----------------------------------------------------- */
-const canvas = document.getElementById("starCanvas");
-const ctx = canvas.getContext("2d");
+/* ---------------------- Setup ---------------------- */
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d', { alpha: true });
+const moon = document.getElementById('moon');
+const sun  = document.getElementById('sun');
+const message = document.getElementById('message');
+const scene = document.getElementById('scene');
 
-function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-}
+let W = window.innerWidth, H = window.innerHeight;
+function resize() { W = innerWidth; H = innerHeight; canvas.width = W; canvas.height = H; }
 resize();
-addEventListener("resize", resize);
+addEventListener('resize', resize);
 
-function makeStars(count, depth) {
-    const arr = [];
-    for (let i=0; i<count; i++) {
-        arr.push({
-            x: Math.random()*canvas.width,
-            y: Math.random()*canvas.height,
-            z: depth,
-            size: Math.random()*1.8 + 0.2,
-            tw: Math.random()*0.02 + 0.005
-        });
+/* ---------------------- Stars (3 depth layers) ---------------------- */
+function makeStars(count, depthScale){
+  const a = [];
+  for(let i=0;i<count;i++){
+    a.push({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      size: (Math.random()*1.6 + 0.3) * depthScale,
+      tw: Math.random()*0.018 + 0.003,
+      depth: depthScale,
+      baseAlpha: 0.5 + Math.random()*0.6
+    });
+  }
+  return a;
+}
+let farStars  = makeStars(220, 0.7);
+let midStars  = makeStars(140, 1.0);
+let nearStars = makeStars(70,  1.5);
+
+let starFade = 1; // 1..0
+
+function drawStars(now){
+  ctx.clearRect(0,0,W,H);
+  const time = now*0.001;
+  function drawLayer(list){
+    for(const s of list){
+      const glow = (Math.sin(time * (s.tw*60)) + 1) * 0.5;
+      const alpha = Math.max(0, glow * s.baseAlpha * starFade);
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+      ctx.fill();
     }
-    return arr;
+  }
+  drawLayer(farStars);
+  drawLayer(midStars);
+  drawLayer(nearStars);
 }
 
-let farStars  = makeStars(160, 3);
-let midStars  = makeStars(120, 2);
-let nearStars = makeStars(70,  1);
-
-let fadeFactor = 1;  // stars fade as moon drags
-
-function drawStars() {
-    const time = Date.now();
-    ctx.clearRect(0,0,canvas.width, canvas.height);
-
-    function drawLayer(stars, depthScale) {
-        stars.forEach(s => {
-            const glow = (Math.sin(time * s.tw) + 1) * 0.5;
-            ctx.fillStyle = `rgba(255,255,255,${glow*fadeFactor})`;
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, s.size*depthScale, 0, 2*Math.PI);
-            ctx.fill();
-        });
-    }
-
-    drawLayer(farStars, 0.7);
-    drawLayer(midStars, 1.0);
-    drawLayer(nearStars, 1.5);
-
-    requestAnimationFrame(drawStars);
+/* ---------------------- IMAX slow zoom ---------------------- */
+let zoom = 1.0;
+function stepZoom(){
+  // gentle asymptotic zoom-in
+  zoom += (1.005 - zoom) * 0.00065;
+  scene.style.transform = `scale(${zoom})`;
+  requestAnimationFrame(stepZoom);
 }
-drawStars();
+requestAnimationFrame(stepZoom);
 
-
-/* ----------------------------------------------------
-   IMAX CAMERA — slow zoom in
----------------------------------------------------- */
-let zoom = 1;
-function imaxZoom() {
-    zoom += 0.00015;
-    canvas.style.transform = `scale(${zoom})`;
-    requestAnimationFrame(imaxZoom);
-}
-imaxZoom();
-
-
-/* ----------------------------------------------------
-   MOON DRAGGING — stars fade + message typing
----------------------------------------------------- */
-const moon = document.getElementById("moon");
-const sun  = document.getElementById("sun");
-const msg  = document.getElementById("message");
-
+/* ---------------------- Drag logic (pointer-friendly) ---------------------- */
 let dragging = false;
-let offsetX, offsetY;
+let pointerId = null;
+let startX = null;          // initial moon left when dragging begins
+let progress = 0;           // 0..1
+const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
+message.textContent = "";  // start empty
 
-let fullText = msg.textContent.trim();
-msg.textContent = "";
-let revealIndex = 0;
+// initial moon position (top-left)
+moon.style.left = `${72}px`;
+moon.style.top  = `${72}px`;
 
-moon.onmousedown = e => {
-    dragging = true;
-    offsetX = e.clientX - moon.offsetLeft;
-    offsetY = e.clientY - moon.offsetTop;
-    moon.style.cursor = "grabbing";
-};
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 
-onmouseup = () => { dragging = false; moon.style.cursor = "grab"; };
-onmousemove = e => {
-    if (!dragging) return;
+// We calculate progress based on moon center X relative to scene width:
+// start at left edge offset, target at 80% width (tunable)
+function computeProgress(moonCenterX){
+  const start = 0.06 * W;        // when moon roughly near left edge
+  const target = 0.78 * W;       // when moon dragged far right -> complete
+  return clamp((moonCenterX - start) / (target - start), 0, 1);
+}
 
-    moon.style.left = (e.clientX - offsetX) + "px";
-    moon.style.top  = (e.clientY - offsetY) + "px";
+/* pointer handlers */
+moon.addEventListener('pointerdown', (ev) => {
+  ev.preventDefault();
+  dragging = true;
+  pointerId = ev.pointerId;
+  moon.setPointerCapture(pointerId);
+  startX = ev.clientX - moon.offsetLeft;
+  moon.style.cursor = 'grabbing';
+});
 
-    // Fade stars
-    fadeFactor = Math.max(0, 1 - (moon.offsetLeft / (innerWidth*0.8)));
+moon.addEventListener('pointerup', (ev) => {
+  if(ev.pointerId !== pointerId) return;
+  dragging = false;
+  try { moon.releasePointerCapture(pointerId); } catch(_) {}
+  moon.style.cursor = 'grab';
+});
 
-    // Reveal message letter-by-letter
-    let progress = 1 - fadeFactor; 
-    let lettersToShow = Math.floor(progress * fullText.length);
+moon.addEventListener('pointercancel', () => { dragging = false; moon.style.cursor='grab'; });
 
-    if (lettersToShow > revealIndex) {
-        revealIndex = lettersToShow;
-        msg.textContent = fullText.substring(0, revealIndex);
-        msg.style.opacity = 1;
-    }
+moon.addEventListener('pointermove', (ev) => {
+  if(!dragging || ev.pointerId !== pointerId) return;
+  // follow pointer but clamp inside window bounds (so user can't drag off-screen too far)
+  let left = ev.clientX - startX;
+  left = clamp(left, 8, W - 8 - moon.offsetWidth);
+  let top  = clamp(ev.clientY - (moon.offsetHeight/2), 8, H - 8 - moon.offsetHeight);
+  moon.style.left = `${left}px`;
+  moon.style.top  = `${top}px`;
 
-    // When message fully revealed → moon fades, sun enters
-    if (revealIndex >= fullText.length) {
-        moon.style.opacity = 0;
+  // compute progress based on moon center
+  const moonCenterX = left + (moon.offsetWidth/2);
+  progress = computeProgress(moonCenterX);
 
-        setTimeout(() => {
-            sun.style.transition = "all 2s ease";
-            sun.style.opacity = 1;
-            sun.style.top = "80px";
-        }, 800);
-    }
-};
+  // update star fade (completely fades to 0 as progress->1)
+  starFade = 1 - progress;
+  // reveal message letters proportionally (letter-by-letter)
+  const lettersToShow = Math.floor(fullText.length * progress);
+  if(lettersToShow > 0) {
+    message.style.opacity = 1;
+    message.textContent = fullText.slice(0, lettersToShow);
+  } else {
+    message.style.opacity = 0;
+    message.textContent = "";
+  }
+
+  // when fully complete, trigger moon fade + sun rise once
+  if(progress >= 1){
+    completeSequence();
+  }
+});
+
+/* ensure other touches/mouse drags outside moon don't break */
+window.addEventListener('pointerup', () => { dragging = false; moon.style.cursor='grab'; });
+
+let completed = false;
+function completeSequence(){
+  if(completed) return;
+  completed = true;
+  // fully clear stars
+  starFade = 0;
+  // ensure message full
+  message.textContent = fullText;
+  message.style.opacity = 1;
+  // moon fade
+  moon.style.transition = 'opacity 1.8s ease, transform 1.8s ease';
+  moon.style.opacity = 0;
+  // slight scale up on moon before fade (cinematic)
+  moon.style.transform = 'translate(-50%,-50%) scale(1.08)';
+
+  // sun rise after a short delay
+  setTimeout(()=> {
+    sun.style.transition = 'opacity 2.4s ease, top 2.4s cubic-bezier(.2,.9,.2,1), right 2.4s cubic-bezier(.2,.9,.2,1)';
+    sun.style.opacity = 1;
+    // move sun into top-right cinematic position
+    sun.style.top = `${0.08 * H}px`;
+    sun.style.right = `${0.06 * W}px`;
+    // small pop
+    sun.style.transform = 'translate(-50%,-50%) scale(1.03)';
+  }, 600);
+}
+
+/* ---------------------- Animation loop ---------------------- */
+function loop(t){
+  drawStars(t);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ---------------------- Accessibility & keyboard (optional) ---------------------- */
+document.addEventListener('keydown', (e) => {
+  // allow keyboard to nudge moon (left/right) for testing / accessibility
+  const step = 18;
+  if(e.key === 'ArrowRight'){ moon.style.left = `${clamp(moon.offsetLeft + step, 8, W - moon.offsetWidth - 8)}px`; }
+  if(e.key === 'ArrowLeft') { moon.style.left = `${clamp(moon.offsetLeft - step, 8, W - moon.offsetWidth - 8)}px`; }
+  // recompute progress when moved via keyboard
+  const moonCenterX = moon.offsetLeft + (moon.offsetWidth/2);
+  progress = computeProgress(moonCenterX);
+  starFade = 1 - progress;
+  const lettersToShow = Math.floor(fullText.length * progress);
+  message.textContent = fullText.slice(0, lettersToShow);
+  if(progress>=1) completeSequence();
+});
+
+/* Good practice: reposition stars on resize for nicer distribution */
+window.addEventListener('resize', () => {
+  // re-generate star layers subtly for new size
+  farStars  = makeStars(220, 0.7);
+  midStars  = makeStars(140, 1.0);
+  nearStars = makeStars(70,  1.5);
+  // reposition moon/sun to keep cinematic layout
+  if(!completed){
+    moon.style.left = `${Math.min(72, W*0.08)}px`;
+    moon.style.top  = `${Math.min(72, H*0.08)}px`;
+  }
+});
 </script>
 </body>
 </html>

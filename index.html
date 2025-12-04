@@ -309,7 +309,7 @@ function update(t){
     sun.style.right="40px";
   }
 
-  /* Sun flares — corrected formula */
+  /* Sun flares */
   flares.forEach(f=>{
     f.style.opacity = t>0.7 ? (t-0.7)*0.4 : 0;
   });
@@ -327,9 +327,9 @@ function update(t){
     f.style.opacity = 0.03 + t*0.04;
   });
 
-  /* Stars */
+  /* Stars — fade completely away */
   stars.forEach(s=>{
-    s.el.style.opacity = Math.max(0, 1 - t*3);
+    s.el.style.opacity = Math.max(0, 1 - t*2); // fully gone by t=0.5
     let depthFactor = 1 - s.depth*0.7;
     s.el.style.top = s.top - t*150*depthFactor + "%";
     s.el.style.left = s.left + t*30*(0.5-s.depth) + "%";

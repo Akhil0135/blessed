@@ -23,7 +23,6 @@
         z-index: 1;
     }
 
-    /* Moon & Sun */
     .planet {
         position: absolute;
         width: 160px;
@@ -51,7 +50,6 @@
         z-index: 5;
     }
 
-    /* Message reveal */
     #message {
         position: absolute;
         bottom: 120px;
@@ -60,7 +58,6 @@
         font-size: 32px;
         color: #ffd87a;
         letter-spacing: 4px;
-        opacity: 0;
         z-index: 20;
         text-shadow: 0 0 18px #ffddaa;
     }
@@ -73,13 +70,11 @@
 <div id="moon" class="planet"></div>
 <div id="sun" class="planet"></div>
 
-<div id="message">
-    ON THIS CALM BIRTHDAY EVE SO NEW,<br>
-    GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.
-</div>
+<div id="message"></div>
 
 <script>
-/* ------------------ CANVAS SETUP ------------------ */
+const fullMessage = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
@@ -90,10 +85,9 @@ function resize() {
 resize();
 addEventListener("resize", resize);
 
-/* ------------------ STAR FIELD ------------------ */
+/* ---------------- STARS ---------------- */
 let stars = [];
 const STAR_COUNT = 220;
-
 for (let i = 0; i < STAR_COUNT; i++) {
     stars.push({
         x: Math.random() * innerWidth,
@@ -106,15 +100,15 @@ for (let i = 0; i < STAR_COUNT; i++) {
 
 function drawStars() {
     stars.forEach(s => {
-        const twinkle = (Math.sin(Date.now() * s.tw) + 1) / 2;
-        ctx.fillStyle = `rgba(255,255,255,${twinkle * s.fade})`;
+        let glow = (Math.sin(Date.now() * s.tw) + 1) / 2;
+        ctx.fillStyle = `rgba(255,255,255,${glow * s.fade})`;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
         ctx.fill();
     });
 }
 
-/* ------------------ DRAG MOON ------------------ */
+/* ---------------- DRAGGING MOON ---------------- */
 const moon = document.getElementById("moon");
 const sun = document.getElementById("sun");
 const message = document.getElementById("message");
@@ -127,13 +121,9 @@ moon.addEventListener("mousedown", e => {
     dragging = true;
     offsetX = e.clientX - moon.offsetLeft;
     offsetY = e.clientY - moon.offsetTop;
-    moon.style.cursor = "grabbing";
 });
 
-addEventListener("mouseup", () => {
-    dragging = false;
-    moon.style.cursor = "grab";
-});
+addEventListener("mouseup", () => dragging = false);
 
 addEventListener("mousemove", e => {
     if (!dragging) return;
@@ -141,25 +131,22 @@ addEventListener("mousemove", e => {
     moon.style.left = (e.clientX - offsetX) + "px";
     moon.style.top = (e.clientY - offsetY) + "px";
 
-    // Calculate drag progress (0 → 1)
-    progress = Math.min(1, Math.max(0, (e.clientX / innerWidth)));
+    progress = Math.min(1, Math.max(0, e.clientX / innerWidth));
 
-    // Fade stars
     stars.forEach(s => s.fade = 1 - progress);
 
-    // Reveal message
-    message.style.opacity = progress;
+    // Letter-by-letter reveal
+    let lettersToShow = Math.floor(fullMessage.length * progress);
+    message.innerText = fullMessage.slice(0, lettersToShow);
 
-    // When fully revealed → fade moon and rise sun
     if (progress >= 1) {
         moon.style.transition = "1.8s ease";
         moon.style.opacity = 0;
-
         sunRise();
     }
 });
 
-/* ------------------ SUN RISE ------------------ */
+/* ---------------- SUN RISE ---------------- */
 function sunRise() {
     sun.style.transition = "2.5s ease-out";
     sun.style.opacity = 1;
@@ -167,7 +154,7 @@ function sunRise() {
     sun.style.right = "40px";
 }
 
-/* ------------------ ANIMATE ------------------ */
+/* ---------------- ANIMATION LOOP ---------------- */
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
@@ -175,6 +162,5 @@ function animate() {
 }
 animate();
 </script>
-
 </body>
 </html>

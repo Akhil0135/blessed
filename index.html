@@ -49,8 +49,20 @@ html, body{
 .star.depth2{opacity:0.55; animation:twinkle2 3.8s infinite alternate;}
 .star.depth3{opacity:0.8; animation:twinkle3 4.2s infinite alternate;}
 
-/* -------------------- CLOUDS, FOG, SUN, MOON, TEXT same as before -------------------- */
+@keyframes twinkle{
+  0%{opacity:0.15;}
+  100%{opacity:0.45;}
+}
+@keyframes twinkle2{
+  0%{opacity:0.25;}
+  100%{opacity:0.70;}
+}
+@keyframes twinkle3{
+  0%{opacity:0.35;}
+  100%{opacity:0.95;}
+}
 
+/* -------------------- CLOUDS -------------------- */
 .cloud{
   position:absolute;
   background:rgba(255,255,255,0.05);
@@ -62,8 +74,12 @@ html, body{
 .cloud.layer2{width:680px;height:200px;top:45%;left:-800px;animation:cloudMove 180s linear infinite;opacity:0.06;}
 .cloud.layer3{width:900px;height:260px;top:65%;left:-900px;animation:cloudMove 210s linear infinite;opacity:0.05;}
 
-@keyframes cloudMove{0%{ transform:translateX(0);}100%{ transform:translateX(130vw); }}
+@keyframes cloudMove{
+  0%{ transform:translateX(0);}
+  100%{ transform:translateX(130vw); }
+}
 
+/* -------------------- FOG -------------------- */
 .fog{
   position:absolute;
   width:250vw;
@@ -78,8 +94,12 @@ html, body{
 .fog.layer2{top:48%; animation-duration:220s; opacity:0.05;}
 .fog.layer3{top:38%; animation-duration:260s; opacity:0.04;}
 
-@keyframes fogMove{0%{ transform:translateX(0);}100%{ transform:translateX(140vw); }}
+@keyframes fogMove{
+  0%{ transform:translateX(0);}
+  100%{ transform:translateX(140vw); }
+}
 
+/* -------------------- SUN -------------------- */
 #sun{
   position:absolute;
   width:360px;
@@ -89,28 +109,97 @@ html, body{
   right:-260px;
   opacity:0;
   background:radial-gradient(circle at 38% 34%, #fffbe8 0%, #ffe79c 14%, #ffbe55 38%, #ff8e2d 58%, rgba(180,60,10,0.4) 80%, rgba(150,40,0,0) 100%);
-  box-shadow:0 0 260px 80px rgba(255,180,80,0.22),0 0 600px 160px rgba(255,130,40,0.18),0 0 900px 220px rgba(255,120,40,0.12);
+  box-shadow:
+    0 0 260px 80px rgba(255,180,80,0.22),
+    0 0 600px 160px rgba(255,130,40,0.18),
+    0 0 900px 220px rgba(255,120,40,0.12);
   transition:opacity 1.6s ease-in-out, top 2.2s ease-out, right 2.2s ease-out;
   pointer-events:none;
 }
 
-.sun-flare{position:absolute;width:180px;height:180px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle, rgba(255,245,180,0.15), transparent 60%);filter:blur(60px);opacity:0;pointer-events:none;transition:opacity 1.7s ease-in-out;}
+.sun-flare{
+  position:absolute;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(255,245,180,0.15), transparent 60%);
+  filter:blur(60px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 1.7s ease-in-out;
+}
 .sun-flare.layer2{width:300px;height:300px;opacity:0.05;}
 .sun-flare.layer3{width:450px;height:450px;opacity:0.03;}
 
-.god-ray{position:absolute;width:10px;height:1000px;background:linear-gradient(to bottom, rgba(255,235,200,0.15), transparent 80%);top:-200px;left:50%;filter:blur(24px);pointer-events:none;opacity:0;animation:rayDrift 50s linear infinite;}
+.god-ray{
+  position:absolute;
+  width:10px;
+  height:1000px;
+  background:linear-gradient(to bottom, rgba(255,235,200,0.15), transparent 80%);
+  top:-200px;
+  left:50%;
+  filter:blur(24px);
+  pointer-events:none;
+  opacity:0;
+  animation:rayDrift 50s linear infinite;
+}
 .god-ray.layer1{transform:rotate(-5deg);}
 .god-ray.layer2{transform:rotate(10deg);opacity:0.08;}
 .god-ray.layer3{transform:rotate(-15deg);opacity:0.06;}
 .god-ray.layer4{transform:rotate(20deg);opacity:0.05;}
 
-#moon{
-  position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 40% 34%, #ffffff, #000000 85%);top:28%;left:12%;transform:translate(-50%,-50%);box-shadow:0 0 80px rgba(255,245,200,0.22);cursor:grab;transition:opacity 0.30s linear;}
-#moon:active{cursor:grabbing;}
-#moon .flare{position:absolute;inset:-60px;border-radius:50%;background:radial-gradient(circle, rgba(255,240,200,0.12), transparent 70%);filter:blur(70px);}
+@keyframes rayDrift{
+  0%{ transform:translateX(-20px) rotate(var(--angle)); }
+  100%{ transform:translateX(20px) rotate(var(--angle)); }
+}
 
-#message{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:18px;letter-spacing:3px;font-family:"IM Fell English SC", serif;color:white;opacity:0;transition:color 2s ease-out, opacity 2s ease-out;}
-.letter{display:inline-block;opacity:0;transform:translateY(12px);transition:opacity .12s ease, transform .12s ease;}
+/* -------------------- MOON -------------------- */
+#moon{
+  position:absolute;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 34%, #ffffff, #000000 85%);
+  top:28%;
+  left:12%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 80px rgba(255,245,200,0.22);
+  cursor:grab;
+  transition:opacity 0.30s linear;
+}
+#moon:active{cursor:grabbing;}
+
+#moon .flare{
+  position:absolute;
+  inset:-60px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,240,200,0.12), transparent 70%);
+  filter:blur(70px);
+}
+
+/* -------------------- MESSAGE -------------------- */
+#message{
+  position:absolute;
+  bottom:7%;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  font-size:18px;
+  letter-spacing:3px;
+  font-family:"IM Fell English SC", serif;
+  color:white;
+  opacity:0;
+  transition:color 2s ease-out, opacity 2s ease-out;
+}
+.letter{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(12px);
+  transition:opacity .12s ease, transform .12s ease;
+}
 </style>
 </head>
 
@@ -134,7 +223,7 @@ html, body{
   <div class="god-ray layer1"></div>
   <div class="god-ray layer2"></div>
   <div class="god-ray layer3"></div>
-  <div class="god-ray.layer4"></div>
+  <div class="god-ray layer4"></div>
 
   <div id="moon"><div class="flare"></div></div>
   <div id="sun"></div>
@@ -194,14 +283,16 @@ document.addEventListener("pointermove", e=>{
 });
 
 /* DOLLY ZOOM */
-function dollyZoom(t){ stage.style.transform = `scale(${1 + t*0.10})`; }
+function dollyZoom(t){
+  stage.style.transform = `scale(${1 + t*0.10})`;
+}
 
-/* UPDATE */
+/* UPDATE FUNCTION */
 function update(t){
   moon.style.opacity = 1-t;
   moon.style.left = (12 + t*50)+"%";
 
-  // Background shift black -> dark blue
+  /* Background shift */
   let bgColor = `linear-gradient(to bottom, #000000 0%, #00101d 100%)`;
   if(t>0.5){
     let p = (t-0.5)/0.5;
@@ -211,29 +302,52 @@ function update(t){
   }
   document.body.style.background = bgColor;
 
-  // Sun rising
+  /* Sun */
   sun.style.opacity=t;
-  if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
+  if(t>0.7){
+    sun.style.top="40px";
+    sun.style.right="40px";
+  }
 
-  // Sun flares
-  flares.forEach(f=>{ f.style.opacity = t>0.7 ? 0.05 + t*0.20 : 0; });
-  // God Rays
-  godRays.forEach(r=>{ r.style.opacity = t>0.7 ? 0.05 + t*0.15 : 0; });
-
-  // Stars 3D depth movement and fade
-  stars.forEach(s=>{
-    s.el.style.opacity = Math.max(0, 1 - t*3);
-    let depthFactor = 1 - s.depth*0.7; // background moves slower
-    s.el.style.top = s.top - t*150*depthFactor + "%";
-    s.el.style.left = s.left + t*30*(0.5-s.depth) + "%"; // small lateral drift
+  /* Sun flares — corrected formula */
+  flares.forEach(f=>{
+    f.style.opacity = t>0.7 ? (t-0.7)*0.4 : 0;
   });
 
-  // Reveal text
+  /* God Rays */
+  godRays.forEach(r=>{
+    r.style.opacity = t>0.7 ? (t-0.7)*0.4 : 0;
+  });
+
+  /* Clouds & Fog reacting to sunrise */
+  document.querySelectorAll(".cloud").forEach(c=>{
+    c.style.opacity = 0.04 + t*0.08;
+  });
+  document.querySelectorAll(".fog").forEach(f=>{
+    f.style.opacity = 0.03 + t*0.04;
+  });
+
+  /* Stars */
+  stars.forEach(s=>{
+    s.el.style.opacity = Math.max(0, 1 - t*3);
+    let depthFactor = 1 - s.depth*0.7;
+    s.el.style.top = s.top - t*150*depthFactor + "%";
+    s.el.style.left = s.left + t*30*(0.5-s.depth) + "%";
+  });
+
+  /* LETTERS */
   let show=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
-    if(i<show){ letters[i].style.opacity=1; letters[i].style.transform="translateY(0)"; }
+    if(i<show){
+      letters[i].style.opacity=1;
+      letters[i].style.transform="translateY(0)";
+    }
   }
-  if(t>0.72){ message.style.color="var(--gold)"; message.style.opacity=1; }
+  if(t>0.72){
+    message.style.color="var(--gold)";
+    message.style.opacity=1;
+  }
+
   dollyZoom(t);
 }
 </script>

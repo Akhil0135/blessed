@@ -106,8 +106,13 @@ html, body{
     0 0 260px 80px rgba(255,180,80,0.22),
     0 0 600px 160px rgba(255,130,40,0.18),
     0 0 900px 220px rgba(255,120,40,0.12);
-  transition:opacity 1.6s ease-in-out, top 2.2s ease-out, right 2.2s ease-out;
+  transition:opacity 1.6s ease-in-out, top 2.2s ease-out, right 2.2s ease-out, transform 2s ease-in-out;
   pointer-events:none;
+  animation:sunPulse 8s infinite alternate ease-in-out;
+}
+@keyframes sunPulse{
+  0%{ transform:scale(1); }
+  100%{ transform:scale(1.04); }
 }
 
 /* -------------------- SUN FLARES -------------------- */
@@ -121,10 +126,15 @@ html, body{
   filter:blur(60px);
   opacity:0;
   pointer-events:none;
-  transition:opacity 1.7s ease-in-out;
+  transition:opacity 1.7s ease-in-out, transform 3s ease-in-out;
+  animation:flareMove 12s infinite alternate ease-in-out;
 }
 .sun-flare.layer2{width:300px;height:300px;opacity:0.05;}
 .sun-flare.layer3{width:450px;height:450px;opacity:0.03;}
+@keyframes flareMove{
+  0%{ transform:translate(-50%,-50%) rotate(0deg) scale(1); }
+  100%{ transform:translate(-50%,-50%) rotate(7deg) scale(1.02); }
+}
 
 /* -------------------- GOD RAYS -------------------- */
 .god-ray{
@@ -286,12 +296,15 @@ function update(t){
     document.body.style.background = "linear-gradient(to bottom, #011c38 0%, #022b57 100%)";
   }
 
-  /* Sun rising */
+  /* Sun rising and glow */
   sun.style.opacity=t;
   if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
 
   /* Sun flares */
-  flares.forEach(f=>{ f.style.opacity = t>0.7 ? 0.05 + t*0.20 : 0; });
+  flares.forEach(f=>{ 
+    f.style.opacity = t>0.7 ? 0.08 + t*0.25 : 0; 
+    f.style.transform = `translate(-50%,-50%) rotate(${t*15}deg) scale(${1 + t*0.05})`;
+  });
 
   /* God Rays */
   godRays.forEach(r=>{ r.style.opacity = t>0.7 ? 0.05 + t*0.15 : 0; });

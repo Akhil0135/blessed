@@ -46,6 +46,7 @@ html, body{
   opacity:0.2;
   animation:twinkle 3s infinite alternate ease-in-out;
   filter:blur(0.3px);
+  transition:opacity 1.2s ease-out;
 }
 .star.depth2{opacity:0.55; animation:twinkle2 3.8s infinite alternate;}
 .star.depth3{opacity:0.8; animation:twinkle3 4.2s infinite alternate;}
@@ -54,20 +55,21 @@ html, body{
 @keyframes twinkle2{ from{opacity:0.2;} to{opacity:0.6;} }
 @keyframes twinkle3{ from{opacity:0.3;} to{opacity:1;} }
 
-/* -------------------- IMAX COSMIC CLOUDS -------------------- */
+/* -------------------- CLOUDS -------------------- */
 .cloud{
   position:absolute;
   background:rgba(255,255,255,0.05);
   border-radius:50%;
   filter:blur(35px);
   pointer-events:none;
+  transition:opacity 1.5s ease-out;
 }
 .cloud.layer1{width:480px;height:160px;top:20%;left:-600px;animation:cloudMove 140s linear infinite;}
 .cloud.layer2{width:680px;height:200px;top:45%;left:-800px;animation:cloudMove 180s linear infinite;opacity:0.06;}
 .cloud.layer3{width:900px;height:260px;top:65%;left:-900px;animation:cloudMove 210s linear infinite;opacity:0.05;}
 @keyframes cloudMove{ 0%{ transform:translateX(0); } 100%{ transform:translateX(130vw); } }
 
-/* -------------------- COSMIC FOG -------------------- */
+/* -------------------- FOG -------------------- */
 .fog{
   position:absolute;
   width:250vw;
@@ -77,6 +79,7 @@ html, body{
   filter:blur(90px);
   animation:fogMove linear infinite;
   pointer-events:none;
+  transition:opacity 1.5s ease-out;
 }
 .fog.layer1{top:58%; animation-duration:180s;}
 .fog.layer2{top:48%; animation-duration:220s; opacity:0.05;}
@@ -274,7 +277,7 @@ function update(t){
   moon.style.opacity = 1-t;
   moon.style.left = (12 + t*50)+"%";
 
-  /* Background shift: black → dark blue → pre-dawn */
+  /* Background shift: black → deep → pre-dawn → dark blue */
   if(t<0.4){
     document.body.style.background = "linear-gradient(to bottom, #000000 0%, #00101d 100%)";
   } else if(t<0.7){
@@ -285,24 +288,22 @@ function update(t){
 
   /* Sun rising */
   sun.style.opacity=t;
-  if(t>0.7){
-    sun.style.top="40px";
-    sun.style.right="40px";
-  }
+  if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
 
   /* Sun flares */
-  flares.forEach(f=>{
-    f.style.opacity = t>0.7 ? 0.05 + t*0.20 : 0;
-  });
+  flares.forEach(f=>{ f.style.opacity = t>0.7 ? 0.05 + t*0.20 : 0; });
 
   /* God Rays */
-  godRays.forEach(r=>{
-    r.style.opacity = t>0.7 ? 0.05 + t*0.15 : 0;
+  godRays.forEach(r=>{ r.style.opacity = t>0.7 ? 0.05 + t*0.15 : 0; });
+
+  /* Stars fade fully */
+  [...starsWrap.children].forEach(s=>{
+    s.style.opacity = Math.max(0, 0.4*(1-t*1.7));
   });
 
-  /* Stars fade completely */
-  [...starsWrap.children].forEach(s=>{
-    s.style.opacity = Math.max(0, 0.35*(1-t*1.5));
+  /* Clouds and fog dim slightly */
+  document.querySelectorAll(".cloud, .fog").forEach(c=>{
+    c.style.opacity = parseFloat(getComputedStyle(c).opacity)*(1-t*0.6);
   });
 
   /* Reveal text */

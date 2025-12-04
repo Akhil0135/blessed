@@ -11,7 +11,6 @@
 :root{
   --night-black:#000000;
   --night-deep:#00101d;
-  --pre-dawn:#011c38;
   --dawn-blue:#022b57;
   --gold:#ffd46b;
 }
@@ -46,7 +45,6 @@ html, body{
   opacity:0.2;
   animation:twinkle 3s infinite alternate ease-in-out;
   filter:blur(0.3px);
-  transition:opacity 1.2s ease-out;
 }
 .star.depth2{opacity:0.55; animation:twinkle2 3.8s infinite alternate;}
 .star.depth3{opacity:0.8; animation:twinkle3 4.2s infinite alternate;}
@@ -55,21 +53,25 @@ html, body{
 @keyframes twinkle2{ from{opacity:0.2;} to{opacity:0.6;} }
 @keyframes twinkle3{ from{opacity:0.3;} to{opacity:1;} }
 
-/* -------------------- CLOUDS -------------------- */
+/* -------------------- IMAX COSMIC CLOUDS -------------------- */
 .cloud{
   position:absolute;
   background:rgba(255,255,255,0.05);
   border-radius:50%;
   filter:blur(35px);
   pointer-events:none;
-  transition:opacity 1.5s ease-out;
 }
+
 .cloud.layer1{width:480px;height:160px;top:20%;left:-600px;animation:cloudMove 140s linear infinite;}
 .cloud.layer2{width:680px;height:200px;top:45%;left:-800px;animation:cloudMove 180s linear infinite;opacity:0.06;}
 .cloud.layer3{width:900px;height:260px;top:65%;left:-900px;animation:cloudMove 210s linear infinite;opacity:0.05;}
-@keyframes cloudMove{ 0%{ transform:translateX(0); } 100%{ transform:translateX(130vw); } }
 
-/* -------------------- FOG -------------------- */
+@keyframes cloudMove{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(130vw); }
+}
+
+/* -------------------- COSMIC FOG -------------------- */
 .fog{
   position:absolute;
   width:250vw;
@@ -79,12 +81,15 @@ html, body{
   filter:blur(90px);
   animation:fogMove linear infinite;
   pointer-events:none;
-  transition:opacity 1.5s ease-out;
 }
 .fog.layer1{top:58%; animation-duration:180s;}
 .fog.layer2{top:48%; animation-duration:220s; opacity:0.05;}
 .fog.layer3{top:38%; animation-duration:260s; opacity:0.04;}
-@keyframes fogMove{ 0%{ transform:translateX(0); } 100%{ transform:translateX(140vw); } }
+
+@keyframes fogMove{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(140vw); }
+}
 
 /* -------------------- SUN -------------------- */
 #sun{
@@ -106,13 +111,8 @@ html, body{
     0 0 260px 80px rgba(255,180,80,0.22),
     0 0 600px 160px rgba(255,130,40,0.18),
     0 0 900px 220px rgba(255,120,40,0.12);
-  transition:opacity 1.6s ease-in-out, top 2.2s ease-out, right 2.2s ease-out, transform 2s ease-in-out;
+  transition:opacity 1.6s ease-in-out, top 2.2s ease-out, right 2.2s ease-out;
   pointer-events:none;
-  animation:sunPulse 8s infinite alternate ease-in-out;
-}
-@keyframes sunPulse{
-  0%{ transform:scale(1); }
-  100%{ transform:scale(1.04); }
 }
 
 /* -------------------- SUN FLARES -------------------- */
@@ -126,15 +126,10 @@ html, body{
   filter:blur(60px);
   opacity:0;
   pointer-events:none;
-  transition:opacity 1.7s ease-in-out, transform 3s ease-in-out;
-  animation:flareMove 12s infinite alternate ease-in-out;
+  transition:opacity 1.7s ease-in-out;
 }
 .sun-flare.layer2{width:300px;height:300px;opacity:0.05;}
 .sun-flare.layer3{width:450px;height:450px;opacity:0.03;}
-@keyframes flareMove{
-  0%{ transform:translate(-50%,-50%) rotate(0deg) scale(1); }
-  100%{ transform:translate(-50%,-50%) rotate(7deg) scale(1.02); }
-}
 
 /* -------------------- GOD RAYS -------------------- */
 .god-ray{
@@ -153,7 +148,11 @@ html, body{
 .god-ray.layer2{transform:rotate(10deg); opacity:0.08;}
 .god-ray.layer3{transform:rotate(-15deg); opacity:0.06;}
 .god-ray.layer4{transform:rotate(20deg); opacity:0.05;}
-@keyframes rayDrift{ 0%{ transform:translateX(0); } 100%{ transform:translateX(120vw); } }
+
+@keyframes rayDrift{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(120vw); }
+}
 
 /* -------------------- MOON -------------------- */
 #moon{
@@ -170,6 +169,7 @@ html, body{
   transition:opacity 0.30s linear;
 }
 #moon:active{cursor:grabbing;}
+
 #moon .flare{
   position:absolute;
   inset:-60px;
@@ -243,8 +243,8 @@ let dragging=false;
 let lastX=0;
 let progress=0;
 
-/* STARS — 350 for epic sky */
-for(let i=0;i<350;i++){
+/* STARS */
+for(let i=0;i<300;i++){ // increased stars
   const s=document.createElement("div");
   let depth=Math.random();
   s.className=depth<0.33?"star depth3":depth<0.67?"star depth2":"star";
@@ -264,60 +264,74 @@ for(let i=0;i<fullText.length;i++){
 }
 
 /* DRAG LOGIC */
-moon.addEventListener("pointerdown", e=>{ dragging=true; lastX=e.clientX; });
+moon.addEventListener("pointerdown", e=>{
+  dragging=true;
+  lastX=e.clientX;
+});
 document.addEventListener("pointerup", ()=>dragging=false);
+
 document.addEventListener("pointermove", e=>{
   if(!dragging) return;
   let dx=e.clientX-lastX;
   lastX=e.clientX;
   if(dx<=0) return;
+
   progress+=dx*0.0024;
   if(progress>1) progress=1;
   update(progress);
 });
 
 /* IMAX DOLLY ZOOM */
-function dollyZoom(t){ stage.style.transform = `scale(${1 + t*0.10})`; }
+function dollyZoom(t){
+  let scale = 1 + t*0.10;
+  stage.style.transform = `scale(${scale})`;
+}
 
 /* UPDATE */
 function update(t){
   moon.style.opacity = 1-t;
   moon.style.left = (12 + t*50)+"%";
 
-  /* Background shift: black → deep → pre-dawn → dark blue */
-  if(t<0.4) document.body.style.background = "linear-gradient(to bottom, #000000 0%, #00101d 100%)";
-  else if(t<0.7) document.body.style.background = "linear-gradient(to bottom, #00101d 0%, #011c38 100%)";
-  else document.body.style.background = "linear-gradient(to bottom, #011c38 0%, #022b57 100%)";
+  /* Background shift: black -> dark blue */
+  document.body.style.background = `linear-gradient(to bottom, #000000 0%, #00142a ${t*100}%)`;
 
-  /* Sun rising and glow */
+  /* Sun rising */
   sun.style.opacity=t;
-  if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
+  if(t>0.7){
+    sun.style.top="40px";
+    sun.style.right="40px";
+  }
 
-  /* Sun flares with subtle movement */
+  /* Sun flares */
   flares.forEach(f=>{
-    f.style.opacity = t>0.7 ? 0.08 + t*0.25 : 0;
-    f.style.transform = `translate(-50%,-50%) rotate(${t*20}deg) scale(${1 + t*0.05})`;
+    if(t>0.7) f.style.opacity=0.05 + t*0.20;
+    else f.style.opacity=0;
   });
 
   /* God Rays */
-  godRays.forEach(r=>{ r.style.opacity = t>0.7 ? 0.05 + t*0.15 : 0; });
-
-  /* Stars fade fully */
-  [...starsWrap.children].forEach(s=>{
-    s.style.opacity = Math.max(0, 0.4*(1-t*1.8));
+  godRays.forEach(r=>{
+    if(t>0.7) r.style.opacity=0.05 + t*0.15;
+    else r.style.opacity=0;
   });
 
-  /* Clouds and fog dim slightly */
-  document.querySelectorAll(".cloud, .fog").forEach(c=>{
-    c.style.opacity = parseFloat(getComputedStyle(c).opacity)*(1-t*0.6);
+  /* Stars fade completely */
+  [...starsWrap.children].forEach(s=>{
+    s.style.opacity = Math.max(0, 1 - t*2); // fades fully by t ~0.5
   });
 
   /* Reveal text */
   let show=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
-    if(i<show){ letters[i].style.opacity=1; letters[i].style.transform="translateY(0)"; }
+    if(i<show){
+      letters[i].style.opacity=1;
+      letters[i].style.transform="translateY(0)";
+    }
   }
-  if(t>0.72){ message.style.color="var(--gold)"; message.style.opacity=1; }
+
+  if(t>0.72){
+    message.style.color="var(--gold)";
+    message.style.opacity=1;
+  }
 
   dollyZoom(t);
 }

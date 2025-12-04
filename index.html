@@ -3,17 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IMAX Nolan Sunrise with God Rays — Akhil Sir</title>
+<title>IMAX Cosmic Sunrise — For Akhil Sir</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+
 <style>
 :root{
   --night-black:#000000;
-  --night-deep:#001122;
-  --day-blue:#0b3d91;
+  --night-deep:#00101d;
+  --dawn-blue:#022b57;
+  --day-blue:#0a3d91;
   --gold:#ffd46b;
 }
 
-/* BASE */
 html, body{
   margin:0;
   height:100%;
@@ -24,7 +26,6 @@ html, body{
   transition:background 2s ease-in-out;
 }
 
-/* STAGE WITH DOLLY-ZOOM */
 #stage{
   position:relative;
   width:100%;
@@ -35,7 +36,7 @@ html, body{
   transition:transform 0.05s linear;
 }
 
-/* STARS */
+/* -------------------- STARS -------------------- */
 .star{
   position:absolute;
   width:2px;
@@ -46,65 +47,92 @@ html, body{
   animation:twinkle 3s infinite alternate ease-in-out;
   filter:blur(0.3px);
 }
-.star.depth2{opacity:0.5; animation:twinkle2 3.8s infinite alternate;}
+.star.depth2{opacity:0.55; animation:twinkle2 3.8s infinite alternate;}
 .star.depth3{opacity:0.8; animation:twinkle3 4.2s infinite alternate;}
-@keyframes twinkle{0%{opacity:0.05;}100%{opacity:0.25;}}
-@keyframes twinkle2{0%{opacity:0.2;}100%{opacity:0.6;}}
-@keyframes twinkle3{0%{opacity:0.3;}100%{opacity:1;}}
 
-/* CLOUDS */
+@keyframes twinkle{ from{opacity:0.05;} to{opacity:0.25;} }
+@keyframes twinkle2{ from{opacity:0.2;} to{opacity:0.6;} }
+@keyframes twinkle3{ from{opacity:0.3;} to{opacity:1;} }
+
+/* -------------------- IMAX COSMIC CLOUDS -------------------- */
 .cloud{
   position:absolute;
-  background:rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.05);
   border-radius:50%;
-  filter:blur(16px);
+  filter:blur(35px);
   pointer-events:none;
 }
-.cloud.layer1{width:500px;height:120px;top:15%;left:-600px;animation:cloudMove 120s linear infinite;}
-.cloud.layer2{width:650px;height:150px;top:35%;left:-700px;animation:cloudMove 150s linear infinite;opacity:0.08;}
-.cloud.layer3{width:800px;height:200px;top:55%;left:-800px;animation:cloudMove 180s linear infinite;opacity:0.06;}
-.cloud.layer4{width:1000px;height:250px;top:70%;left:-1000px;animation:cloudMove 200s linear infinite;opacity:0.04;}
-@keyframes cloudMove{0%{transform:translateX(0);}100%{transform:translateX(120vw);}}
 
-/* FOG */
+.cloud.layer1{width:480px;height:160px;top:20%;left:-600px;animation:cloudMove 140s linear infinite;}
+.cloud.layer2{width:680px;height:200px;top:45%;left:-800px;animation:cloudMove 180s linear infinite;opacity:0.06;}
+.cloud.layer3{width:900px;height:260px;top:65%;left:-900px;animation:cloudMove 210s linear infinite;opacity:0.05;}
+
+@keyframes cloudMove{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(130vw); }
+}
+
+/* -------------------- COSMIC FOG -------------------- */
 .fog{
   position:absolute;
-  width:200vw;
-  height:200px;
-  top:50%;
-  left:-50%;
-  background:radial-gradient(circle, rgba(255,255,255,0.02), transparent 80%);
-  border-radius:50%;
-  filter:blur(60px);
-  animation:fogDrift linear infinite;
+  width:250vw;
+  height:260px;
+  left:-80vw;
+  background:radial-gradient(circle, rgba(255,255,255,0.035), transparent 80%);
+  filter:blur(90px);
+  animation:fogMove linear infinite;
   pointer-events:none;
 }
-.fog.layer1{top:60%;animation-duration:160s;}
-.fog.layer2{top:50%;animation-duration:200s;opacity:0.06;}
-.fog.layer3{top:40%;animation-duration:240s;opacity:0.04;}
-@keyframes fogDrift{0%{transform:translateX(0);}100%{transform:translateX(120vw);}}
+.fog.layer1{top:58%; animation-duration:180s;}
+.fog.layer2{top:48%; animation-duration:220s; opacity:0.05;}
+.fog.layer3{top:38%; animation-duration:260s; opacity:0.04;}
 
-/* LIGHT BEAMS */
-.light-beam{
+@keyframes fogMove{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(140vw); }
+}
+
+/* -------------------- SUN -------------------- */
+#sun{
   position:absolute;
-  width:15px;
-  height:800px;
-  background:linear-gradient(to bottom, rgba(255,235,180,0.15), transparent 70%);
-  top:-200px;
-  left:50%;
-  transform:translateX(-50%) rotate(0deg);
-  filter:blur(24px);
+  width:360px;
+  height:360px;
+  border-radius:50%;
+  top:-260px;
+  right:-260px;
+  opacity:0;
+  background:radial-gradient(circle at 38% 34%,
+      #fffbe8 0%,
+      #ffe79c 14%,
+      #ffbe55 38%,
+      #ff8e2d 58%,
+      rgba(180,60,10,0.4) 80%,
+      rgba(150,40,0,0) 100%);
+  box-shadow:
+    0 0 260px 80px rgba(255,180,80,0.22),
+    0 0 600px 160px rgba(255,130,40,0.18),
+    0 0 900px 220px rgba(255,120,40,0.12);
+  transition:opacity 1.6s ease-in-out, top 2.2s ease-out, right 2.2s ease-out;
+  pointer-events:none;
+}
+
+/* -------------------- SUN FLARES -------------------- */
+.sun-flare{
+  position:absolute;
+  width:180px;height:180px;
+  border-radius:50%;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(255,245,180,0.15), transparent 60%);
+  filter:blur(60px);
   opacity:0;
   pointer-events:none;
-  animation:beamRotate 40s linear infinite;
-  z-index:5;
+  transition:opacity 1.7s ease-in-out;
 }
-.light-beam.layer1{animation-duration:45s;}
-.light-beam.layer2{animation-duration:50s;opacity:0.12;}
-.light-beam.layer3{animation-duration:60s;opacity:0.08;}
-@keyframes beamRotate{0%{transform:translateX(-50%) rotate(0deg);}100%{transform:translateX(-50%) rotate(360deg);}}
+.sun-flare.layer2{width:300px;height:300px;opacity:0.05;}
+.sun-flare.layer3{width:450px;height:450px;opacity:0.03;}
 
-/* GOD RAYS */
+/* -------------------- GOD RAYS -------------------- */
 .god-ray{
   position:absolute;
   width:10px;
@@ -118,61 +146,47 @@ html, body{
   animation:rayDrift 50s linear infinite;
 }
 .god-ray.layer1{transform:rotate(-5deg);}
-.god-ray.layer2{transform:rotate(10deg);opacity:0.08;}
-.god-ray.layer3{transform:rotate(-15deg);opacity:0.06;}
-.god-ray.layer4{transform:rotate(20deg);opacity:0.05;}
-@keyframes rayDrift{0%{transform:translateX(0);}100%{transform:translateX(120vw);}}
+.god-ray.layer2{transform:rotate(10deg); opacity:0.08;}
+.god-ray.layer3{transform:rotate(-15deg); opacity:0.06;}
+.god-ray.layer4{transform:rotate(20deg); opacity:0.05;}
 
-/* SUN */
-#sun{
-  position:absolute;
-  width:360px;
-  height:360px;
-  border-radius:50%;
-  top:-200px;
-  right:-200px;
-  opacity:0;
-  pointer-events:none;
-  background:radial-gradient(circle at 38% 34%,
-      #fffbe8 0%,
-      #ffe79c 14%,
-      #ffbe55 38%,
-      #ff8e2d 58%,
-      rgba(180,60,10,0.4) 80%,
-      rgba(150,40,0,0) 100%);
-  box-shadow:
-    0 0 280px 80px rgba(255,180,80,0.2),
-    0 0 600px 120px rgba(255,150,60,0.15),
-    0 0 900px 180px rgba(255,120,40,0.08);
-  transition:opacity 1.4s ease-in-out, top 2.1s ease-out, right 2.1s ease-out;
+@keyframes rayDrift{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(120vw); }
 }
 
-/* SUN FLARES */
-.sun-flare{
+/* -------------------- MOON -------------------- */
+#moon{
   position:absolute;
-  width:160px;
-  height:160px;
+  width:180px;
+  height:180px;
   border-radius:50%;
-  top:50%;
-  left:50%;
-  pointer-events:none;
+  background:radial-gradient(circle at 40% 34%, #ffffff, #000000 85%);
+  top:28%;
+  left:12%;
   transform:translate(-50%,-50%);
-  background:radial-gradient(circle, rgba(255,245,180,0.15), transparent 60%);
-  filter:blur(60px);
-  opacity:0;
-  transition:opacity 1.6s ease-in-out;
+  box-shadow:0 0 80px rgba(255,245,200,0.22);
+  cursor:grab;
+  transition:opacity 0.30s linear;
 }
-.sun-flare.layer2{width:280px;height:280px;opacity:0.05;}
-.sun-flare.layer3{width:420px;height:420px;opacity:0.03;}
+#moon:active{cursor:grabbing;}
 
-/* MESSAGE */
+#moon .flare{
+  position:absolute;
+  inset:-60px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,240,200,0.12), transparent 70%);
+  filter:blur(70px);
+}
+
+/* -------------------- TEXT -------------------- */
 #message{
   position:absolute;
-  bottom:6%;
+  bottom:7%;
   left:50%;
   transform:translateX(-50%);
   white-space:nowrap;
-  font-size:19px;
+  font-size:18px;
   letter-spacing:3px;
   font-family:"IM Fell English SC", serif;
   color:white;
@@ -182,56 +196,37 @@ html, body{
 .letter{
   display:inline-block;
   opacity:0;
-  transform:translateY(10px);
+  transform:translateY(12px);
   transition:opacity .12s ease, transform .12s ease;
-}
-
-/* MOON */
-#moon{
-  position:absolute;
-  width:180px;
-  height:180px;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 34%, #ffffff, #000000 80%);
-  top:28%;
-  left:10%;
-  box-shadow:0 0 80px rgba(255,245,200,0.2);
-  cursor:grab;
-  transform:translate(-50%,-50%);
-  transition:opacity 0.25s linear;
-}
-#moon:active{cursor:grabbing;}
-#moon .flare{
-  position:absolute;
-  inset:-50px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(255,240,200,0.1), transparent 70%);
-  filter:blur(60px);
 }
 </style>
 </head>
+
 <body>
 <div id="stage">
+
   <div id="stars"></div>
+
   <div class="cloud layer1"></div>
   <div class="cloud layer2"></div>
   <div class="cloud layer3"></div>
-  <div class="cloud layer4"></div>
+
   <div class="fog layer1"></div>
   <div class="fog layer2"></div>
   <div class="fog layer3"></div>
-  <div class="light-beam layer1"></div>
-  <div class="light-beam layer2"></div>
-  <div class="light-beam layer3"></div>
+
+  <div class="sun-flare layer1"></div>
+  <div class="sun-flare layer2"></div>
+  <div class="sun-flare layer3"></div>
+
   <div class="god-ray layer1"></div>
   <div class="god-ray layer2"></div>
   <div class="god-ray layer3"></div>
   <div class="god-ray layer4"></div>
-  <div class="sun-flare layer1"></div>
-  <div class="sun-flare layer2"></div>
-  <div class="sun-flare layer3"></div>
+
   <div id="moon"><div class="flare"></div></div>
   <div id="sun"></div>
+
   <div id="message"></div>
 </div>
 
@@ -241,7 +236,6 @@ const moon=document.getElementById("moon");
 const sun=document.getElementById("sun");
 const starsWrap=document.getElementById("stars");
 const message=document.getElementById("message");
-const beams=document.querySelectorAll(".light-beam");
 const flares=document.querySelectorAll(".sun-flare");
 const godRays=document.querySelectorAll(".god-ray");
 const stage=document.getElementById("stage");
@@ -251,12 +245,12 @@ let lastX=0;
 let progress=0;
 
 /* STARS */
-for(let i=0;i<170;i++){
+for(let i=0;i<180;i++){
   const s=document.createElement("div");
   let depth=Math.random();
-  s.className=depth<0.33?"star":"star depth2";
+  s.className=depth<0.33?"star depth3":depth<0.67?"star depth2":"star";
   s.style.left=Math.random()*100+"%";
-  s.style.top=Math.random()*80+"%";
+  s.style.top=Math.random()*90+"%";
   starsWrap.appendChild(s);
 }
 
@@ -276,74 +270,79 @@ moon.addEventListener("pointerdown", e=>{
   lastX=e.clientX;
 });
 document.addEventListener("pointerup", ()=>dragging=false);
+
 document.addEventListener("pointermove", e=>{
   if(!dragging) return;
   let dx=e.clientX-lastX;
   lastX=e.clientX;
   if(dx<=0) return;
-  progress+=dx*0.0025;
+
+  progress+=dx*0.0024;
   if(progress>1) progress=1;
   update(progress);
 });
 
-/* DOLLY-ZOOM */
+/* IMAX DOLLY ZOOM */
 function dollyZoom(t){
-  let scale = 1 + t*0.08; // subtle zoom
+  let scale = 1 + t*0.10;
   stage.style.transform = `scale(${scale})`;
 }
 
-/* MOUSE MOVE PARALLAX */
-document.addEventListener("mousemove", e=>{
-  let mouseX = (e.clientX/window.innerWidth - 0.5) * 40;
-  let mouseY = (e.clientY/window.innerHeight - 0.5) * 20;
-  beams.forEach((b,i)=>{
-    b.style.transform = `translateX(-50%) rotate(${mouseX + i*15}deg) skewY(${mouseY}deg)`;
-  });
-});
-
-/* UPDATE SCENE */
+/* UPDATE */
 function update(t){
-  moon.style.opacity=1-t;
-  moon.style.left=(10 + t*50)+"%";
+  moon.style.opacity = 1-t;
+  moon.style.left = (12 + t*50)+"%";
 
-  // Background
-  if(t<0.4){
-    document.body.style.background="linear-gradient(to bottom, #000000 0%, #001122 100%)";
+  /* Background shift */
+  if(t<0.40){
+    document.body.style.background = "linear-gradient(to bottom, #000000 0%, #00101d 100%)";
+  } else if(t<0.75){
+    document.body.style.background = "linear-gradient(to bottom, #00101d 0%, #022b57 100%)";
   } else {
-    document.body.style.background="linear-gradient(to bottom, #001637 0%, #0b3d91 100%)";
+    document.body.style.background = "linear-gradient(to bottom, #022b57 0%, #0a3d91 100%)";
   }
 
-  // Sun appear
+  /* Sun rising */
   sun.style.opacity=t;
-  if(t>0.7){ sun.style.top="40px"; sun.style.right="40px"; }
+  if(t>0.7){
+    sun.style.top="40px";
+    sun.style.right="40px";
+  }
 
-  // Sun flares
+  /* Sun flares */
   flares.forEach(f=>{
-    if(t>0.7) f.style.opacity=0.05 + t*0.15;
+    if(t>0.7) f.style.opacity=0.05 + t*0.20;
     else f.style.opacity=0;
   });
 
-  // God rays
+  /* God Rays */
   godRays.forEach(r=>{
     if(t>0.7) r.style.opacity=0.05 + t*0.15;
     else r.style.opacity=0;
   });
 
-  // Stars fade
+  /* Stars fade */
   [...starsWrap.children].forEach(s=>{
-    s.style.opacity=Math.max(0, 0.3*(1-t*1.2));
+    s.style.opacity=Math.max(0, 0.35*(1-t*1.3));
   });
 
-  // Message reveal
+  /* Reveal text */
   let show=Math.floor(t*letters.length);
   for(let i=0;i<letters.length;i++){
-    if(i<show){ letters[i].style.opacity=1; letters[i].style.transform="translateY(0)"; }
+    if(i<show){
+      letters[i].style.opacity=1;
+      letters[i].style.transform="translateY(0)";
+    }
   }
-  if(t>0.7){ message.style.color="var(--gold)"; message.style.opacity=1; }
 
-  // Dolly zoom effect
+  if(t>0.72){
+    message.style.color="var(--gold)";
+    message.style.opacity=1;
+  }
+
   dollyZoom(t);
 }
 </script>
+
 </body>
 </html>

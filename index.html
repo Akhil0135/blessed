@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 2 — MCU Shield 3D Metallic Star</title>
+<title>Phase 2 — MCU Shield IMAX Metallic</title>
 <style>
 html, body {
     margin: 0;
@@ -54,7 +54,7 @@ function drawStars() {
 }
 
 // -------------------- SHIELD PARAMETERS --------------------
-const shieldRadius = 150; // Main radius
+const shieldRadius = 250; // Bigger shield radius
 const shieldX = canvas.width / 2;
 const shieldY = canvas.height / 2;
 let angle = 0;
@@ -64,45 +64,59 @@ function drawShield(x, y, r, rotation) {
     ctx.save();
     ctx.translate(x, y);
 
-    // --------- ROTATING OUTER RINGS ---------
+    // --------- ROTATING OUTER RINGS (METALLIC GRADIENTS) ---------
     ctx.rotate(rotation);
 
-    // Outer Red
+    // Outer Red Ring
+    const outerRed = ctx.createRadialGradient(0,0,r*0.7,0,0,r);
+    outerRed.addColorStop(0,'#ff5555');
+    outerRed.addColorStop(0.5,'#aa0000');
+    outerRed.addColorStop(1,'#880000');
+    ctx.fillStyle = outerRed;
     ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI*2);
-    ctx.fillStyle = '#aa0000';
+    ctx.arc(0,0,r,0,Math.PI*2);
     ctx.fill();
 
-    // Inner White
+    // Inner White Ring
+    const innerWhite = ctx.createRadialGradient(0,0,r*0.6,0,0,r*0.8);
+    innerWhite.addColorStop(0,'#ffffff');
+    innerWhite.addColorStop(0.5,'#cccccc');
+    innerWhite.addColorStop(1,'#aaaaaa');
+    ctx.fillStyle = innerWhite;
     ctx.beginPath();
-    ctx.arc(0, 0, r*0.8, 0, Math.PI*2);
-    ctx.fillStyle = '#ffffff';
+    ctx.arc(0,0,r*0.8,0,Math.PI*2);
     ctx.fill();
 
-    // Inner Red
+    // Inner Red Ring
+    const innerRed = ctx.createRadialGradient(0,0,r*0.5,0,0,r*0.6);
+    innerRed.addColorStop(0,'#ff6666');
+    innerRed.addColorStop(0.5,'#aa1111');
+    innerRed.addColorStop(1,'#880000');
+    ctx.fillStyle = innerRed;
     ctx.beginPath();
-    ctx.arc(0, 0, r*0.6, 0, Math.PI*2);
-    ctx.fillStyle = '#aa0000';
+    ctx.arc(0,0,r*0.6,0,Math.PI*2);
     ctx.fill();
 
     ctx.restore();
 
-    // --------- FIXED NAVY BLUE CENTER ---------
+    // --------- FIXED NAVY BLUE CENTER (METALLIC) ---------
     ctx.save();
     ctx.translate(x, y);
 
-    // Center Navy Blue Ring
-    ctx.beginPath();
-    ctx.arc(0, 0, r*0.4, 0, Math.PI*2);
-    const metallicGradient = ctx.createRadialGradient(0,0,r*0.05,0,0,r*0.4);
-    metallicGradient.addColorStop(0,'#6a7a8c');
+    const centerR = r*0.4;
+
+    // Center navy blue metallic ring
+    const metallicGradient = ctx.createRadialGradient(0,0,centerR*0.05,0,0,centerR);
+    metallicGradient.addColorStop(0,'#7a8aa0');
     metallicGradient.addColorStop(0.5,'#001f3f');
     metallicGradient.addColorStop(1,'#001830');
     ctx.fillStyle = metallicGradient;
+    ctx.beginPath();
+    ctx.arc(0,0,centerR,0,Math.PI*2);
     ctx.fill();
 
-    // --------- LARGER 3D METALLIC STAR (fills navy ring) ---------
-    const starR = r*0.38; // Bigger star almost fills the blue ring
+    // --------- LARGER 3D METALLIC STAR ---------
+    const starR = centerR*0.95; // Nearly fills the blue ring
     const starPoints = [];
     for (let i = 0; i < 5; i++) {
         starPoints.push({
@@ -115,7 +129,6 @@ function drawShield(x, y, r, rotation) {
         });
     }
 
-    // Metallic gradient for star
     const starGradient = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
     starGradient.addColorStop(0,'#ffffff');
     starGradient.addColorStop(0.3,'#dddddd');
@@ -129,8 +142,8 @@ function drawShield(x, y, r, rotation) {
         ctx.lineTo(starPoints[i].x, starPoints[i].y);
     }
     ctx.closePath();
-    ctx.shadowColor = 'rgba(255,255,255,0.3)';
-    ctx.shadowBlur = 10;
+    ctx.shadowColor = 'rgba(255,255,255,0.4)';
+    ctx.shadowBlur = 15;
     ctx.fill();
 
     ctx.restore();
@@ -139,7 +152,7 @@ function drawShield(x, y, r, rotation) {
 // -------------------- ANIMATION LOOP --------------------
 function animate() {
     drawStars();
-    angle += 0.01; // Smooth rotation of outer rings
+    angle += 0.008; // Smooth rotation of outer rings
     drawShield(shieldX, shieldY, shieldRadius, angle);
 
     requestAnimationFrame(animate);

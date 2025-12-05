@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 2 — MCU Shield Interactive</title>
+<title>Phase 2 — MCU Shield Interactive with Verse</title>
 <style>
 html, body {
     margin: 0;
@@ -15,9 +15,20 @@ canvas {
     display: block;
     cursor: pointer;
 }
+#verse {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 20px;
+    font-size: 24px;
+    font-family: "Cinzel", serif;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
 </style>
 </head>
 <body>
+<div id="verse">"He counts the number of the stars; He gives names to all of them." — Psalm 147:4</div>
 <canvas id="shieldCanvas"></canvas>
 <script>
 const canvas = document.getElementById('shieldCanvas');
@@ -64,7 +75,7 @@ let pieces = [];
 let starSpin = false;
 let starAngle = 0;
 
-// -------------------- HELPER FUNCTIONS --------------------
+// -------------------- DRAW SHIELD --------------------
 function drawShield(x, y, r, rotation) {
     ctx.save();
     ctx.translate(x, y);
@@ -103,7 +114,7 @@ function drawShield(x, y, r, rotation) {
     }
     ctx.restore();
 
-    // --------- NAVY BLUE CENTER ---------
+    // Center Navy Blue Metallic
     ctx.save();
     ctx.translate(x, y);
 
@@ -117,7 +128,7 @@ function drawShield(x, y, r, rotation) {
     ctx.arc(0,0,centerR,0,Math.PI*2);
     ctx.fill();
 
-    // --------- 3D METALLIC STAR ---------
+    // 3D Metallic Star
     const starR = centerR*0.95;
     const starPoints = [];
     for (let i = 0; i < 5; i++) {
@@ -164,8 +175,8 @@ function createPieces(){
         pieces.push({
             x: shieldX + Math.cos(angle)*dist,
             y: shieldY + Math.sin(angle)*dist,
-            dx: Math.cos(angle)*Math.random()*10,
-            dy: Math.sin(angle)*Math.random()*10 - 2,
+            dx: Math.cos(angle)*Math.random()*4, // slower pieces
+            dy: Math.sin(angle)*Math.random()*4 - 1, // slower + small lift
             size: size,
             opacity:1,
             color: 'rgba(255,100,100,1)'
@@ -176,16 +187,15 @@ function createPieces(){
 // -------------------- ANIMATION LOOP --------------------
 function animate(){
     drawStars();
-    if(!breaking) angle += 0.008;
+    if(!breaking) angle += 0.004; // slower rotation
     drawShield(shieldX, shieldY, shieldRadius, angle);
 
-    // Animate pieces
     if(breaking){
         pieces.forEach(p=>{
             p.x += p.dx;
             p.y += p.dy;
-            p.dy += 0.2; // gravity
-            p.opacity -= 0.02;
+            p.dy += 0.1; // slower gravity
+            p.opacity -= 0.015;
             ctx.fillStyle = p.color.replace('1)',''+p.opacity+')');
             ctx.beginPath();
             ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
@@ -193,7 +203,7 @@ function animate(){
         });
     }
 
-    if(starSpin) starAngle += 0.2;
+    if(starSpin) starAngle += 0.05; // slower spin
 
     requestAnimationFrame(animate);
 }

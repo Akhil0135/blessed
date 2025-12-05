@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 2 — MCU Shield Interactive</title>
+<title>Phase 2 — MCU Shield Interactive with Cinematic Verse</title>
 <style>
 html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: #0a0a1a;
+    background: #0a0a1a; /* Deep cinematic background */
 }
 canvas {
     display: block;
@@ -20,10 +20,9 @@ canvas {
     font-family: "Cinzel", serif;
     font-size: 28px;
     color: #ffd700;
-    text-shadow: 0 0 10px rgba(255,255,255,0.6);
+    text-shadow: 0 0 15px rgba(255,255,255,0.8);
     opacity: 0;
-    transform: scale(0.2);
-    transition: all 1s ease-out;
+    transition: all 0.8s ease-out;
 }
 </style>
 </head>
@@ -50,7 +49,6 @@ for (let i = 0; i < 200; i++) {
         tw: Math.random() * 0.02 + 0.005
     });
 }
-
 function drawStars() {
     ctx.fillStyle = "#0a0a1a";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -65,8 +63,8 @@ function drawStars() {
 
 // -------------------- SHIELD --------------------
 let shieldRadius = 250;
-const shieldX = canvas.width/2;
-const shieldY = canvas.height/2;
+const shieldX = canvas.width / 2;
+const shieldY = canvas.height / 2;
 let angle = 0;
 let breaking = false;
 let pieces = [];
@@ -79,38 +77,51 @@ function drawShield(x, y, r, rotation) {
 
     if(!breaking){
         ctx.rotate(rotation);
-
-        // Outer Dark Red
-        ctx.fillStyle = "#8b0000";
+        // Outer Red
+        const outerRed = ctx.createRadialGradient(0,0,r*0.7,0,0,r);
+        outerRed.addColorStop(0,'#880000');
+        outerRed.addColorStop(0.5,'#550000');
+        outerRed.addColorStop(1,'#330000');
+        ctx.fillStyle = outerRed;
         ctx.beginPath();
         ctx.arc(0,0,r,0,Math.PI*2);
         ctx.fill();
 
-        // White Ring
-        ctx.fillStyle = "#c0c0c0";
+        // Inner White
+        const innerWhite = ctx.createRadialGradient(0,0,r*0.6,0,0,r*0.8);
+        innerWhite.addColorStop(0,'#cccccc');
+        innerWhite.addColorStop(0.5,'#aaaaaa');
+        innerWhite.addColorStop(1,'#888888');
+        ctx.fillStyle = innerWhite;
         ctx.beginPath();
-        ctx.arc(0,0,r*0.75,0,Math.PI*2);
+        ctx.arc(0,0,r*0.8,0,Math.PI*2);
         ctx.fill();
 
         // Inner Red
-        ctx.fillStyle = "#b22222";
+        const innerRed = ctx.createRadialGradient(0,0,r*0.5,0,0,r*0.6);
+        innerRed.addColorStop(0,'#aa1111');
+        innerRed.addColorStop(0.5,'#880000');
+        innerRed.addColorStop(1,'#660000');
+        ctx.fillStyle = innerRed;
         ctx.beginPath();
-        ctx.arc(0,0,r*0.55,0,Math.PI*2);
+        ctx.arc(0,0,r*0.6,0,Math.PI*2);
         ctx.fill();
     }
+    ctx.restore();
 
-    // Center Navy Blue Metallic Circle only if shield not breaking
+    // Center Navy Blue Metallic
+    ctx.save();
+    ctx.translate(x, y);
+
     const centerR = r*0.4;
-    if(!breaking){
-        const metallicGradient = ctx.createRadialGradient(0,0,centerR*0.05,0,0,centerR);
-        metallicGradient.addColorStop(0,'#7a8aa0');
-        metallicGradient.addColorStop(0.5,'#001f3f');
-        metallicGradient.addColorStop(1,'#001830');
-        ctx.fillStyle = metallicGradient;
-        ctx.beginPath();
-        ctx.arc(0,0,centerR,0,Math.PI*2);
-        ctx.fill();
-    }
+    const metallicGradient = ctx.createRadialGradient(0,0,centerR*0.05,0,0,centerR);
+    metallicGradient.addColorStop(0,'#7a8aa0');
+    metallicGradient.addColorStop(0.5,'#001f3f');
+    metallicGradient.addColorStop(1,'#001830');
+    ctx.fillStyle = metallicGradient;
+    ctx.beginPath();
+    ctx.arc(0,0,centerR,0,Math.PI*2);
+    ctx.fill();
 
     // 3D Metallic Star
     const starR = centerR*0.95;
@@ -188,7 +199,6 @@ function animate(){
     }
 
     if(starSpin) starAngle += 0.05;
-
     requestAnimationFrame(animate);
 }
 
@@ -207,21 +217,25 @@ canvas.addEventListener('click', function(e){
             starSpin = true;
             createPieces();
 
-            // Cinematic Verse — zooming from star
+            // Verse animation
             const verseText = "He counts the number of the stars; He gives names to all of them. — Psalm 147:4";
-            const fontSize = 28;
+            const startX = shieldX;
+            const startY = shieldY;
             const topY = 50;
+            const fontSize = 28;
 
-            let totalWidth = 0;
+            // Measure total width
             const tempCanvas = document.createElement('canvas');
             const tempCtx = tempCanvas.getContext('2d');
             tempCtx.font = `${fontSize}px Cinzel`;
+            let totalWidth = 0;
             const widths = [];
-            for(let i=0;i<verseText.length;i++){
+            for (let i = 0; i < verseText.length; i++){
                 const w = tempCtx.measureText(verseText[i]).width;
                 widths.push(w);
                 totalWidth += w;
             }
+
             let currentX = canvas.width/2 - totalWidth/2;
             let delay = 0;
 
@@ -229,19 +243,18 @@ canvas.addEventListener('click', function(e){
                 const span = document.createElement('span');
                 span.textContent = verseText[i];
                 span.className = 'verse-letter';
-                span.style.fontSize = fontSize + 'px';
-                span.style.left = shieldX + 'px';
-                span.style.top = shieldY + 'px';
+                span.style.fontSize = fontSize+'px';
+                span.style.left = startX+'px';
+                span.style.top = startY+'px';
                 span.style.transform = 'scale(0.2)';
                 document.body.appendChild(span);
 
                 setTimeout(()=>{
                     span.style.opacity = 1;
-                    span.style.left = currentX + 'px';
-                    span.style.top = topY + 'px';
                     span.style.transform = 'scale(1)';
+                    span.style.left = currentX+'px';
+                    span.style.top = topY+'px';
                 }, delay);
-
                 delay += 70;
                 currentX += widths[i];
             }

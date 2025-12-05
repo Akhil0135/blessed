@@ -9,7 +9,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: #0a0a1a; /* Deep cinematic background */
+    background: #0a0a1a; /* Cinematic deep blue-black */
 }
 canvas {
     display: block;
@@ -68,6 +68,7 @@ const shieldY = canvas.height / 2;
 let angle = 0;
 let breaking = false;
 let pieces = [];
+let cracks = [];
 let starSpin = false;
 let starAngle = 0;
 
@@ -77,6 +78,7 @@ function drawShield(x, y, r, rotation) {
 
     if(!breaking){
         ctx.rotate(rotation);
+
         // Outer Red
         const outerRed = ctx.createRadialGradient(0,0,r*0.7,0,0,r);
         outerRed.addColorStop(0,'#880000');
@@ -107,6 +109,19 @@ function drawShield(x, y, r, rotation) {
         ctx.arc(0,0,r*0.6,0,Math.PI*2);
         ctx.fill();
     }
+
+    // Draw cracks if any
+    if(cracks.length){
+        ctx.strokeStyle = '#ffaaaa';
+        ctx.lineWidth = 2;
+        cracks.forEach(line=>{
+            ctx.beginPath();
+            ctx.moveTo(line.x1, line.y1);
+            ctx.lineTo(line.x2, line.y2);
+            ctx.stroke();
+        });
+    }
+
     ctx.restore();
 
     // Center Navy Blue Metallic
@@ -160,6 +175,20 @@ function drawShield(x, y, r, rotation) {
 }
 
 // -------------------- SHIELD BREAK --------------------
+function createCracks(){
+    cracks = [];
+    for(let i=0;i<20;i++){
+        const angle = Math.random()*Math.PI*2;
+        const len = Math.random()*shieldRadius*0.8;
+        cracks.push({
+            x1: shieldX,
+            y1: shieldY,
+            x2: shieldX + Math.cos(angle)*len,
+            y2: shieldY + Math.sin(angle)*len
+        });
+    }
+}
+
 function createPieces(){
     pieces = [];
     const numPieces = 50;
@@ -184,6 +213,12 @@ function animate(){
     drawStars();
     if(!breaking) angle += 0.004;
     drawShield(shieldX, shieldY, shieldRadius, angle);
+
+    if(cracks.length){
+        // Slowly fade cracks before breaking
+        cracks.forEach(c=>{c.opacity = (c.opacity||1) - 0.005});
+        cracks = cracks.filter(c=>c.opacity>0);
+    }
 
     if(breaking){
         pieces.forEach(p=>{
@@ -213,11 +248,15 @@ canvas.addEventListener('click', function(e){
     const centerR = shieldRadius*0.4*0.95;
     if(Math.sqrt(dx*dx + dy*dy) <= centerR){
         if(!breaking){
-            breaking = true;
-            starSpin = true;
-            createPieces();
+            // Shield starts cracking
+            createCracks();
+            setTimeout(()=>{
+                breaking = true;
+                starSpin = true;
+                createPieces();
+            }, 500); // Delay to show cracks first
 
-            // Verse animation
+            // Verse animation from star center
             const verseText = "He counts the number of the stars; He gives names to all of them. — Psalm 147:4";
             const startX = shieldX;
             const startY = shieldY;
@@ -246,7 +285,7 @@ canvas.addEventListener('click', function(e){
                 span.style.fontSize = fontSize+'px';
                 span.style.left = startX+'px';
                 span.style.top = startY+'px';
-                span.style.transform = 'scale(0.2)';
+                span.style.transform = 'scale(0.1)';
                 document.body.appendChild(span);
 
                 setTimeout(()=>{

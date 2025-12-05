@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 2 — Captain America Shield</title>
+<title>Phase 2 — MCU Shield</title>
 <style>
 html, body {
     margin: 0;
@@ -14,21 +14,10 @@ html, body {
 canvas {
     display: block;
 }
-
-/* IMAX cinematic styling */
-#shieldCanvas {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
 </style>
 </head>
 <body>
-
 <canvas id="shieldCanvas"></canvas>
-
 <script>
 // -------------------- CANVAS SETUP --------------------
 const canvas = document.getElementById('shieldCanvas');
@@ -55,7 +44,6 @@ for (let i = 0; i < 200; i++) {
 function drawStars() {
     ctx.fillStyle = "#0a0a1a";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     stars.forEach(s => {
         const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
         ctx.fillStyle = `rgba(255,255,255,${glow})`;
@@ -71,43 +59,52 @@ const shieldX = canvas.width / 2;
 const shieldY = canvas.height / 2;
 let angle = 0;
 
-// Draw MCU-style shield
+// Draw the shield
 function drawShield(x, y, r, rotation) {
     ctx.save();
     ctx.translate(x, y);
+
+    // --------- ROTATING OUTER RINGS ---------
     ctx.rotate(rotation);
 
-    // Outer ring
+    // Outer Red
     ctx.beginPath();
     ctx.arc(0, 0, r, 0, Math.PI*2);
     ctx.fillStyle = '#aa0000';
     ctx.fill();
-    ctx.strokeStyle = '#ffffff20';
-    ctx.lineWidth = 4;
-    ctx.stroke();
 
-    // White ring
+    // Inner White
     ctx.beginPath();
     ctx.arc(0, 0, r*0.8, 0, Math.PI*2);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
-    ctx.strokeStyle = '#ffffff20';
-    ctx.lineWidth = 3;
-    ctx.stroke();
 
-    // Blue center ring
+    // Inner Red
     ctx.beginPath();
-    ctx.arc(0, 0, r*0.55, 0, Math.PI*2);
-    ctx.fillStyle = '#002366';
+    ctx.arc(0, 0, r*0.6, 0, Math.PI*2);
+    ctx.fillStyle = '#aa0000';
     ctx.fill();
-    ctx.strokeStyle = '#ffffff20';
-    ctx.lineWidth = 2;
-    ctx.stroke();
 
-    // Star in center
+    ctx.restore();
+
+    // --------- FIXED NAVY BLUE CENTER ---------
+    ctx.save();
+    ctx.translate(x, y);
+
+    // Center Navy Blue Ring
+    ctx.beginPath();
+    ctx.arc(0, 0, r*0.4, 0, Math.PI*2);
+    const metallicGradient = ctx.createRadialGradient(0,0,r*0.1,0,0,r*0.4);
+    metallicGradient.addColorStop(0,'#4f5d78');
+    metallicGradient.addColorStop(0.5,'#001f3f');
+    metallicGradient.addColorStop(1,'#001830');
+    ctx.fillStyle = metallicGradient;
+    ctx.fill();
+
+    // Fixed Star
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    const starR = r*0.2;
+    const starR = r*0.15;
     for (let i = 0; i < 5; i++) {
         ctx.lineTo(Math.cos((18 + i*72)*Math.PI/180)*starR, -Math.sin((18 + i*72)*Math.PI/180)*starR);
         ctx.lineTo(Math.cos((54 + i*72)*Math.PI/180)*(starR*0.5), -Math.sin((54 + i*72)*Math.PI/180)*(starR*0.5));
@@ -121,7 +118,7 @@ function drawShield(x, y, r, rotation) {
 // -------------------- ANIMATION LOOP --------------------
 function animate() {
     drawStars();
-    angle += 0.01; // Smooth rotation speed
+    angle += 0.01; // Smooth rotation of outer rings
     drawShield(shieldX, shieldY, shieldRadius, angle);
 
     requestAnimationFrame(animate);
@@ -129,6 +126,5 @@ function animate() {
 
 animate();
 </script>
-
 </body>
 </html>

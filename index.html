@@ -219,33 +219,47 @@ canvas.addEventListener('click', function(e){
             starSpin = true;
             createPieces();
 
-            // Cinematic Verse — center → top middle, proper spacing
+            // Cinematic Verse — letter-by-letter, proper spacing
             const verseText = "He counts the number of the stars; He gives names to all of them. — Psalm 147:4";
-            const totalLength = verseText.length;
             const startX = shieldX;
             const startY = shieldY;
             const topY = 50;
-            const letterSpacing = 14;
-            const startLeft = canvas.width/2 - (totalLength/2)*letterSpacing;
+            const fontSize = 28;
 
+            // Temporary canvas for measuring
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.font = `${fontSize}px Cinzel`;
+
+            let totalWidth = 0;
+            const widths = [];
+            for (let i = 0; i < verseText.length; i++) {
+                const w = tempCtx.measureText(verseText[i]).width;
+                widths.push(w);
+                totalWidth += w;
+            }
+
+            let currentX = canvas.width / 2 - totalWidth / 2;
             let delay = 0;
-            for(let i = 0; i < totalLength; i++){
+            for (let i = 0; i < verseText.length; i++) {
                 const span = document.createElement('span');
                 span.textContent = verseText[i];
                 span.className = 'verse-letter';
+                span.style.fontSize = fontSize + 'px';
                 span.style.left = startX + 'px';
                 span.style.top = startY + 'px';
                 span.style.transform = 'scale(0.2)';
                 document.body.appendChild(span);
 
-                setTimeout(()=>{
+                setTimeout(() => {
                     span.style.opacity = 1;
                     span.style.transform = 'scale(1)';
-                    span.style.left = startLeft + i*letterSpacing + 'px';
+                    span.style.left = currentX + 'px';
                     span.style.top = topY + 'px';
                 }, delay);
 
                 delay += 70;
+                currentX += widths[i]; // precise spacing
             }
         }
     }

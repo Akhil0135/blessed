@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 2 — MCU Shield 3D Star</title>
+<title>Phase 2 — MCU Shield 3D Metallic Star</title>
 <style>
 html, body {
     margin: 0;
@@ -101,8 +101,8 @@ function drawShield(x, y, r, rotation) {
     ctx.fillStyle = metallicGradient;
     ctx.fill();
 
-    // --------- 3D METALLIC STAR ---------
-    const starR = r*0.15;
+    // --------- LARGER 3D METALLIC STAR (fills navy ring) ---------
+    const starR = r*0.38; // Bigger star almost fills the blue ring
     const starPoints = [];
     for (let i = 0; i < 5; i++) {
         starPoints.push({
@@ -115,7 +115,7 @@ function drawShield(x, y, r, rotation) {
         });
     }
 
-    // Create metallic gradient for star
+    // Metallic gradient for star
     const starGradient = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
     starGradient.addColorStop(0,'#ffffff');
     starGradient.addColorStop(0.3,'#dddddd');
@@ -130,7 +130,7 @@ function drawShield(x, y, r, rotation) {
     }
     ctx.closePath();
     ctx.shadowColor = 'rgba(255,255,255,0.3)';
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = 10;
     ctx.fill();
 
     ctx.restore();

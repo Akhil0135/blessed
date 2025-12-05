@@ -22,7 +22,7 @@
         transition: transform 6s ease-out;
     }
 
-    /* Twinkling 3D stars */
+    /* Stars */
     .star {
         position: absolute;
         width: 2px; height: 2px;
@@ -48,14 +48,14 @@
         cursor: grab;
     }
 
-    /* SUN (large) */
+    /* SUN (bigger, clean, no rays) */
     #sun {
         position: absolute;
-        width: 240px; height: 240px;
-        top: -280px; right: -280px;
+        width: 260px; height: 260px;
+        top: -300px; right: -300px;
         border-radius: 50%;
         opacity: 0;
-        background: radial-gradient(circle at 30% 30%, #fff7d6, #ffd444, #ff8c00);
+        background: radial-gradient(circle at 30% 30%, #fff8d6, #ffd444, #ff8c00);
         box-shadow: 0 0 90px 45px rgba(255,180,0,0.55);
         transition: all 2.8s ease-out;
         animation: rotateSun 22s linear infinite;
@@ -66,11 +66,11 @@
         100% { transform: rotate(360deg); }
     }
 
-    /* Lens flare strips */
+    /* Lens flares only — NO god rays */
     .flare {
         position: absolute;
         width: 3px; height: 100vh;
-        background: rgba(255,200,80,0.35);
+        background: rgba(255,200,80,0.25);
         top: 0;
         left: 50%;
         transform: translateX(-50%) scaleY(0);
@@ -101,7 +101,7 @@
 <!-- Sun -->
 <div id="sun"></div>
 
-<!-- Lens flare strips -->
+<!-- Lens flares -->
 <div class="flare" id="flare1"></div>
 <div class="flare" id="flare2" style="left: 40%;"></div>
 <div class="flare" id="flare3" style="left: 60%;"></div>
@@ -126,22 +126,21 @@ const msg = document.getElementById("msg");
 
 let dragging = false;
 
-/* The full cinematic message */
-const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
+/* Message */
+const fullText =
+"ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
 let revealed = 0;
 
-/* DRAGGING LOGIC */
+/* Dragging */
 moon.addEventListener("mousedown", () => dragging = true);
 window.addEventListener("mouseup", () => dragging = false);
 
 window.addEventListener("mousemove", (e) => {
     if (!dragging) return;
 
-    /* Moon follows pointer */
     moon.style.left = (e.clientX - 65) + "px";
     moon.style.top = (e.clientY - 65) + "px";
 
-    /* Progress based on drag distance */
     const progress = Math.min(e.clientX / window.innerWidth, 1);
 
     /* Fade stars */
@@ -149,7 +148,7 @@ window.addEventListener("mousemove", (e) => {
         star.style.opacity = 1 - progress;
     });
 
-    /* Reveal message letters */
+    /* Reveal message */
     let letters = Math.floor(progress * fullText.length);
     if (letters > revealed) {
         revealed = letters;
@@ -157,28 +156,25 @@ window.addEventListener("mousemove", (e) => {
         msg.style.opacity = 1;
     }
 
-    /* Trigger Sun after full message */
+    /* Sun entrance */
     if (revealed >= fullText.length) {
         moon.style.transition = "1.5s ease";
         moon.style.opacity = 0;
 
-        /* Sun entrance */
         sun.style.opacity = 1;
         sun.style.top = "60px";
         sun.style.right = "60px";
 
-        /* IMAX zoom */
         document.body.classList.add("zoom-in");
 
-        /* Lens-flare activation */
         activateLensFlare();
 
-        /* Change background → soft blue daylight */
-        document.body.style.background = "linear-gradient(#001122, #004466, #447799)";
+        document.body.style.background =
+            "linear-gradient(#001122, #004466, #447799)";
     }
 });
 
-/* LENS FLARE */
+/* Lens flares */
 function activateLensFlare() {
     const flares = ["flare1", "flare2", "flare3"].map(id => document.getElementById(id));
 
@@ -191,9 +187,7 @@ function activateLensFlare() {
     });
 
     setTimeout(() => {
-        flares.forEach(f => {
-            f.style.opacity = 0;
-        });
+        flares.forEach(f => f.style.opacity = 0);
     }, 2000);
 }
 </script>

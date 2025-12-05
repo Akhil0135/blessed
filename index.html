@@ -19,11 +19,14 @@ canvas {
     position: absolute;
     width: 100%;
     text-align: center;
-    top: 20px;
-    font-size: 24px;
+    top: 50px;
+    font-size: 28px;
     font-family: "Cinzel", serif;
     color: #ffd700;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    text-shadow: 0 0 10px rgba(255,255,255,0.6);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 2s ease, transform 2s ease;
 }
 </style>
 </head>
@@ -33,6 +36,7 @@ canvas {
 <script>
 const canvas = document.getElementById('shieldCanvas');
 const ctx = canvas.getContext('2d');
+const verse = document.getElementById('verse');
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -175,8 +179,8 @@ function createPieces(){
         pieces.push({
             x: shieldX + Math.cos(angle)*dist,
             y: shieldY + Math.sin(angle)*dist,
-            dx: Math.cos(angle)*Math.random()*4, // slower pieces
-            dy: Math.sin(angle)*Math.random()*4 - 1, // slower + small lift
+            dx: Math.cos(angle)*Math.random()*4,
+            dy: Math.sin(angle)*Math.random()*4 - 1,
             size: size,
             opacity:1,
             color: 'rgba(255,100,100,1)'
@@ -194,7 +198,7 @@ function animate(){
         pieces.forEach(p=>{
             p.x += p.dx;
             p.y += p.dy;
-            p.dy += 0.1; // slower gravity
+            p.dy += 0.1; 
             p.opacity -= 0.015;
             ctx.fillStyle = p.color.replace('1)',''+p.opacity+')');
             ctx.beginPath();
@@ -203,7 +207,7 @@ function animate(){
         });
     }
 
-    if(starSpin) starAngle += 0.05; // slower spin
+    if(starSpin) starAngle += 0.05; 
 
     requestAnimationFrame(animate);
 }
@@ -222,6 +226,11 @@ canvas.addEventListener('click', function(e){
             breaking = true;
             starSpin = true;
             createPieces();
+            // Cinematic verse reveal
+            setTimeout(() => {
+                verse.style.opacity = 1;
+                verse.style.transform = 'translateY(0px)';
+            }, 800); // slight delay for dramatic effect
         }
     }
 });

@@ -9,7 +9,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: #0a0a1a; /* Cinematic deep background */
+    background: #0a0a1a;
 }
 canvas {
     display: block;
@@ -22,6 +22,7 @@ canvas {
     color: #ffd700;
     text-shadow: 0 0 10px rgba(255,255,255,0.6);
     opacity: 0;
+    transform: scale(0.2);
     transition: all 1s ease-out;
 }
 </style>
@@ -98,16 +99,18 @@ function drawShield(x, y, r, rotation) {
         ctx.fill();
     }
 
-    // Center Navy Blue Metallic Circle
+    // Center Navy Blue Metallic Circle only if shield not breaking
     const centerR = r*0.4;
-    const metallicGradient = ctx.createRadialGradient(0,0,centerR*0.05,0,0,centerR);
-    metallicGradient.addColorStop(0,'#7a8aa0');
-    metallicGradient.addColorStop(0.5,'#001f3f');
-    metallicGradient.addColorStop(1,'#001830');
-    ctx.fillStyle = metallicGradient;
-    ctx.beginPath();
-    ctx.arc(0,0,centerR,0,Math.PI*2);
-    ctx.fill();
+    if(!breaking){
+        const metallicGradient = ctx.createRadialGradient(0,0,centerR*0.05,0,0,centerR);
+        metallicGradient.addColorStop(0,'#7a8aa0');
+        metallicGradient.addColorStop(0.5,'#001f3f');
+        metallicGradient.addColorStop(1,'#001830');
+        ctx.fillStyle = metallicGradient;
+        ctx.beginPath();
+        ctx.arc(0,0,centerR,0,Math.PI*2);
+        ctx.fill();
+    }
 
     // 3D Metallic Star
     const starR = centerR*0.95;
@@ -204,42 +207,39 @@ canvas.addEventListener('click', function(e){
             starSpin = true;
             createPieces();
 
-            // Cinematic Verse — letter-by-letter
+            // Cinematic Verse — zooming from star
             const verseText = "He counts the number of the stars; He gives names to all of them. — Psalm 147:4";
-            const startX = shieldX;
-            const startY = shieldY;
-            const topY = 50;
             const fontSize = 28;
+            const topY = 50;
 
+            let totalWidth = 0;
             const tempCanvas = document.createElement('canvas');
             const tempCtx = tempCanvas.getContext('2d');
             tempCtx.font = `${fontSize}px Cinzel`;
-
-            let totalWidth = 0;
             const widths = [];
-            for (let i = 0; i < verseText.length; i++) {
+            for(let i=0;i<verseText.length;i++){
                 const w = tempCtx.measureText(verseText[i]).width;
                 widths.push(w);
                 totalWidth += w;
             }
-
             let currentX = canvas.width/2 - totalWidth/2;
             let delay = 0;
-            for (let i = 0; i < verseText.length; i++) {
+
+            for(let i=0;i<verseText.length;i++){
                 const span = document.createElement('span');
                 span.textContent = verseText[i];
                 span.className = 'verse-letter';
                 span.style.fontSize = fontSize + 'px';
-                span.style.left = startX + 'px';
-                span.style.top = startY + 'px';
+                span.style.left = shieldX + 'px';
+                span.style.top = shieldY + 'px';
                 span.style.transform = 'scale(0.2)';
                 document.body.appendChild(span);
 
-                setTimeout(() => {
+                setTimeout(()=>{
                     span.style.opacity = 1;
-                    span.style.transform = 'scale(1)';
                     span.style.left = currentX + 'px';
                     span.style.top = topY + 'px';
+                    span.style.transform = 'scale(1)';
                 }, delay);
 
                 delay += 70;

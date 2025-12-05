@@ -22,7 +22,7 @@ canvas {
     color: #ffd700;
     text-shadow: 0 0 10px rgba(255,255,255,0.6);
     opacity: 0;
-    transition: all 1.2s ease-out;
+    transition: all 1s ease-out;
 }
 </style>
 </head>
@@ -219,28 +219,33 @@ canvas.addEventListener('click', function(e){
             starSpin = true;
             createPieces();
 
-            // Cinematic Verse Evolution
+            // Cinematic Verse — center → top middle, proper spacing
             const verseText = "He counts the number of the stars; He gives names to all of them. — Psalm 147:4";
+            const totalLength = verseText.length;
+            const startX = shieldX;
+            const startY = shieldY;
+            const topY = 50;
+            const letterSpacing = 14;
+            const startLeft = canvas.width/2 - (totalLength/2)*letterSpacing;
+
             let delay = 0;
-            for(let i=0;i<verseText.length;i++){
+            for(let i = 0; i < totalLength; i++){
                 const span = document.createElement('span');
                 span.textContent = verseText[i];
                 span.className = 'verse-letter';
-                span.style.left = shieldX + 'px';
-                span.style.top = shieldY + 'px';
-                span.style.transform = 'scale(0.2) translateY(0px)';
+                span.style.left = startX + 'px';
+                span.style.top = startY + 'px';
+                span.style.transform = 'scale(0.2)';
                 document.body.appendChild(span);
 
                 setTimeout(()=>{
                     span.style.opacity = 1;
-                    const finalX = (canvas.width/2 - verseText.length*7/2 + i*14);
-                    const finalY = 50 + Math.sin(i*0.3)*5; // cinematic wave
-                    span.style.left = finalX + 'px';
-                    span.style.top = finalY + 'px';
-                    span.style.transform = 'scale(1) translateY(-20px)';
+                    span.style.transform = 'scale(1)';
+                    span.style.left = startLeft + i*letterSpacing + 'px';
+                    span.style.top = topY + 'px';
                 }, delay);
 
-                delay += 70; // stagger letters
+                delay += 70;
             }
         }
     }

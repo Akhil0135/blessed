@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 2 — MCU Shield Interactive with Verse</title>
+<title>Phase 2 — MCU Shield Interactive with Cinematic Verse</title>
 <style>
 html, body {
     margin: 0;
@@ -39,7 +39,7 @@ function resize() {
 resize();
 window.onresize = resize;
 
-// -------------------- STAR BACKGROUND --------------------
+// -------------------- STARS --------------------
 const stars = [];
 for (let i = 0; i < 200; i++) {
     stars.push({
@@ -62,18 +62,16 @@ function drawStars() {
     });
 }
 
-// -------------------- SHIELD PARAMETERS --------------------
+// -------------------- SHIELD --------------------
 let shieldRadius = 250;
 const shieldX = canvas.width / 2;
 const shieldY = canvas.height / 2;
 let angle = 0;
-
 let breaking = false;
 let pieces = [];
 let starSpin = false;
 let starAngle = 0;
 
-// -------------------- DRAW SHIELD --------------------
 function drawShield(x, y, r, rotation) {
     ctx.save();
     ctx.translate(x, y);
@@ -162,7 +160,7 @@ function drawShield(x, y, r, rotation) {
     ctx.restore();
 }
 
-// -------------------- BREAK SHIELD INTO PIECES --------------------
+// -------------------- SHIELD BREAK --------------------
 function createPieces(){
     pieces = [];
     const numPieces = 50;
@@ -185,7 +183,7 @@ function createPieces(){
 // -------------------- ANIMATION LOOP --------------------
 function animate(){
     drawStars();
-    if(!breaking) angle += 0.004; // slower rotation
+    if(!breaking) angle += 0.004; // slow rotation
     drawShield(shieldX, shieldY, shieldRadius, angle);
 
     if(breaking){
@@ -208,7 +206,7 @@ function animate(){
 
 animate();
 
-// -------------------- CLICK ON STAR --------------------
+// -------------------- STAR CLICK --------------------
 canvas.addEventListener('click', function(e){
     const mx = e.clientX;
     const my = e.clientY;
@@ -221,7 +219,7 @@ canvas.addEventListener('click', function(e){
             starSpin = true;
             createPieces();
 
-            // Verse letters
+            // Cinematic Verse Evolution
             const verseText = "He counts the number of the stars; He gives names to all of them. — Psalm 147:4";
             let delay = 0;
             for(let i=0;i<verseText.length;i++){
@@ -230,13 +228,19 @@ canvas.addEventListener('click', function(e){
                 span.className = 'verse-letter';
                 span.style.left = shieldX + 'px';
                 span.style.top = shieldY + 'px';
+                span.style.transform = 'scale(0.2) translateY(0px)';
                 document.body.appendChild(span);
+
                 setTimeout(()=>{
                     span.style.opacity = 1;
-                    span.style.left = (canvas.width/2 - verseText.length*7/2 + i*14) + 'px';
-                    span.style.top = '50px';
+                    const finalX = (canvas.width/2 - verseText.length*7/2 + i*14);
+                    const finalY = 50 + Math.sin(i*0.3)*5; // cinematic wave
+                    span.style.left = finalX + 'px';
+                    span.style.top = finalY + 'px';
+                    span.style.transform = 'scale(1) translateY(-20px)';
                 }, delay);
-                delay += 80; // letters appear one by one
+
+                delay += 70; // stagger letters
             }
         }
     }

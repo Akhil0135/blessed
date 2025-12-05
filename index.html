@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 1 — IMAX Cinematic Night</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PHASE 1 — IMAX CINEMATIC EXPERIENCE</title>
 
 <style>
     html, body {
-        margin: 0; padding: 0;
+        margin: 0;
+        padding: 0;
         width: 100%; height: 100%;
         overflow: hidden;
-        background: black;
+        background: #000;
         font-family: "Cinzel", serif;
+        transition: background 2.5s ease;
     }
 
-    /* --- 3D Twinkling Stars --- */
+    /* Cinematic camera zoom */
+    body.zoom-in {
+        transform: scale(1.05);
+        transition: transform 6s ease-out;
+    }
+
+    /* Twinkling 3D stars */
     .star {
         position: absolute;
         width: 2px; height: 2px;
@@ -24,70 +32,91 @@
         animation: twinkle 4s infinite ease-in-out alternate;
     }
     @keyframes twinkle {
-        0% { opacity: 0; transform: scale(0.2); }
-        50% { opacity: 1; transform: scale(1); }
-        100% { opacity: 0.3; transform: scale(0.4); }
+        0% { opacity: 0.1; transform: scale(0.4); }
+        50% { opacity: 1; transform: scale(1.3); }
+        100% { opacity: 0.2; transform: scale(0.5); }
     }
 
-    /* --- Moon --- */
+    /* MOON */
     #moon {
         position: absolute;
-        width: 130px;
-        height: 130px;
-        top: 50px;
-        left: 50px;
-        background: radial-gradient(circle at 30% 30%, #ffffff, #d5d5d5, #9e9e9e);
+        width: 130px; height: 130px;
+        top: 60px; left: 60px;
         border-radius: 50%;
-        box-shadow: 0 0 40px 20px rgba(255,255,255,0.4);
+        background: radial-gradient(circle at 30% 30%, #fff, #d6d6d6, #9b9b9b);
+        box-shadow: 0 0 40px 20px rgba(255,255,255,0.45);
         cursor: grab;
-        user-select: none;
     }
 
-    /* --- Sun (Hidden initially) --- */
+    /* SUN (large) */
     #sun {
         position: absolute;
-        width: 150px;
-        height: 150px;
-        top: -200px;
-        right: -200px;
-        background: radial-gradient(circle at 30% 30%, #fff3c0, #ffcc33, #ff8800);
+        width: 240px; height: 240px;
+        top: -280px; right: -280px;
         border-radius: 50%;
-        box-shadow: 0 0 50px 30px rgba(255,180,0,0.5);
         opacity: 0;
+        background: radial-gradient(circle at 30% 30%, #fff7d6, #ffd444, #ff8c00);
+        box-shadow: 0 0 90px 45px rgba(255,180,0,0.55);
+        transition: all 2.8s ease-out;
+        animation: rotateSun 22s linear infinite;
     }
 
-    /* --- Cinematic Message --- */
+    @keyframes rotateSun {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Lens flare strips */
+    .flare {
+        position: absolute;
+        width: 3px; height: 100vh;
+        background: rgba(255,200,80,0.35);
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%) scaleY(0);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Message */
     #msg {
         position: absolute;
-        bottom: 15%;
         width: 100%;
+        bottom: 15%;
         text-align: center;
         font-size: 22px;
         letter-spacing: 2px;
-        color: #ffd88a; /* Soft Cinematic Gold */
-        text-shadow: 0 0 8px #775500;
+        color: #ffd88a;
         opacity: 0;
+        text-shadow: 0 0 6px #644400;
     }
 </style>
 </head>
 
 <body>
 
+<!-- Moon -->
 <div id="moon"></div>
+
+<!-- Sun -->
 <div id="sun"></div>
+
+<!-- Lens flare strips -->
+<div class="flare" id="flare1"></div>
+<div class="flare" id="flare2" style="left: 40%;"></div>
+<div class="flare" id="flare3" style="left: 60%;"></div>
+
+<!-- Message -->
 <div id="msg"></div>
 
 <script>
-/* -------------------------------
-   3D STAR GENERATION
---------------------------------*/
-for (let i = 0; i < 250; i++) {
+/* STARS */
+for (let i = 0; i < 260; i++) {
     const s = document.createElement("div");
     s.className = "star";
     s.style.left = Math.random() * window.innerWidth + "px";
     s.style.top = Math.random() * window.innerHeight + "px";
-    s.style.animationDelay = (Math.random() * 4) + "s";
-    s.style.transform = `scale(${0.3 + Math.random() * 1.5})`;
+    s.style.animationDelay = (Math.random() * 3) + "s";
     document.body.appendChild(s);
 }
 
@@ -97,48 +126,76 @@ const msg = document.getElementById("msg");
 
 let dragging = false;
 
-/* Full message line */
+/* The full cinematic message */
 const fullText = "ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.";
 let revealed = 0;
 
-/* -------------------------------
-   DRAG MOON
---------------------------------*/
+/* DRAGGING LOGIC */
 moon.addEventListener("mousedown", () => dragging = true);
 window.addEventListener("mouseup", () => dragging = false);
 
 window.addEventListener("mousemove", (e) => {
     if (!dragging) return;
 
-    // Make moon follow cursor perfectly
+    /* Moon follows pointer */
     moon.style.left = (e.clientX - 65) + "px";
     moon.style.top = (e.clientY - 65) + "px";
 
-    // Fade stars based on horizontal movement
+    /* Progress based on drag distance */
     const progress = Math.min(e.clientX / window.innerWidth, 1);
+
+    /* Fade stars */
     document.querySelectorAll(".star").forEach(star => {
         star.style.opacity = 1 - progress;
     });
 
-    // Reveal message letter-by-letter parallel to drag
-    let lettersToShow = Math.floor(progress * fullText.length);
-    if (lettersToShow > revealed) {
-        revealed = lettersToShow;
+    /* Reveal message letters */
+    let letters = Math.floor(progress * fullText.length);
+    if (letters > revealed) {
+        revealed = letters;
         msg.textContent = fullText.substring(0, revealed);
         msg.style.opacity = 1;
     }
 
-    // When message fully revealed → moon fades → sun comes
+    /* Trigger Sun after full message */
     if (revealed >= fullText.length) {
         moon.style.transition = "1.5s ease";
-        moon.style.opacity = "0";
+        moon.style.opacity = 0;
 
-        sun.style.transition = "2.5s ease";
-        sun.style.opacity = "1";
-        sun.style.top = "50px";
-        sun.style.right = "50px";
+        /* Sun entrance */
+        sun.style.opacity = 1;
+        sun.style.top = "60px";
+        sun.style.right = "60px";
+
+        /* IMAX zoom */
+        document.body.classList.add("zoom-in");
+
+        /* Lens-flare activation */
+        activateLensFlare();
+
+        /* Change background → soft blue daylight */
+        document.body.style.background = "linear-gradient(#001122, #004466, #447799)";
     }
 });
+
+/* LENS FLARE */
+function activateLensFlare() {
+    const flares = ["flare1", "flare2", "flare3"].map(id => document.getElementById(id));
+
+    flares.forEach((f, i) => {
+        setTimeout(() => {
+            f.style.opacity = 1;
+            f.style.transform = "translateX(-50%) scaleY(1)";
+            f.style.transition = "transform 1.8s ease, opacity 1.8s ease";
+        }, i * 250);
+    });
+
+    setTimeout(() => {
+        flares.forEach(f => {
+            f.style.opacity = 0;
+        });
+    }, 2000);
+}
 </script>
 
 </body>

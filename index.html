@@ -1,108 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Phase 1 — IMAX Cinematic</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 2 — Captain America Shield</title>
 <style>
 html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: #000;
+    background: #0a0a1a; /* Cinematic deep blue-black background */
 }
-
-/* 3D Stars canvas fills screen */
 canvas {
     display: block;
 }
 
-/* Cinematic message style */
-#message {
+/* IMAX cinematic styling */
+#shieldCanvas {
     position: absolute;
-    bottom: 80px;
-    width: 100%;
-    text-align: center;
-    font-size: 26px;
-    font-weight: 600;
-    color: #ffd27f; /* Soft golden */
-    letter-spacing: 2px;
-    text-shadow: 0 0 5px #d9a441;
-    opacity: 0;
-    transition: opacity 1.5s ease;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-/* Sun */
-#sun {
-    position: absolute;
-    width: 260px;
-    height: 260px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #fff7c0 0%, #ffcc33 40%, #d68b00 70%, #000 100%);
-    box-shadow: 0 0 50px #ffb300;
-    top: -300px;
-    right: -300px;
-    opacity: 0;
-    transition: all 2.5s ease-in-out;
-}
-
-/* Moon container */
-#moon {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    left: 40px;
-    top: 40px;
-    border-radius: 50%;
-    cursor: grab;
-
-    /* Cinematic Silver Moon Texture (no image needed) */
-    background: radial-gradient(circle at 30% 30%, 
-        #d9d9d9 0%, 
-        #c0c0c0 20%, 
-        #9a9a9a 45%, 
-        #6d6d6d 70%, 
-        #2a2a2a 100%);
-
-    box-shadow: 
-        0 0 15px rgba(180,180,255,0.8), 
-        inset -20px -20px 40px rgba(0,0,0,0.5);
-
-    transition: box-shadow 0.3s ease;
-}
-
-/* Ambient IMAX Blue Lighting */
-#ambient {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%);
-    pointer-events: none;
-}
 </style>
 </head>
-
 <body>
 
-<canvas id="stars"></canvas>
-
-<div id="ambient"></div>
-
-<div id="moon"></div>
-
-<div id="sun"></div>
-
-<div id="message">ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.</div>
-
-<audio id="whoosh" src="https://cdn.pixabay.com/download/audio/2021/09/16/audio_4f1c1c9f28.mp3?filename=woosh-14795.mp3"></audio>
+<canvas id="shieldCanvas"></canvas>
 
 <script>
-/* ------------------------------
-   STARFIELD (3D TWINKLING)
---------------------------------*/
-const canvas = document.getElementById("stars");
-const ctx = canvas.getContext("2d");
+// -------------------- CANVAS SETUP --------------------
+const canvas = document.getElementById('shieldCanvas');
+const ctx = canvas.getContext('2d');
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -111,8 +41,9 @@ function resize() {
 resize();
 window.onresize = resize;
 
-let stars = [];
-for (let i = 0; i < 250; i++) {
+// -------------------- STARRY BACKGROUND --------------------
+const stars = [];
+for (let i = 0; i < 200; i++) {
     stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -122,83 +53,80 @@ for (let i = 0; i < 250; i++) {
 }
 
 function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0a0a1a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     stars.forEach(s => {
-        let glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
+        const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
         ctx.fillStyle = `rgba(255,255,255,${glow})`;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.z, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.z, 0, Math.PI*2);
         ctx.fill();
     });
 }
 
-/* ------------------------------
-   DRAGGING MOON
---------------------------------*/
-const moon = document.getElementById("moon");
-const message = document.getElementById("message");
-const sun = document.getElementById("sun");
-const whoosh = document.getElementById("whoosh");
+// -------------------- SHIELD PARAMETERS --------------------
+const shieldRadius = 150; // Main radius
+const shieldX = canvas.width / 2;
+const shieldY = canvas.height / 2;
+let angle = 0;
 
-let dragging = false;
-let offsetX, offsetY;
+// Draw MCU-style shield
+function drawShield(x, y, r, rotation) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
 
-let revealIndex = 0;
-const fullMsg = message.innerText;
-message.innerText = ""; // start hidden
+    // Outer ring
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI*2);
+    ctx.fillStyle = '#aa0000';
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff20';
+    ctx.lineWidth = 4;
+    ctx.stroke();
 
-moon.addEventListener("mousedown", e => {
-    dragging = true;
-    offsetX = e.clientX - moon.offsetLeft;
-    offsetY = e.clientY - moon.offsetTop;
-    moon.style.cursor = "grabbing";
+    // White ring
+    ctx.beginPath();
+    ctx.arc(0, 0, r*0.8, 0, Math.PI*2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff20';
+    ctx.lineWidth = 3;
+    ctx.stroke();
 
-    whoosh.currentTime = 0;
-    whoosh.play(); // soft whoosh
-});
+    // Blue center ring
+    ctx.beginPath();
+    ctx.arc(0, 0, r*0.55, 0, Math.PI*2);
+    ctx.fillStyle = '#002366';
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff20';
+    ctx.lineWidth = 2;
+    ctx.stroke();
 
-document.addEventListener("mouseup", () => {
-    dragging = false;
-    moon.style.cursor = "grab";
-});
-
-document.addEventListener("mousemove", e => {
-    if (!dragging) return;
-
-    moon.style.left = (e.clientX - offsetX) + "px";
-    moon.style.top = (e.clientY - offsetY) + "px";
-
-    // Reveal message letter-by-letter
-    if (revealIndex < fullMsg.length) {
-        message.style.opacity = 1;
-        message.innerText = fullMsg.substring(0, revealIndex++);
+    // Star in center
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    const starR = r*0.2;
+    for (let i = 0; i < 5; i++) {
+        ctx.lineTo(Math.cos((18 + i*72)*Math.PI/180)*starR, -Math.sin((18 + i*72)*Math.PI/180)*starR);
+        ctx.lineTo(Math.cos((54 + i*72)*Math.PI/180)*(starR*0.5), -Math.sin((54 + i*72)*Math.PI/180)*(starR*0.5));
     }
+    ctx.closePath();
+    ctx.fill();
 
-    // Fade stars gradually
-    stars.forEach(s => s.tw = 0); // stops twinkling
-    ctx.globalAlpha -= 0.01;
-    if (ctx.globalAlpha < 0) ctx.globalAlpha = 0;
+    ctx.restore();
+}
 
-    // When message fully revealed → Sun enters
-    if (revealIndex >= fullMsg.length) {
-        moon.style.opacity = 0;
-        setTimeout(() => {
-            sun.style.opacity = 1;
-            sun.style.top = "40px";
-            sun.style.right = "40px";
-
-            stars = []; // stars fade away completely
-        }, 800);
-    }
-});
-
-/* ------------------------------
-   ANIMATION LOOP
---------------------------------*/
+// -------------------- ANIMATION LOOP --------------------
 function animate() {
     drawStars();
+    angle += 0.01; // Smooth rotation speed
+    drawShield(shieldX, shieldY, shieldRadius, angle);
+
     requestAnimationFrame(animate);
 }
+
 animate();
 </script>
 

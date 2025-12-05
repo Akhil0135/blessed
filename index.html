@@ -15,28 +15,22 @@ canvas {
     display: block;
     cursor: pointer;
 }
-#verse {
+.verse-letter {
     position: absolute;
-    width: 100%;
-    text-align: center;
-    top: 50px;
-    font-size: 28px;
     font-family: "Cinzel", serif;
+    font-size: 28px;
     color: #ffd700;
     text-shadow: 0 0 10px rgba(255,255,255,0.6);
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 2s ease, transform 2s ease;
+    transition: all 1.2s ease-out;
 }
 </style>
 </head>
 <body>
-<div id="verse">"He counts the number of the stars; He gives names to all of them." — Psalm 147:4</div>
 <canvas id="shieldCanvas"></canvas>
 <script>
 const canvas = document.getElementById('shieldCanvas');
 const ctx = canvas.getContext('2d');
-const verse = document.getElementById('verse');
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -226,11 +220,24 @@ canvas.addEventListener('click', function(e){
             breaking = true;
             starSpin = true;
             createPieces();
-            // Cinematic verse reveal
-            setTimeout(() => {
-                verse.style.opacity = 1;
-                verse.style.transform = 'translateY(0px)';
-            }, 800); // slight delay for dramatic effect
+
+            // Verse letters
+            const verseText = "He counts the number of the stars; He gives names to all of them. — Psalm 147:4";
+            let delay = 0;
+            for(let i=0;i<verseText.length;i++){
+                const span = document.createElement('span');
+                span.textContent = verseText[i];
+                span.className = 'verse-letter';
+                span.style.left = shieldX + 'px';
+                span.style.top = shieldY + 'px';
+                document.body.appendChild(span);
+                setTimeout(()=>{
+                    span.style.opacity = 1;
+                    span.style.left = (canvas.width/2 - verseText.length*7/2 + i*14) + 'px';
+                    span.style.top = '50px';
+                }, delay);
+                delay += 80; // letters appear one by one
+            }
         }
     }
 });

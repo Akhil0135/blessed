@@ -2,38 +2,38 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Phase 2 — Captain America Shield & Constellation Verse</title>
+<title>Phase 2 — Shield & Constellation Verse</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html, body {
-    margin: 0; padding: 0; overflow: hidden;
-    background: radial-gradient(circle at center, #0a0d19 0%, #05060f 60%, #010208 100%);
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background: radial-gradient(circle at center, #0a0d19 0%, #05060f 70%, #010208 100%);
     font-family: "Cinzel", serif;
 }
-canvas { display: block; }
+canvas { display:block; }
 
 .star-letter {
-    position: absolute;
-    font-size: 28px;
-    color: #ffe9a6;
-    text-shadow: 0 0 8px #fff2b3, 0 0 15px #e6d37a;
-    opacity: 0;
-    transform: scale(0.2);
-    transition: 1s ease-out;
-    pointer-events: none;
-    white-space: pre;
+    position:absolute;
+    font-size:28px;
+    color:#ffe9a6;
+    text-shadow:0 0 10px #fff2b3, 0 0 15px #e6d37a;
+    opacity:0;
+    transform:scale(0.2);
+    transition:0.8s ease-out;
+    pointer-events:none;
 }
-
 #final-verse {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 36px;
-    color: #ffd977;
-    text-shadow: 0 0 15px #ffe9b0;
-    opacity: 0;
-    white-space: nowrap;
+    position:absolute;
+    top:40px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:36px;
+    color:#ffd977;
+    text-shadow:0 0 15px #ffe9b0;
+    opacity:0;
+    white-space:nowrap;
 }
 </style>
 </head>
@@ -45,152 +45,164 @@ canvas { display: block; }
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
-function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
+let cw, ch;
+function resize() { cw = canvas.width = window.innerWidth; ch = canvas.height = window.innerHeight; }
 resize();
 window.onresize = resize;
 
-// -------------------- BACKGROUND STARS --------------------
-let bgStars = [];
-for(let i=0;i<400;i++){
-    bgStars.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        z: Math.random()*1.5+0.5,
-        speedX: (Math.random()-0.5)*0.2,
-        speedY: (Math.random()-0.5)*0.2
-    });
-}
-
-// -------------------- SHIELD --------------------
-let starSpin=false;
-let starAngle=0;
+// -------------------- Shield --------------------
 let shieldX, shieldY, R;
+let starSpin = false;
+let starAngle = 0;
 
-function drawShield(){
-    shieldX=canvas.width/2;
-    shieldY=canvas.height/2;
-    R=Math.min(canvas.width, canvas.height)/3;
-
+function drawShield() {
+    shieldX = cw/2; shieldY = ch/2; R = Math.min(cw,ch)/3;
     ctx.save();
     ctx.translate(shieldX, shieldY);
 
     // Outer Red
-    const g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
+    const g1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
     g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000");
-    ctx.fillStyle=g1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = g1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
 
-    // White Ring
-    const g2=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
+    // White
+    const g2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
     g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5");
-    ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = g2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
 
     // Inner Red
-    const g3=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
+    const g3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
     g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000");
-    ctx.fillStyle=g3; ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = g3; ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
 
-    // Blue metallic
-    const g4=ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
+    // Blue Metallic Center
+    const g4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
     g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933");
-    ctx.fillStyle=g4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = g4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
 
     // Star
     ctx.save();
     if(starSpin) ctx.rotate(starAngle);
-
-    const starR=R*0.28;
+    const starR = R*0.28;
     ctx.beginPath();
     for(let i=0;i<5;i++){
-        let o=(Math.PI*2/5)*i-Math.PI/2;
-        let n=o+Math.PI/5;
+        let o=(Math.PI*2/5)*i - Math.PI/2;
+        let n=o + Math.PI/5;
         ctx.lineTo(Math.cos(o)*starR, Math.sin(o)*starR);
         ctx.lineTo(Math.cos(n)*starR*0.45, Math.sin(n)*starR*0.45);
     }
     ctx.closePath();
-
     ctx.shadowColor="rgba(255,255,255,0.25)";
     ctx.shadowBlur=5;
-
     const sg=ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
     sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
     ctx.fillStyle=sg; ctx.fill();
-
     ctx.restore();
+
     ctx.restore();
 }
 
-// -------------------- ANIMATION --------------------
-function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+// -------------------- Background Stars --------------------
+let bgStars=[];
+for(let i=0;i<300;i++){
+    bgStars.push({
+        x: Math.random()*cw, y:Math.random()*ch,
+        z: Math.random()*1.5+0.5,
+        dx:(Math.random()-0.5)*0.5,
+        dy:(Math.random()-0.5)*0.5,
+        tw: Math.random()*0.02+0.005
+    });
+}
 
-    // Move and draw background stars
+function drawStars() {
+    ctx.fillStyle="rgba(10,13,25,1)";
+    ctx.fillRect(0,0,cw,ch);
     bgStars.forEach(s=>{
-        s.x+=s.speedX; s.y+=s.speedY;
-        if(s.x<0)s.x=canvas.width;
-        if(s.x>canvas.width)s.x=0;
-        if(s.y<0)s.y=canvas.height;
-        if(s.y>canvas.height)s.y=0;
-        ctx.fillStyle="rgba(255,255,255,0.7)";
+        s.x+=s.dx; s.y+=s.dy;
+        if(s.x<0) s.x=cw; if(s.x>cw) s.x=0;
+        if(s.y<0) s.y=ch; if(s.y>ch) s.y=0;
+        const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
+        ctx.fillStyle=`rgba(255,255,255,${glow})`;
         ctx.beginPath(); ctx.arc(s.x,s.y,s.z,0,Math.PI*2); ctx.fill();
     });
+}
 
+// -------------------- Animation Loop --------------------
+function loop(){
+    drawStars();
     drawShield();
     if(starSpin) starAngle+=0.035;
-
-    requestAnimationFrame(animate);
+    requestAnimationFrame(loop);
 }
-animate();
+loop();
 
-// -------------------- STAR CLICK --------------------
+// -------------------- Constellation & Verse --------------------
 const verseText="He counts the stars and calls them each by name — Psalm 147:4";
-const finalVerse=document.getElementById("final-verse");
-finalVerse.textContent=verseText;
+let letters=[];
+let finalVerse=document.getElementById("final-verse");
 
 canvas.addEventListener("click",(e)=>{
-    const dx=e.clientX-shieldX;
-    const dy=e.clientY-shieldY;
-    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
+    let dx=e.clientX-shieldX, dy=e.clientY-shieldY;
+    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28 && !starSpin){
         starSpin=true;
-        startConstellationToVerse();
+        revealConstellation();
     }
 });
 
-// -------------------- CONSTELLATION → VERSE --------------------
-function startConstellationToVerse(){
-    const letters=[...verseText];
-    const starPerLetter=10;
-    const starsForVerse=[];
+function revealConstellation(){
+    const starX=shieldX, starY=shieldY;
 
-    // Create stars for letters
-    letters.forEach((char,i)=>{
-        for(let j=0;j<starPerLetter;j++){
-            const s=document.createElement("div");
-            s.className="star-letter"; s.textContent=char;
-            s.style.left=shieldX+"px";
-            s.style.top=shieldY+"px";
-            document.body.appendChild(s);
-            starsForVerse.push(s);
+    // Generate letter star positions using offscreen canvas
+    const tempCanvas=document.createElement("canvas");
+    const tctx=tempCanvas.getContext("2d");
+    tempCanvas.width=cw; tempCanvas.height=ch;
+    tctx.font="bold 100px Cinzel";
+    tctx.fillStyle="white";
+    tctx.textAlign="center";
+    tctx.textBaseline="middle";
+    tctx.fillText(verseText,cw/2,ch/2);
+
+    const imageData=tctx.getImageData(0,0,cw,ch).data;
+    const positions=[];
+    for(let y=0;y<ch;y+=10){
+        for(let x=0;x<cw;x+=10){
+            let index=(y*cw+x)*4;
+            if(imageData[index+3]>128) positions.push({x,y});
         }
-    });
+    }
 
-    // Animate stars to form letters
-    starsForVerse.forEach((s,index)=>{
-        const charIndex=Math.floor(index/starPerLetter);
-        const finalX=window.innerWidth/2 - (verseText.length*16)/2 + charIndex*16 + (index%starPerLetter)*1.2;
-        const finalY=50 + Math.random()*2;
+    // Take 8–12 stars per letter evenly
+    const selectedPositions=[];
+    let step=Math.floor(positions.length/verseText.length/10);
+    for(let i=0;i<verseText.length;i++){
+        for(let j=i*step*10;j<(i+1)*step*10 && j<positions.length;j+=Math.floor(step/1.5)||1){
+            selectedPositions.push({x:positions[j].x,y:positions[j].y});
+        }
+    }
+
+    selectedPositions.forEach((pos,i)=>{
         setTimeout(()=>{
-            s.style.opacity=1;
-            s.style.transform="scale(1)";
-            s.style.left=finalX+"px";
-            s.style.top=finalY+"px";
-        }, index*60);
+            const s=document.createElement("div");
+            s.className="star-letter";
+            s.textContent="*";
+            s.style.left=starX+"px"; s.style.top=starY+"px";
+            document.body.appendChild(s);
+            letters.push({el:s, tx:pos.x, ty:pos.y});
+            setTimeout(()=>{
+                s.style.opacity=1;
+                s.style.transform="scale(1)";
+                s.style.left=pos.x+"px"; s.style.top=pos.y+"px";
+            },10);
+        },i*30);
     });
 
-    // Show final verse after animation
-    setTimeout(()=>{ finalVerse.style.opacity=1; }, letters.length*starPerLetter*60 + 500);
+    // After constellation forms → convert to actual verse
+    setTimeout(()=>{
+        letters.forEach(l=>{
+            l.el.remove();
+        });
+        finalVerse.style.opacity=1;
+    },selectedPositions.length*30+1200);
 }
 </script>
 </body>

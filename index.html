@@ -2,62 +2,66 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Phase 2 — Shield & Constellation Verse</title>
+<title>Captain America Shield — Phase 2</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-html, body {
+html,body{
   margin:0; padding:0; overflow:hidden;
-  background: radial-gradient(circle at center,#0a0d19 0%,#05060f 70%,#010208 100%);
+  background:#0a0d19;
   font-family:"Cinzel", serif;
 }
-canvas { display:block; }
-.star {
+canvas{display:block;}
+.star{
   position:absolute;
   width:3px; height:3px;
   background:white; border-radius:50%;
+  pointer-events:none;
 }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <script>
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
-let cw, ch;
-function resize(){ cw = canvas.width = window.innerWidth; ch = canvas.height = window.innerHeight; }
+const canvas=document.getElementById("c");
+const ctx=canvas.getContext("2d");
+let cw,ch;
+function resize(){ cw=canvas.width=window.innerWidth; ch=canvas.height=window.innerHeight;}
 resize();
-window.onresize = resize;
+window.onresize=resize;
 
-// -------------------- Shield --------------------
-let shieldX, shieldY, R;
-let starSpin=false, starAngle=0;
+// ---------------- Shield ----------------
+let shieldX,shieldY,R;
+let starSpin=false,starAngle=0;
 function drawShield(){
   shieldX=cw/2; shieldY=ch/2; R=Math.min(cw,ch)/3;
-  ctx.save();
-  ctx.translate(shieldX,shieldY);
+  ctx.save(); ctx.translate(shieldX,shieldY);
+
   // Outer Red
   let g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
   g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000");
   ctx.fillStyle=g1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+
   // White
   let g2=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
   g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5");
   ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
+
   // Inner Red
   let g3=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
   g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000");
   ctx.fillStyle=g3; ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
+
   // Blue metallic
   let g4=ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
   g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933");
   ctx.fillStyle=g4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
+
   // Star
-  ctx.save();
-  if(starSpin) ctx.rotate(starAngle);
+  ctx.save(); if(starSpin) ctx.rotate(starAngle);
   let starR=R*0.28;
   ctx.beginPath();
   for(let i=0;i<5;i++){
-    let o=(Math.PI*2/5)*i - Math.PI/2;
+    let o=(Math.PI*2/5)*i-Math.PI/2;
     let n=o+Math.PI/5;
     ctx.lineTo(Math.cos(o)*starR,Math.sin(o)*starR);
     ctx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45);
@@ -68,17 +72,16 @@ function drawShield(){
   let sg=ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
   sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
   ctx.fillStyle=sg; ctx.fill();
-  ctx.restore();
-  ctx.restore();
+  ctx.restore(); ctx.restore();
 }
 
-// -------------------- Background stars --------------------
+// ---------------- Background stars ----------------
 let stars=[];
-for(let i=0;i<500;i++){
+for(let i=0;i<600;i++){
   stars.push({x:Math.random()*cw,y:Math.random()*ch,z:Math.random()*1.5+0.5});
 }
 
-// -------------------- Animate --------------------
+// ---------------- Animate ----------------
 function loop(){
   ctx.fillStyle="rgba(10,13,25,1)";
   ctx.fillRect(0,0,cw,ch);
@@ -92,7 +95,7 @@ function loop(){
 }
 loop();
 
-// -------------------- Constellation → Verse --------------------
+// ---------------- Constellation → Verse ----------------
 const verse="He counts the stars and calls them each by name — Psalm 147:4";
 let starElems=[];
 
@@ -105,40 +108,34 @@ canvas.addEventListener("click",(e)=>{
 });
 
 function formVerse(){
-  // Create hidden canvas to measure verse letters
-  const tempCanvas=document.createElement("canvas");
-  tempCanvas.width=cw; tempCanvas.height=ch;
-  const tctx=tempCanvas.getContext("2d");
-  tctx.font=`bold 80px Cinzel`;
+  const temp=document.createElement("canvas");
+  temp.width=cw; temp.height=ch;
+  const tctx=temp.getContext("2d");
+  tctx.font="bold 80px Cinzel";
   tctx.textAlign="center"; tctx.textBaseline="middle";
   tctx.fillText(verse,cw/2,ch/2);
   const data=tctx.getImageData(0,0,cw,ch).data;
 
-  // pick positions where alpha>128
   let positions=[];
   for(let y=0;y<ch;y+=10){
     for(let x=0;x<cw;x+=10){
       if(data[(y*cw+x)*4+3]>128) positions.push({x,y});
     }
   }
-
   positions=positions.sort(()=>0.5-Math.random()).slice(0,500);
 
-  // Animate background stars to move to positions
   for(let i=0;i<positions.length;i++){
     let s=stars[i];
     let target=positions[i];
     let elem=document.createElement("div");
     elem.className="star";
-    elem.style.left=s.x+"px";
-    elem.style.top=s.y+"px";
+    elem.style.left=s.x+"px"; elem.style.top=s.y+"px";
     document.body.appendChild(elem);
     starElems.push(elem);
 
     setTimeout(()=>{
       elem.style.transition="1.5s ease-out";
-      elem.style.left=target.x+"px";
-      elem.style.top=target.y+"px";
+      elem.style.left=target.x+"px"; elem.style.top=target.y+"px";
     },i*5);
   }
 }

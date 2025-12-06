@@ -2,19 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Captain America Shield — Phase 2 (Divine Light Verse)</title>
+<title>Captain America Shield — Phase 2 (Divine Light Spread)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+    margin:0;
+    padding:0;
+    overflow:hidden;
     background: radial-gradient(circle at center, #0a0d19 0%, #05060f 60%, #010208 100%);
-    font-family: "Cinzel", serif;
+    font-family:"Cinzel", serif;
 }
-canvas {
-    display: block;
-}
+canvas { display:block; }
 
 /* Divine light beam */
 #light-beam {
@@ -22,42 +20,43 @@ canvas {
     top: -500px;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
+    width: 6px;
     height: 500px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0));
+    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 80%);
     opacity: 0;
-    transition: 1s ease-out;
+    transition: top 1.5s ease-out, opacity 1.5s ease-out;
+    pointer-events:none;
 }
 
 /* Verse letters */
 .verse-letter {
-    position: absolute;
-    font-size: 36px;
-    color: #ffd977;
-    text-shadow: 0 0 15px #ffe9b0;
-    opacity: 0;
-    transform: translateY(-50px) scale(0.5);
+    position:absolute;
+    font-size:36px;
+    color:#ffd977;
+    text-shadow:0 0 15px #ffe9b0;
+    opacity:0;
+    transform: scale(0.5);
     transition: all 0.8s ease-out;
     white-space: pre;
+    pointer-events:none;
 }
 </style>
 </head>
 <body>
-
 <canvas id="c"></canvas>
 <div id="light-beam"></div>
 
 <script>
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-const lightBeam = document.getElementById('light-beam');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const lightBeam=document.getElementById('light-beam');
 
-function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
 resize();
-window.onresize = resize;
+window.onresize=resize;
 
 // ------------------ Background stars ------------------
-const bgStars = [];
+const bgStars=[];
 for(let i=0;i<150;i++){
     bgStars.push({
         x: Math.random()*canvas.width,
@@ -67,7 +66,7 @@ for(let i=0;i<150;i++){
     });
 }
 function drawBackgroundStars(){
-    ctx.fillStyle = "#0a0d19";
+    ctx.fillStyle="#0a0d19";
     ctx.fillRect(0,0,canvas.width,canvas.height);
     bgStars.forEach(s=>{
         const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
@@ -80,16 +79,16 @@ function drawBackgroundStars(){
 
 // ------------------ Shield ------------------
 let shieldX, shieldY, R;
-let starSpin = false;
-let starAngle = 0;
+let starSpin=false;
+let starAngle=0;
 
 function drawShield(){
     shieldX=canvas.width/2;
     shieldY=canvas.height/2;
-    R = Math.min(canvas.width, canvas.height)/3;
+    R=Math.min(canvas.width,canvas.height)/3;
 
     ctx.save();
-    ctx.translate(shieldX, shieldY);
+    ctx.translate(shieldX,shieldY);
 
     // Outer red
     const g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
@@ -111,14 +110,14 @@ function drawShield(){
     g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933");
     ctx.fillStyle=g4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
 
-    // Shield star
+    // Star
     ctx.save();
     if(starSpin) ctx.rotate(starAngle);
     const starR=R*0.28;
     ctx.beginPath();
     for(let i=0;i<5;i++){
         let o=(Math.PI*2/5)*i - Math.PI/2;
-        let n=o + Math.PI/5;
+        let n=o+Math.PI/5;
         ctx.lineTo(Math.cos(o)*starR, Math.sin(o)*starR);
         ctx.lineTo(Math.cos(n)*(starR*0.45), Math.sin(n)*(starR*0.45));
     }
@@ -136,7 +135,7 @@ function drawShield(){
 function loop(){
     drawBackgroundStars();
     drawShield();
-    if(starSpin) starAngle += 0.04;
+    if(starSpin) starAngle+=0.04;
     requestAnimationFrame(loop);
 }
 loop();
@@ -152,10 +151,10 @@ canvas.addEventListener("click",(e)=>{
     }
 });
 
-// ------------------ Divine light + verse ------------------
+// ------------------ Divine light spread ------------------
 function revealVerse(){
+    // Show light beam
     lightBeam.style.opacity=1;
-    lightBeam.style.transition="1.5s ease-out";
     lightBeam.style.top="0px";
 
     const verse="He counts the stars and calls them each by name — Psalm 147:4";
@@ -170,11 +169,20 @@ function revealVerse(){
             span.style.left=startX + i*18 + "px";
             span.style.top=startY + "px";
             document.body.appendChild(span);
-            // Animate
+
+            // Animate spreading outward from beam
             setTimeout(()=>{
+                const randomOffsetX = (Math.random()-0.5)*30;
+                const randomOffsetY = (Math.random()-0.5)*30;
                 span.style.opacity=1;
-                span.style.transform="translateY(0px) scale(1)";
+                span.style.transform=`translate(${randomOffsetX}px, 100px) scale(1)`;
             },50);
+
+            // Settle at top center
+            setTimeout(()=>{
+                span.style.transform="translate(0px,0px) scale(1)";
+                span.style.top="40px";
+            },1000 + i*50);
         }, i*100);
     });
 }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Captain America Shield — Phase 2</title>
+<title>Captain America Shield — Phase 2 (Divine Light Verse)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html, body {
@@ -15,34 +15,42 @@ html, body {
 canvas {
     display: block;
 }
-.star-letter {
+
+/* Divine light beam */
+#light-beam {
     position: absolute;
-    color: #ffe9a6;
-    text-shadow: 0 0 8px #fff2b3, 0 0 15px #e6d37a;
-    font-size: 32px;
-    opacity: 0;
-    pointer-events: none;
-}
-#final-verse {
-    position: absolute;
-    top: 40px;
+    top: -500px;
     left: 50%;
     transform: translateX(-50%);
+    width: 4px;
+    height: 500px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0));
+    opacity: 0;
+    transition: 1s ease-out;
+}
+
+/* Verse letters */
+.verse-letter {
+    position: absolute;
     font-size: 36px;
     color: #ffd977;
     text-shadow: 0 0 15px #ffe9b0;
     opacity: 0;
-    white-space: nowrap;
-    pointer-events: none;
+    transform: translateY(-50px) scale(0.5);
+    transition: all 0.8s ease-out;
+    white-space: pre;
 }
 </style>
 </head>
 <body>
+
 <canvas id="c"></canvas>
-<div id="final-verse"></div>
+<div id="light-beam"></div>
+
 <script>
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
+const lightBeam = document.getElementById('light-beam');
 
 function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resize();
@@ -74,6 +82,7 @@ function drawBackgroundStars(){
 let shieldX, shieldY, R;
 let starSpin = false;
 let starAngle = 0;
+
 function drawShield(){
     shieldX=canvas.width/2;
     shieldY=canvas.height/2;
@@ -114,7 +123,8 @@ function drawShield(){
         ctx.lineTo(Math.cos(n)*(starR*0.45), Math.sin(n)*(starR*0.45));
     }
     ctx.closePath();
-    ctx.shadowColor="rgba(255,255,255,0.25)"; ctx.shadowBlur=5;
+    ctx.shadowColor="rgba(255,255,255,0.25)";
+    ctx.shadowBlur=5;
     const sg=ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
     sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
     ctx.fillStyle=sg; ctx.fill();
@@ -122,66 +132,51 @@ function drawShield(){
     ctx.restore();
 }
 
-// ------------------ Star flying letters ------------------
-let letters = [];
-const verseText="He counts the stars and calls them each by name — Psalm 147:4";
-const finalVerse=document.getElementById("final-verse");
-
-function animateLetters(){
-    letters.forEach(l=>{
-        l.x += (l.tx - l.x)*0.08;
-        l.y += (l.ty - l.y)*0.08;
-        l.el.style.left = l.x+"px";
-        l.el.style.top = l.y+"px";
-        l.el.style.opacity=1;
-    });
-}
-
-// ------------------ Main Loop ------------------
+// ------------------ Animate ------------------
 function loop(){
     drawBackgroundStars();
     drawShield();
     if(starSpin) starAngle += 0.04;
-    animateLetters();
     requestAnimationFrame(loop);
 }
 loop();
 
-// ------------------ On Click ------------------
+// ------------------ Click event ------------------
 canvas.addEventListener("click",(e)=>{
     let dx=e.clientX-shieldX, dy=e.clientY-shieldY;
     if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
-        starSpin=true;
-        createLetterStars();
+        if(!starSpin){
+            starSpin=true;
+            revealVerse();
+        }
     }
 });
 
-// ------------------ Create multiple stars per letter ------------------
-function createLetterStars(){
-    letters=[];
-    const startX=100; // starting X for first letter
-    const startY=100; // top position
-    let offsetX=canvas.width/2 - verseText.length*15;
+// ------------------ Divine light + verse ------------------
+function revealVerse(){
+    lightBeam.style.opacity=1;
+    lightBeam.style.transition="1.5s ease-out";
+    lightBeam.style.top="0px";
 
-    for(let i=0;i<verseText.length;i++){
-        const char=verseText[i];
-        const numStars = 8 + Math.floor(Math.random()*5);
-        for(let j=0;j<numStars;j++){
-            const el=document.createElement("div");
-            el.className="star-letter"; el.textContent="•";
-            el.style.left=shieldX+"px"; el.style.top=shieldY+"px";
-            document.body.appendChild(el);
+    const verse="He counts the stars and calls them each by name — Psalm 147:4";
+    const startX=canvas.width/2 - (verse.length*18)/2;
+    const startY=0;
 
-            // target x,y for this star
-            const tx = offsetX + i*20 + (Math.random()*10-5);
-            const ty = startY + (Math.random()*15-7);
-
-            letters.push({el,x:shieldX,y:shieldY,tx,ty});
-        }
-    }
-
-    // After animation, show final verse
-    setTimeout(()=>{ finalVerse.style.opacity=1; }, 3000);
+    [...verse].forEach((char,i)=>{
+        setTimeout(()=>{
+            const span=document.createElement("div");
+            span.className="verse-letter";
+            span.textContent=char;
+            span.style.left=startX + i*18 + "px";
+            span.style.top=startY + "px";
+            document.body.appendChild(span);
+            // Animate
+            setTimeout(()=>{
+                span.style.opacity=1;
+                span.style.transform="translateY(0px) scale(1)";
+            },50);
+        }, i*100);
+    });
 }
 </script>
 </body>

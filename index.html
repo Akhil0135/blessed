@@ -1,262 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Captain America Shield — Phase 2 (Constellation Reveal)</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Constellation Verse Reveal — Akhil Sir</title>
 <style>
-    html,body{
-        margin:0;
-        padding:0;
-        overflow:hidden;
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Cinzel', serif;
+  }
 
-        /* IMAX Cinematic Deep-Space Background */
-        background: radial-gradient(circle at center,
-                    #0a0d19 0%,
-                    #05060f 60%,
-                    #010208 100%);
-        font-family: "Cinzel", serif;
-    }
-    canvas{
-        display:block;
-    }
+  /* Starfield BG */
+  canvas#starfield {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
 
-    /* INDIVIDUAL CONSTELLATION LETTERS */
-    .star-letter{
-        position:absolute;
-        font-size:30px;
-        color:#ffe9a6;
-        text-shadow:0 0 8px #fff2b3, 0 0 15px #e6d37a;
-        opacity:0;
-        transform:scale(0.2);
-        transition:0.8s ease-out;
-        pointer-events:none;
-    }
+  /* Constellation lines */
+  svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 2;
+  }
 
-    /* FINAL VERSE (when settled at top) */
-    #final-verse{
-        position:absolute;
-        top:40px;
-        left:50%;
-        transform:translateX(-50%);
-        font-size:36px;
-        color:#ffd977;
-        text-shadow:0 0 15px #ffe9b0;
-        opacity:0;
-        transition:1.5s ease-out;
-        white-space:nowrap;
-        pointer-events:none;
-    }
+  #verse {
+    color: #e6e6ff;
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+    text-shadow: 0 0 12px #4e5bff;
+    opacity: 0;
+    z-index: 3;
+    position: relative;
+  }
 </style>
-
 </head>
 <body>
+<canvas id="starfield"></canvas>
 
-<canvas id="shieldCanvas"></canvas>
-<div id="final-verse"></div>
+<!-- Constellation Layer -->
+<svg id="constellation"></svg>
+
+<div id="verse"></div>
 
 <script>
-const canvas = document.getElementById("shieldCanvas");
-const ctx = canvas.getContext("2d");
+// --------------------- STARFIELD BACKGROUND ---------------------
+const starCanvas = document.getElementById('starfield');
+const ctx = starCanvas.getContext('2d');
+starCanvas.width = innerWidth;
+starCanvas.height = innerHeight;
 
-function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resize();
-window.onresize = resize;
-
-// ---------------------------------------------
-// SHIELD + STAR
-// ---------------------------------------------
-let starSpin = false;
-let starAngle = 0;
-let shieldX, shieldY, R;
-
-function drawShield(){
-    shieldX = canvas.width/2;
-    shieldY = canvas.height/2;
-    R = Math.min(canvas.width, canvas.height)/3;
-
-    ctx.save();
-    ctx.translate(shieldX, shieldY);
-
-    // OUTER RED
-    const g1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
-    g1.addColorStop(0,"#3c0000");
-    g1.addColorStop(1,"#7a0000");
-    ctx.fillStyle = g1;
-    ctx.beginPath();
-    ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
-
-    // WHITE
-    const g2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
-    g2.addColorStop(0,"#dadada");
-    g2.addColorStop(1,"#f5f5f5");
-    ctx.fillStyle = g2;
-    ctx.beginPath();
-    ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
-
-    // INNER RED
-    const g3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
-    g3.addColorStop(0,"#4b0000");
-    g3.addColorStop(1,"#8c0000");
-    ctx.fillStyle = g3;
-    ctx.beginPath();
-    ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
-
-    // BLUE METALLIC CENTER
-    const g4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
-    g4.addColorStop(0,"#b4c7e0");
-    g4.addColorStop(1,"#001933");
-    ctx.fillStyle = g4;
-    ctx.beginPath();
-    ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
-
-    // STAR
-    ctx.save();
-    if(starSpin) ctx.rotate(starAngle);
-
-    const starR = R*0.28;
-    ctx.beginPath();
-    for(let i=0;i<5;i++){
-        let o = (Math.PI*2/5)*i - Math.PI/2;
-        let n = o + Math.PI/5;
-        ctx.lineTo(Math.cos(o)*starR, Math.sin(o)*starR);
-        ctx.lineTo(Math.cos(n)*(starR*0.45), Math.sin(n)*(starR*0.45));
-    }
-    ctx.closePath();
-
-    // Reduced glow
-    ctx.shadowColor="rgba(255,255,255,0.25)";
-    ctx.shadowBlur=5;
-
-    const sg = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
-    sg.addColorStop(0,"#ffffff");
-    sg.addColorStop(0.4,"#eeeeee");
-    sg.addColorStop(1,"#7a7a7a");
-    ctx.fillStyle = sg;
-    ctx.fill();
-
-    ctx.restore();
-    ctx.restore();
+let stars = [];
+for (let i = 0; i < 300; i++) {
+  stars.push({
+    x: Math.random() * innerWidth,
+    y: Math.random() * innerHeight,
+    size: Math.random() * 1.2,
+    speed: Math.random() * 0.2 + 0.05
+  });
 }
 
-function loop(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawShield();
-    if(starSpin) starAngle += 0.035;
-    requestAnimationFrame(loop);
+function starfieldAnim() {
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+  ctx.fillStyle = 'white';
+
+  stars.forEach(s => {
+    ctx.globalAlpha = Math.random();
+    ctx.fillRect(s.x, s.y, s.size, s.size);
+  });
+
+  requestAnimationFrame(starfieldAnim);
 }
-loop();
+starfieldAnim();
 
-// ---------------------------------------------
-// CONSTELLATION LETTER REVEAL
-// ---------------------------------------------
-const verseText = "He counts the stars and calls them each by name — Psalm 147:4";
-const finalVerse = document.getElementById("final-verse");
-finalVerse.textContent = verseText;
+// --------------------- CONSTELLATION DRAW -----------------------
+const svg = document.getElementById('constellation');
+const verseText = "EVOLUTION OF THE SOUL";
+const verseDiv = document.getElementById('verse');
 
-let letters = [];
-let lineSegments = [];
+// Constellation points
+let points = [];
+const totalPoints = 20;
 
-canvas.addEventListener("click", (e)=>{
-    let mx=e.clientX, my=e.clientY;
-    let dx = mx-shieldX;
-    let dy = my-shieldY;
-    if(Math.sqrt(dx*dx + dy*dy) <= R*0.28){
-        starSpin=true;
-        revealConstellation();
-    }
+for (let i = 0; i < totalPoints; i++) {
+  points.push({
+    x: Math.random() * innerWidth,
+    y: Math.random() * innerHeight * 0.6 + innerHeight * 0.2
+  });
+}
+
+// Create stars
+points.forEach((p, i) => {
+  const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  star.setAttribute('cx', p.x);
+  star.setAttribute('cy', p.y);
+  star.setAttribute('r', 3);
+  star.setAttribute('fill', '#9ab1ff');
+  star.setAttribute('opacity', '0');
+  svg.appendChild(star);
+
+  setTimeout(() => {
+    star.style.transition = 'opacity 0.7s ease';
+    star.setAttribute('opacity', '1');
+  }, i * 200);
 });
 
-function revealConstellation(){
-    const starX = shieldX;
-    const starY = shieldY;
+// Draw lines
+points.forEach((p, i) => {
+  if (i === 0) return;
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', points[i - 1].x);
+  line.setAttribute('y1', points[i - 1].y);
+  line.setAttribute('x2', p.x);
+  line.setAttribute('y2', p.y);
+  line.setAttribute('stroke', '#6e7cff');
+  line.setAttribute('stroke-width', '2');
+  line.setAttribute('opacity', '0');
+  svg.appendChild(line);
 
-    let prevX = starX;
-    let prevY = starY;
+  setTimeout(() => {
+    line.style.transition = 'opacity 0.7s ease';
+    line.setAttribute('opacity', '0.9');
+  }, i * 300 + 300);
+});
 
-    [...verseText].forEach((char, i)=>{
+// --------------------- VERSE REVEAL LETTER BY LETTER ---------------------
+setTimeout(() => {
+  verseDiv.style.opacity = 1;
+  let i = 0;
 
-        setTimeout(()=>{
+  function typeWrite() {
+    verseDiv.textContent = verseText.substring(0, i);
+    i++;
+    if (i <= verseText.length) setTimeout(typeWrite, 120);
+  }
 
-            // Create individual letter
-            const el = document.createElement("div");
-            el.className="star-letter";
-            el.textContent = char;
-
-            // Start at star center
-            el.style.left = starX+"px";
-            el.style.top  = starY+"px";
-            document.body.appendChild(el);
-            letters.push(el);
-
-            // TARGET POSITION for each letter (top center)
-            const finalY = 40 + 0; 
-            const offsetX = - (finalVerse.clientWidth/2) + (i*20);
-
-            const finalX = window.innerWidth/2 + offsetX;
-
-            // Animate letter
-            setTimeout(()=>{
-                el.style.opacity=1;
-                el.style.transform="scale(1)";
-                el.style.left = finalX+"px";
-                el.style.top  = finalY+"px";
-            },20);
-
-            // DRAW CONSTELLATION LINE
-            const newX = finalX;
-            const newY = finalY;
-
-            drawConstellationLine(prevX, prevY, newX, newY);
-            prevX = newX;
-            prevY = newY;
-
-            // After all letters → fade in final verse
-            if(i===verseText.length-1){
-                setTimeout(()=>{
-                    finalVerse.style.opacity=1;
-                }, 1500);
-            }
-
-        }, i*120);  // reveal speed
-    });
-}
-
-// Draw connecting star lines
-function drawConstellationLine(x1,y1,x2,y2){
-    const line = document.createElement("canvas");
-    line.width = canvas.width;
-    line.height = canvas.height;
-    line.style.position="absolute";
-    line.style.left="0";
-    line.style.top="0";
-    line.style.pointerEvents="none";
-
-    const lctx = line.getContext("2d");
-    lctx.strokeStyle="rgba(255,220,150,0.9)";
-    lctx.lineWidth=2;
-    lctx.shadowBlur=8;
-    lctx.shadowColor="rgba(255,220,150,0.7)";
-
-    lctx.beginPath();
-    lctx.moveTo(x1,y1);
-    lctx.lineTo(x2,y2);
-    lctx.stroke();
-
-    document.body.appendChild(line);
-
-    // fade line slowly
-    setTimeout(()=>{
-        line.style.transition="3s ease-out";
-        line.style.opacity=0;
-        setTimeout(()=> line.remove(), 3500);
-    }, 1200);
-}
+  typeWrite();
+}, totalPoints * 250);
 </script>
-
 </body>
 </html>

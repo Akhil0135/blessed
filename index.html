@@ -1,154 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Constellation Verse Reveal — Akhil Sir</title>
+<meta charset="UTF-8">
+<title>IMAX Constellation Verse — Akhil Sir</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-  body {
-    margin: 0;
-    height: 100vh;
-    background: #000;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Cinzel', serif;
-  }
+    html,body{
+        margin:0;
+        padding:0;
+        overflow:hidden;
+        background:#03040a;
+        font-family:"Cinzel",serif;
+    }
+    canvas{
+        position:absolute;
+        top:0;
+        left:0;
+    }
 
-  /* Starfield BG */
-  canvas#starfield {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-  }
-
-  /* Constellation lines */
-  svg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 2;
-  }
-
-  #verse {
-    color: #e6e6ff;
-    font-size: 2.2rem;
-    letter-spacing: 2px;
-    text-shadow: 0 0 12px #4e5bff;
-    opacity: 0;
-    z-index: 3;
-    position: relative;
-  }
+    /* Final verse text */
+    #finalVerse{
+        position:absolute;
+        top:40px;
+        left:50%;
+        transform:translateX(-50%);
+        font-size:36px;
+        color:#ffd98a;
+        text-shadow:0 0 15px #fff4cf;
+        opacity:0;
+        transition:1.5s ease-out;
+        white-space:nowrap;
+        pointer-events:none;
+    }
 </style>
 </head>
 <body>
-<canvas id="starfield"></canvas>
 
-<!-- Constellation Layer -->
-<svg id="constellation"></svg>
+<canvas id="bgStars"></canvas>
+<canvas id="shieldCanvas"></canvas>
+<canvas id="constellationCanvas"></canvas>
 
-<div id="verse"></div>
+<div id="finalVerse">He counts the stars and calls them each by name — Psalm 147:4</div>
 
 <script>
-// --------------------- STARFIELD BACKGROUND ---------------------
-const starCanvas = document.getElementById('starfield');
-const ctx = starCanvas.getContext('2d');
-starCanvas.width = innerWidth;
-starCanvas.height = innerHeight;
+/* --------------------------------------------------
+   RESIZE HANDLING
+-------------------------------------------------- */
+const bg = document.getElementById("bgStars");
+const shieldCanvas = document.getElementById("shieldCanvas");
+const constCanvas = document.getElementById("constellationCanvas");
 
-let stars = [];
-for (let i = 0; i < 300; i++) {
-  stars.push({
-    x: Math.random() * innerWidth,
-    y: Math.random() * innerHeight,
-    size: Math.random() * 1.2,
-    speed: Math.random() * 0.2 + 0.05
-  });
+const bgCtx = bg.getContext("2d");
+const sCtx  = shieldCanvas.getContext("2d");
+const cCtx  = constCanvas.getContext("2d");
+
+function resize(){
+    bg.width = shieldCanvas.width = constCanvas.width = window.innerWidth;
+    bg.height = shieldCanvas.height = constCanvas.height = window.innerHeight;
+}
+resize();
+window.onresize = resize;
+
+/* --------------------------------------------------
+   STARFIELD BACKGROUND
+-------------------------------------------------- */
+let bgStars = [];
+const STAR_COUNT = 350;
+
+for(let i=0;i<STAR_COUNT;i++){
+    bgStars.push({
+        x: Math.random()*bg.width,
+        y: Math.random()*bg.height,
+        r: Math.random()*1.5 + 0.3,
+        speed: Math.random()*0.15 + 0.05
+    });
 }
 
-function starfieldAnim() {
-  ctx.clearRect(0, 0, innerWidth, innerHeight);
-  ctx.fillStyle = 'white';
+function drawBgStars(){
+    bgCtx.clearRect(0,0,bg.width,bg.height);
+    bgCtx.fillStyle="white";
 
-  stars.forEach(s => {
-    ctx.globalAlpha = Math.random();
-    ctx.fillRect(s.x, s.y, s.size, s.size);
-  });
+    for(let s of bgStars){
+        bgCtx.globalAlpha = 0.3 + Math.random()*0.3;
+        bgCtx.beginPath();
+        bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        bgCtx.fill();
 
-  requestAnimationFrame(starfieldAnim);
-}
-starfieldAnim();
-
-// --------------------- CONSTELLATION DRAW -----------------------
-const svg = document.getElementById('constellation');
-const verseText = "EVOLUTION OF THE SOUL";
-const verseDiv = document.getElementById('verse');
-
-// Constellation points
-let points = [];
-const totalPoints = 20;
-
-for (let i = 0; i < totalPoints; i++) {
-  points.push({
-    x: Math.random() * innerWidth,
-    y: Math.random() * innerHeight * 0.6 + innerHeight * 0.2
-  });
+        // Drift
+        s.y += s.speed;
+        if(s.y > bg.height) s.y=0;
+    }
 }
 
-// Create stars
-points.forEach((p, i) => {
-  const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  star.setAttribute('cx', p.x);
-  star.setAttribute('cy', p.y);
-  star.setAttribute('r', 3);
-  star.setAttribute('fill', '#9ab1ff');
-  star.setAttribute('opacity', '0');
-  svg.appendChild(star);
+/* --------------------------------------------------
+   SHIELD + STAR
+-------------------------------------------------- */
+let starSpin=false;
+let starAngle=0;
+let shieldX, shieldY, R;
 
-  setTimeout(() => {
-    star.style.transition = 'opacity 0.7s ease';
-    star.setAttribute('opacity', '1');
-  }, i * 200);
+function drawShield(){
+    shieldX = shieldCanvas.width/2;
+    shieldY = shieldCanvas.height/2;
+    R = Math.min(shieldCanvas.width,shieldCanvas.height)/3;
+
+    sCtx.save();
+    sCtx.translate(shieldX,shieldY);
+
+    // OUTER RING
+    const g1 = sCtx.createRadialGradient(0,0,R*0.2,0,0,R);
+    g1.addColorStop(0,"#3c0000");
+    g1.addColorStop(1,"#7a0000");
+    sCtx.fillStyle=g1;
+    sCtx.beginPath();
+    sCtx.arc(0,0,R,0,Math.PI*2);
+    sCtx.fill();
+
+    // WHITE RING
+    const g2 = sCtx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
+    g2.addColorStop(0,"#dadada");
+    g2.addColorStop(1,"#f5f5f5");
+    sCtx.fillStyle=g2;
+    sCtx.beginPath();
+    sCtx.arc(0,0,R*0.75,0,Math.PI*2);
+    sCtx.fill();
+
+    // INNER RED
+    const g3 = sCtx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
+    g3.addColorStop(0,"#4b0000");
+    g3.addColorStop(1,"#8c0000");
+    sCtx.fillStyle=g3;
+    sCtx.beginPath();
+    sCtx.arc(0,0,R*0.5,0,Math.PI*2);
+    sCtx.fill();
+
+    // BLUE CENTER
+    const g4 = sCtx.createRadialGradient(0,0,R*0.07,0,0,R*0.35);
+    g4.addColorStop(0,"#b4c7e0");
+    g4.addColorStop(1,"#001933");
+    sCtx.fillStyle=g4;
+    sCtx.beginPath();
+    sCtx.arc(0,0,R*0.35,0,Math.PI*2);
+    sCtx.fill();
+
+    // STAR
+    sCtx.save();
+    if(starSpin) sCtx.rotate(starAngle);
+
+    const sr = R*0.28;
+    sCtx.beginPath();
+    for(let i=0;i<5;i++){
+        let a = (Math.PI*2/5)*i - Math.PI/2;
+        let b = a + Math.PI/5;
+        sCtx.lineTo(Math.cos(a)*sr, Math.sin(a)*sr);
+        sCtx.lineTo(Math.cos(b)*(sr*0.45), Math.sin(b)*(sr*0.45));
+    }
+
+    sCtx.closePath();
+    sCtx.shadowBlur=5;
+    sCtx.shadowColor="rgba(255,255,255,0.25)";
+
+    const sg = sCtx.createRadialGradient(0,0,sr*0.1,0,0,sr);
+    sg.addColorStop(0,"#ffffff");
+    sg.addColorStop(0.4,"#eeeeee");
+    sg.addColorStop(1,"#7a7a7a");
+    sCtx.fillStyle=sg;
+    sCtx.fill();
+
+    sCtx.restore();
+    sCtx.restore();
+}
+
+/* --------------------------------------------------
+   CONSTELLATION FORMATION (MAIN EFFECT)
+-------------------------------------------------- */
+const verse = "He counts the stars and calls them each by name — Psalm 147:4";
+let constellationStars = [];
+let forming = false;
+
+function spawnConstellation(){
+    forming=true;
+    cCtx.clearRect(0,0,constCanvas.width,constCanvas.height);
+
+    constellationStars = [];
+
+    // take stars from the background randomly
+    for(let i=0;i<verse.length;i++){
+        let pick = bgStars[Math.floor(Math.random()*bgStars.length)];
+        constellationStars.push({
+            x: pick.x,
+            y: pick.y,
+            size: 2,
+            targetX: window.innerWidth/2 - verse.length*6 + i*12,
+            targetY: 60,
+            progress:0
+        });
+    }
+}
+
+function drawConstellation(){
+    if(!forming) return;
+
+    cCtx.clearRect(0,0,constCanvas.width,constCanvas.height);
+
+    for(let s of constellationStars){
+        s.progress += 0.015;
+        if(s.progress>1) s.progress=1;
+
+        s.x += (s.targetX - s.x)*0.05;
+        s.y += (s.targetY - s.y)*0.05;
+
+        cCtx.fillStyle="rgba(255,230,150,0.9)";
+        cCtx.beginPath();
+        cCtx.arc(s.x,s.y,s.size,0,Math.PI*2);
+        cCtx.fill();
+    }
+
+    // once done → show final verse
+    if(constellationStars.every(s=>s.progress===1)){
+        setTimeout(()=>{
+            document.getElementById("finalVerse").style.opacity=1;
+        },500);
+    }
+}
+
+/* --------------------------------------------------
+   INTERACTION
+-------------------------------------------------- */
+shieldCanvas.addEventListener("click",(e)=>{
+    let dx = e.clientX - shieldX;
+    let dy = e.clientY - shieldY;
+
+    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
+        starSpin=true;
+        spawnConstellation();
+    }
 });
 
-// Draw lines
-points.forEach((p, i) => {
-  if (i === 0) return;
-  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  line.setAttribute('x1', points[i - 1].x);
-  line.setAttribute('y1', points[i - 1].y);
-  line.setAttribute('x2', p.x);
-  line.setAttribute('y2', p.y);
-  line.setAttribute('stroke', '#6e7cff');
-  line.setAttribute('stroke-width', '2');
-  line.setAttribute('opacity', '0');
-  svg.appendChild(line);
+/* --------------------------------------------------
+   MASTER LOOP
+-------------------------------------------------- */
+function loop(){
+    drawBgStars();
+    sCtx.clearRect(0,0,shieldCanvas.width,shieldCanvas.height);
+    drawShield();
 
-  setTimeout(() => {
-    line.style.transition = 'opacity 0.7s ease';
-    line.setAttribute('opacity', '0.9');
-  }, i * 300 + 300);
-});
+    if(starSpin){
+        starAngle+=0.035;
+    }
 
-// --------------------- VERSE REVEAL LETTER BY LETTER ---------------------
-setTimeout(() => {
-  verseDiv.style.opacity = 1;
-  let i = 0;
+    drawConstellation();
+    requestAnimationFrame(loop);
+}
+loop();
 
-  function typeWrite() {
-    verseDiv.textContent = verseText.substring(0, i);
-    i++;
-    if (i <= verseText.length) setTimeout(typeWrite, 120);
-  }
-
-  typeWrite();
-}, totalPoints * 250);
 </script>
 </body>
 </html>

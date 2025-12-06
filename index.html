@@ -13,17 +13,6 @@ html, body {
     font-family: "Cinzel", serif;
 }
 canvas { display: block; }
-
-.verse-letter {
-    position: absolute;
-    color: #ffe9a6;
-    text-shadow: 0 0 8px #fff2b3, 0 0 15px #e6d37a;
-    font-size: 28px;
-    opacity: 0;
-    transform: scale(0.2);
-    transition: all 0.8s ease-out;
-    pointer-events: none;
-}
 </style>
 </head>
 <body>
@@ -36,15 +25,10 @@ let w, h;
 function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
 resize(); window.addEventListener('resize', resize);
 
-// --------------------- BACKGROUND STARS ---------------------
+// Background stars
 const bgStars = [];
 for(let i=0;i<300;i++){
-    bgStars.push({
-        x: Math.random()*w,
-        y: Math.random()*h,
-        z: Math.random()*1.5 + 0.5,
-        speed: Math.random()*0.3 + 0.1
-    });
+    bgStars.push({x: Math.random()*w, y: Math.random()*h, z: Math.random()*1.5 + 0.5, speed: Math.random()*0.3 + 0.1});
 }
 function drawBgStars(){
     ctx.fillStyle = "#0a0d19";
@@ -59,33 +43,43 @@ function drawBgStars(){
     });
 }
 
-// --------------------- SHIELD ---------------------
+// Shield
 let shieldX = w/2, shieldY = h/2;
 let R = Math.min(w,h)/3;
 let starAngle = 0, starSpin = false;
 
 function drawShield(){
+    // Rings
     ctx.save();
     ctx.translate(shieldX,shieldY);
+
     // Outer Red
-    let grad1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
-    grad1.addColorStop(0,"#3c0000"); grad1.addColorStop(1,"#7a0000");
-    ctx.fillStyle = grad1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+    let g1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
+    g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000");
+    ctx.fillStyle = g1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+
     // White Ring
-    let grad2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
-    grad2.addColorStop(0,"#dadada"); grad2.addColorStop(1,"#f5f5f5");
-    ctx.fillStyle = grad2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
+    let g2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
+    g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5");
+    ctx.fillStyle = g2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
+
     // Inner Red
-    let grad3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
-    grad3.addColorStop(0,"#4b0000"); grad3.addColorStop(1,"#8c0000");
-    ctx.fillStyle = grad3; ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
+    let g3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
+    g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000");
+    ctx.fillStyle = g3; ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
+
     // Blue Metallic
-    let grad4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
-    grad4.addColorStop(0,"#b4c7e0"); grad4.addColorStop(1,"#001933");
-    ctx.fillStyle = grad4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
-    // Star
+    let g4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
+    g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933");
+    ctx.fillStyle = g4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
+
+    ctx.restore();
+
+    // Star (rotates)
     ctx.save();
+    ctx.translate(shieldX,shieldY);
     if(starSpin) ctx.rotate(starAngle);
+
     const starR = R*0.28;
     ctx.beginPath();
     for(let i=0;i<5;i++){
@@ -95,6 +89,7 @@ function drawShield(){
         ctx.lineTo(Math.cos(n)*(starR*0.45), Math.sin(n)*(starR*0.45));
     }
     ctx.closePath();
+
     ctx.shadowColor="rgba(255,255,255,0.25)";
     ctx.shadowBlur=5;
     let sg = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
@@ -102,20 +97,9 @@ function drawShield(){
     ctx.fillStyle = sg;
     ctx.fill();
     ctx.restore();
-    ctx.restore();
 }
 
-// --------------------- ANIMATION ---------------------
-function animate(){
-    drawBgStars();
-    drawShield();
-    if(starSpin) starAngle+=0.04;
-    updateStarLetters();
-    requestAnimationFrame(animate);
-}
-animate();
-
-// --------------------- STAR LETTERS ---------------------
+// Star Letters
 let starLetters = [];
 let animationActive=false;
 const verse = "He counts the stars and calls them each by name — Psalm 147:4";
@@ -138,13 +122,13 @@ function generateStarLetters(){
     for(let i=0;i<verse.length;i++){
         let char = verse[i];
         let charWidth = ctx.measureText(char).width;
-        const numStars = 10; // stars per letter
+        const numStars = 10;
         for(let j=0;j<numStars;j++){
             starLetters.push({
                 char: char,
                 x: startX,
                 y: startY,
-                tx: targetX + charWidth*i/verse.length + Math.random()*10,
+                tx: targetX + charWidth*i/verse.length + Math.random()*8,
                 ty: targetY + Math.random()*5,
                 opacity:0,
                 scale:0.2
@@ -168,6 +152,16 @@ function updateStarLetters(){
         ctx.restore();
     });
 }
+
+// Animation loop
+function animate(){
+    drawBgStars();
+    drawShield();
+    if(starSpin) starAngle+=0.05; // Rotation active
+    updateStarLetters();
+    requestAnimationFrame(animate);
+}
+animate();
 </script>
 </body>
 </html>

@@ -2,131 +2,178 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Captain America Shield — Phase 2</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Captain America Shield — Verse Reveal</title>
 
 <style>
-    body{
+    html,body{
         margin:0;
-        height:100vh;
-        background: radial-gradient(circle at center, #020203, #000000 70%);
-        display:flex;
-        justify-content:center;
-        align-items:center;
+        padding:0;
         overflow:hidden;
+
+        /* IMAX Cinematic Background */
+        background: radial-gradient(circle at center,
+                    #0b0e20 0%,    /* deep space blue */
+                    #05060f 60%,
+                    #02030a 100%); /* darker outer */
+    
         font-family: "Cinzel", serif;
     }
-
-    /* Container */
-    .scene {
-        position: relative;
-        width: 260px;
-        height: 260px;
-        cursor: pointer;
+    canvas{
+        display:block;
     }
 
-    /* Shield */
-    .shield {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background:
-            radial-gradient(circle, #d40000 0%, #b00000 40%, #7a0000 70%),
-            radial-gradient(circle, #ffffff 0%, #e6e6e6 60%, #bfbfbf 100%);
-        box-shadow: 0 0 40px #ff000033;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        position: relative;
-        transition: opacity 0.8s ease-out;
-    }
-
-    /* Star */
-    .star {
-        width: 95px;
-        height: 95px;
-        background: white;
-        clip-path: polygon(
-            50% 0%,
-            61% 35%,
-            98% 35%,
-            68% 57%,
-            79% 91%,
-            50% 70%,
-            21% 91%,
-            32% 57%,
-            2% 35%,
-            39% 35%
-        );
-        filter: drop-shadow(0 0 4px #66aaff55); /* 🌟 Reduced glow here */
-        transition: filter 0.5s ease-out;
-    }
-
-    /* Rotation only after click */
-    .rotate {
-        animation: spin 2.5s linear forwards;
-    }
-    @keyframes spin {
-        from { transform: rotate(0deg) scale(1); }
-        to { transform: rotate(720deg) scale(1.1); }
-    }
-
-    /* Verse */
-    .verse {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.1);
-        color: #ffffff;
-        font-size: 26px;
-        opacity: 0;
-        text-align:center;
-        transition: transform 1.8s ease-out, opacity 1.5s ease-out, top 1.8s ease-out;
-        pointer-events:none;
-        letter-spacing: 1px;
-        text-shadow: 0 0 10px #ffffff33;
-    }
-
-    .verse.show {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.4);
-        top: 10%;
+    /* VERSE LETTER STYLING */
+    .verse{
+        position:absolute;
+        font-size:32px;
+        color:#ffd700;
+        text-shadow:0 0 10px rgba(255,255,150,0.7);
+        opacity:0;
+        transform:scale(0.2);
+        transition:1s ease-out;
+        white-space:nowrap;
     }
 </style>
+
 </head>
 <body>
 
-<div class="scene" onclick="reveal()">
-    <div class="shield" id="shield">
-        <div class="star" id="star"></div>
-    </div>
-
-    <div class="verse" id="verse">
-        **"THE POWER TO RISE  
-        COMES FROM WITHIN."**
-    </div>
-</div>
+<canvas id="c"></canvas>
 
 <script>
-    let clicked = false;
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
 
-    function reveal(){
-        if(clicked) return;
-        clicked = true;
+function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.onresize = resize;
 
-        // Rotate the star
-        document.getElementById("star").classList.add("rotate");
+let starSpin = false;
+let starAngle = 0;
+let shieldX, shieldY, R;
 
-        // Fade shield after rotation starts
-        setTimeout(()=>{
-            document.getElementById("shield").style.opacity = 0;
-        }, 900);
+function drawShield(){
+    shieldX = canvas.width/2;
+    shieldY = canvas.height/2;
+    R = Math.min(canvas.width, canvas.height)/3;
 
-        // Show verse zooming out of star
-        setTimeout(()=>{
-            document.getElementById("verse").classList.add("show");
-        }, 1100);
+    ctx.save();
+    ctx.translate(shieldX, shieldY);
+
+    /* ------- OUTER RED RING ------- */
+    const grad1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
+    grad1.addColorStop(0,"#3c0000");
+    grad1.addColorStop(1,"#7a0000");
+    ctx.fillStyle = grad1;
+    ctx.beginPath();
+    ctx.arc(0,0,R,0,Math.PI*2);
+    ctx.fill();
+
+    /* ------- WHITE RING ------- */
+    const grad2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
+    grad2.addColorStop(0,"#bfc0c2");
+    grad2.addColorStop(1,"#e3e3e3");
+    ctx.fillStyle = grad2;
+    ctx.beginPath();
+    ctx.arc(0,0,R*0.75,0,Math.PI*2);
+    ctx.fill();
+
+    /* ------- INNER RED RING ------- */
+    const grad3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
+    grad3.addColorStop(0,"#4b0000");
+    grad3.addColorStop(1,"#8c0000");
+    ctx.fillStyle = grad3;
+    ctx.beginPath();
+    ctx.arc(0,0,R*0.5,0,Math.PI*2);
+    ctx.fill();
+
+    /* ------- BLUE METALLIC CENTER ------- */
+    const grad4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
+    grad4.addColorStop(0,"#9db2cc");
+    grad4.addColorStop(1,"#001c44");
+    ctx.fillStyle = grad4;
+    ctx.beginPath();
+    ctx.arc(0,0,R*0.35,0,Math.PI*2);
+    ctx.fill();
+
+    /* ------- 3D METALLIC STAR ------- */
+    ctx.save();
+    if(starSpin) ctx.rotate(starAngle);
+
+    const starR = R*0.28;
+    ctx.beginPath();
+    for(let i=0;i<5;i++){
+        let outer = (Math.PI*2/5)*i - Math.PI/2;
+        let inner = outer + Math.PI/5;
+
+        ctx.lineTo(Math.cos(outer)*starR, Math.sin(outer)*starR);
+        ctx.lineTo(Math.cos(inner)*(starR*0.45), Math.sin(inner)*(starR*0.45));
     }
+    ctx.closePath();
+
+    /* ----- Reduced Glow Around Star ----- */
+    ctx.shadowColor = "rgba(255,255,255,0.3)";
+    ctx.shadowBlur = 6;  // Previously 15 → reduced glow
+
+    const starGrad = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
+    starGrad.addColorStop(0,"#ffffff");
+    starGrad.addColorStop(0.4,"#e0e0e0");
+    starGrad.addColorStop(1,"#808080");
+    ctx.fillStyle = starGrad;
+    ctx.fill();
+
+    ctx.restore(); 
+    ctx.restore();
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    drawShield();
+
+    if(starSpin) starAngle += 0.04;
+
+    requestAnimationFrame(animate);
+}
+animate();
+
+// CLICK → Start spin + verse
+canvas.addEventListener("click", (e)=>{
+    let mx = e.clientX, my = e.clientY;
+    let dx = mx - shieldX;
+    let dy = my - shieldY;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+
+    if(dist <= R*0.28){
+        starSpin = true;
+        showVerse();
+    }
+});
+
+// VERSE ZOOM FROM STAR → TOP CENTER
+function showVerse(){
+    const verse = "He counts the stars and calls them each by name — Psalm 147:4";
+
+    const el = document.createElement("div");
+    el.className = "verse";
+    el.textContent = verse;
+
+    el.style.left = shieldX + "px";
+    el.style.top = shieldY + "px";
+
+    document.body.appendChild(el);
+
+    setTimeout(()=>{
+        el.style.opacity = 1;
+        el.style.transform = "scale(1)";
+        el.style.left = (window.innerWidth/2 - el.clientWidth/2) + "px";
+        el.style.top = "40px";
+    }, 40);
+}
 </script>
 
 </body>

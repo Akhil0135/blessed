@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IMAX Constellation Verse — Akhil Sir</title>
+<title>IMAX Constellation Verse — For Akhil Sir</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -10,255 +10,211 @@
         margin:0;
         padding:0;
         overflow:hidden;
-        background:#03040a;
-        font-family:"Cinzel",serif;
+        background:#03040a;  /* deep space black */
+        font-family: "Cinzel", serif;
     }
+    canvas{ display:block; }
 
-    canvas{
+    .beam{
         position:absolute;
+        width:40vw;
+        height:40vh;
         top:0;
-        left:0;
-        pointer-events:none; /* FIX: prevents blocking clicks */
-    }
-
-    #shieldCanvas{
-        pointer-events:auto; /* Only shield canvas receives clicks */
-    }
-
-    #finalVerse{
-        position:absolute;
-        top:40px;
         left:50%;
         transform:translateX(-50%);
-        font-size:36px;
-        color:#ffd98a;
-        text-shadow:0 0 15px #fff2c3;
+        background:radial-gradient(circle,#ffffff40 0%, transparent 70%);
+        filter:blur(40px);
         opacity:0;
-        transition:1.5s ease-out;
-        white-space:nowrap;
+        transition:2s ease-out;
         pointer-events:none;
     }
 </style>
 </head>
 <body>
 
-<canvas id="bgStars"></canvas>
-<canvas id="constellationCanvas"></canvas>
-<canvas id="shieldCanvas"></canvas>
-
-<div id="finalVerse">He counts the stars and calls them each by name — Psalm 147:4</div>
+<div id="beam" class="beam"></div>
+<canvas id="c"></canvas>
 
 <script>
-/* --------------------------------------------------
-   CANVAS SETUP
--------------------------------------------------- */
-const bg = document.getElementById("bgStars");
-const constCanvas = document.getElementById("constellationCanvas");
-const shieldCanvas = document.getElementById("shieldCanvas");
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); onresize = resize;
 
-const bgCtx = bg.getContext("2d");
-const cCtx = constCanvas.getContext("2d");
-const sCtx = shieldCanvas.getContext("2d");
-
-function resize(){
-    bg.width = constCanvas.width = shieldCanvas.width = window.innerWidth;
-    bg.height = constCanvas.height = shieldCanvas.height = window.innerHeight;
-}
-resize();
-window.onresize = resize;
-
-/* --------------------------------------------------
-   BACKGROUND STARFIELD
--------------------------------------------------- */
+/* ------------------ BACKGROUND STARS ------------------- */
 let bgStars = [];
-const STAR_COUNT = 350;
-
-for(let i=0;i<STAR_COUNT;i++){
+for(let i=0;i<350;i++){
     bgStars.push({
-        x: Math.random()*bg.width,
-        y: Math.random()*bg.height,
-        r: Math.random()*1.5+0.3,
-        speed: Math.random()*0.15+0.05
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*1.5 + 0.2,
+        tw: Math.random()*0.04 + 0.01,
+        phase: Math.random()*Math.PI*2
     });
 }
 
-function drawBgStars(){
-    bgCtx.clearRect(0,0,bg.width,bg.height);
-
-    for(let s of bgStars){
-        bgCtx.globalAlpha = 0.3 + Math.random()*0.3;
-        bgCtx.fillStyle="white";
-        bgCtx.beginPath();
-        bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2);
-        bgCtx.fill();
-
-        s.y += s.speed;
-        if(s.y > bg.height) s.y = 0;
-    }
-}
-
-/* --------------------------------------------------
-   SHIELD + STAR
--------------------------------------------------- */
-let starSpin=false;
-let starAngle=0;
+/* ------------------ SHIELD LOGIC ------------------- */
+let starSpin=false, starAngle=0;
 let shieldX, shieldY, R;
 
+/* ------------------ CONSTELLATION LETTERS ------------------- */
+
+const verse = "HE COUNTS THE STARS";
+let allConstellations = []; // stores all letter clusters
+let revealProgress = 0;
+
+/* Generate constellation for each letter */
+function generateConstellations(){
+    const startX = canvas.width/2 - verse.length*20;
+    let x = startX;
+    let y = canvas.height*0.20;
+
+    for(let char of verse){
+        if(char===" "){ x+=50; continue; }
+
+        let pts=[];
+        let count = 8 + Math.floor(Math.random()*5); // 8–12 stars/letter
+
+        for(let i=0;i<count;i++){
+            pts.push({
+                x: x + (Math.random()*40 - 20),
+                y: y + (Math.random()*40 - 20)
+            });
+        }
+
+        allConstellations.push({ char, pts });
+        x+=45;
+    }
+}
+
+/* ------------------ DRAW SHIELD ------------------- */
 function drawShield(){
-    shieldX = shieldCanvas.width/2;
-    shieldY = shieldCanvas.height/2;
-    R = Math.min(shieldCanvas.width, shieldCanvas.height)/3;
+    shieldX = canvas.width/2;
+    shieldY = canvas.height/2 + canvas.height*0.15;
+    R = Math.min(canvas.width, canvas.height)/3;
 
-    sCtx.save();
-    sCtx.translate(shieldX, shieldY);
+    ctx.save();
+    ctx.translate(shieldX, shieldY);
 
-    // Outer red
-    const g1 = sCtx.createRadialGradient(0,0,R*0.2,0,0,R);
-    g1.addColorStop(0,"#3c0000");
-    g1.addColorStop(1,"#7a0000");
-    sCtx.fillStyle=g1;
-    sCtx.beginPath();
-    sCtx.arc(0,0,R,0,Math.PI*2);
-    sCtx.fill();
+    /* Rings omitted for brevity — but still here in invisible code */
+    const grad1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
+    grad1.addColorStop(0,"#3c0000");
+    grad1.addColorStop(1,"#7a0000");
+    ctx.fillStyle = grad1;
+    ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
 
-    // White ring
-    const g2 = sCtx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
-    g2.addColorStop(0,"#dcdcdc");
-    g2.addColorStop(1,"#f7f7f7");
-    sCtx.fillStyle=g2;
-    sCtx.beginPath();
-    sCtx.arc(0,0,R*0.75,0,Math.PI*2);
-    sCtx.fill();
+    const grad2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
+    grad2.addColorStop(0,"#bfc0c2");
+    grad2.addColorStop(1,"#e3e3e3");
+    ctx.fillStyle = grad2;
+    ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
 
-    // Inner red
-    const g3 = sCtx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
-    g3.addColorStop(0,"#4b0000");
-    g3.addColorStop(1,"#8c0000");
-    sCtx.fillStyle=g3;
-    sCtx.beginPath();
-    sCtx.arc(0,0,R*0.5,0,Math.PI*2);
-    sCtx.fill();
+    const grad3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
+    grad3.addColorStop(0,"#4b0000");
+    grad3.addColorStop(1,"#8c0000");
+    ctx.fillStyle = grad3;
+    ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
 
-    // Blue center
-    const g4 = sCtx.createRadialGradient(0,0,R*0.07,0,0,R*0.35);
-    g4.addColorStop(0,"#b9ccdf");
-    g4.addColorStop(1,"#001833");
-    sCtx.fillStyle=g4;
-    sCtx.beginPath();
-    sCtx.arc(0,0,R*0.35,0,Math.PI*2);
-    sCtx.fill();
+    const grad4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
+    grad4.addColorStop(0,"#8fa4c1");
+    grad4.addColorStop(1,"#001226");
+    ctx.fillStyle = grad4;
+    ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
 
-    // Star
-    sCtx.save();
-    if(starSpin) sCtx.rotate(starAngle);
+    /* ---- STAR: Glow reduced more ---- */
+    ctx.save();
+    if(starSpin) ctx.rotate(starAngle);
 
-    const sr = R*0.28;
-    sCtx.beginPath();
+    const starR = R*0.28;
+    ctx.shadowColor = "rgba(255,255,255,0.2)";
+    ctx.shadowBlur = 3;   // reduced glow
+
+    ctx.beginPath();
     for(let i=0;i<5;i++){
-        let a = (Math.PI*2/5)*i - Math.PI/2;
-        let b = a + Math.PI/5;
-        sCtx.lineTo(Math.cos(a)*sr, Math.sin(a)*sr);
-        sCtx.lineTo(Math.cos(b)*(sr*0.45), Math.sin(b)*(sr*0.45));
+        let a1=(Math.PI*2/5)*i - Math.PI/2;
+        let a2=a1+Math.PI/5;
+        ctx.lineTo(Math.cos(a1)*starR, Math.sin(a1)*starR);
+        ctx.lineTo(Math.cos(a2)*(starR*0.45), Math.sin(a2)*(starR*0.45));
     }
-    sCtx.closePath();
+    ctx.closePath();
 
-    sCtx.shadowBlur=4;
-    sCtx.shadowColor="rgba(255,255,255,0.25)";
+    const starGrad = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
+    starGrad.addColorStop(0,"#ffffff");
+    starGrad.addColorStop(1,"#7f7f7f");
+    ctx.fillStyle = starGrad;
+    ctx.fill();
 
-    const sg = sCtx.createRadialGradient(0,0,sr*0.1,0,0,sr);
-    sg.addColorStop(0,"#ffffff");
-    sg.addColorStop(1,"#7b7b7b");
-    sCtx.fillStyle=sg;
-    sCtx.fill();
-
-    sCtx.restore();
-    sCtx.restore();
+    ctx.restore();
+    ctx.restore();
 }
 
-/* --------------------------------------------------
-   CONSTELLATION EFFECT
--------------------------------------------------- */
-const verse = "He counts the stars and calls them each by name — Psalm 147:4";
-let constellationStars = [];
-let forming = false;
+/* ------------------ DRAW BACKGROUND STARS ------------------- */
+function drawBgStars(){
+    for(let s of bgStars){
+        s.phase += s.tw;
+        let alpha = 0.3 + Math.sin(s.phase)*0.3;
 
-function spawnConstellation(){
-    forming = true;
-    constellationStars = [];
-
-    const baseX = window.innerWidth/2 - verse.length*6;
-
-    for(let i=0;i<verse.length;i++){
-        let src = bgStars[Math.floor(Math.random()*bgStars.length)];
-
-        constellationStars.push({
-            x: src.x,
-            y: src.y,
-            tx: baseX + i*12,
-            ty: 60,
-            p: 0
-        });
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fill();
     }
 }
 
-function drawConstellation(){
-    if(!forming) return;
+/* ------------------ DRAW CONSTELLATIONS ------------------- */
+function drawConstellations(){
+    const maxLetters = Math.floor(revealProgress);
 
-    cCtx.clearRect(0,0,constCanvas.width,constCanvas.height);
+    for(let i=0;i<maxLetters;i++){
+        let L = allConstellations[i];
 
-    for(let s of constellationStars){
-        s.p += 0.02;
-        if(s.p > 1) s.p = 1;
+        /* Lines */
+        ctx.strokeStyle="rgba(255,255,255,0.5)";
+        ctx.lineWidth=1;
+        ctx.beginPath();
+        for(let j=0;j<L.pts.length;j++){
+            let a=L.pts[j], b=L.pts[(j+1)%L.pts.length];
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(b.x,b.y);
+        }
+        ctx.stroke();
 
-        s.x += (s.tx - s.x)*0.08;
-        s.y += (s.ty - s.y)*0.08;
-
-        cCtx.fillStyle="rgba(255,220,150,0.9)";
-        cCtx.beginPath();
-        cCtx.arc(s.x, s.y, 2.2, 0, Math.PI*2);
-        cCtx.fill();
-    }
-
-    // When all stars settled
-    if(constellationStars.every(s => s.p === 1)){
-        setTimeout(()=>{
-            document.getElementById("finalVerse").style.opacity = 1;
-        },400);
+        /* Stars */
+        for(let p of L.pts){
+            ctx.fillStyle="#fff";
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,3,0,Math.PI*2);
+            ctx.fill();
+        }
     }
 }
 
-/* --------------------------------------------------
-   CLICK HANDLER (NOW WORKS PERFECT)
--------------------------------------------------- */
-shieldCanvas.addEventListener("click", (e)=>{
-    let dx = e.clientX - shieldX;
-    let dy = e.clientY - shieldY;
-    let dist = Math.sqrt(dx*dx + dy*dy);
-
-    if(dist <= R*0.28){
-        starSpin = true;
-        spawnConstellation();
-    }
-});
-
-/* --------------------------------------------------
-   MAIN LOOP
--------------------------------------------------- */
+/* ------------------ ANIMATION LOOP ------------------- */
 function animate(){
-    drawBgStars();
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    sCtx.clearRect(0,0,shieldCanvas.width,shieldCanvas.height);
+    drawBgStars();
     drawShield();
+    drawConstellations();
 
     if(starSpin){
-        starAngle += 0.035;
+        starAngle += 0.04;
+        revealProgress += 0.05; // reveals letters slowly
     }
-
-    drawConstellation();
 
     requestAnimationFrame(animate);
 }
+generateConstellations();
 animate();
+
+/* ------------------ CLICK TO START ------------------- */
+canvas.addEventListener("click", (e)=>{
+    let dx=e.clientX-shieldX, dy=e.clientY-shieldY;
+    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
+        starSpin=true;
+        document.getElementById("beam").style.opacity=1;
+    }
+});
 </script>
 
 </body>

@@ -6,37 +6,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html, body {
-  margin:0;
-  padding:0;
-  overflow:hidden;
+  margin:0; padding:0; overflow:hidden;
   background: radial-gradient(circle at center,#0a0d19 0%,#05060f 70%,#010208 100%);
   font-family:"Cinzel", serif;
 }
 canvas { display:block; }
 .star {
   position:absolute;
-  width:4px;
-  height:4px;
-  background:white;
-  border-radius:50%;
-  opacity:0.8;
-}
-#final-verse {
-  position:absolute;
-  top:40px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:36px;
-  color:#ffd977;
-  text-shadow:0 0 15px #ffe9b0;
-  opacity:0;
-  white-space:nowrap;
+  width:3px; height:3px;
+  background:white; border-radius:50%;
 }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="final-verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 <script>
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
@@ -80,7 +63,7 @@ function drawShield(){
     ctx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45);
   }
   ctx.closePath();
-  ctx.shadowColor="rgba(255,255,255,0.25)";
+  ctx.shadowColor="rgba(255,255,255,0.2)";
   ctx.shadowBlur=5;
   let sg=ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
   sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
@@ -90,80 +73,74 @@ function drawShield(){
 }
 
 // -------------------- Background stars --------------------
-let bgStars=[];
-for(let i=0;i<400;i++){
-  bgStars.push({x:Math.random()*cw,y:Math.random()*ch,z:Math.random()*1.5+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
+let stars=[];
+for(let i=0;i<500;i++){
+  stars.push({x:Math.random()*cw,y:Math.random()*ch,z:Math.random()*1.5+0.5});
 }
-function drawStars(){
+
+// -------------------- Animate --------------------
+function loop(){
   ctx.fillStyle="rgba(10,13,25,1)";
   ctx.fillRect(0,0,cw,ch);
-  bgStars.forEach(s=>{
-    s.x+=s.dx; s.y+=s.dy;
-    if(s.x<0) s.x=cw; if(s.x>cw) s.x=0;
-    if(s.y<0) s.y=ch; if(s.y>ch) s.y=0;
+  drawShield();
+  stars.forEach(s=>{
     ctx.fillStyle=`rgba(255,255,255,${s.z/2})`;
     ctx.beginPath(); ctx.arc(s.x,s.y,s.z,0,Math.PI*2); ctx.fill();
   });
-}
-
-// -------------------- Animation Loop --------------------
-function loop(){
-  drawStars();
-  drawShield();
   if(starSpin) starAngle+=0.035;
   requestAnimationFrame(loop);
 }
 loop();
 
-// -------------------- Constellation & Verse --------------------
-const verseText="He counts the stars and calls them each by name — Psalm 147:4";
-const finalVerse=document.getElementById("final-verse");
+// -------------------- Constellation → Verse --------------------
+const verse="He counts the stars and calls them each by name — Psalm 147:4";
+let starElems=[];
 
 canvas.addEventListener("click",(e)=>{
   let dx=e.clientX-shieldX, dy=e.clientY-shieldY;
   if(Math.sqrt(dx*dx+dy*dy)<=R*0.28 && !starSpin){
     starSpin=true;
-    revealConstellation();
+    formVerse();
   }
 });
 
-function revealConstellation(){
-  // Create flying stars toward text positions
-  const positions=[];
-  const fontSize=100;
+function formVerse(){
+  // Create hidden canvas to measure verse letters
   const tempCanvas=document.createElement("canvas");
   tempCanvas.width=cw; tempCanvas.height=ch;
   const tctx=tempCanvas.getContext("2d");
-  tctx.font=`bold ${fontSize}px Cinzel`;
+  tctx.font=`bold 80px Cinzel`;
   tctx.textAlign="center"; tctx.textBaseline="middle";
-  tctx.fillText(verseText,cw/2,ch/2);
+  tctx.fillText(verse,cw/2,ch/2);
   const data=tctx.getImageData(0,0,cw,ch).data;
-  for(let y=0;y<ch;y+=12){
-    for(let x=0;x<cw;x+=12){
+
+  // pick positions where alpha>128
+  let positions=[];
+  for(let y=0;y<ch;y+=10){
+    for(let x=0;x<cw;x+=10){
       if(data[(y*cw+x)*4+3]>128) positions.push({x,y});
     }
   }
-  // Reduce number of stars to ~500
-  const selected=positions.sort(()=>0.5-Math.random()).slice(0,500);
 
-  selected.forEach((pos,i)=>{
+  positions=positions.sort(()=>0.5-Math.random()).slice(0,500);
+
+  // Animate background stars to move to positions
+  for(let i=0;i<positions.length;i++){
+    let s=stars[i];
+    let target=positions[i];
+    let elem=document.createElement("div");
+    elem.className="star";
+    elem.style.left=s.x+"px";
+    elem.style.top=s.y+"px";
+    document.body.appendChild(elem);
+    starElems.push(elem);
+
     setTimeout(()=>{
-      const s=document.createElement("div");
-      s.className="star";
-      s.style.left=shieldX+"px"; s.style.top=shieldY+"px";
-      document.body.appendChild(s);
-      // Animate to position
-      setTimeout(()=>{
-        s.style.transition="1s ease-out";
-        s.style.left=pos.x+"px"; s.style.top=pos.y+"px";
-      },10);
-      // Fade out after reaching
-      setTimeout(()=>{ s.remove(); },1200);
+      elem.style.transition="1.5s ease-out";
+      elem.style.left=target.x+"px";
+      elem.style.top=target.y+"px";
     },i*5);
-  });
-
-  // Show final verse after animation
-  setTimeout(()=>{ finalVerse.style.opacity=1; },2000);
+  }
 }
 </script>
 </body>

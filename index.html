@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Captain America Shield — Phase 2 (Divine Light Spread)</title>
+<title>Captain America Shield — Phase 2 (Divine Light Reveal)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html, body {
@@ -20,12 +20,12 @@ canvas { display:block; }
     top: -500px;
     left: 50%;
     transform: translateX(-50%);
-    width: 6px;
+    width: 10px;
     height: 500px;
-    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 80%);
+    background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 80%);
     opacity: 0;
-    transition: top 1.5s ease-out, opacity 1.5s ease-out;
     pointer-events:none;
+    transition: top 2s ease-out, opacity 1.2s ease-out;
 }
 
 /* Verse letters */
@@ -36,7 +36,7 @@ canvas { display:block; }
     text-shadow:0 0 15px #ffe9b0;
     opacity:0;
     transform: scale(0.5);
-    transition: all 0.8s ease-out;
+    transition: opacity 1s ease-out, transform 1s ease-out;
     white-space: pre;
     pointer-events:none;
 }
@@ -146,43 +146,37 @@ canvas.addEventListener("click",(e)=>{
     if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
         if(!starSpin){
             starSpin=true;
-            revealVerse();
+            revealVerseWithLight();
         }
     }
 });
 
-// ------------------ Divine light spread ------------------
-function revealVerse(){
-    // Show light beam
+// ------------------ Divine light revealing the verse ------------------
+function revealVerseWithLight(){
     lightBeam.style.opacity=1;
     lightBeam.style.top="0px";
 
     const verse="He counts the stars and calls them each by name — Psalm 147:4";
+    const letters = [...verse];
     const startX=canvas.width/2 - (verse.length*18)/2;
     const startY=0;
 
-    [...verse].forEach((char,i)=>{
+    letters.forEach((char,i)=>{
         setTimeout(()=>{
             const span=document.createElement("div");
             span.className="verse-letter";
             span.textContent=char;
             span.style.left=startX + i*18 + "px";
             span.style.top=startY + "px";
+            span.style.opacity=0;
+            span.style.transform="scale(0.5)";
             document.body.appendChild(span);
 
-            // Animate spreading outward from beam
+            // Animate opacity when light reaches
             setTimeout(()=>{
-                const randomOffsetX = (Math.random()-0.5)*30;
-                const randomOffsetY = (Math.random()-0.5)*30;
                 span.style.opacity=1;
-                span.style.transform=`translate(${randomOffsetX}px, 100px) scale(1)`;
-            },50);
-
-            // Settle at top center
-            setTimeout(()=>{
-                span.style.transform="translate(0px,0px) scale(1)";
-                span.style.top="40px";
-            },1000 + i*50);
+                span.style.transform="scale(1)";
+            }, i*120 + 400); // delay to simulate light spreading
         }, i*100);
     });
 }

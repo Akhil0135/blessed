@@ -2,142 +2,171 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Captain America Shield — Phase 2</title>
+<title>Phase 2 — Shield & Constellation Verse</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-html,body{
-  margin:0; padding:0; overflow:hidden;
-  background:#0a0d19;
-  font-family:"Cinzel", serif;
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #0a0d19 0%, #05060f 60%, #010208 100%);
+    font-family: "Cinzel", serif;
 }
-canvas{display:block;}
-.star{
-  position:absolute;
-  width:3px; height:3px;
-  background:white; border-radius:50%;
-  pointer-events:none;
+canvas { display: block; }
+
+.verse-letter {
+    position: absolute;
+    color: #ffe9a6;
+    text-shadow: 0 0 8px #fff2b3, 0 0 15px #e6d37a;
+    font-size: 28px;
+    opacity: 0;
+    transform: scale(0.2);
+    transition: all 0.8s ease-out;
+    pointer-events: none;
 }
 </style>
 </head>
 <body>
-<canvas id="c"></canvas>
+<canvas id="canvas"></canvas>
+
 <script>
-const canvas=document.getElementById("c");
-const ctx=canvas.getContext("2d");
-let cw,ch;
-function resize(){ cw=canvas.width=window.innerWidth; ch=canvas.height=window.innerHeight;}
-resize();
-window.onresize=resize;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let w, h;
+function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
 
-// ---------------- Shield ----------------
-let shieldX,shieldY,R;
-let starSpin=false,starAngle=0;
+// --------------------- BACKGROUND STARS ---------------------
+const bgStars = [];
+for(let i=0;i<300;i++){
+    bgStars.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        z: Math.random()*1.5 + 0.5,
+        speed: Math.random()*0.3 + 0.1
+    });
+}
+function drawBgStars(){
+    ctx.fillStyle = "#0a0d19";
+    ctx.fillRect(0,0,w,h);
+    bgStars.forEach(s=>{
+        s.x += s.speed;
+        if(s.x>w) s.x=0;
+        ctx.fillStyle = `rgba(255,255,255,0.8)`;
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.z,0,Math.PI*2);
+        ctx.fill();
+    });
+}
+
+// --------------------- SHIELD ---------------------
+let shieldX = w/2, shieldY = h/2;
+let R = Math.min(w,h)/3;
+let starAngle = 0, starSpin = false;
+
 function drawShield(){
-  shieldX=cw/2; shieldY=ch/2; R=Math.min(cw,ch)/3;
-  ctx.save(); ctx.translate(shieldX,shieldY);
-
-  // Outer Red
-  let g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
-  g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000");
-  ctx.fillStyle=g1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
-
-  // White
-  let g2=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
-  g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5");
-  ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
-
-  // Inner Red
-  let g3=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
-  g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000");
-  ctx.fillStyle=g3; ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
-
-  // Blue metallic
-  let g4=ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
-  g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933");
-  ctx.fillStyle=g4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
-
-  // Star
-  ctx.save(); if(starSpin) ctx.rotate(starAngle);
-  let starR=R*0.28;
-  ctx.beginPath();
-  for(let i=0;i<5;i++){
-    let o=(Math.PI*2/5)*i-Math.PI/2;
-    let n=o+Math.PI/5;
-    ctx.lineTo(Math.cos(o)*starR,Math.sin(o)*starR);
-    ctx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45);
-  }
-  ctx.closePath();
-  ctx.shadowColor="rgba(255,255,255,0.2)";
-  ctx.shadowBlur=5;
-  let sg=ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
-  sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
-  ctx.fillStyle=sg; ctx.fill();
-  ctx.restore(); ctx.restore();
+    ctx.save();
+    ctx.translate(shieldX,shieldY);
+    // Outer Red
+    let grad1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
+    grad1.addColorStop(0,"#3c0000"); grad1.addColorStop(1,"#7a0000");
+    ctx.fillStyle = grad1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+    // White Ring
+    let grad2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
+    grad2.addColorStop(0,"#dadada"); grad2.addColorStop(1,"#f5f5f5");
+    ctx.fillStyle = grad2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
+    // Inner Red
+    let grad3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
+    grad3.addColorStop(0,"#4b0000"); grad3.addColorStop(1,"#8c0000");
+    ctx.fillStyle = grad3; ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
+    // Blue Metallic
+    let grad4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
+    grad4.addColorStop(0,"#b4c7e0"); grad4.addColorStop(1,"#001933");
+    ctx.fillStyle = grad4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
+    // Star
+    ctx.save();
+    if(starSpin) ctx.rotate(starAngle);
+    const starR = R*0.28;
+    ctx.beginPath();
+    for(let i=0;i<5;i++){
+        let o = (Math.PI*2/5)*i - Math.PI/2;
+        let n = o + Math.PI/5;
+        ctx.lineTo(Math.cos(o)*starR, Math.sin(o)*starR);
+        ctx.lineTo(Math.cos(n)*(starR*0.45), Math.sin(n)*(starR*0.45));
+    }
+    ctx.closePath();
+    ctx.shadowColor="rgba(255,255,255,0.25)";
+    ctx.shadowBlur=5;
+    let sg = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
+    sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.restore();
+    ctx.restore();
 }
 
-// ---------------- Background stars ----------------
-let stars=[];
-for(let i=0;i<600;i++){
-  stars.push({x:Math.random()*cw,y:Math.random()*ch,z:Math.random()*1.5+0.5});
+// --------------------- ANIMATION ---------------------
+function animate(){
+    drawBgStars();
+    drawShield();
+    if(starSpin) starAngle+=0.04;
+    updateStarLetters();
+    requestAnimationFrame(animate);
 }
+animate();
 
-// ---------------- Animate ----------------
-function loop(){
-  ctx.fillStyle="rgba(10,13,25,1)";
-  ctx.fillRect(0,0,cw,ch);
-  drawShield();
-  stars.forEach(s=>{
-    ctx.fillStyle=`rgba(255,255,255,${s.z/2})`;
-    ctx.beginPath(); ctx.arc(s.x,s.y,s.z,0,Math.PI*2); ctx.fill();
-  });
-  if(starSpin) starAngle+=0.035;
-  requestAnimationFrame(loop);
-}
-loop();
-
-// ---------------- Constellation → Verse ----------------
-const verse="He counts the stars and calls them each by name — Psalm 147:4";
-let starElems=[];
+// --------------------- STAR LETTERS ---------------------
+let starLetters = [];
+let animationActive=false;
+const verse = "He counts the stars and calls them each by name — Psalm 147:4";
 
 canvas.addEventListener("click",(e)=>{
-  let dx=e.clientX-shieldX, dy=e.clientY-shieldY;
-  if(Math.sqrt(dx*dx+dy*dy)<=R*0.28 && !starSpin){
-    starSpin=true;
-    formVerse();
-  }
+    let dx = e.clientX - shieldX, dy = e.clientY - shieldY;
+    if(Math.sqrt(dx*dx + dy*dy) <= R*0.28 && !animationActive){
+        starSpin=true; animationActive=true;
+        generateStarLetters();
+    }
 });
 
-function formVerse(){
-  const temp=document.createElement("canvas");
-  temp.width=cw; temp.height=ch;
-  const tctx=temp.getContext("2d");
-  tctx.font="bold 80px Cinzel";
-  tctx.textAlign="center"; tctx.textBaseline="middle";
-  tctx.fillText(verse,cw/2,ch/2);
-  const data=tctx.getImageData(0,0,cw,ch).data;
+function generateStarLetters(){
+    const fontSize = 32;
+    ctx.font=`${fontSize}px Cinzel`;
+    const startX = shieldX, startY = shieldY;
+    const targetX = w/2 - ctx.measureText(verse).width/2;
+    const targetY = 60;
 
-  let positions=[];
-  for(let y=0;y<ch;y+=10){
-    for(let x=0;x<cw;x+=10){
-      if(data[(y*cw+x)*4+3]>128) positions.push({x,y});
+    for(let i=0;i<verse.length;i++){
+        let char = verse[i];
+        let charWidth = ctx.measureText(char).width;
+        const numStars = 10; // stars per letter
+        for(let j=0;j<numStars;j++){
+            starLetters.push({
+                char: char,
+                x: startX,
+                y: startY,
+                tx: targetX + charWidth*i/verse.length + Math.random()*10,
+                ty: targetY + Math.random()*5,
+                opacity:0,
+                scale:0.2
+            });
+        }
     }
-  }
-  positions=positions.sort(()=>0.5-Math.random()).slice(0,500);
+}
 
-  for(let i=0;i<positions.length;i++){
-    let s=stars[i];
-    let target=positions[i];
-    let elem=document.createElement("div");
-    elem.className="star";
-    elem.style.left=s.x+"px"; elem.style.top=s.y+"px";
-    document.body.appendChild(elem);
-    starElems.push(elem);
-
-    setTimeout(()=>{
-      elem.style.transition="1.5s ease-out";
-      elem.style.left=target.x+"px"; elem.style.top=target.y+"px";
-    },i*5);
-  }
+function updateStarLetters(){
+    if(starLetters.length===0) return;
+    starLetters.forEach(s=>{
+        s.x += (s.tx - s.x)*0.07;
+        s.y += (s.ty - s.y)*0.07;
+        s.scale += (1 - s.scale)*0.07;
+        s.opacity += (1 - s.opacity)*0.05;
+        ctx.save();
+        ctx.translate(s.x,s.y);
+        ctx.scale(s.scale,s.scale);
+        ctx.fillStyle=`rgba(255,233,166,${s.opacity})`;
+        ctx.fillText(s.char,0,0);
+        ctx.restore();
+    });
 }
 </script>
 </body>

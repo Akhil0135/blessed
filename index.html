@@ -2,84 +2,77 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IMAX Cinematic — Shield & Verse Letters</title>
+<title>IMAX Cinematic — Shield & Verse</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-html,body{
-    margin:0;
-    padding:0;
-    overflow:hidden;
-    background:#0a0d19; /* deep space */
+html, body{
+    margin:0; padding:0; overflow:hidden;
+    background:#0a0d19; 
     font-family:"Cinzel", serif;
 }
-canvas{
-    display:block;
-}
+canvas{ display:block; }
+
 .verse-letter{
     position:absolute;
-    font-size:32px;
+    font-size:30px;
     color:#ffe9a6;
-    text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
+    text-shadow:0 0 8px #fff2b3, 0 0 15px #e6d37a;
     opacity:0;
     transform:scale(0.2);
-    transition: all 0.8s ease-out;
+    transition:0.8s ease-out;
     white-space:nowrap;
     pointer-events:none;
 }
 </style>
 </head>
 <body>
+
 <canvas id="shieldCanvas"></canvas>
 
 <script>
 const canvas = document.getElementById("shieldCanvas");
 const ctx = canvas.getContext("2d");
-let width=window.innerWidth, height=window.innerHeight;
-canvas.width=width; canvas.height=height;
+let width = window.innerWidth, height = window.innerHeight;
+canvas.width = width; canvas.height = height;
 
-let shieldX=width/2, shieldY=height/2;
-let R=Math.min(width,height)/3;
-let starSpin=false, starAngle=0;
+let shieldX = width/2, shieldY = height/2;
+let R = Math.min(width,height)/3;
+let starSpin = false, starAngle = 0;
 
 // ---------------- Background Stars ----------------
-const bgStars=[];
+const bgStars = [];
 for(let i=0;i<200;i++){
     bgStars.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005});
 }
 
 // ---------------- Shield Drawing ----------------
 function drawShield(){
-    ctx.save();
-    ctx.translate(shieldX,shieldY);
+    ctx.save(); ctx.translate(shieldX, shieldY);
 
     // Outer Red
     let g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
     g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000");
-    ctx.fillStyle=g1;
-    ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=g1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
 
-    // White Ring
+    // White
     let g2=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
     g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5");
-    ctx.fillStyle=g2;
-    ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
 
     // Inner Red
     let g3=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
     g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000");
-    ctx.fillStyle=g3;
-    ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=g3; ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
 
     // Blue Metallic Center
     let g4=ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
     g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933");
-    ctx.fillStyle=g4;
-    ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=g4; ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
 
     // 3D Star
     ctx.save();
     if(starSpin) ctx.rotate(starAngle);
-    let starR=R*0.28;
+    let starR = R*0.28;
     ctx.beginPath();
     for(let i=0;i<5;i++){
         let o=(Math.PI*2/5)*i-Math.PI/2;
@@ -91,12 +84,10 @@ function drawShield(){
     ctx.shadowColor="rgba(255,255,255,0.25)";
     ctx.shadowBlur=5;
     let sg=ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
-    sg.addColorStop(0,"#ffffff");
-    sg.addColorStop(0.4,"#eeeeee");
-    sg.addColorStop(1,"#7a7a7a");
-    ctx.fillStyle=sg;
-    ctx.fill();
+    sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
+    ctx.fillStyle=sg; ctx.fill();
     ctx.restore();
+
     ctx.restore();
 }
 
@@ -108,50 +99,43 @@ function animate(){
     bgStars.forEach(s=>{
         const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
         ctx.fillStyle=`rgba(255,255,255,${glow})`;
-        ctx.beginPath();
-        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
     });
 
     drawShield();
-
     if(starSpin) starAngle+=0.035;
-
     requestAnimationFrame(animate);
 }
 animate();
 
-// ---------------- Click on Shield Star ----------------
-const verseText="He counts the stars and calls them each by name — Psalm 147:4";
-
+// ---------------- Click Event ----------------
+const verseText = "He counts the stars and calls them each by name — Psalm 147:4";
 canvas.addEventListener("click", e=>{
     const dx=e.clientX-shieldX;
     const dy=e.clientY-shieldY;
-    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
+    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28 && !starSpin){
         starSpin=true;
         revealVerse();
     }
 });
 
-// ---------------- Letter by Letter Verse Reveal ----------------
+// ---------------- Letter-by-letter Verse ----------------
 function revealVerse(){
-    const startX=shieldX;
-    const startY=shieldY;
-    const topY=40;
-    const fontSize=32;
-    let totalWidth=0;
+    const startX=shieldX; const startY=shieldY; const topY=40;
+    const fontSize=30;
+
     const temp=document.createElement("canvas");
     const tctx=temp.getContext("2d");
     tctx.font=`${fontSize}px Cinzel`;
 
-    const widths=[];
+    let totalWidth=0, widths=[];
     for(let i=0;i<verseText.length;i++){
         const w=tctx.measureText(verseText[i]).width;
         widths.push(w);
         totalWidth+=w;
     }
 
-    let currentX=width/2 - totalWidth/2;
+    let currentX = width/2 - totalWidth/2;
     let delay=0;
 
     for(let i=0;i<verseText.length;i++){
@@ -171,9 +155,10 @@ function revealVerse(){
         }, delay);
 
         delay+=80;
-        currentX+=widths[i]+1; // spacing between letters
+        currentX+=widths[i]+2; // proper spacing
     }
 }
 </script>
+
 </body>
 </html>

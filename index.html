@@ -1,175 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX PRINCE → DAIVIK</title>
+<meta charset="UTF-8">
+<title>IMAX Cinematic — Shield & Verse</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background: #000;
-    }
-    canvas { display: block; }
-    #clickBtn {
-        position: absolute;
-        bottom: 40px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 15px 30px;
-        font-size: 20px;
-        font-weight: bold;
-        background: linear-gradient(90deg, #ff0066, #ffcc00, #00ccff);
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        box-shadow: 0 0 20px rgba(255,255,255,0.6);
-        color: #fff;
-        opacity: 0;
-        transition: opacity 1s ease;
-        z-index: 1000;
-    }
+html,body{
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background:#0a0d19; /* deep space */
+    font-family:"Cinzel", serif;
+}
+canvas{
+    display:block;
+}
+#verse{
+    position:absolute;
+    top:40px;
+    left:50%;
+    transform:translateX(-50%) scale(0.2);
+    font-size:32px;
+    color:#ffe9a6;
+    text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
+    opacity:0;
+    transition: all 1s ease-out;
+    white-space:nowrap;
+    pointer-events:none;
+}
 </style>
 </head>
 <body>
-<canvas id="c"></canvas>
-<button id="clickBtn">Click Here</button>
+<canvas id="shieldCanvas"></canvas>
+<div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 
 <script>
-const canvas = document.getElementById("c");
+const canvas = document.getElementById("shieldCanvas");
 const ctx = canvas.getContext("2d");
-const btn = document.getElementById("clickBtn");
+let width=window.innerWidth, height=window.innerHeight;
+canvas.width=width; canvas.height=height;
 
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resize();
-window.onresize = resize;
+let shieldX=width/2, shieldY=height/2;
+let R=Math.min(width,height)/3;
+let starSpin=false, starAngle=0;
 
-// Background twinkling stars
-const bgStars = [];
-const bgStarCount = 180;
-for (let i = 0; i < bgStarCount; i++) {
-    bgStars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 1.1 + 0.2,
-        tw: Math.random() * 0.02 + 0.003
-    });
+// ---------------- Background Stars ----------------
+const bgStars=[];
+for(let i=0;i<200;i++){
+    bgStars.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005});
 }
 
-function drawStarShape() {
-    bgStars.forEach(s => {
-        const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
-        ctx.fillStyle = `rgba(255,255,255,${glow})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fill();
-    });
-}
-
-// Map text to particles
-function mapTextToPoints(textStr) {
-    const temp = document.createElement("canvas");
-    const tctx = temp.getContext("2d");
-    temp.width = canvas.width;
-    temp.height = canvas.height;
-
-    const fontSize = canvas.width / 7;
-    tctx.clearRect(0, 0, temp.width, temp.height);
-    tctx.fillStyle = "#fff";
-    tctx.font = "bold " + fontSize + "px Arial";
-    tctx.textAlign = "center";
-    tctx.textBaseline = "middle";
-    tctx.fillText(textStr, temp.width / 2, temp.height / 2);
-
-    const imageData = tctx.getImageData(0, 0, temp.width, temp.height).data;
-    const points = [];
-    for (let y = 0; y < temp.height; y += 6) {
-        for (let x = 0; x < temp.width; x += 6) {
-            let index = (y * temp.width + x) * 4;
-            if (imageData[index + 3] > 200) {
-                points.push({ x, y });
-            }
-        }
-    }
-    return points;
-}
-
-// Initial particles
-let currentText = "PRINCE";
-let letterPoints = mapTextToPoints(currentText);
-const particles = letterPoints.map(p => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    tx: p.x,
-    ty: p.y,
-    speed: Math.random() * 0.08 + 0.04,
-    size: Math.random() * 1.8 + 1.2,
-    color: null
-}));
-
-// Camera drift (no rotation)
-let camera = { dx: 0, dy: 0, zoom: 1 };
-function applyCamera() {
-    camera.dx = Math.sin(Date.now() * 0.0003) * 15;
-    camera.dy = Math.cos(Date.now() * 0.00025) * 15;
-    camera.zoom = 1 + 0.02 * Math.sin(Date.now() * 0.0002);
-
+// ---------------- Shield Drawing ----------------
+function drawShield(){
     ctx.save();
-    ctx.translate(canvas.width / 2 + camera.dx, canvas.height / 2 + camera.dy);
-    ctx.scale(camera.zoom, camera.zoom);
-    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    ctx.translate(shieldX,shieldY);
+
+    // Outer Red Ring
+    let g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
+    g1.addColorStop(0,"#3c0000");
+    g1.addColorStop(1,"#7a0000");
+    ctx.fillStyle=g1;
+    ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+
+    // White Ring
+    let g2=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
+    g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5");
+    ctx.fillStyle=g2;
+    ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
+
+    // Inner Red Ring
+    let g3=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
+    g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000");
+    ctx.fillStyle=g3;
+    ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
+
+    // Blue Metallic Center
+    let g4=ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
+    g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933");
+    ctx.fillStyle=g4;
+    ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
+
+    // 3D Star
+    ctx.save();
+    if(starSpin) ctx.rotate(starAngle);
+    let starR=R*0.28;
+    ctx.beginPath();
+    for(let i=0;i<5;i++){
+        let o=(Math.PI*2/5)*i-Math.PI/2;
+        let n=o+Math.PI/5;
+        ctx.lineTo(Math.cos(o)*starR,Math.sin(o)*starR);
+        ctx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45);
+    }
+    ctx.closePath();
+    ctx.shadowColor="rgba(255,255,255,0.25)";
+    ctx.shadowBlur=5;
+    let sg=ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
+    sg.addColorStop(0,"#ffffff");
+    sg.addColorStop(0.4,"#eeeeee");
+    sg.addColorStop(1,"#7a7a7a");
+    ctx.fillStyle=sg;
+    ctx.fill();
+    ctx.restore();
+    ctx.restore();
 }
 
-// Animation loop
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    applyCamera();
-    drawStarShape();
+// ---------------- Animate Loop ----------------
+function animate(){
+    ctx.fillStyle="#0a0d19"; ctx.fillRect(0,0,width,height);
 
-    const time = Date.now();
-
-    particles.forEach(p => {
-        p.x += (p.tx - p.x) * p.speed;
-        p.y += (p.ty - p.y) * p.speed;
-
-        let fillColor = p.color || `hsl(${(p.x + p.y) % 360}, 90%, 70%)`;
-        let shadowIntensity = p.color ? (Math.sin(time * 0.005) * 0.5 + 0.5) * 20 : 18;
-
-        ctx.fillStyle = fillColor;
-        ctx.shadowBlur = shadowIntensity;
-        ctx.shadowColor = fillColor;
-
+    // Background twinkling stars
+    bgStars.forEach(s=>{
+        const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
+        ctx.fillStyle=`rgba(255,255,255,${glow})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
         ctx.fill();
     });
 
-    ctx.restore();
+    drawShield();
+
+    if(starSpin) starAngle+=0.035;
+
     requestAnimationFrame(animate);
 }
-
 animate();
 
-// Show button after 3 seconds
-setTimeout(() => { btn.style.opacity = 1; }, 3000);
-
-// Click event to change text
-btn.addEventListener("click", () => {
-    btn.style.display = "none";
-    const newText = "DAIVIK";
-    const newPoints = mapTextToPoints(newText);
-
-    particles.forEach((p, i) => {
-        const np = newPoints[i % newPoints.length];
-        p.tx = np.x;
-        p.ty = np.y;
-        p.color = "#fff"; // White shining letters
-    });
+// ---------------- Click on Shield Star ----------------
+const verseDiv=document.getElementById("verse");
+canvas.addEventListener("click", e=>{
+    const dx=e.clientX-shieldX;
+    const dy=e.clientY-shieldY;
+    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
+        starSpin=true;
+        showVerse();
+    }
 });
+
+// ---------------- Show Verse ----------------
+function showVerse(){
+    verseDiv.style.opacity=1;
+    verseDiv.style.transform="translateX(-50%) scale(1)";
+}
 </script>
 </body>
 </html>

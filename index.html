@@ -2,177 +2,205 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Phase 2 — Captain America Shield Constellation Verse</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cinematic Shield Verse</title>
 <style>
-    body {
+    html, body {
         margin: 0;
-        background: #000;
+        padding: 0;
         overflow: hidden;
-        font-family: Cinzel, serif;
+        background: #0a0d19; /* deep space */
+        font-family: "Cinzel", serif;
     }
-
-    /* -------------------- Twinkling Stars -------------------- */
-    #bg {
+    canvas {
+        display: block;
+    }
+    .verse-star {
         position: absolute;
-        inset: 0;
-        z-index: 1;
-    }
-
-    /* -------------------- Shield -------------------- */
-    #shield {
-        width: 260px;
-        height: 260px;
-        border-radius: 50%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background:
-            radial-gradient(circle, #ffffff 0%, #c7d7ff 20%, #9bbaff 25%, #0b3d91 45%, #7c0000 65%, #440000 85%);
-        box-shadow: 0 0 15px #1acbff40;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        z-index: 10;
-    }
-
-    /* Center Star */
-    #star {
-        width: 90px;
-        height: 90px;
-        background: white;
-        clip-path: polygon(
-            50% 0%, 61% 35%, 98% 35%,
-            68% 57%, 79% 91%,
-            50% 70%, 21% 91%,
-            32% 57%, 2% 35%, 39% 35%
-        );
-        filter: drop-shadow(0 0 8px #33d8ff);
-        transition: transform 1.2s ease-out;
-    }
-
-    /* Rotation */
-    .rotate {
-        animation: spin 3s linear infinite;
-    }
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to   { transform: rotate(360deg); }
-    }
-
-    /* -------------------- Verse -------------------- */
-    #verse {
-        position: absolute;
-        top: 12%;
-        width: 100%;
-        text-align: center;
-        font-size: 30px;
-        color: #fff3cf;
-        letter-spacing: 7px;
+        color: #ffe9a6;
+        text-shadow: 0 0 6px #fff2b3, 0 0 10px #e6d37a;
+        font-size: 26px;
         opacity: 0;
-        z-index: 20;
+        transform: scale(0.2);
+        transition: all 0.8s ease-out;
+        pointer-events: none;
     }
-
-    .letter {
-        display: inline-block;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: rise 0.55s forwards ease-out;
-    }
-
-    @keyframes rise {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
 </style>
 </head>
 <body>
 
-<canvas id="bg"></canvas>
-
-<div id="shield">
-    <div id="star"></div>
-</div>
-
-<div id="verse"></div>
+<canvas id="shieldCanvas"></canvas>
 
 <script>
-/* -------------------------------------------------------
-   BACKGROUND TWINKLING STARS
-------------------------------------------------------- */
-const c = document.getElementById("bg");
-const ctx = c.getContext("2d");
-c.width = innerWidth;
-c.height = innerHeight;
+const canvas = document.getElementById("shieldCanvas");
+const ctx = canvas.getContext("2d");
+let width = window.innerWidth;
+let height = window.innerHeight;
+canvas.width = width;
+canvas.height = height;
 
-let stars = [];
-for (let i = 0; i < 180; i++) {
-    stars.push({
-        x: Math.random() * c.width,
-        y: Math.random() * c.height,
-        r: Math.random() * 1.3,
-        o: Math.random()
+// ----------------- Background Stars -----------------
+const bgStars = [];
+for(let i=0;i<200;i++){
+    bgStars.push({
+        x: Math.random()*width,
+        y: Math.random()*height,
+        r: Math.random()*1.5+0.5,
+        tw: Math.random()*0.02+0.005
     });
 }
 
-function drawStars() {
-    ctx.clearRect(0, 0, c.width, c.height);
-    for (let s of stars) {
+// Draw twinkling background stars
+function drawBackgroundStars(){
+    ctx.fillStyle="#0a0d19";
+    ctx.fillRect(0,0,width,height);
+    bgStars.forEach(s=>{
+        const glow = (Math.sin(Date.now()*s.tw)+1)*0.5;
+        ctx.fillStyle=`rgba(255,255,255,${glow})`;
         ctx.beginPath();
-        ctx.fillStyle = `rgba(255,255,255,${s.o})`;
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
         ctx.fill();
-
-        s.o += (Math.random() - 0.5) * 0.04;
-        if (s.o < 0.1) s.o = 0.1;
-        if (s.o > 1) s.o = 1;
-    }
-    requestAnimationFrame(drawStars);
-}
-drawStars();
-
-/* -------------------------------------------------------
-   STAR CLICK → ROTATE + LETTER-BY-LETTER VERSE
-------------------------------------------------------- */
-const star = document.getElementById("star");
-const verseDiv = document.getElementById("verse");
-const verseText = "THE LORD IS MY SHEPHERD";
-
-let clicked = false;
-
-document.getElementById("shield").onclick = () => {
-    if (clicked) return;
-    clicked = true;
-
-    // Rotate star
-    star.classList.add("rotate");
-
-    // Reveal verse
-    setTimeout(() => revealVerse(), 700);
-};
-
-/* -------------------------------------------------------
-   CLEAR LETTER-BY-LETTER VERSE
-------------------------------------------------------- */
-function revealVerse() {
-    verseDiv.innerHTML = "";
-    verseDiv.style.opacity = 1;
-
-    [...verseText].forEach((char, i) => {
-        let span = document.createElement("span");
-        span.className = "letter";
-        span.style.animationDelay = `${i * 0.08}s`;
-        span.textContent = char === " " ? "\u00A0" : char;
-        verseDiv.appendChild(span);
     });
 }
+
+// ----------------- Shield -----------------
+let shieldX = width/2;
+let shieldY = height/2;
+let R = Math.min(width,height)/3;
+let starSpin=false;
+let starAngle=0;
+
+function drawShield(){
+    ctx.save();
+    ctx.translate(shieldX,shieldY);
+    // Outer Red
+    const g1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
+    g1.addColorStop(0,"#3c0000");
+    g1.addColorStop(1,"#7a0000");
+    ctx.fillStyle=g1;
+    ctx.beginPath();
+    ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+    // White
+    const g2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
+    g2.addColorStop(0,"#dadada");
+    g2.addColorStop(1,"#f5f5f5");
+    ctx.fillStyle=g2;
+    ctx.beginPath();
+    ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
+    // Inner Red
+    const g3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
+    g3.addColorStop(0,"#4b0000");
+    g3.addColorStop(1,"#8c0000");
+    ctx.fillStyle=g3;
+    ctx.beginPath();
+    ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
+    // Blue Metallic Center
+    const g4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
+    g4.addColorStop(0,"#b4c7e0");
+    g4.addColorStop(1,"#001933");
+    ctx.fillStyle=g4;
+    ctx.beginPath();
+    ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
+    // 3D Star
+    ctx.save();
+    if(starSpin) ctx.rotate(starAngle);
+    const starR = R*0.28;
+    ctx.beginPath();
+    for(let i=0;i<5;i++){
+        let o=(Math.PI*2/5)*i-Math.PI/2;
+        let n=o+Math.PI/5;
+        ctx.lineTo(Math.cos(o)*starR,Math.sin(o)*starR);
+        ctx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45);
+    }
+    ctx.closePath();
+    ctx.shadowColor="rgba(255,255,255,0.25)";
+    ctx.shadowBlur=5;
+    const sg = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
+    sg.addColorStop(0,"#ffffff");
+    sg.addColorStop(0.4,"#eeeeee");
+    sg.addColorStop(1,"#7a7a7a");
+    ctx.fillStyle=sg;
+    ctx.fill();
+    ctx.restore();
+    ctx.restore();
+}
+
+// ----------------- Animate -----------------
+function animate(){
+    drawBackgroundStars();
+    drawShield();
+    if(starSpin) starAngle+=0.035;
+    requestAnimationFrame(animate);
+}
+animate();
+
+// ----------------- Verse Stars -----------------
+const verse="He counts the stars and calls them each by name — Psalm 147:4";
+let verseStars=[];
+
+// Click on shield star
+canvas.addEventListener("click", e=>{
+    const dx=e.clientX-shieldX;
+    const dy=e.clientY-shieldY;
+    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
+        starSpin=true;
+        spawnVerseStars();
+    }
+});
+
+function spawnVerseStars(){
+    if(verseStars.length>0) return;
+    const startX=shieldX;
+    const startY=shieldY;
+    const spacing=24;
+    let offsetX = window.innerWidth/2 - (verse.length*spacing)/2;
+
+    for(let i=0;i<verse.length;i++){
+        let char=verse[i];
+        let starCount=Math.floor(Math.random()*4)+8;
+        for(let j=0;j<starCount;j++){
+            let star=document.createElement("div");
+            star.className="verse-star";
+            star.textContent="✦"; // small star emoji
+            star.style.fontSize="16px";
+            document.body.appendChild(star);
+            verseStars.push({el:star, targetX:offsetX+i*spacing + Math.random()*6-3, targetY:40+Math.random()*4-2});
+            star.style.left=startX+"px";
+            star.style.top=startY+"px";
+            star.style.opacity=1;
+            setTimeout(()=>{star.style.transform="scale(1.2)";},10);
+        }
+    }
+
+    animateVerseStars();
+}
+
+function animateVerseStars(){
+    let done=false;
+    function step(){
+        done=true;
+        verseStars.forEach(s=>{
+            let el=s.el;
+            let curX=parseFloat(el.style.left);
+            let curY=parseFloat(el.style.top);
+            let dx=(s.targetX-curX)*0.08;
+            let dy=(s.targetY-curY)*0.08;
+            el.style.left=curX+dx+"px";
+            el.style.top=curY+dy+"px";
+            if(Math.abs(dx)>0.5 || Math.abs(dy)>0.5) done=false;
+        });
+        if(!done) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
+// ----------------- Background Star Twinkle -----------------
+setInterval(()=>{
+    bgStars.forEach(s=>{
+        s.tw=Math.random()*0.02+0.005;
+    });
+},1000);
 
 </script>
-
 </body>
 </html>

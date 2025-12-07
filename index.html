@@ -2,253 +2,173 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Captain America Shield — Divine Verse</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Cinematic Shield Verse</title>
 <style>
-    html,body{
-        margin:0;
-        padding:0;
-        overflow:hidden;
-        background:#000005;   /* FIXED — pure IMAX black */
-        font-family: "Cinzel", serif;
+    body {
+        margin: 0;
+        background: #000;
+        overflow: hidden;
+        font-family: Cinzel, serif;
     }
 
-    canvas{
-        position:absolute;
-        top:0; left:0;
-        width:100%; height:100%;
-        display:block;
-        z-index:2;
+    /* -------------------- Twinkling Stars -------------------- */
+    #bg {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
     }
 
-    /* Stars in background */
-    #bg-stars div{
-        position:absolute;
-        background:white;
-        border-radius:50%;
-        pointer-events:none;
-        filter:blur(1px);
+    /* -------------------- Shield -------------------- */
+    #shield {
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background:
+            radial-gradient(circle, #ffffff 0%, #c7d7ff 20%, #9bbaff 25%, #0b3d91 45%, #7c0000 65%, #440000 85%);
+        box-shadow: 0 0 15px #1acbff40;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        z-index: 10;
     }
 
-    #bg-stars{
-        position:absolute;
-        top:0; left:0;
-        width:100%; height:100%;
-        z-index:1;
-        background:#000005;   /* ensures NO white flash */
+    /* Center Star */
+    #star {
+        width: 90px;
+        height: 90px;
+        background: white;
+        clip-path: polygon(
+            50% 0%, 61% 35%, 98% 35%,
+            68% 57%, 79% 91%,
+            50% 70%, 21% 91%,
+            32% 57%, 2% 35%, 39% 35%
+        );
+        filter: drop-shadow(0 0 8px #33d8ff);
+        transition: transform 1.2s ease-out;
     }
 
-    /* Divine beam */
-    #beam{
-        position:absolute;
-        top:-200px;
-        left:50%;
-        transform:translateX(-50%);
-        width:300px;
-        height:600px;
-        background:linear-gradient(to bottom,
-            rgba(255,255,200,0) 0%,
-            rgba(255,255,170,0.7) 25%,
-            rgba(255,255,140,0.2) 100%);
-        filter:blur(40px);
-        opacity:0;
-        transition:1.2s ease-out;
-        z-index:5;
-        pointer-events:none;
+    /* Rotation */
+    .rotate {
+        animation: spin 3s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
     }
 
-    .verse-letter{
-        position:absolute;
-        top:70px;
-        font-size:38px;
-        color:#ffe7aa;
-        opacity:0;
-        transform:scale(0.1);
-        text-shadow:0 0 10px #fff4c2;
-        transition:0.6s ease-out;
-        z-index:10;
-        white-space:pre;
-        pointer-events:none;
+    /* -------------------- Verse -------------------- */
+    #verse {
+        position: absolute;
+        top: 12%;
+        width: 100%;
+        text-align: center;
+        font-size: 30px;
+        color: #fff3cf;
+        letter-spacing: 7px;
+        opacity: 0;
+        z-index: 20;
     }
 
-    /* Invisible span used for perfect measurement */
-    #measure{
-        visibility:hidden;
-        position:absolute;
-        top:-9999px;
-        left:-9999px;
-        font-size:38px;
-        font-family:"Cinzel", serif;
-        white-space:pre;
+    .letter {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: rise 0.55s forwards ease-out;
     }
+
+    @keyframes rise {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
 </style>
-
 </head>
 <body>
 
-<div id="bg-stars"></div>
-<div id="beam"></div>
-<div id="measure"></div>
-<canvas id="shieldCanvas"></canvas>
+<canvas id="bg"></canvas>
+
+<div id="shield">
+    <div id="star"></div>
+</div>
+
+<div id="verse"></div>
 
 <script>
-// ------------------------------------------
-// ⭐ BACKGROUND STARS FIXED
-// ------------------------------------------
-const bg = document.getElementById("bg-stars");
-for(let i=0;i<250;i++){
-    const s = document.createElement("div");
-    let size = Math.random()*2 + 1;
-    s.style.width = size + "px";
-    s.style.height = size + "px";
-    s.style.left = (Math.random()*100) + "%";
-    s.style.top = (Math.random()*100) + "%";
-    s.style.opacity = Math.random()*0.8;
-    bg.appendChild(s);
+/* -------------------------------------------------------
+   BACKGROUND TWINKLING STARS
+------------------------------------------------------- */
+const c = document.getElementById("bg");
+const ctx = c.getContext("2d");
+c.width = innerWidth;
+c.height = innerHeight;
+
+let stars = [];
+for (let i = 0; i < 180; i++) {
+    stars.push({
+        x: Math.random() * c.width,
+        y: Math.random() * c.height,
+        r: Math.random() * 1.3,
+        o: Math.random()
+    });
 }
 
-// ------------------------------------------
-// ⭐ CANVAS SHIELD
-// ------------------------------------------
-const canvas = document.getElementById("shieldCanvas");
-const ctx = canvas.getContext("2d");
-function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resize();
-window.onresize = resize;
+function drawStars() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    for (let s of stars) {
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${s.o})`;
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
 
-let shieldX, shieldY, R;
-let starSpin = false;
-let starAngle = 0;
-
-function drawShield(){
-    shieldX = canvas.width/2;
-    shieldY = canvas.height/2;
-    R = Math.min(canvas.width, canvas.height)/3;
-
-    ctx.save();
-    ctx.translate(shieldX, shieldY);
-
-    // OUTER RED
-    let g1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
-    g1.addColorStop(0,"#300000");
-    g1.addColorStop(1,"#700000");
-    ctx.fillStyle = g1;
-    ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
-
-    // WHITE
-    let g2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
-    g2.addColorStop(0,"#e3e3e3");
-    g2.addColorStop(1,"#fafafa");
-    ctx.fillStyle = g2;
-    ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
-
-    // INNER RED
-    let g3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
-    g3.addColorStop(0,"#450000");
-    g3.addColorStop(1,"#880000");
-    ctx.fillStyle = g3;
-    ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
-
-    // BLUE METALLIC
-    let g4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
-    g4.addColorStop(0,"#b0c4e8");
-    g4.addColorStop(1,"#00152d");
-    ctx.fillStyle = g4;
-    ctx.beginPath(); ctx.arc(0,0,R*0.35,0,Math.PI*2); ctx.fill();
-
-    // STAR
-    ctx.save();
-    if(starSpin) ctx.rotate(starAngle);
-    let starR = R*0.28;
-
-    ctx.beginPath();
-    for(let i=0;i<5;i++){
-        let o = i*(Math.PI*2/5) - Math.PI/2;
-        let inner = o + Math.PI/5;
-        ctx.lineTo(Math.cos(o)*starR, Math.sin(o)*starR);
-        ctx.lineTo(Math.cos(inner)*(starR*0.45), Math.sin(inner)*(starR*0.45));
+        s.o += (Math.random() - 0.5) * 0.04;
+        if (s.o < 0.1) s.o = 0.1;
+        if (s.o > 1) s.o = 1;
     }
-    ctx.closePath();
-
-    ctx.shadowColor="rgba(255,255,255,0.15)";
-    ctx.shadowBlur=3;
-
-    let sg = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
-    sg.addColorStop(0,"#ffffff");
-    sg.addColorStop(1,"#757575");
-
-    ctx.fillStyle = sg;
-    ctx.fill();
-
-    ctx.restore();
-    ctx.restore();
+    requestAnimationFrame(drawStars);
 }
+drawStars();
 
-function loop(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawShield();
-    if(starSpin) starAngle += 0.045;
-    requestAnimationFrame(loop);
-}
-loop();
+/* -------------------------------------------------------
+   STAR CLICK → ROTATE + LETTER-BY-LETTER VERSE
+------------------------------------------------------- */
+const star = document.getElementById("star");
+const verseDiv = document.getElementById("verse");
+const verseText = "THE LORD IS MY SHEPHERD";
 
-// ------------------------------------------
-// ⭐ MEASURE TEXT PROPERLY WITHOUT OVERLAP
-// ------------------------------------------
-const measureSpan = document.getElementById("measure");
-measureSpan.style.fontSize = "38px";
-measureSpan.style.fontFamily = "Cinzel, serif";
+let clicked = false;
 
-function getLetterWidth(char){
-    measureSpan.textContent = char;
-    return measureSpan.offsetWidth;
-}
+document.getElementById("shield").onclick = () => {
+    if (clicked) return;
+    clicked = true;
 
-// ------------------------------------------
-// ⭐ DIVINE VERSE REVEAL
-// ------------------------------------------
-const verse = "He counts the stars and calls them each by name — Psalm 147:4";
-const beam = document.getElementById("beam");
+    // Rotate star
+    star.classList.add("rotate");
 
-canvas.addEventListener("click",(e)=>{
-    let dx = e.clientX - shieldX;
-    let dy = e.clientY - shieldY;
-    if(Math.sqrt(dx*dx + dy*dy) < R*0.30){
-        starSpin = true;
-        showVerse();
-    }
-});
+    // Reveal verse
+    setTimeout(() => revealVerse(), 700);
+};
 
-function showVerse(){
-    beam.style.opacity = 1;
+/* -------------------------------------------------------
+   CLEAR LETTER-BY-LETTER VERSE
+------------------------------------------------------- */
+function revealVerse() {
+    verseDiv.innerHTML = "";
+    verseDiv.style.opacity = 1;
 
-    let letters = [...verse];
-    let totalWidth = letters.reduce((t,ch)=> t + getLetterWidth(ch), 0);
-    let x = window.innerWidth/2 - totalWidth/2;
-
-    letters.forEach((ch,i)=>{
-        let w = getLetterWidth(ch);
-        setTimeout(()=>{
-
-            const el = document.createElement("div");
-            el.className = "verse-letter";
-            el.textContent = ch;
-            el.style.left = x + "px";
-
-            document.body.appendChild(el);
-
-            setTimeout(()=>{
-                el.style.opacity = 1;
-                el.style.transform = "scale(1)";
-            },20);
-
-        }, i * 90);
-
-        x += w;
+    [...verseText].forEach((char, i) => {
+        let span = document.createElement("span");
+        span.className = "letter";
+        span.style.animationDelay = `${i * 0.08}s`;
+        span.textContent = char === " " ? "\u00A0" : char;
+        verseDiv.appendChild(span);
     });
 }
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Captain America Shield — Phase 2 (Stars Form Verse)</title>
+<title>Captain America Shield — Phase 2 Cinematic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html, body {
@@ -14,15 +14,14 @@ html, body {
 }
 canvas { display:block; }
 
-/* Verse letters */
-.verse-letter{
+.verse-letter {
     position:absolute;
     font-size:36px;
     color:#ffd977;
     text-shadow:0 0 15px #ffe9b0;
     opacity:0;
-    transform:scale(0.5);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transform:scale(0.3);
+    transition: opacity 1s ease-out, transform 1s ease-out;
     white-space: pre;
     pointer-events:none;
 }
@@ -32,21 +31,17 @@ canvas { display:block; }
 <canvas id="c"></canvas>
 
 <script>
-const canvas=document.getElementById('c');
-const ctx=canvas.getContext('2d');
-function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resize();
 window.onresize=resize;
 
 // ---------------- Background stars ----------------
-let bgStars=[];
-for(let i=0;i<200;i++){
-    bgStars.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        z:Math.random()*1.5 + 0.5,
-        tw:Math.random()*0.02 + 0.005
-    });
+let bgStars = [];
+for(let i=0;i<250;i++){
+    bgStars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, z:Math.random()*1.5+0.5, tw:Math.random()*0.02+0.005});
 }
 
 // ---------------- Shield ----------------
@@ -55,12 +50,10 @@ let starSpin=false;
 let starAngle=0;
 
 function drawShield(){
-    shieldX=canvas.width/2;
-    shieldY=canvas.height/2;
+    shieldX=canvas.width/2; shieldY=canvas.height/2;
     R=Math.min(canvas.width,canvas.height)/3;
 
-    ctx.save();
-    ctx.translate(shieldX,shieldY);
+    ctx.save(); ctx.translate(shieldX,shieldY);
 
     // Outer red
     const g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
@@ -94,8 +87,8 @@ function drawShield(){
         ctx.lineTo(Math.cos(n)*(starR*0.45), Math.sin(n)*(starR*0.45));
     }
     ctx.closePath();
-    ctx.shadowColor="rgba(255,255,255,0.25)";
-    ctx.shadowBlur=5;
+    ctx.shadowColor="rgba(255,255,255,0.2)";
+    ctx.shadowBlur=4;
     const sg=ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
     sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
     ctx.fillStyle=sg; ctx.fill();
@@ -120,8 +113,7 @@ function loop(){
     drawBackgroundStars();
     drawShield();
     if(starSpin) starAngle+=0.04;
-    // move background stars slowly
-    bgStars.forEach(s=>{s.x+=0.05; if(s.x>canvas.width) s.x=0;});
+    bgStars.forEach(s=>{s.x+=0.05; if(s.x>canvas.width)s.x=0;});
     requestAnimationFrame(loop);
 }
 loop();
@@ -130,10 +122,7 @@ loop();
 canvas.addEventListener("click",(e)=>{
     let dx=e.clientX-shieldX, dy=e.clientY-shieldY;
     if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
-        if(!starSpin){
-            starSpin=true;
-            startVerseFormation();
-        }
+        if(!starSpin){ starSpin=true; startVerseFormation(); }
     }
 });
 
@@ -143,8 +132,8 @@ function startVerseFormation(){
     const letters=[...verse];
     const starsPerLetter=10;
     const allStars=[];
-    
-    letters.forEach((char, i)=>{
+
+    letters.forEach((char,i)=>{
         const targetX=canvas.width/2 - (letters.length*18)/2 + i*18;
         const targetY=50;
         for(let j=0;j<starsPerLetter;j++){
@@ -153,36 +142,47 @@ function startVerseFormation(){
                 y:shieldY,
                 tx: targetX + Math.random()*8 -4,
                 ty: targetY + Math.random()*8 -4,
-                size: Math.random()*2 +1,
+                size: Math.random()*2+1,
                 opacity:0
             });
         }
     });
 
-    // Animate stars flying from shield star to form letters
     let steps=0;
     const interval=setInterval(()=>{
         steps++;
         drawBackgroundStars();
         drawShield();
+
+        // ---------------- Divine light behind
+        ctx.save();
+        const grad=ctx.createRadialGradient(canvas.width/2,0,0,canvas.width/2,0,canvas.width/1.5);
+        grad.addColorStop(0,"rgba(255,255,220,0.35)");
+        grad.addColorStop(1,"rgba(255,255,220,0)");
+        ctx.fillStyle=grad;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+
+        // ---------------- Move stars to form letters
         allStars.forEach(star=>{
-            star.x += (star.tx-star.x)/8;
-            star.y += (star.ty-star.y)/8;
-            star.opacity += 0.05;
+            star.x+=(star.tx-star.x)/8;
+            star.y+=(star.ty-star.y)/8;
+            star.opacity+=0.05;
             ctx.fillStyle=`rgba(255,255,180,${star.opacity})`;
             ctx.beginPath();
             ctx.arc(star.x,star.y,star.size,0,Math.PI*2);
             ctx.fill();
         });
-        if(steps>30){
+
+        if(steps>35){
             clearInterval(interval);
-            revealVerse(letters);
+            revealVerseLetters(letters);
         }
     },30);
 }
 
-// ---------------- Divine light reveal ----------------
-function revealVerse(letters){
+// ---------------- Reveal verse letters ----------------
+function revealVerseLetters(letters){
     const startX=canvas.width/2 - (letters.length*18)/2;
     letters.forEach((char,i)=>{
         setTimeout(()=>{
@@ -193,7 +193,7 @@ function revealVerse(letters){
             span.style.top="50px";
             document.body.appendChild(span);
             setTimeout(()=>{span.style.opacity=1; span.style.transform="scale(1)";},50);
-        }, i*80);
+        }, i*90);
     });
 }
 </script>

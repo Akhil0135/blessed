@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IMAX Cinematic — Shield & Verse</title>
+<title>IMAX Cinematic — Shield & Verse Letters</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 html,body{
@@ -15,16 +15,14 @@ html,body{
 canvas{
     display:block;
 }
-#verse{
+.verse-letter{
     position:absolute;
-    top:40px;
-    left:50%;
-    transform:translateX(-50%) scale(0.2);
     font-size:32px;
     color:#ffe9a6;
     text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
     opacity:0;
-    transition: all 1s ease-out;
+    transform:scale(0.2);
+    transition: all 0.8s ease-out;
     white-space:nowrap;
     pointer-events:none;
 }
@@ -32,7 +30,6 @@ canvas{
 </head>
 <body>
 <canvas id="shieldCanvas"></canvas>
-<div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 
 <script>
 const canvas = document.getElementById("shieldCanvas");
@@ -55,10 +52,9 @@ function drawShield(){
     ctx.save();
     ctx.translate(shieldX,shieldY);
 
-    // Outer Red Ring
+    // Outer Red
     let g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
-    g1.addColorStop(0,"#3c0000");
-    g1.addColorStop(1,"#7a0000");
+    g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000");
     ctx.fillStyle=g1;
     ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
 
@@ -68,7 +64,7 @@ function drawShield(){
     ctx.fillStyle=g2;
     ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
 
-    // Inner Red Ring
+    // Inner Red
     let g3=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
     g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000");
     ctx.fillStyle=g3;
@@ -126,20 +122,57 @@ function animate(){
 animate();
 
 // ---------------- Click on Shield Star ----------------
-const verseDiv=document.getElementById("verse");
+const verseText="He counts the stars and calls them each by name — Psalm 147:4";
+
 canvas.addEventListener("click", e=>{
     const dx=e.clientX-shieldX;
     const dy=e.clientY-shieldY;
     if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
         starSpin=true;
-        showVerse();
+        revealVerse();
     }
 });
 
-// ---------------- Show Verse ----------------
-function showVerse(){
-    verseDiv.style.opacity=1;
-    verseDiv.style.transform="translateX(-50%) scale(1)";
+// ---------------- Letter by Letter Verse Reveal ----------------
+function revealVerse(){
+    const startX=shieldX;
+    const startY=shieldY;
+    const topY=40;
+    const fontSize=32;
+    let totalWidth=0;
+    const temp=document.createElement("canvas");
+    const tctx=temp.getContext("2d");
+    tctx.font=`${fontSize}px Cinzel`;
+
+    const widths=[];
+    for(let i=0;i<verseText.length;i++){
+        const w=tctx.measureText(verseText[i]).width;
+        widths.push(w);
+        totalWidth+=w;
+    }
+
+    let currentX=width/2 - totalWidth/2;
+    let delay=0;
+
+    for(let i=0;i<verseText.length;i++){
+        const span=document.createElement("div");
+        span.textContent=verseText[i];
+        span.className="verse-letter";
+        span.style.left=startX+"px";
+        span.style.top=startY+"px";
+        span.style.fontSize=fontSize+"px";
+        document.body.appendChild(span);
+
+        setTimeout(()=>{
+            span.style.opacity=1;
+            span.style.transform="scale(1)";
+            span.style.left=currentX+"px";
+            span.style.top=topY+"px";
+        }, delay);
+
+        delay+=80;
+        currentX+=widths[i]+1; // spacing between letters
+    }
 }
 </script>
 </body>

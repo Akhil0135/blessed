@@ -15,20 +15,24 @@ html,body{
 canvas{
     display:block;
 }
-.verse-star{
+#verse{
     position:absolute;
+    top:40px;
+    left:50%;
+    transform:translateX(-50%) scale(0.2);
+    font-size:32px;
     color:#ffe9a6;
-    text-shadow:0 0 6px #fff2b3,0 0 12px #e6d37a;
-    font-size:26px;
+    text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
     opacity:0;
-    transform:scale(0.2);
-    transition:all 0.8s ease-out;
+    transition: all 1s ease-out;
+    white-space:nowrap;
     pointer-events:none;
 }
 </style>
 </head>
 <body>
 <canvas id="shieldCanvas"></canvas>
+<div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 
 <script>
 const canvas = document.getElementById("shieldCanvas");
@@ -121,71 +125,22 @@ function animate(){
 }
 animate();
 
-// ---------------- Verse Stars ----------------
-const verse="He counts the stars and calls them each by name — Psalm 147:4";
-let verseStars=[];
-
-// Click → shield star
+// ---------------- Click on Shield Star ----------------
+const verseDiv=document.getElementById("verse");
 canvas.addEventListener("click", e=>{
     const dx=e.clientX-shieldX;
     const dy=e.clientY-shieldY;
     if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
         starSpin=true;
-        spawnVerseStars();
+        showVerse();
     }
 });
 
-// Spawn stars forming the verse directly
-function spawnVerseStars(){
-    if(verseStars.length>0) return;
-    const startX=shieldX, startY=shieldY;
-    const spacing=26;
-    let offsetX=window.innerWidth/2-(verse.length*spacing)/2;
-
-    for(let i=0;i<verse.length;i++){
-        let char=verse[i];
-        let starCount=Math.floor(Math.random()*4)+8;
-        for(let j=0;j<starCount;j++){
-            let star=document.createElement("div");
-            star.className="verse-star";
-            star.textContent="✦";
-            star.style.fontSize="16px";
-            document.body.appendChild(star);
-            verseStars.push({el:star,targetX:offsetX+i*spacing + Math.random()*5-2,targetY:40+Math.random()*3-1});
-            star.style.left=startX+"px";
-            star.style.top=startY+"px";
-            star.style.opacity=1;
-            setTimeout(()=>{star.style.transform="scale(1.2)";},10);
-        }
-    }
-    animateVerseStars();
+// ---------------- Show Verse ----------------
+function showVerse(){
+    verseDiv.style.opacity=1;
+    verseDiv.style.transform="translateX(-50%) scale(1)";
 }
-
-// Animate stars flying to form verse
-function animateVerseStars(){
-    let done=false;
-    function step(){
-        done=true;
-        verseStars.forEach(s=>{
-            let el=s.el;
-            let curX=parseFloat(el.style.left);
-            let curY=parseFloat(el.style.top);
-            let dx=(s.targetX-curX)*0.08;
-            let dy=(s.targetY-curY)*0.08;
-            el.style.left=curX+dx+"px";
-            el.style.top=curY+dy+"px";
-            if(Math.abs(dx)>0.5 || Math.abs(dy)>0.5) done=false;
-        });
-        if(!done) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-}
-
-// ---------------- Twinkle refresh ----------------
-setInterval(()=>{
-    bgStars.forEach(s=>{ s.tw=Math.random()*0.02+0.005; });
-},1000);
-
 </script>
 </body>
 </html>

@@ -2,59 +2,123 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IMAX Cinematic — Shield & Verse</title>
+<title>IMAX Cinematic — Full Sequence</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-html, body{
-    margin:0; padding:0; overflow:hidden;
-    background:#0a0d19; 
-    font-family:"Cinzel", serif;
+html, body {
+    margin:0; padding:0; overflow:hidden; background:#000; font-family:"Cinzel", serif;
 }
-canvas{ display:block; }
-
-.verse-letter{
-    position:absolute;
-    font-size:30px;
-    color:#ffe9a6;
-    text-shadow:0 0 8px #fff2b3, 0 0 15px #e6d37a;
-    opacity:0;
-    transform:scale(0.2);
-    transition:0.8s ease-out;
-    white-space:nowrap;
-    pointer-events:none;
+canvas { display:block; }
+#verse {
+    position:absolute; top:40px; left:50%; transform:translateX(-50%) scale(0.2);
+    font-size:32px; color:#ffe9a6; text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
+    opacity:0; transition:all 1s ease-out; white-space:nowrap; pointer-events:none;
+}
+#phase3 {
+    position:absolute; top:50%; left:50%; transform:translate(-50%, -50%) scale(0.2);
+    font-size:64px; color:#ffd700; text-shadow:0 0 15px #ffe9b0;
+    opacity:0; transition:all 1s ease-out; white-space:nowrap; pointer-events:none;
 }
 </style>
 </head>
 <body>
-
-<canvas id="shieldCanvas"></canvas>
+<canvas id="canvas"></canvas>
+<div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
+<div id="phase3">PRINCE → DAIVIK</div>
 
 <script>
-const canvas = document.getElementById("shieldCanvas");
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-let width = window.innerWidth, height = window.innerHeight;
-canvas.width = width; canvas.height = height;
+let w = window.innerWidth, h = window.innerHeight;
+canvas.width = w; canvas.height = h;
 
-let shieldX = width/2, shieldY = height/2;
-let R = Math.min(width,height)/3;
-let starSpin = false, starAngle = 0;
-
-// ---------------- Background Stars ----------------
-const bgStars = [];
+// ---------------------- Phase 1 ----------------------
+let moon = {x:w/3, y:h/2, r:60};
+let sun = {x:w*0.8, y:h/2, r:80, alpha:0};
+let draggingMoon=false;
+let stars1=[];
 for(let i=0;i<200;i++){
-    bgStars.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005});
+    stars1.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.5+0.5, tw:Math.random()*0.02+0.005});
+}
+canvas.addEventListener("mousedown", e=>{ 
+    const dx=e.clientX-moon.x, dy=e.clientY-moon.y;
+    if(Math.sqrt(dx*dx+dy*dy)<=moon.r) draggingMoon=true;
+});
+canvas.addEventListener("mouseup", e=>{ draggingMoon=false; });
+canvas.addEventListener("mousemove", e=>{ if(draggingMoon){ moon.x=e.clientX; moon.y=e.clientY; }});
+
+// ---------------------- Phase 2 ----------------------
+let shieldX=w/2, shieldY=h/2, R=Math.min(w,h)/3;
+let starSpin=false, starAngle=0;
+const bgStars=[];
+for(let i=0;i<200;i++){
+    bgStars.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005});
 }
 
-// ---------------- Shield Drawing ----------------
+// ---------------------- Animate ----------------------
+let phase=1; // 1=moon/sun, 2=shield, 3=PRINCE->DAIVIK
+function animate(){
+    ctx.fillStyle="#0a0d19"; ctx.fillRect(0,0,w,h);
+
+    if(phase===1){
+        // background stars
+        stars1.forEach(s=>{
+            const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
+            ctx.fillStyle=`rgba(255,255,255,${glow})`;
+            ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+        });
+
+        // moon
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(moon.x, moon.y, moon.r,0,Math.PI*2);
+        ctx.fillStyle="#c0c0c0"; ctx.shadowColor="#888"; ctx.shadowBlur=15;
+        ctx.fill();
+        ctx.restore();
+
+        // sun (rises gradually)
+        if(sun.alpha<1) sun.alpha+=0.002;
+        ctx.save();
+        ctx.globalAlpha=sun.alpha;
+        ctx.beginPath();
+        ctx.arc(sun.x, sun.y, sun.r,0,Math.PI*2);
+        ctx.fillStyle="#ffd580";
+        ctx.fill();
+        ctx.restore();
+
+        // fade stars as sun rises
+        stars1.forEach(s=>{ s.r=Math.max(0,s.r-0.01); });
+
+        // Move to Phase2 if sun fully appeared
+        if(sun.alpha>=0.99) phase=2;
+    }
+
+    if(phase===2){
+        // background stars
+        bgStars.forEach(s=>{
+            const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
+            ctx.fillStyle=`rgba(255,255,255,${glow})`;
+            ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+        });
+
+        drawShield();
+        if(starSpin) starAngle+=0.035;
+    }
+
+    requestAnimationFrame(animate);
+}
+animate();
+
+// ---------------------- Draw Shield ----------------------
 function drawShield(){
-    ctx.save(); ctx.translate(shieldX, shieldY);
+    ctx.save(); ctx.translate(shieldX,shieldY);
 
     // Outer Red
     let g1=ctx.createRadialGradient(0,0,R*0.2,0,0,R);
     g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000");
     ctx.fillStyle=g1; ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
 
-    // White
+    // White Ring
     let g2=ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
     g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5");
     ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
@@ -72,7 +136,7 @@ function drawShield(){
     // 3D Star
     ctx.save();
     if(starSpin) ctx.rotate(starAngle);
-    let starR = R*0.28;
+    let starR=R*0.28;
     ctx.beginPath();
     for(let i=0;i<5;i++){
         let o=(Math.PI*2/5)*i-Math.PI/2;
@@ -91,74 +155,29 @@ function drawShield(){
     ctx.restore();
 }
 
-// ---------------- Animate Loop ----------------
-function animate(){
-    ctx.fillStyle="#0a0d19"; ctx.fillRect(0,0,width,height);
-
-    // Background twinkling stars
-    bgStars.forEach(s=>{
-        const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
-        ctx.fillStyle=`rgba(255,255,255,${glow})`;
-        ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
-    });
-
-    drawShield();
-    if(starSpin) starAngle+=0.035;
-    requestAnimationFrame(animate);
-}
-animate();
-
-// ---------------- Click Event ----------------
-const verseText = "He counts the stars and calls them each by name — Psalm 147:4";
+// ---------------------- Click Shield Star ----------------------
+const verseDiv=document.getElementById("verse");
+const phase3Div=document.getElementById("phase3");
 canvas.addEventListener("click", e=>{
-    const dx=e.clientX-shieldX;
-    const dy=e.clientY-shieldY;
-    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28 && !starSpin){
+    const dx=e.clientX-shieldX, dy=e.clientY-shieldY;
+    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28 && phase===2){
         starSpin=true;
-        revealVerse();
+        showVerse();
     }
 });
 
-// ---------------- Letter-by-letter Verse ----------------
-function revealVerse(){
-    const startX=shieldX; const startY=shieldY; const topY=40;
-    const fontSize=30;
-
-    const temp=document.createElement("canvas");
-    const tctx=temp.getContext("2d");
-    tctx.font=`${fontSize}px Cinzel`;
-
-    let totalWidth=0, widths=[];
-    for(let i=0;i<verseText.length;i++){
-        const w=tctx.measureText(verseText[i]).width;
-        widths.push(w);
-        totalWidth+=w;
-    }
-
-    let currentX = width/2 - totalWidth/2;
-    let delay=0;
-
-    for(let i=0;i<verseText.length;i++){
-        const span=document.createElement("div");
-        span.textContent=verseText[i];
-        span.className="verse-letter";
-        span.style.left=startX+"px";
-        span.style.top=startY+"px";
-        span.style.fontSize=fontSize+"px";
-        document.body.appendChild(span);
-
-        setTimeout(()=>{
-            span.style.opacity=1;
-            span.style.transform="scale(1)";
-            span.style.left=currentX+"px";
-            span.style.top=topY+"px";
-        }, delay);
-
-        delay+=80;
-        currentX+=widths[i]+2; // proper spacing
-    }
+// ---------------------- Show Verse ----------------------
+function showVerse(){
+    verseDiv.style.opacity=1;
+    verseDiv.style.transform="translateX(-50%) scale(1)";
+    // After 2s, show Phase3
+    setTimeout(()=>{
+        phase=3;
+        phase3Div.style.opacity=1;
+        phase3Div.style.transform="translate(-50%,-50%) scale(1)";
+    }, 2500);
 }
-</script>
 
+</script>
 </body>
 </html>

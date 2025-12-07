@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Captain America Shield — Divine Verse Reveal</title>
+<title>Captain America Shield — Divine Verse</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -10,64 +10,77 @@
         margin:0;
         padding:0;
         overflow:hidden;
-        background: radial-gradient(circle at center,
-            #0a0d19 0%,
-            #05060f 60%,
-            #010208 100%);
+        background:#000005;   /* FIXED — pure IMAX black */
         font-family: "Cinzel", serif;
     }
 
     canvas{
         position:absolute;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
+        top:0; left:0;
+        width:100%; height:100%;
         display:block;
+        z-index:2;
     }
 
-    /* Stars created on background */
+    /* Stars in background */
+    #bg-stars div{
+        position:absolute;
+        background:white;
+        border-radius:50%;
+        pointer-events:none;
+        filter:blur(1px);
+    }
+
     #bg-stars{
         position:absolute;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        pointer-events:none;
-        z-index:0;
+        top:0; left:0;
+        width:100%; height:100%;
+        z-index:1;
+        background:#000005;   /* ensures NO white flash */
     }
 
-    /* Divine light */
+    /* Divine beam */
     #beam{
         position:absolute;
         top:-200px;
         left:50%;
+        transform:translateX(-50%);
         width:300px;
         height:600px;
-        transform:translateX(-50%);
         background:linear-gradient(to bottom,
             rgba(255,255,200,0) 0%,
-            rgba(255,255,180,0.6) 30%,
-            rgba(255,255,150,0.15) 100%);
-        filter:blur(35px);
+            rgba(255,255,170,0.7) 25%,
+            rgba(255,255,140,0.2) 100%);
+        filter:blur(40px);
         opacity:0;
         transition:1.2s ease-out;
-        pointer-events:none;
         z-index:5;
+        pointer-events:none;
     }
 
-    /* Letters of verse */
     .verse-letter{
         position:absolute;
-        top:50px;
-        font-size:36px;
-        color:#ffe9a6;
+        top:70px;
+        font-size:38px;
+        color:#ffe7aa;
         opacity:0;
         transform:scale(0.1);
-        text-shadow:0 0 10px #fff1b3;
-        pointer-events:none;
+        text-shadow:0 0 10px #fff4c2;
         transition:0.6s ease-out;
         z-index:10;
+        white-space:pre;
+        pointer-events:none;
+    }
+
+    /* Invisible span used for perfect measurement */
+    #measure{
+        visibility:hidden;
+        position:absolute;
+        top:-9999px;
+        left:-9999px;
+        font-size:38px;
+        font-family:"Cinzel", serif;
+        white-space:pre;
     }
 </style>
 
@@ -76,34 +89,30 @@
 
 <div id="bg-stars"></div>
 <div id="beam"></div>
+<div id="measure"></div>
 <canvas id="shieldCanvas"></canvas>
 
 <script>
-// -------------------------------------------------------
-// Create background stars
-// -------------------------------------------------------
+// ------------------------------------------
+// ⭐ BACKGROUND STARS FIXED
+// ------------------------------------------
 const bg = document.getElementById("bg-stars");
-
 for(let i=0;i<250;i++){
     const s = document.createElement("div");
-    s.style.position="absolute";
-    s.style.width="2px";
-    s.style.height="2px";
-    s.style.background="white";
-    s.style.borderRadius="50%";
-    s.style.opacity=Math.random()*0.7;
-    s.style.left=(Math.random()*100)+"%";
-    s.style.top=(Math.random()*100)+"%";
-    s.style.filter="blur(1px)";
+    let size = Math.random()*2 + 1;
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+    s.style.left = (Math.random()*100) + "%";
+    s.style.top = (Math.random()*100) + "%";
+    s.style.opacity = Math.random()*0.8;
     bg.appendChild(s);
 }
 
-// -------------------------------------------------------
-// Shield + Star Canvas Setup
-// -------------------------------------------------------
+// ------------------------------------------
+// ⭐ CANVAS SHIELD
+// ------------------------------------------
 const canvas = document.getElementById("shieldCanvas");
 const ctx = canvas.getContext("2d");
-
 function resize(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -111,22 +120,10 @@ function resize(){
 resize();
 window.onresize = resize;
 
+let shieldX, shieldY, R;
 let starSpin = false;
 let starAngle = 0;
-let shieldX, shieldY, R;
 
-// Measure text widths accurately
-function measureTextWidth(text, font="36px Cinzel") {
-    ctx.save();
-    ctx.font = font;
-    const width = ctx.measureText(text).width;
-    ctx.restore();
-    return width;
-}
-
-// -------------------------------------------------------
-// Draw Shield
-// -------------------------------------------------------
 function drawShield(){
     shieldX = canvas.width/2;
     shieldY = canvas.height/2;
@@ -135,28 +132,28 @@ function drawShield(){
     ctx.save();
     ctx.translate(shieldX, shieldY);
 
-    // Outer red
+    // OUTER RED
     let g1 = ctx.createRadialGradient(0,0,R*0.2,0,0,R);
     g1.addColorStop(0,"#300000");
     g1.addColorStop(1,"#700000");
     ctx.fillStyle = g1;
     ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
 
-    // White
+    // WHITE
     let g2 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.75);
-    g2.addColorStop(0,"#dcdcdc");
-    g2.addColorStop(1,"#f0f0f0");
+    g2.addColorStop(0,"#e3e3e3");
+    g2.addColorStop(1,"#fafafa");
     ctx.fillStyle = g2;
     ctx.beginPath(); ctx.arc(0,0,R*0.75,0,Math.PI*2); ctx.fill();
 
-    // Inner red
+    // INNER RED
     let g3 = ctx.createRadialGradient(0,0,R*0.1,0,0,R*0.5);
-    g3.addColorStop(0,"#400000");
-    g3.addColorStop(1,"#850000");
+    g3.addColorStop(0,"#450000");
+    g3.addColorStop(1,"#880000");
     ctx.fillStyle = g3;
     ctx.beginPath(); ctx.arc(0,0,R*0.5,0,Math.PI*2); ctx.fill();
 
-    // Blue metallic
+    // BLUE METALLIC
     let g4 = ctx.createRadialGradient(0,0,R*0.05,0,0,R*0.35);
     g4.addColorStop(0,"#b0c4e8");
     g4.addColorStop(1,"#00152d");
@@ -166,14 +163,14 @@ function drawShield(){
     // STAR
     ctx.save();
     if(starSpin) ctx.rotate(starAngle);
-
     let starR = R*0.28;
+
     ctx.beginPath();
     for(let i=0;i<5;i++){
-        let o = (Math.PI*2/5)*i - Math.PI/2;
-        let i2 = o + Math.PI/5;
+        let o = i*(Math.PI*2/5) - Math.PI/2;
+        let inner = o + Math.PI/5;
         ctx.lineTo(Math.cos(o)*starR, Math.sin(o)*starR);
-        ctx.lineTo(Math.cos(i2)*(starR*0.45), Math.sin(i2)*(starR*0.45));
+        ctx.lineTo(Math.cos(inner)*(starR*0.45), Math.sin(inner)*(starR*0.45));
     }
     ctx.closePath();
 
@@ -182,12 +179,12 @@ function drawShield(){
 
     let sg = ctx.createRadialGradient(0,0,starR*0.1,0,0,starR);
     sg.addColorStop(0,"#ffffff");
-    sg.addColorStop(1,"#6a6a6a");
+    sg.addColorStop(1,"#757575");
+
     ctx.fillStyle = sg;
-
     ctx.fill();
-    ctx.restore();
 
+    ctx.restore();
     ctx.restore();
 }
 
@@ -199,52 +196,59 @@ function loop(){
 }
 loop();
 
-// -------------------------------------------------------
-// Verse Reveal
-// -------------------------------------------------------
+// ------------------------------------------
+// ⭐ MEASURE TEXT PROPERLY WITHOUT OVERLAP
+// ------------------------------------------
+const measureSpan = document.getElementById("measure");
+measureSpan.style.fontSize = "38px";
+measureSpan.style.fontFamily = "Cinzel, serif";
+
+function getLetterWidth(char){
+    measureSpan.textContent = char;
+    return measureSpan.offsetWidth;
+}
+
+// ------------------------------------------
+// ⭐ DIVINE VERSE REVEAL
+// ------------------------------------------
 const verse = "He counts the stars and calls them each by name — Psalm 147:4";
 const beam = document.getElementById("beam");
 
-canvas.addEventListener("click", (e)=>{
+canvas.addEventListener("click",(e)=>{
     let dx = e.clientX - shieldX;
     let dy = e.clientY - shieldY;
-
-    if(Math.sqrt(dx*dx + dy*dy) <= R*0.30){
+    if(Math.sqrt(dx*dx + dy*dy) < R*0.30){
         starSpin = true;
-        revealVerse();
+        showVerse();
     }
 });
 
-function revealVerse(){
+function showVerse(){
     beam.style.opacity = 1;
 
-    const font = "36px Cinzel";
+    let letters = [...verse];
+    let totalWidth = letters.reduce((t,ch)=> t + getLetterWidth(ch), 0);
+    let x = window.innerWidth/2 - totalWidth/2;
 
-    const letters = [...verse];
-    let totalWidth = measureTextWidth(verse, font);
-    let startX = canvas.width/2 - totalWidth/2;
-    let cursor = startX;
-
-    letters.forEach((char,i)=>{
-        let w = measureTextWidth(char, font);
-
+    letters.forEach((ch,i)=>{
+        let w = getLetterWidth(ch);
         setTimeout(()=>{
 
-            const span = document.createElement("div");
-            span.className="verse-letter";
-            span.textContent = char;
-            span.style.left = cursor + "px";
+            const el = document.createElement("div");
+            el.className = "verse-letter";
+            el.textContent = ch;
+            el.style.left = x + "px";
 
-            document.body.appendChild(span);
+            document.body.appendChild(el);
 
             setTimeout(()=>{
-                span.style.opacity = 1;
-                span.style.transform = "scale(1)";
+                el.style.opacity = 1;
+                el.style.transform = "scale(1)";
             },20);
 
-        }, i*90);
+        }, i * 90);
 
-        cursor += w;
+        x += w;
     });
 }
 

@@ -80,10 +80,25 @@ canvas {
     background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%);
     pointer-events: none;
 }
+
+/* Instruction for user */
+#instruction {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    color: #fff;
+    text-shadow: 0 0 8px #000;
+    opacity: 0.9;
+    pointer-events: none;
+}
 </style>
 </head>
 
 <body>
+
+<div id="instruction">Drag the moon to reveal the message</div>
 
 <canvas id="stars"></canvas>
 

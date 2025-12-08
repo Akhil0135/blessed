@@ -2,122 +2,103 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IMAX Phase 4 — PRINCE</title>
+<title>IMAX Galaxy — Happy Birthday Prince</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
     html, body {
         margin: 0;
         padding: 0;
         overflow: hidden;
         background: #000;
+        font-family: 'Cinzel', serif;
     }
-    canvas { display: block; }
+
+    /* FULL GALAXY BACKGROUND */
+    #galaxy {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, #1d1b3d, #000 70%);
+        overflow: hidden;
+    }
+
+    /* Stars */
+    .star {
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 3s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.2; transform: scale(0.6); }
+        50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* 3D Scene */
+    #scene {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-style: preserve-3d;
+        transform: translate(-50%, -50%) rotateY(0deg);
+        animation: spinCamera 20s infinite linear;
+    }
+
+    @keyframes spinCamera {
+        0%   { transform: translate(-50%, -50%) rotateY(0deg); }
+        100% { transform: translate(-50%, -50%) rotateY(360deg); }
+    }
+
+    /* 3D Text */
+    .title {
+        font-size: 90px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        color: #ffddaa;
+        text-shadow:
+            0 0 20px #ffcc88,
+            0 0 40px #ffbb66,
+            0 0 80px #ffaa44,
+            0 0 120px #ff8800;
+        
+        transform: translateZ(120px);
+        animation: glow 4s infinite ease-in-out;
+    }
+
+    @keyframes glow {
+        0%, 100% { text-shadow: 0 0 15px #ffaa55, 0 0 40px #ff8844; }
+        50% { text-shadow: 0 0 30px #ffd499, 0 0 90px #ffbb66; }
+    }
+
 </style>
+
 </head>
 <body>
-<canvas id="galaxy"></canvas>
+
+<div id="galaxy"></div>
+
+<div id="scene">
+    <div class="title">HAPPY BIRTHDAY PRINCE</div>
+</div>
 
 <script>
-const canvas = document.getElementById("galaxy");
-const ctx = canvas.getContext("2d");
+/* --- CREATE GALAXY STARS --- */
+const galaxy = document.getElementById("galaxy");
 
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+for (let i = 0; i < 300; i++) {
+    const s = document.createElement("div");
+    s.classList.add("star");
+    let size = Math.random() * 3 + 1;
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+    s.style.top = Math.random() * 100 + "%";
+    s.style.left = Math.random() * 100 + "%";
+    s.style.animationDuration = (Math.random() * 3 + 2) + "s";
+    galaxy.appendChild(s);
 }
-resize();
-window.onresize = resize;
-
-// Galaxy stars
-const stars = [];
-for (let i = 0; i < 600; i++) {
-    stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 1.6 + 0.2,
-        tw: Math.random() * 0.02 + 0.003
-    });
-}
-
-// Convert PRINCE text → points
-function textToPoints(textStr) {
-    const temp = document.createElement("canvas");
-    const tctx = temp.getContext("2d");
-
-    temp.width = canvas.width;
-    temp.height = canvas.height;
-
-    const fontSize = canvas.width / 6;
-
-    tctx.fillStyle = "#fff";
-    tctx.font = "bold " + fontSize + "px Arial";
-    tctx.textAlign = "center";
-    tctx.textBaseline = "middle";
-    tctx.fillText(textStr, temp.width / 2, temp.height / 2);
-
-    const img = tctx.getImageData(0, 0, temp.width, temp.height).data;
-
-    const points = [];
-    for (let y = 0; y < temp.height; y += 6) {
-        for (let x = 0; x < temp.width; x += 6) {
-            let idx = (y * temp.width + x) * 4;
-            if (img[idx + 3] > 200) {
-                points.push({ x, y });
-            }
-        }
-    }
-    return points;
-}
-
-let points = textToPoints("PRINCE");
-
-// Camera rotation
-let angle = 0;
-
-// Draw Loop
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Galaxy stars
-    stars.forEach(s => {
-        const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
-        ctx.fillStyle = `rgba(255,255,255,${glow})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fill();
-    });
-
-    // Text points with rotation
-    ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-
-    angle += 0.003;  // Slow cinematic rotation
-    const cosA = Math.cos(angle);
-    const sinA = Math.sin(angle);
-
-    points.forEach(p => {
-        let rx = (p.x - canvas.width / 2);
-        let ry = (p.y - canvas.height / 2);
-
-        // Rotate around the center
-        let x2 = rx * cosA - ry * sinA;
-        let y2 = rx * sinA + ry * cosA;
-
-        ctx.fillStyle = "#fff";
-        ctx.shadowColor = "#fff";
-        ctx.shadowBlur = 15;
-
-        ctx.beginPath();
-        ctx.arc(x2, y2, 2, 0, Math.PI * 2);
-        ctx.fill();
-    });
-
-    ctx.restore();
-
-    requestAnimationFrame(draw);
-}
-
-draw();
 </script>
+
 </body>
 </html>

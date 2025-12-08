@@ -91,11 +91,13 @@ document.addEventListener("mousemove", e=>{
     if(!dragging) return;
     moon.style.left=(e.clientX-offsetX)+"px"; moon.style.top=(e.clientY-offsetY)+"px";
     if(revealIndex<fullMsg.length){ message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++); }
+    // Moon dragged to end -> Stage 1 complete
     if(parseInt(moon.style.left)>window.innerWidth-250 && parseInt(moon.style.top)>window.innerHeight-250 && !stage1Completed){
         stage1Completed=true;
         moon.style.pointerEvents="none"; instruction.innerText=""; 
         sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px";
-        setTimeout(startStage2,5000); // Stage 2 after 5s
+        // Stage 2 after 5s
+        setTimeout(startStage2,5000);
     }
 });
 

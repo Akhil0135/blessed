@@ -1,117 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Phase 4 — HAPPY BIRTHDAY PRINCE</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<title>IMAX Phase 4 — PRINCE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    body { margin:0; overflow:hidden; background:#000; }
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #000;
+    }
+    canvas { display: block; }
 </style>
 </head>
 <body>
+<canvas id="galaxy"></canvas>
 
-<!-- Three.js (module build) -->
-<script type="module">
+<script>
+const canvas = document.getElementById("galaxy");
+const ctx = canvas.getContext("2d");
 
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js";
-import { FontLoader } from "https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/FontLoader.js";
-import { TextGeometry } from "https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/geometries/TextGeometry.js";
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.onresize = resize;
 
-let scene = new THREE.Scene();
-
-let camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    2000
-);
-camera.position.set(0, 30, 150);
-
-let renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-// ---------- Galaxy Stars ----------
-let starGeo = new THREE.BufferGeometry();
-let count = 1500;
-let pos = new Float32Array(count * 3);
-
-for (let i = 0; i < count * 3; i++) {
-    pos[i] = (Math.random() - 0.5) * 3000;
+// Galaxy stars
+const stars = [];
+for (let i = 0; i < 600; i++) {
+    stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 1.6 + 0.2,
+        tw: Math.random() * 0.02 + 0.003
+    });
 }
 
-starGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-let starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.5 });
-let stars = new THREE.Points(starGeo, starMat);
-scene.add(stars);
+// Convert PRINCE text → points
+function textToPoints(textStr) {
+    const temp = document.createElement("canvas");
+    const tctx = temp.getContext("2d");
 
-// ---------- Lights ----------
-scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    temp.width = canvas.width;
+    temp.height = canvas.height;
 
-let point = new THREE.PointLight(0xffcc88, 2, 2000);
-point.position.set(100, 200, 150);
-scene.add(point);
+    const fontSize = canvas.width / 6;
 
-// ---------- Text ----------
-let textMesh;
+    tctx.fillStyle = "#fff";
+    tctx.font = "bold " + fontSize + "px Arial";
+    tctx.textAlign = "center";
+    tctx.textBaseline = "middle";
+    tctx.fillText(textStr, temp.width / 2, temp.height / 2);
 
-const loader = new FontLoader();
-loader.load(
-    "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
+    const img = tctx.getImageData(0, 0, temp.width, temp.height).data;
 
-    function (font) {
-        let geo = new TextGeometry("HAPPY BIRTHDAY PRINCE", {
-            font: font,
-            size: 12,
-            height: 4,
-            bevelEnabled: true,
-            bevelThickness: 1,
-            bevelSize: 0.6,
-            bevelSegments: 6,
-        });
-
-        geo.center();
-
-        let mat = new THREE.MeshStandardMaterial({
-            color: 0xffd966,
-            emissive: 0xffaa00,
-            metalness: 0.7,
-            roughness: 0.25,
-        });
-
-        textMesh = new THREE.Mesh(geo, mat);
-        scene.add(textMesh);
+    const points = [];
+    for (let y = 0; y < temp.height; y += 6) {
+        for (let x = 0; x < temp.width; x += 6) {
+            let idx = (y * temp.width + x) * 4;
+            if (img[idx + 3] > 200) {
+                points.push({ x, y });
+            }
+        }
     }
-);
+    return points;
+}
 
-// ---------- Camera Orbit ----------
+let points = textToPoints("PRINCE");
+
+// Camera rotation
 let angle = 0;
 
-function animate() {
-    requestAnimationFrame(animate);
+// Draw Loop
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    stars.rotation.y += 0.0004;
+    // Galaxy stars
+    stars.forEach(s => {
+        const glow = (Math.sin(Date.now() * s.tw) + 1) * 0.5;
+        ctx.fillStyle = `rgba(255,255,255,${glow})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+    });
 
-    if (textMesh) {
-        angle += 0.002;
-        camera.position.x = Math.sin(angle) * 160;
-        camera.position.z = Math.cos(angle) * 160;
-        camera.lookAt(textMesh.position);
-    }
+    // Text points with rotation
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
 
-    renderer.render(scene, camera);
+    angle += 0.003;  // Slow cinematic rotation
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+
+    points.forEach(p => {
+        let rx = (p.x - canvas.width / 2);
+        let ry = (p.y - canvas.height / 2);
+
+        // Rotate around the center
+        let x2 = rx * cosA - ry * sinA;
+        let y2 = rx * sinA + ry * cosA;
+
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "#fff";
+        ctx.shadowBlur = 15;
+
+        ctx.beginPath();
+        ctx.arc(x2, y2, 2, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    ctx.restore();
+
+    requestAnimationFrame(draw);
 }
 
-animate();
-
-// ---------- Responsive ----------
-window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
+draw();
 </script>
-
 </body>
 </html>

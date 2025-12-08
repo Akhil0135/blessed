@@ -1,104 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 4 — Happy Birthday PRINCE</title>
+<meta charset="utf-8">
+<title>Phase 4 — HAPPY BIRTHDAY PRINCE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  html, body { margin:0; padding:0; overflow:hidden; background:#000; }
+  body { margin:0; overflow:hidden; background:#000; }
   canvas { display:block; }
 </style>
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/controls/OrbitControls.js"></script>
-<script>
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.set(0, 5, 30);
 
-const renderer = new THREE.WebGLRenderer({antialias:true});
+<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/geometries/TextGeometry.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/loaders/FontLoader.js"></script>
+
+<script>
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 2000);
+camera.position.set(0, 50, 200);
+
+let renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// Lights
-const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambient);
-const spot = new THREE.SpotLight(0xffddaa, 1.2);
-spot.position.set(30,40,30);
-scene.add(spot);
+// ---------- Galaxy Stars ----------
+let starGeo = new THREE.BufferGeometry();
+let starCount = 1000;
+let starPositions = new Float32Array(starCount * 3);
+for (let i=0; i<starCount*3; i++){
+    starPositions[i] = (Math.random()-0.5)*2000;
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+let starMat = new THREE.PointsMaterial({color:0xffffff, size:1.5});
+let stars = new THREE.Points(starGeo, starMat);
+scene.add(stars);
 
-// Glow function
-function createLetter(char, x) {
-    const geo = new THREE.TextGeometry(char, {
-        font: new THREE.FontLoader().parse({
-            "glyphs": {}, "familyName":"Arial", "ascender":1000, "descender":0, "underlinePosition":0, "underlineThickness":0, "boundingBox":null
-        }),
-        size:2,
-        height:0.5,
-        curveSegments:4
+// ---------- Lighting ----------
+let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+let pointLight = new THREE.PointLight(0xffddaa, 2, 1000);
+pointLight.position.set(50,100,50);
+scene.add(pointLight);
+
+// ---------- Text ----------
+let textMesh;
+let loader = new THREE.FontLoader();
+loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font){
+    let textGeo = new THREE.TextGeometry('HAPPY BIRTHDAY PRINCE', {
+        font: font,
+        size: 12,
+        height: 4,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 1.5,
+        bevelSize: 0.8,
+        bevelOffset: 0,
+        bevelSegments: 5
     });
-    const mat = new THREE.MeshStandardMaterial({color:0xffcc00, metalness:0.8, roughness:0.2});
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.x = x;
-    scene.add(mesh);
-    return mesh;
-}
+    textGeo.center(); // center geometry
 
-// Text letters (using cubes if font fails)
-const letters = [];
-const text = "HAPPY BIRTHDAY PRINCE";
-let offsetX = -text.length;
-for(let i=0;i<text.length;i++){
-    const c = text[i];
-    if(c!==" "){
-        const geo = new THREE.BoxGeometry(1.5,2,0.5);
-        const mat = new THREE.MeshStandardMaterial({color:0xffcc00, metalness:0.8, roughness:0.2});
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.x = offsetX + i*1.6;
-        mesh.position.y = 0;
-        mesh.position.z = 0;
-        scene.add(mesh);
-        letters.push(mesh);
-    }
-}
+    let textMat = new THREE.MeshStandardMaterial({
+        color: 0xffcc33,
+        emissive: 0xffaa00,
+        metalness: 0.6,
+        roughness: 0.3
+    });
 
-// Starfield
-const particleCount = 500;
-const particles = new THREE.BufferGeometry();
-const positions = new Float32Array(particleCount*3);
-for(let i=0;i<particleCount;i++){
-    positions[i*3] = (Math.random()-0.5)*100;
-    positions[i*3+1] = (Math.random()-0.5)*50;
-    positions[i*3+2] = (Math.random()-0.5)*100;
-}
-particles.setAttribute('position', new THREE.BufferAttribute(positions,3));
-const pMaterial = new THREE.PointsMaterial({color:0xffffff, size:0.5});
-const pointCloud = new THREE.Points(particles, pMaterial);
-scene.add(pointCloud);
+    textMesh = new THREE.Mesh(textGeo, textMat);
+    scene.add(textMesh);
+});
 
-// Animation
-const clock = new THREE.Clock();
+// ---------- Camera Orbit ----------
+let angle = 0;
 function animate(){
-    const t = clock.getElapsedTime();
-    camera.position.x = Math.sin(t*0.2)*35;
-    camera.position.z = Math.cos(t*0.2)*35;
-    camera.lookAt(0,0,0);
-
-    letters.forEach((l,i)=>{ l.rotation.y = t*0.2 + i*0.05; });
-
-    renderer.render(scene, camera);
     requestAnimationFrame(animate);
+    stars.rotation.y += 0.0005; // subtle galaxy rotation
+    if(textMesh){
+        angle += 0.002;
+        camera.position.x = Math.sin(angle)*200;
+        camera.position.z = Math.cos(angle)*200;
+        camera.lookAt(textMesh.position);
+    }
+    renderer.render(scene, camera);
 }
 animate();
 
-// Resize
+// ---------- Handle Resize ----------
 window.addEventListener('resize', ()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 </script>
+
 </body>
 </html>

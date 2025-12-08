@@ -1,53 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IMAX Full Sequence</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IMAX Cinematic Combined</title>
 <style>
-html, body { margin:0; padding:0; overflow:hidden; background:#000; }
-
-/* Stage 1 */
-canvas#stars { display:block; }
-#moon, #sun, #message, #ambient, #instruction1 {
-    position:absolute;
-}
-#moon {
-    width:200px; height:200px; left:40px; top:40px; border-radius:50%; cursor:grab;
-    background: radial-gradient(circle at 30% 30%, #d9d9d9 0%, #c0c0c0 20%, #9a9a9a 45%, #6d6d6d 70%, #2a2a2a 100%);
-    box-shadow: 0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5);
-    transition: box-shadow 0.3s ease;
-}
-#sun {
-    width:260px; height:260px; border-radius:50%; background: radial-gradient(circle, #fff7c0 0%, #ffcc33 40%, #d68b00 70%, #000 100%);
-    box-shadow:0 0 50px #ffb300; top:-300px; right:-300px; opacity:0; transition: all 2.5s ease-in-out;
-}
-#message {
-    bottom:80px; width:100%; text-align:center; font-size:26px; font-weight:600; color:#ffd27f;
-    letter-spacing:2px; text-shadow:0 0 5px #d9a441; opacity:0; transition:opacity 1.5s ease;
-}
-#ambient {
-    width:100%; height:100%; background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%);
-    pointer-events:none;
-}
-#instruction1 { top:20px; width:100%; text-align:center; font-size:22px; color:#fff; text-shadow:0 0 8px #000; opacity:0.9; pointer-events:none; }
-
-/* Stage 2 */
-canvas#shieldCanvas { display:none; }
-#verse { position:absolute; top:40px; left:50%; transform:translateX(-50%) scale(0.2); font-size:32px; color:#ffe9a6; text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a; opacity:0; transition:all 1s ease-out; white-space:nowrap; pointer-events:none; }
-#instruction2 { position:absolute; top:20px; width:100%; text-align:center; font-size:22px; color:#fff; text-shadow:0 0 8px #000; opacity:0.9; pointer-events:none; }
-
-/* Stage 3 */
-canvas#c { display:none; }
-#clickBtn { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); padding:15px 30px; font-size:20px; font-weight:bold;
-    background: linear-gradient(90deg, #ff0066, #ffcc00, #00ccff); border:none; border-radius:10px; cursor:pointer;
-    box-shadow:0 0 20px rgba(255,255,255,0.6); color:#fff; opacity:0; transition:opacity 1s ease; z-index:1000; display:none; }
+html, body { margin:0; padding:0; overflow:hidden; background:#000; font-family:"Cinzel", serif; }
+canvas { display:block; position:absolute; top:0; left:0; }
+#message { position:absolute; bottom:80px; width:100%; text-align:center; font-size:26px; font-weight:600; color:#ffd27f; letter-spacing:2px; text-shadow:0 0 5px #d9a441; opacity:0; transition:opacity 1.5s ease; }
+#sun { position:absolute; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle, #fff7c0 0%, #ffcc33 40%, #d68b00 70%, #000 100%); box-shadow:0 0 50px #ffb300; top:-300px; right:-300px; opacity:0; transition:all 2.5s ease-in-out; }
+#moon { position:absolute; width:200px; height:200px; left:40px; top:40px; border-radius:50%; cursor:grab; background:radial-gradient(circle at 30% 30%, #d9d9d9 0%, #c0c0c0 20%, #9a9a9a 45%, #6d6d6d 70%, #2a2a2a 100%); box-shadow:0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5); transition:box-shadow 0.3s ease; }
+#ambient { position:absolute; width:100%; height:100%; background:radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%); pointer-events:none; }
+#instruction { position:absolute; top:20px; width:100%; text-align:center; font-size:22px; color:#fff; text-shadow:0 0 8px #000; opacity:0.9; pointer-events:none; }
+#shieldCanvas, #stage3Canvas { display:none; }
+#verse { position:absolute; top:40px; left:50%; transform:translateX(-50%) scale(0.2); font-size:32px; color:#ffe9a6; text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a; opacity:0; transition: all 1s ease-out; white-space:nowrap; pointer-events:none; }
+#clickBtn { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); padding:15px 30px; font-size:20px; font-weight:bold; background:linear-gradient(90deg,#ff0066,#ffcc00,#00ccff); border:none; border-radius:10px; cursor:pointer; box-shadow:0 0 20px rgba(255,255,255,0.6); color:#fff; opacity:0; transition:opacity 1s ease; z-index:1000; }
 </style>
 </head>
 <body>
 
-<!-- Stage 1 -->
-<div id="instruction1">Drag the moon to reveal the message</div>
+<div id="instruction">Drag the moon to reveal the message</div>
 <canvas id="stars"></canvas>
 <div id="ambient"></div>
 <div id="moon"></div>
@@ -56,75 +28,99 @@ canvas#c { display:none; }
 <audio id="whoosh" src="https://cdn.pixabay.com/download/audio/2021/09/16/audio_4f1c1c9f28.mp3?filename=woosh-14795.mp3"></audio>
 
 <!-- Stage 2 -->
-<div id="instruction2">Click the star at the center of the shield</div>
 <canvas id="shieldCanvas"></canvas>
 <div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 
 <!-- Stage 3 -->
-<canvas id="c"></canvas>
+<canvas id="stage3Canvas"></canvas>
 <button id="clickBtn">Click Here</button>
 
 <script>
-/* ---------------- Stage 1 ---------------- */
-const canvas1 = document.getElementById("stars"), ctx1 = canvas1.getContext("2d");
-const moon = document.getElementById("moon"), sun = document.getElementById("sun"), message = document.getElementById("message"), whoosh = document.getElementById("whoosh");
-function resize1(){canvas1.width=window.innerWidth; canvas1.height=window.innerHeight;}
-resize1(); window.onresize=resize1;
+// ---------------- Stage 1 ----------------
+const canvas1 = document.getElementById("stars");
+const ctx1 = canvas1.getContext("2d");
+const moon = document.getElementById("moon");
+const message = document.getElementById("message");
+const sun = document.getElementById("sun");
+const whoosh = document.getElementById("whoosh");
 
-let stars = [];
-for(let i=0;i<250;i++){stars.push({x:Math.random()*canvas1.width,y:Math.random()*canvas1.height,z:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005});}
+function resize1(){canvas1.width=window.innerWidth; canvas1.height=window.innerHeight;}
+resize1();
+window.onresize=resize1;
+
+let stars=[];
+for(let i=0;i<250;i++) stars.push({x:Math.random()*canvas1.width, y:Math.random()*canvas1.height, z:Math.random()*1.5+0.5, tw:Math.random()*0.02+0.005});
 
 function drawStars(){ctx1.clearRect(0,0,canvas1.width,canvas1.height); stars.forEach(s=>{let glow=(Math.sin(Date.now()*s.tw)+1)*0.5; ctx1.fillStyle=`rgba(255,255,255,${glow})`; ctx1.beginPath(); ctx1.arc(s.x,s.y,s.z,0,Math.PI*2); ctx1.fill();});}
 
-let dragging=false, offsetX, offsetY, revealIndex=0;
-const fullMsg=message.innerText; message.innerText="";
-moon.addEventListener("mousedown",e=>{dragging=true; offsetX=e.clientX-moon.offsetLeft; offsetY=e.clientY-moon.offsetTop; moon.style.cursor="grabbing"; whoosh.currentTime=0; whoosh.play();});
+// Drag Moon
+let dragging=false, offsetX, offsetY;
+let revealIndex=0, messageRevealed=false;
+const fullMsg = message.innerText;
+message.innerText="";
+
+moon.addEventListener("mousedown", e=>{
+    dragging=true; offsetX=e.clientX-moon.offsetLeft; offsetY=e.clientY-moon.offsetTop; moon.style.cursor="grabbing";
+    whoosh.currentTime=0; whoosh.play();
+});
 document.addEventListener("mouseup",()=>{dragging=false; moon.style.cursor="grab";});
-document.addEventListener("mousemove",e=>{if(!dragging)return; moon.style.left=(e.clientX-offsetX)+"px"; moon.style.top=(e.clientY-offsetY)+"px"; if(revealIndex<fullMsg.length){message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++);} stars.forEach(s=>s.tw=0); ctx1.globalAlpha-=0.01; if(ctx1.globalAlpha<0)ctx1.globalAlpha=0; if(revealIndex>=fullMsg.length){moon.style.opacity=0; setTimeout(()=>{sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px"; stars=[]; /* wait 3 seconds then start stage 2 */ setTimeout(startStage2,3000);},800);}});
+document.addEventListener("mousemove", e=>{
+    if(!dragging) return;
+    moon.style.left=(e.clientX-offsetX)+"px"; moon.style.top=(e.clientY-offsetY)+"px";
+    if(!messageRevealed && revealIndex<fullMsg.length){
+        message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++);
+        if(revealIndex>=fullMsg.length){
+            messageRevealed=true;
+            moon.style.opacity=0;
+            setTimeout(()=>{
+                sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px"; stars=[];
+                setTimeout(startStage2,3000); // Stage 2 starts after 3s
+            },800);
+        }
+    }
+});
 
-function animate1(){drawStars(); requestAnimationFrame(animate1);} animate1();
+function animate1(){drawStars(); requestAnimationFrame(animate1);}
+animate1();
 
-/* ---------------- Stage 2 ---------------- */
-const canvas2=document.getElementById("shieldCanvas"), ctx2=canvas2.getContext("2d");
-let width=window.innerWidth, height=window.innerHeight;
-canvas2.width=width; canvas2.height=height;
-let shieldX=width/2, shieldY=height/2, R=Math.min(width,height)/3, starSpin=false, starAngle=0;
-const verseDiv=document.getElementById("verse");
-const instruction2=document.getElementById("instruction2");
+// ---------------- Stage 2 ----------------
+const canvas2 = document.getElementById("shieldCanvas");
+const ctx2 = canvas2.getContext("2d");
+let verseDiv=document.getElementById("verse");
+let width2=window.innerWidth, height2=window.innerHeight;
+canvas2.width=width2; canvas2.height=height2;
 
-const bgStars2=[];
-for(let i=0;i<200;i++){bgStars2.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005});}
+let shieldX=width2/2, shieldY=height2/2, R=Math.min(width2,height2)/3;
+let starSpin=false, starAngle=0;
+let bgStars2=[];
+for(let i=0;i<200;i++) bgStars2.push({x:Math.random()*width2, y:Math.random()*height2, r:Math.random()*1.5+0.5, tw:Math.random()*0.02+0.005});
 
 function drawShield(){
     ctx2.save(); ctx2.translate(shieldX,shieldY);
-    // Outer Red Ring
     let g1=ctx2.createRadialGradient(0,0,R*0.2,0,0,R); g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000"); ctx2.fillStyle=g1; ctx2.beginPath(); ctx2.arc(0,0,R,0,Math.PI*2); ctx2.fill();
-    // White Ring
     let g2=ctx2.createRadialGradient(0,0,R*0.1,0,0,R*0.75); g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5"); ctx2.fillStyle=g2; ctx2.beginPath(); ctx2.arc(0,0,R*0.75,0,Math.PI*2); ctx2.fill();
-    // Inner Red Ring
     let g3=ctx2.createRadialGradient(0,0,R*0.1,0,0,R*0.5); g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000"); ctx2.fillStyle=g3; ctx2.beginPath(); ctx2.arc(0,0,R*0.5,0,Math.PI*2); ctx2.fill();
-    // Blue Metallic Center
     let g4=ctx2.createRadialGradient(0,0,R*0.05,0,0,R*0.35); g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933"); ctx2.fillStyle=g4; ctx2.beginPath(); ctx2.arc(0,0,R*0.35,0,Math.PI*2); ctx2.fill();
-    // 3D Star
-    ctx2.save(); if(starSpin) ctx2.rotate(starAngle);
-    let starR=R*0.28;
-    ctx2.beginPath(); for(let i=0;i<5;i++){let o=(Math.PI*2/5)*i-Math.PI/2; let n=o+Math.PI/5; ctx2.lineTo(Math.cos(o)*starR,Math.sin(o)*starR); ctx2.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45);}
-    ctx2.closePath(); ctx2.shadowColor="rgba(255,255,255,0.25)"; ctx2.shadowBlur=5;
-    let sg=ctx2.createRadialGradient(0,0,starR*0.1,0,0,starR); sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a"); ctx2.fillStyle=sg; ctx2.fill();
-    ctx2.restore(); ctx2.restore();
+
+    ctx2.save(); if(starSpin) ctx2.rotate(starAngle); let starR=R*0.28;
+    ctx2.beginPath(); for(let i=0;i<5;i++){let o=(Math.PI*2/5)*i-Math.PI/2,n=o+Math.PI/5; ctx2.lineTo(Math.cos(o)*starR,Math.sin(o)*starR); ctx2.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45);} ctx2.closePath();
+    ctx2.shadowColor="rgba(255,255,255,0.25)"; ctx2.shadowBlur=5;
+    let sg=ctx2.createRadialGradient(0,0,starR*0.1,0,0,starR); sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
+    ctx2.fillStyle=sg; ctx2.fill(); ctx2.restore(); ctx2.restore();
 }
 
 function animate2(){
-    ctx2.fillStyle="#0a0d19"; ctx2.fillRect(0,0,width,height);
-    bgStars2.forEach(s=>{const glow=(Math.sin(Date.now()*s.tw)+1)*0.5; ctx2.fillStyle=`rgba(255,255,255,${glow})`; ctx2.beginPath(); ctx2.arc(s.x,s.y,s.r,0,Math.PI*2); ctx2.fill();});
+    ctx2.fillStyle="#0a0d19"; ctx2.fillRect(0,0,width2,height2);
+    bgStars2.forEach(s=>{let glow=(Math.sin(Date.now()*s.tw)+1)*0.5; ctx2.fillStyle=`rgba(255,255,255,${glow})`; ctx2.beginPath(); ctx2.arc(s.x,s.y,s.r,0,Math.PI*2); ctx2.fill();});
     drawShield();
     if(starSpin) starAngle+=0.035;
     requestAnimationFrame(animate2);
 }
 
 function startStage2(){
+    canvas1.style.display="none";
     canvas2.style.display="block";
-    instruction2.style.display="block";
+    document.getElementById("instruction").innerText="Click the star at the center of the shield";
     animate2();
 }
 
@@ -133,48 +129,70 @@ canvas2.addEventListener("click", e=>{
     const dx=e.clientX-shieldX, dy=e.clientY-shieldY;
     if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
         starSpin=true;
-        verseDiv.style.opacity=1; verseDiv.style.transform="translateX(-50%) scale(1)";
-        instruction2.style.display="none";
-        setTimeout(startStage3,7000); // wait 7 sec then start stage 3
-        canvas2.style.display="none"; verseDiv.style.display="none";
+        verseDiv.style.opacity=1;
+        verseDiv.style.transform="translateX(-50%) scale(1)";
+        // Start Stage 3 after 7s
+        setTimeout(startStage3,7000);
     }
 });
 
-/* ---------------- Stage 3 ---------------- */
-const canvas3=document.getElementById("c"), ctx3=canvas3.getContext("2d"), btn=document.getElementById("clickBtn");
+// ---------------- Stage 3 ----------------
+const canvas3=document.getElementById("stage3Canvas");
+const ctx3=canvas3.getContext("2d");
+const btn=document.getElementById("clickBtn");
 function resize3(){canvas3.width=window.innerWidth; canvas3.height=window.innerHeight;}
 resize3(); window.onresize=resize3;
 
-const bgStars3=[]; const bgStarCount3=180;
-for(let i=0;i<bgStarCount3;i++){bgStars3.push({x:Math.random()*canvas3.width,y:Math.random()*canvas3.height,size:Math.random()*1.1+0.2,tw:Math.random()*0.02+0.003});}
+function startStage3(){
+    canvas2.style.display="none";
+    canvas3.style.display="block";
+    btn.style.opacity=1;
 
-function drawStarShape3(){bgStars3.forEach(s=>{const glow=(Math.sin(Date.now()*s.tw)+1)*0.5; ctx3.fillStyle=`rgba(255,255,255,${glow})`; ctx3.beginPath(); ctx3.arc(s.x,s.y,s.size,0,Math.PI*2); ctx3.fill();});}
+    // Background stars
+    const bgStars3=[]; const bgStarCount=180;
+    for(let i=0;i<bgStarCount;i++) bgStars3.push({x:Math.random()*canvas3.width,y:Math.random()*canvas3.height,size:Math.random()*1.1+0.2,tw:Math.random()*0.02+0.003});
 
-function mapTextToPoints(textStr){
-    const temp=document.createElement("canvas"); const tctx=temp.getContext("2d"); temp.width=canvas3.width; temp.height=canvas3.height;
-    const fontSize=canvas3.width/7; tctx.clearRect(0,0,temp.width,temp.height); tctx.fillStyle="#fff"; tctx.font="bold "+fontSize+"px Arial"; tctx.textAlign="center"; tctx.textBaseline="middle"; tctx.fillText(textStr,temp.width/2,temp.height/2);
-    const imageData=tctx.getImageData(0,0,temp.width,temp.height).data; const points=[];
-    for(let y=0;y<temp.height;y+=6){for(let x=0;x<temp.width;x+=6){let index=(y*temp.width+x)*4; if(imageData[index+3]>200) points.push({x,y});}}
-    return points;
-}
+    function drawStars3(){
+        bgStars3.forEach(s=>{const glow=(Math.sin(Date.now()*s.tw)+1)*0.5; ctx3.fillStyle=`rgba(255,255,255,${glow})`; ctx3.beginPath(); ctx3.arc(s.x,s.y,s.size,0,Math.PI*2); ctx3.fill();});
+    }
 
-let currentText="PRINCE"; let letterPoints=mapTextToPoints(currentText);
-const particles=letterPoints.map(p=>({x:Math.random()*canvas3.width,y:Math.random()*canvas3.height,tx:p.x,ty:p.y,speed:Math.random()*0.08+0.04,size:Math.random()*1.8+1.2,color:null}));
-let camera={dx:0,dy:0,zoom:1};
+    function mapTextToPoints(textStr){
+        const temp=document.createElement("canvas"); const tctx=temp.getContext("2d"); temp.width=canvas3.width; temp.height=canvas3.height;
+        const fontSize=canvas3.width/7;
+        tctx.clearRect(0,0,temp.width,temp.height); tctx.fillStyle="#fff"; tctx.font="bold "+fontSize+"px Arial"; tctx.textAlign="center"; tctx.textBaseline="middle"; tctx.fillText(textStr,temp.width/2,temp.height/2);
+        const imageData=tctx.getImageData(0,0,temp.width,temp.height).data; const points=[];
+        for(let y=0;y<temp.height;y+=6){for(let x=0;x<temp.width;x+=6){let index=(y*temp.width+x)*4;if(imageData[index+3]>200) points.push({x,y});}}
+        return points;
+    }
 
-function applyCamera3(){camera.dx=Math.sin(Date.now()*0.0003)*15; camera.dy=Math.cos(Date.now()*0.00025)*15; camera.zoom=1+0.02*Math.sin(Date.now()*0.0002);
-ctx3.save(); ctx3.translate(canvas3.width/2+camera.dx,canvas3.height/2+camera.dy); ctx3.scale(camera.zoom,camera.zoom); ctx3.translate(-canvas3.width/2,-canvas3.height/2);}
+    let currentText="PRINCE";
+    let letterPoints=mapTextToPoints(currentText);
+    const particles=letterPoints.map(p=>({x:Math.random()*canvas3.width,y:Math.random()*canvas3.height,tx:p.x,ty:p.y,speed:Math.random()*0.08+0.04,size:Math.random()*1.8+1.2,color:null}));
 
-function animate3(){
-    ctx3.clearRect(0,0,canvas3.width,canvas3.height); applyCamera3(); drawStarShape3();
-    const time=Date.now();
-    particles.forEach(p=>{p.x+=(p.tx-p.x)*p.speed; p.y+=(p.ty-p.y)*p.speed; let fillColor=p.color||`hsl(${(p.x+p.y)%360},90%,70%)`; let shadowIntensity=p.color?(Math.sin(time*0.005)*0.5+0.5)*20:18; ctx3.fillStyle=fillColor; ctx3.shadowBlur=shadowIntensity; ctx3.shadowColor=fillColor; ctx3.beginPath(); ctx3.arc(p.x,p.y,p.size,0,Math.PI*2); ctx3.fill();});
-    ctx3.restore(); requestAnimationFrame(animate3);
-}
+    let camera={dx:0,dy:0,zoom:1};
+    function applyCamera(){camera.dx=Math.sin(Date.now()*0.0003)*15; camera.dy=Math.cos(Date.now()*0.00025)*15; camera.zoom=1+0.02*Math.sin(Date.now()*0.0002); ctx3.save(); ctx3.translate(canvas3.width/2+camera.dx,canvas3.height/2+camera.dy); ctx3.scale(camera.zoom,camera.zoom); ctx3.translate(-canvas3.width/2,-canvas3.height/2);}
 
-function startStage3(){ canvas3.style.display="block"; btn.style.display="block"; btn.style.opacity=1; animate3();
-    btn.addEventListener("click",()=>{btn.style.display="none"; const newText="DAIVIK"; const newPoints=mapTextToPoints(newText);
-    particles.forEach((p,i)=>{const np=newPoints[i%newPoints.length]; p.tx=np.x; p.ty=np.y; p.color="#fff";});});
+    function animate3(){
+        ctx3.clearRect(0,0,canvas3.width,canvas3.height);
+        applyCamera(); drawStars3();
+        const time=Date.now();
+        particles.forEach(p=>{p.x+=(p.tx-p.x)*p.speed; p.y+=(p.ty-p.y)*p.speed;
+        let fillColor=p.color||`hsl(${(p.x+p.y)%360},90%,70%)`;
+        let shadowIntensity=p.color?(Math.sin(time*0.005)*0.5+0.5)*20:18;
+        ctx3.fillStyle=fillColor; ctx3.shadowBlur=shadowIntensity; ctx3.shadowColor=fillColor;
+        ctx3.beginPath(); ctx3.arc(p.x,p.y,p.size,0,Math.PI*2); ctx3.fill();
+        });
+        ctx3.restore(); requestAnimationFrame(animate3);
+    }
+    animate3();
+
+    setTimeout(()=>{btn.style.opacity=1;},3000);
+
+    btn.addEventListener("click",()=>{
+        btn.style.display="none";
+        const newText="DAIVIK"; const newPoints=mapTextToPoints(newText);
+        particles.forEach((p,i)=>{const np=newPoints[i%newPoints.length]; p.tx=np.x; p.ty=np.y; p.color="#fff";});
+    });
 }
 </script>
 </body>

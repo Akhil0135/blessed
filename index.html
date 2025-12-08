@@ -44,14 +44,14 @@ let pointLight = new THREE.PointLight(0xffddaa, 2, 2000);
 pointLight.position.set(80, 120, 80);
 scene.add(pointLight);
 
-// ------- Text -------
+// ------- Text + BIG 1 -------
 let textMesh = null;
 let bigOneMesh = null;
 
 const loader = new THREE.FontLoader();
 loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
 
-    // ---- Main HAPPY BIRTHDAY PRINCE ----
+    // ---- main birthday text ----
     const textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
         font: font,
         size: 20,
@@ -73,12 +73,13 @@ loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json
     });
 
     textMesh = new THREE.Mesh(textGeo, textMat);
+    textMesh.position.y = 0;
     scene.add(textMesh);
 
-    // ---- BIG "1" BEHIND EVERYTHING ----
+    // ---- BIG “1” in background ----
     const oneGeo = new THREE.TextGeometry("1", {
         font: font,
-        size: 120,        // VERY BIG
+        size: 140,     // HUGE
         height: 10,
         curveSegments: 12,
         bevelEnabled: true,
@@ -90,15 +91,15 @@ loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json
     oneGeo.center();
 
     const oneMat = new THREE.MeshStandardMaterial({
-        color: 0x4488ff,
-        emissive: 0x224499,
-        metalness: 0.6,
-        roughness: 0.3
+        color: 0x6699ff,
+        emissive: 0x3355ff,
+        metalness: 0.8,
+        roughness: 0.2
     });
 
     bigOneMesh = new THREE.Mesh(oneGeo, oneMat);
-    bigOneMesh.position.z = -200;  // Push far behind
-    bigOneMesh.position.y = -10;
+    bigOneMesh.position.set(0, -40, -300); // behind the text
+    bigOneMesh.scale.set(2, 2.8, 1); // stretched tall
     scene.add(bigOneMesh);
 });
 
@@ -115,7 +116,6 @@ function animate() {
     if (textMesh) {
         angle += 0.0018;
 
-        // camera rotates around the whole scene
         camera.position.x = Math.sin(angle) * 250;
         camera.position.z = Math.cos(angle) * 250;
 

@@ -11,96 +11,101 @@
 </head>
 <body>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/geometries/TextGeometry.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/loaders/FontLoader.js"></script>
 
 <script>
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 2000);
-camera.position.set(0, 60, 230);
+camera.position.set(0, 80, 250);
 
 let renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// ------- Galaxy Background -------
+// ---------- Galaxy Nebula Background ----------
 let starGeo = new THREE.BufferGeometry();
-let starCount = 1200;
+let starCount = 3000;
 let starPositions = new Float32Array(starCount * 3);
 for (let i = 0; i < starCount * 3; i++) {
-    starPositions[i] = (Math.random() - 0.5) * 2500;
+    starPositions[i] = (Math.random() - 0.5) * 3000;
 }
-starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-let starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
+starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
+let starMat = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 2,
+    transparent: true,
+    opacity: 0.9
+});
 let stars = new THREE.Points(starGeo, starMat);
 scene.add(stars);
 
-// ------- Lights -------
-scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+// ---------- Nebula fog ----------
+let fogColor = 0x000011;
+scene.fog = new THREE.FogExp2(fogColor, 0.0009);
 
-let pointLight = new THREE.PointLight(0xffddaa, 2, 2000);
-pointLight.position.set(80, 120, 80);
-scene.add(pointLight);
+// ---------- Lighting ----------
+let ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+scene.add(ambientLight);
 
-// ------- Text -------
-let textMesh = null;
+let glowLight = new THREE.PointLight(0xffdd88, 2, 800);
+glowLight.position.set(0, 120, 120);
+scene.add(glowLight);
 
-const loader = new THREE.FontLoader();
-loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+// ---------- Text ----------
+let textMesh;
+let loader = new THREE.FontLoader();
+loader.load(
+    "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
+    function(font) {
 
-    const textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
-        font: font,
-        size: 20,
-        height: 4,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 2,
-        bevelSize: 1,
-        bevelSegments: 5
-    });
+        let textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
+            font: font,
+            size: 18,
+            height: 6,
+            curveSegments: 14,
+            bevelEnabled: true,
+            bevelThickness: 2,
+            bevelSize: 1.2,
+            bevelSegments: 6
+        });
 
-    textGeo.center();
+        textGeo.center();
 
-    const textMat = new THREE.MeshStandardMaterial({
-        color: 0xffe066,
-        emissive: 0xffbb33,
-        metalness: 0.7,
-        roughness: 0.25
-    });
+        let textMat = new THREE.MeshStandardMaterial({
+            color: 0xffc93c,
+            emissive: 0xffa722,
+            metalness: 0.9,
+            roughness: 0.15
+        });
 
-    textMesh = new THREE.Mesh(textGeo, textMat);
-    textMesh.position.y = 0;
-    scene.add(textMesh);
-});
+        textMesh = new THREE.Mesh(textGeo, textMat);
+        textMesh.position.y = 0;
+        scene.add(textMesh);
+    }
+);
 
-// -------- Camera ORBITING the scene --------
+// ---------- Camera Orbit ----------
 let angle = 0;
-
 function animate() {
     requestAnimationFrame(animate);
 
-    // galaxy subtle motion
+    // Rotate galaxy very slowly
     stars.rotation.y += 0.0004;
-    stars.rotation.x += 0.0001;
 
-    if (textMesh) {
-        angle += 0.0018;
-
-        // camera rotates around the whole scene (NOT around text)
-        camera.position.x = Math.sin(angle) * 250;
-        camera.position.z = Math.cos(angle) * 250;
-
-        camera.lookAt(0, 20, 0);
-    }
+    // Camera rotation around scene
+    angle += 0.0025;
+    camera.position.x = Math.sin(angle) * 250;
+    camera.position.z = Math.cos(angle) * 250;
+    camera.lookAt(0, 0, 0);
 
     renderer.render(scene, camera);
 }
-
 animate();
 
-// -------- Responsive --------
+// ---------- Resize ----------
 window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Phase 4 — HAPPY BIRTHDAY PRINCE</title>
+<title>PHASE 4 — HAPPY BIRTHDAY PRINCE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { margin:0; overflow:hidden; background:#000; }
@@ -17,95 +17,88 @@
 
 <script>
 let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 2000);
-camera.position.set(0, 80, 250);
+let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
+camera.position.set(0, 150, 400);
 
 let renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// ---------- Galaxy Nebula Background ----------
-let starGeo = new THREE.BufferGeometry();
+// ---------------- GALAXY ----------------
+let starGeometry = new THREE.BufferGeometry();
 let starCount = 3000;
 let starPositions = new Float32Array(starCount * 3);
+
 for (let i = 0; i < starCount * 3; i++) {
     starPositions[i] = (Math.random() - 0.5) * 3000;
 }
-starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
-let starMat = new THREE.PointsMaterial({
-    color: 0xffffff,
-    size: 2,
-    transparent: true,
-    opacity: 0.9
-});
-let stars = new THREE.Points(starGeo, starMat);
+
+starGeometry.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
+let starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
+let stars = new THREE.Points(starGeometry, starMaterial);
 scene.add(stars);
 
-// ---------- Nebula fog ----------
-let fogColor = 0x000011;
-scene.fog = new THREE.FogExp2(fogColor, 0.0009);
+// ---------------- LIGHTING ----------------
+let ambient = new THREE.AmbientLight(0xffffff, 0.8);
+scene.add(ambient);
 
-// ---------- Lighting ----------
-let ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
-scene.add(ambientLight);
+let directional = new THREE.DirectionalLight(0xffddbb, 1.2);
+directional.position.set(100, 200, 100);
+scene.add(directional);
 
-let glowLight = new THREE.PointLight(0xffdd88, 2, 800);
-glowLight.position.set(0, 120, 120);
-scene.add(glowLight);
-
-// ---------- Text ----------
+// ---------------- 3D TEXT ----------------
 let textMesh;
 let loader = new THREE.FontLoader();
+
+// Using a CORS-safe mirror link:
 loader.load(
-    "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
-    function(font) {
+  "https://raw.githubusercontent.com/frederickk/threejs_fonts/main/helvetiker_regular.typeface.json",
 
-        let textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
-            font: font,
-            size: 18,
-            height: 6,
-            curveSegments: 14,
-            bevelEnabled: true,
-            bevelThickness: 2,
-            bevelSize: 1.2,
-            bevelSegments: 6
-        });
+  function (font) {
+    let textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
+      font: font,
+      size: 30,
+      height: 8,
+      curveSegments: 12,
+      bevelEnabled: true,
+      bevelThickness: 2,
+      bevelSize: 1.2,
+      bevelSegments: 5
+    });
 
-        textGeo.center();
+    textGeo.center();
 
-        let textMat = new THREE.MeshStandardMaterial({
-            color: 0xffc93c,
-            emissive: 0xffa722,
-            metalness: 0.9,
-            roughness: 0.15
-        });
+    let textMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffbb44,
+      emissive: 0x553300,
+      metalness: 0.8,
+      roughness: 0.2
+    });
 
-        textMesh = new THREE.Mesh(textGeo, textMat);
-        textMesh.position.y = 0;
-        scene.add(textMesh);
-    }
+    textMesh = new THREE.Mesh(textGeo, textMaterial);
+    textMesh.position.y = 0;
+    scene.add(textMesh);
+  }
 );
 
-// ---------- Camera Orbit ----------
+// ---------------- CAMERA ROTATION ----------------
 let angle = 0;
+
 function animate() {
     requestAnimationFrame(animate);
 
-    // Rotate galaxy very slowly
-    stars.rotation.y += 0.0004;
+    stars.rotation.y += 0.0003;
 
-    // Camera rotation around scene
-    angle += 0.0025;
-    camera.position.x = Math.sin(angle) * 250;
-    camera.position.z = Math.cos(angle) * 250;
+    angle += 0.0015;
+    camera.position.x = Math.sin(angle) * 450;
+    camera.position.z = Math.cos(angle) * 450;
     camera.lookAt(0, 0, 0);
 
     renderer.render(scene, camera);
 }
 animate();
 
-// ---------- Resize ----------
+// ---------------- RESIZE ----------------
 window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();

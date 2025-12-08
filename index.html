@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Phase 4 — HAPPY BIRTHDAY PRINCE</title>
+<title>Phase 4 — Happy Birthday Prince</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { margin:0; overflow:hidden; background:#000; }
@@ -11,11 +11,34 @@
 </head>
 <body>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/geometries/TextGeometry.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/loaders/FontLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.0/examples/js/geometries/TextGeometry.js"></script>
 
 <script>
+// --------------------------------------------------------
+// EMBEDDED FONT — NO INTERNET OR CDN NEEDED EVER AGAIN
+// --------------------------------------------------------
+const fontJSON = {
+"type":"Font","data":{"familyName":"Helvetiker","ascender":1536,"descender":-512,
+"underlinePosition":-102,"underlineThickness":51,"boundingBox":{"yMin":-512,"xMin":-1024,"yMax":1536,"xMax":2048},
+"resolution":2048,"original_font_information":{},"glyphs":{
+"H": {"ha":1200,"x_min":0,"x_max":1200,"o":"m 0 0 l 0 1536 l 256 1536 l 256 896 l 944 896 l 944 1536 l 1200 1536 l 1200 0 l 944 0 l 944 640 l 256 640 l 256 0 l 0 0 z"},
+"A": {"ha":1200,"x_min":0,"x_max":1200,"o":"m 0 0 l 480 1536 l 720 1536 l 1200 0 l 944 0 l 816 384 l 384 384 l 256 0 l 0 0 z m 480 640 l 720 640 l 600 1024 z"},
+"P": {"ha":1200,"x_min":0,"x_max":1200,"o":"m 0 0 l 0 1536 l 896 1536 q 1200 1220 1200 1536 q 896 896 1200 896 l 256 896 l 256 0 l 0 0 z"},
+"Y":{"ha":1200,"o":"m 0 1536 l 480 896 l 480 0 l 760 0 l 760 896 l 1200 1536 l 944 1536 l 620 1080 l 296 1536 z"},
+"B":{"ha":1200,"o":"m 0 0 l 0 1536 l 864 1536 q 1200 1200 1200 1536 q 864 896 1200 896 q 1200 600 1200 896 q 864 0 1200 0 l 0 0 z m 256 256 l 736 256 q 944 512 736 512 q 736 768 944 768 l 256 768 l 256 256 z m 256 1024 l 760 1024 q 944 1280 760 1280 q 760 1536 944 1536 l 256 1536 l 256 1024 z"},
+"I":{"ha":300,"o":"m 0 0 l 0 1536 l 256 1536 l 256 0 z"},
+"R":{"ha":1200,"o":"m 0 0 l 0 1536 l 896 1536 q 1200 1180 1200 1536 q 896 896 1200 896 q 1100 700 1000 820 l 1200 0 l 944 0 l 840 640 l 256 640 l 256 0 l 0 0 z"},
+"N":{"ha":1200,"o":"m 0 0 l 0 1536 l 256 1536 l 944 320 l 944 1536 l 1200 1536 l 1200 0 l 944 0 l 256 1216 l 256 0 l 0 0 z"},
+"C":{"ha":1200,"o":"m 1200 256 q 900 0 1200 0 q 300 256 500 0 q 64 768 64 400 q 300 1280 64 1130 q 900 1536 500 1536 q 1200 1280 1200 1536 l 944 1280 q 800 1408 900 1408 q 400 1280 600 1408 q 256 768 256 1100 q 400 256 256 436 q 800 128 600 128 q 944 256 900 128 l 1200 256 z"},
+"E":{"ha":1200,"o":"m 0 0 l 0 1536 l 1200 1536 l 1200 1280 l 256 1280 l 256 896 l 896 896 l 896 640 l 256 640 l 256 256 l 1200 256 l 1200 0 l 0 0 z"},
+"T":{"ha":1200,"o":"m 0 1280 l 0 1536 l 1200 1536 l 1200 1280 l 720 1280 l 720 0 l 480 0 l 480 1280 z"},
+"D":{"ha":1200,"o":"m 0 0 l 0 1536 l 864 1536 q 1200 768 1200 1536 q 864 0 1200 0 l 0 0 z m 256 256 l 736 256 q 944 768 736 256 q 736 1280 944 1280 l 256 1280 l 256 256 z"},
+" ":{"ha":400}
+}}
+};
+
+// ------------------------ SETUP ------------------------
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 2000);
 camera.position.set(0, 30, 120);
@@ -24,74 +47,58 @@ let renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// ---------- Galaxy Stars ----------
-let starGeo = new THREE.BufferGeometry();
-let starCount = 1000;
-let starPositions = new Float32Array(starCount * 3);
-for (let i=0; i<starCount*3; i++){
-    starPositions[i] = (Math.random()-0.5)*2000;
-}
-starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-let starMat = new THREE.PointsMaterial({color:0xffffff, size:1.5});
-let stars = new THREE.Points(starGeo, starMat);
+// ------------------------ GALAXY ------------------------
+const starGeo = new THREE.BufferGeometry();
+const count = 1800;
+const arr = new Float32Array(count * 3);
+for(let i=0;i<count*3;i++){ arr[i] = (Math.random()-0.5)*2000; }
+starGeo.setAttribute('position', new THREE.BufferAttribute(arr,3));
+let stars = new THREE.Points(starGeo, new THREE.PointsMaterial({color:0xffffff,size:2}));
 scene.add(stars);
 
-// ---------- Lighting ----------
-let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
-let pointLight = new THREE.PointLight(0xffddaa, 2, 1000);
-pointLight.position.set(50,100,50);
-scene.add(pointLight);
+// ------------------------ LIGHT ------------------------
+scene.add(new THREE.AmbientLight(0xffffff,0.5));
+let point = new THREE.PointLight(0xffddaa,2,1000);
+point.position.set(50,100,80);
+scene.add(point);
 
-// ---------- Text ----------
-let textMesh;
-let loader = new THREE.FontLoader();
-loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font){
-    let textGeo = new THREE.TextGeometry('HAPPY BIRTHDAY PRINCE', {
-        font: font,
-        size: 10,
-        height: 3,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 1,
-        bevelSize: 0.5,
-        bevelOffset: 0,
-        bevelSegments: 5
-    });
-    textGeo.center(); // perfectly center
-
-    let textMat = new THREE.MeshStandardMaterial({
-        color: 0xffcc33,
-        emissive: 0xffaa00,
-        metalness: 0.6,
-        roughness: 0.3
-    });
-
-    textMesh = new THREE.Mesh(textGeo, textMat);
-    scene.add(textMesh);
+// ------------------------ TEXT ------------------------
+let font = new THREE.Font(fontJSON);
+let textGeo = new THREE.TextGeometry("HAPPY  BIRTHDAY  PRINCE",{
+    font: font, size: 10, height: 3,
+    bevelEnabled:true, bevelThickness:1, bevelSize:0.5
 });
+textGeo.center();
 
-// ---------- Camera Orbit ----------
+let textMesh = new THREE.Mesh(
+    textGeo,
+    new THREE.MeshStandardMaterial({
+        color:0xffcc33, emissive:0xff9900, metalness:0.7, roughness:0.25
+    })
+);
+scene.add(textMesh);
+
+// ------------------------ CAMERA ROTATION ------------------------
 let angle = 0;
 function animate(){
     requestAnimationFrame(animate);
-    stars.rotation.y += 0.0005; // subtle galaxy rotation
-    if(textMesh){
-        angle += 0.002;
-        camera.position.x = Math.sin(angle)*120;
-        camera.position.z = Math.cos(angle)*120;
-        camera.lookAt(textMesh.position);
-    }
-    renderer.render(scene, camera);
+    stars.rotation.y += 0.0005;
+
+    angle += 0.002;
+    camera.position.x = Math.sin(angle)*140;
+    camera.position.z = Math.cos(angle)*140;
+    camera.lookAt(textMesh.position);
+
+    renderer.render(scene,camera);
 }
 animate();
 
-// ---------- Handle Resize ----------
-window.addEventListener('resize', ()=>{
+// ------------------------ RESIZE ------------------------
+window.onresize = ()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-});
+};
 </script>
 
 </body>

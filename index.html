@@ -1,103 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>IMAX Galaxy — Happy Birthday Prince</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Phase 4 — Happy Birthday Prince</title>
 
 <style>
     html, body {
         margin: 0;
         padding: 0;
         overflow: hidden;
-        background: #000;
-        font-family: 'Cinzel', serif;
+        background: black;
+        font-family: "Cinzel", serif;
     }
 
-    /* FULL GALAXY BACKGROUND */
-    #galaxy {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at center, #1d1b3d, #000 70%);
-        overflow: hidden;
+    /* Galaxy background */
+    body {
+        background-image: url("https://upload.wikimedia.org/wikipedia/commons/4/4f/NASA-Hubble-Galaxy.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 
-    /* Stars */
-    .star {
-        position: absolute;
-        background: white;
-        border-radius: 50%;
-        animation: twinkle 3s infinite ease-in-out;
-    }
-
-    @keyframes twinkle {
-        0%, 100% { opacity: 0.2; transform: scale(0.6); }
-        50% { opacity: 1; transform: scale(1.3); }
-    }
-
-    /* 3D Scene */
-    #scene {
+    /* Cinematic text */
+    #title {
         position: absolute;
         top: 50%;
         left: 50%;
         transform-style: preserve-3d;
         transform: translate(-50%, -50%) rotateY(0deg);
-        animation: spinCamera 20s infinite linear;
+        font-size: 70px;
+        color: #fff2cc;
+        text-shadow: 0 0 20px #ffd27a, 0 0 40px #ffb300;
+        letter-spacing: 8px;
+        white-space: nowrap;
     }
-
-    @keyframes spinCamera {
-        0%   { transform: translate(-50%, -50%) rotateY(0deg); }
-        100% { transform: translate(-50%, -50%) rotateY(360deg); }
-    }
-
-    /* 3D Text */
-    .title {
-        font-size: 90px;
-        font-weight: 900;
-        letter-spacing: 4px;
-        color: #ffddaa;
-        text-shadow:
-            0 0 20px #ffcc88,
-            0 0 40px #ffbb66,
-            0 0 80px #ffaa44,
-            0 0 120px #ff8800;
-        
-        transform: translateZ(120px);
-        animation: glow 4s infinite ease-in-out;
-    }
-
-    @keyframes glow {
-        0%, 100% { text-shadow: 0 0 15px #ffaa55, 0 0 40px #ff8844; }
-        50% { text-shadow: 0 0 30px #ffd499, 0 0 90px #ffbb66; }
-    }
-
 </style>
-
 </head>
+
 <body>
 
-<div id="galaxy"></div>
-
-<div id="scene">
-    <div class="title">HAPPY BIRTHDAY PRINCE</div>
-</div>
+<div id="title">HAPPY BIRTHDAY PRINCE</div>
 
 <script>
-/* --- CREATE GALAXY STARS --- */
-const galaxy = document.getElementById("galaxy");
+let angle = 0;
 
-for (let i = 0; i < 300; i++) {
-    const s = document.createElement("div");
-    s.classList.add("star");
-    let size = Math.random() * 3 + 1;
-    s.style.width = size + "px";
-    s.style.height = size + "px";
-    s.style.top = Math.random() * 100 + "%";
-    s.style.left = Math.random() * 100 + "%";
-    s.style.animationDuration = (Math.random() * 3 + 2) + "s";
-    galaxy.appendChild(s);
+function animateCamera() {
+    angle += 0.1; // rotation speed
+    const title = document.getElementById("title");
+
+    // camera-like rotation effect
+    title.style.transform =
+        `translate(-50%, -50%) rotateY(${Math.sin(angle * 0.02) * 35}deg) 
+         rotateX(${Math.cos(angle * 0.015) * 15}deg) 
+         scale(${1 + Math.sin(angle * 0.01) * 0.1})`;
+
+    requestAnimationFrame(animateCamera);
 }
+
+animateCamera();
 </script>
 
 </body>

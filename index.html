@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Phase 4 — HAPPY BIRTHDAY PRINCE</title>
+<title>Phase 4 — HAPPY BIRTHDAY PRINCE with Cartoons</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { margin:0; overflow:hidden; background:#000; }
@@ -14,53 +14,38 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/TextureLoader.js"></script>
 
 <script>
 let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 2000);
-camera.position.set(0, 60, 260);
+let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
+camera.position.set(0, 60, 300);
 
 let renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// -----------------------------------------------------
-// GALAXY BACKGROUND
-// -----------------------------------------------------
+// ------- Galaxy Stars -------
 let starGeo = new THREE.BufferGeometry();
-let starCount = 1500;
+let starCount = 1200;
 let starPositions = new Float32Array(starCount * 3);
-for (let i = 0; i < starCount * 3; i++) {
-    starPositions[i] = (Math.random() - 0.5) * 3000;
-}
+for (let i = 0; i < starCount * 3; i++) starPositions[i] = (Math.random() - 0.5) * 2500;
 starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
 let starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
 let stars = new THREE.Points(starGeo, starMat);
 scene.add(stars);
 
-// -----------------------------------------------------
-// LIGHTS
-// -----------------------------------------------------
+// ------- Lights -------
 scene.add(new THREE.AmbientLight(0xffffff, 0.4));
 let pointLight = new THREE.PointLight(0xffddaa, 2, 2000);
-pointLight.position.set(100, 150, 100);
+pointLight.position.set(80, 120, 80);
 scene.add(pointLight);
 
-// -----------------------------------------------------
-// BIG "1" IN BACKGROUND
-// -----------------------------------------------------
-let bigOneMesh = null;
-
-// -----------------------------------------------------
-// MAIN TEXT — HAPPY BIRTHDAY PRINCE
-// -----------------------------------------------------
+// ------- Main Text -------
 let textMesh = null;
-
 const loader = new THREE.FontLoader();
 loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
-
-    // TEXT
     const textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
         font: font,
         size: 20,
@@ -71,104 +56,58 @@ loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json
         bevelSize: 1,
         bevelSegments: 5
     });
-
     textGeo.center();
-
-    const textMat = new THREE.MeshStandardMaterial({
-        color: 0xffe066,
-        emissive: 0xffbb33,
-        metalness: 0.7,
-        roughness: 0.25
-    });
-
+    const textMat = new THREE.MeshStandardMaterial({ color: 0xffe066, emissive: 0xffbb33, metalness: 0.7, roughness: 0.25 });
     textMesh = new THREE.Mesh(textGeo, textMat);
     textMesh.position.y = 0;
     scene.add(textMesh);
-
-    // BIG "1"
-    const oneGeo = new THREE.TextGeometry("1", {
-        font: font,
-        size: 120,
-        height: 10,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 3,
-        bevelSize: 2,
-        bevelSegments: 5
-    });
-
-    oneGeo.center();
-
-    const oneMat = new THREE.MeshStandardMaterial({
-        color: 0x3366ff,
-        emissive: 0x113366,
-        metalness: 0.6,
-        roughness: 0.35
-    });
-
-    bigOneMesh = new THREE.Mesh(oneGeo, oneMat);
-    bigOneMesh.position.set(0, -40, -200);  // stays behind
-    scene.add(bigOneMesh);
 });
 
-// -----------------------------------------------------
-// RANDOM CARTOON IMAGES
-// -----------------------------------------------------
-let cartoonList = [
-    "https://i.imgur.com/vgXx8Tk.png", // Mickey
-    "https://i.imgur.com/0hQG0YH.png", // Doraemon
-    "https://i.imgur.com/9GV1O3P.png", // Pikachu
-    "https://i.imgur.com/0pF2Clh.png", // Tom
-    "https://i.imgur.com/iF3Gh7P.png"  // Jerry
+// ------- Load Cartoon Textures -------
+let cartoonFiles = [
+    "/mnt/data/a0a2d1e6-3158-499d-99fd-c3b481fac7a6.png", // Mickey
+    "/mnt/data/833fb31c-098c-4ad2-a223-b85154bd69a1.png", // Tom & Jerry
+    "/mnt/data/235de06b-1304-4318-8f28-4cd8b9d9e416.png"  // Space Shuttle
 ];
+let cartoons = [];
 
-let cartoonPlanes = [];
-
-function addRandomCartoon(url) {
-    const texLoader = new THREE.TextureLoader();
-    texLoader.load(url, (texture) => {
-        let mat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-        let geo = new THREE.PlaneGeometry(80, 80);
-        let mesh = new THREE.Mesh(geo, mat);
-
-        // RANDOM POSITIONING AROUND SCENE
+cartoonFiles.forEach(file => {
+    new THREE.TextureLoader().load(file, tex => {
+        const geo = new THREE.PlaneGeometry(30, 30);
+        const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+        const mesh = new THREE.Mesh(geo, mat);
         mesh.position.set(
-            (Math.random() - 0.5) * 2000,
-            (Math.random() - 0.5) * 1200,
-            (Math.random() - 0.5) * 2000
+            (Math.random()-0.5)*500,
+            (Math.random()-0.5)*300,
+            (Math.random()-0.5)*500
         );
-
+        mesh.rotation.y = Math.random() * Math.PI * 2;
         scene.add(mesh);
-        cartoonPlanes.push(mesh);
+        cartoons.push(mesh);
     });
-}
+});
 
-cartoonList.forEach(img => addRandomCartoon(img));
-
-// -----------------------------------------------------
-// CAMERA ORBIT AROUND SCENE
-// -----------------------------------------------------
+// -------- Camera ORBITING the scene --------
 let angle = 0;
-
 function animate() {
     requestAnimationFrame(animate);
 
     stars.rotation.y += 0.0004;
     stars.rotation.x += 0.0001;
 
-    angle += 0.0015;
-    camera.position.x = Math.sin(angle) * 260;
-    camera.position.z = Math.cos(angle) * 260;
-    camera.lookAt(0, 10, 0);
+    if(textMesh){
+        angle += 0.0018;
+        camera.position.x = Math.sin(angle)*300;
+        camera.position.z = Math.cos(angle)*300;
+        camera.lookAt(0, 20, 0);
+    }
 
     renderer.render(scene, camera);
 }
 
 animate();
 
-// -----------------------------------------------------
-// RESPOND TO SCREEN RESIZE
-// -----------------------------------------------------
+// -------- Responsive --------
 window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();

@@ -1,127 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Phase 4 — HAPPY BIRTHDAY PRINCE</title>
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 4 — Galactic PRINCE</title>
 <style>
-  body { margin:0; overflow:hidden; background:#000; }
-  canvas { display:block; }
+    body,html{
+        margin:0;
+        padding:0;
+        overflow:hidden;
+        background:black;
+    }
+    #scene{
+        width:100vw;
+        height:100vh;
+        display:block;
+    }
 </style>
 </head>
 <body>
+<canvas id="scene"></canvas>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152/examples/js/loaders/FontLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152/examples/js/geometries/TextGeometry.js"></script>
 
 <script>
-let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-camera.position.set(0, 60, 230);
-
-let renderer = new THREE.WebGLRenderer({ antialias: true });
+// ====================================================
+// BASIC SETUP
+// ====================================================
+const canvas = document.getElementById("scene");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
-document.body.appendChild(renderer.domElement);
 
-// -------- Galaxy Background --------
-let starGeo = new THREE.BufferGeometry();
-let starCount = 1200;
-let starPositions = new Float32Array(starCount * 3);
-for (let i = 0; i < starCount * 3; i++) {
-    starPositions[i] = (Math.random() - 0.5) * 2500;
-}
-starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
-let starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
-let stars = new THREE.Points(starGeo, starMat);
-scene.add(stars);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
 
-// -------- Lights --------
-scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-let pointLight = new THREE.PointLight(0xffddaa, 2, 2000);
-pointLight.position.set(80, 120, 80);
-scene.add(pointLight);
-
-// ----------------------------------------------------
-// YOUR MICKEY IMAGE IN BASE64 FORMAT (WORKS 100%)
-// ----------------------------------------------------
-let mickeyBase64 = `
-data:image/png;base64,
-`;
-
-// (The Base64 will be inserted here automatically by the system — no action needed)
-
-// Create texture from Base64
-let mickeyTexture = new THREE.TextureLoader().load(mickeyBase64);
-
-// Create 3D plane for image
-let mickeyPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(80, 80),
-    new THREE.MeshBasicMaterial({ map: mickeyTexture, transparent: true })
+const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    2000
 );
+camera.position.set(0, 10, 55);
 
-// Position Mickey in background
-mickeyPlane.position.set(-120, 20, -150);
-scene.add(mickeyPlane);
+// ====================================================
+// GALAXY STAR FIELD BACKGROUND
+// ====================================================
+function createStarField() {
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 4000;
+    const positions = [];
 
-// -------- Text --------
-let textMesh = null;
+    for (let i = 0; i < starCount; i++) {
+        const x = (Math.random() - 0.5) * 2000;
+        const y = (Math.random() - 0.5) * 2000;
+        const z = (Math.random() - 0.5) * 2000;
+        positions.push(x, y, z);
+    }
 
-const loader = new THREE.FontLoader();
-loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
-    const textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
-        font: font,
-        size: 20,
-        height: 4,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 2,
-        bevelSize: 1,
-        bevelSegments: 5
+    starGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(positions, 3)
+    );
+
+    const starMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 1.2,
     });
 
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+}
+createStarField();
+
+// ====================================================
+// GALACTIC PAINT TEXTURE (NEBULA + STARS)
+// ====================================================
+function createGalaxyTexture() {
+    const canvasTex = document.createElement("canvas");
+    canvasTex.width = 1024;
+    canvasTex.height = 512;
+    const ctx = canvasTex.getContext("2d");
+
+    const grad = ctx.createLinearGradient(0,0,1024,512);
+    grad.addColorStop(0, "#ff00ff");
+    grad.addColorStop(0.3, "#4b0082");
+    grad.addColorStop(0.6, "#0000ff");
+    grad.addColorStop(1, "#00ffff");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,1024,512);
+
+    // Stars inside letters
+    for (let i = 0; i < 180; i++) {
+        ctx.fillStyle = "white";
+        const x = Math.random()*1024;
+        const y = Math.random()*512;
+        const s = Math.random()*3;
+        ctx.fillRect(x, y, s, s);
+    }
+
+    const texture = new THREE.CanvasTexture(canvasTex);
+    texture.needsUpdate = true;
+    return texture;
+}
+
+const galaxyTexture = createGalaxyTexture();
+
+// ====================================================
+// LOAD TEXT + APPLY GALACTIC MATERIAL
+// ====================================================
+const loader = new THREE.FontLoader();
+
+loader.load("https://threejs.org/examples/fonts/helvetiker_bold.typeface.json", function(font){
+
+    const textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
+        font: font,
+        size: 6,
+        height: 2,
+        curveSegments: 8,
+        bevelEnabled: true,
+        bevelThickness: 0.5,
+        bevelSize: 0.3,
+        bevelSegments: 3
+    });
     textGeo.center();
 
-    const textMat = new THREE.MeshStandardMaterial({
-        color: 0xffe066,
-        emissive: 0xffbb33,
-        metalness: 0.7,
+    const textMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        map: galaxyTexture,
+        emissive: new THREE.Color("#4b0082"),
+        emissiveIntensity: 0.5,
+        emissiveMap: galaxyTexture,
+        metalness: 0.65,
         roughness: 0.25
     });
 
-    textMesh = new THREE.Mesh(textGeo, textMat);
+    const textMesh = new THREE.Mesh(textGeo, textMaterial);
+    textMesh.position.y = 0;
     scene.add(textMesh);
+
+    // Soft light
+    const light = new THREE.PointLight(0xffffff, 2, 200);
+    light.position.set(50,50,50);
+    scene.add(light);
+
 });
 
-// -------- Camera ORBIT --------
-let angle = 0;
-
+// ====================================================
+// CAMERA ROTATION ANIMATION
+// ====================================================
 function animate() {
     requestAnimationFrame(animate);
 
-    stars.rotation.y += 0.0004;
-    stars.rotation.x += 0.0001;
-
-    if (textMesh) {
-        angle += 0.0018;
-        camera.position.x = Math.sin(angle) * 250;
-        camera.position.z = Math.cos(angle) * 250;
-        camera.lookAt(0, 20, 0);
-    }
+    // Camera rotates around the text
+    const t = Date.now() * 0.0003;
+    camera.position.x = Math.sin(t) * 55;
+    camera.position.z = Math.cos(t) * 55;
+    camera.lookAt(0, 0, 0);
 
     renderer.render(scene, camera);
 }
-
 animate();
 
-// -------- Resize --------
-window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+// ====================================================
+// RESIZE HANDLER
+// ====================================================
+window.addEventListener("resize", ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
-</script>
 
+</script>
 </body>
 </html>

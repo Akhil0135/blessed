@@ -29,8 +29,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
 // ---------------- Lights ----------------
-let ambient = new THREE.AmbientLight(0x666666, 0.5);
-scene.add(ambient);
+scene.add(new THREE.AmbientLight(0x666666, 0.5));
 
 let keyLight = new THREE.PointLight(0x99ccff, 2, 2000);
 keyLight.position.set(180, 200, 140);
@@ -102,20 +101,22 @@ new THREE.FontLoader().load(
 // ---------------- Create letters with proper spacing ----------------
 function createPrinceLetters(){
     const total = princeText.length;
-    const size = 180; // fixed size
-    const height = 15;
-    const letterWidths = [];
-    let totalWidth = 0;
+    const size = 140; // reduced size for balance
+    const height = 12;
+    const meshes = [];
 
-    // measure letter widths
+    let totalWidth = 0;
+    let letterWidths = [];
+
+    // Measure width of each letter
     for(let i=0;i<total;i++){
         let geo = new THREE.TextGeometry(princeText[i],{
             font: loadedFont,
             size: size,
             height: height,
             bevelEnabled:true,
-            bevelThickness:5,
-            bevelSize:3
+            bevelThickness:4,
+            bevelSize:2
         });
         geo.computeBoundingBox();
         let w = geo.boundingBox.max.x - geo.boundingBox.min.x;
@@ -123,8 +124,9 @@ function createPrinceLetters(){
         totalWidth += w;
     }
 
-    const spacing = 15; 
-    totalWidth += spacing*(total-1);
+    // Adjust spacing proportionally
+    const spacing = 12; 
+    totalWidth += spacing * (total - 1);
     let xOffset = -totalWidth/2;
 
     for(let i=0;i<total;i++){
@@ -133,15 +135,15 @@ function createPrinceLetters(){
             size: size,
             height: height,
             bevelEnabled:true,
-            bevelThickness:5,
-            bevelSize:3
+            bevelThickness:4,
+            bevelSize:2
         });
         geo.center();
         let mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color:0xffffff}));
         mesh.position.y = 0;
         mesh.position.x = xOffset + letterWidths[i]/2;
-        mesh.position.z = -800; // start far back
-        mesh.scale.set(0.1,0.1,0.1);
+        mesh.position.z = -800;
+        mesh.scale.set(0.1,0.1,0.1); 
         mesh.rotation.x = (Math.random()-0.5)*0.3; 
         mesh.rotation.y = (Math.random()-0.5)*0.3;
         mesh.visible = false;

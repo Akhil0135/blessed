@@ -155,10 +155,9 @@ new THREE.FontLoader().load(
 // ---------------- Create letters ----------------
 function createPrinceLetters(){
     const total = princeText.length;
-    const screenWidth = window.innerWidth;
-    const size = 250; // Big letters to fill screen
+    const size = 250; // Big letters
     const height = 15;
-    const spacing = size * 1.1; // proper spacing for full screen
+    const spacing = size * 1.0; // reduced spacing for full screen
     const totalWidth = (total-1)*spacing;
     const xOffset = -totalWidth/2;
 
@@ -186,7 +185,7 @@ function createPrinceLetters(){
     }
 }
 
-// ---------------- Animate letters with pop/bounce ----------------
+// ---------------- Animate letters with bounce ----------------
 let currentLetter = 0;
 function revealNextLetter(){
     if(currentLetter < princeLetters.length){
@@ -199,7 +198,7 @@ function revealNextLetter(){
         function animateLetter(){
             if(frame <= duration){
                 let t = frame/duration;
-                let overshoot = 1 + 0.2*Math.sin(t*Math.PI); // small bounce
+                let overshoot = 1 + 0.2*Math.sin(t*Math.PI); // bounce
                 mesh.position.z = -800*(1-t) + finalZ*t;
                 mesh.scale.set((0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot);
                 mesh.material.opacity = t;
@@ -210,9 +209,8 @@ function revealNextLetter(){
             }
         }
         animateLetter();
-
         currentLetter++;
-        setTimeout(revealNextLetter, 400); // stagger letters
+        setTimeout(revealNextLetter, 350); // slightly faster stagger
     }
 }
 

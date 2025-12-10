@@ -41,7 +41,6 @@ let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
 let stars = new THREE.Points(starGeo, starMat);
 scene.add(stars);
 
-// Twinkling effect
 let starVel = new Float32Array(starCount);
 for(let i=0;i<starCount;i++){ starVel[i] = Math.random()*0.02 + 0.01; }
 
@@ -153,13 +152,12 @@ new THREE.FontLoader().load(
     }
 );
 
-// ---------------- Create individual letters ----------------
+// ---------------- Create individual letters with proper spacing ----------------
 function createPrinceLetters(){
     const total = princeText.length;
     const size = 180;
     const height = 12;
-    const screenWidth = window.innerWidth;
-    const spacing = size * 0.7; // proper spacing
+    const spacing = size * 0.9; // Increased spacing
     const totalWidth = (total-1)*spacing;
     const xOffset = -totalWidth/2;
     for(let i=0;i<total;i++){
@@ -176,14 +174,17 @@ function createPrinceLetters(){
         mesh.position.y = 0;
         mesh.position.x = xOffset + i*spacing;
         mesh.position.z = -600; // start far back
-        mesh.scale.set(0.1,0.1,0.1); // start very small
+        mesh.scale.set(0.1,0.1,0.1); // start small
+        mesh.rotation.x = (Math.random()-0.5)*0.3; // small random tilt
+        mesh.rotation.y = (Math.random()-0.5)*0.3;
         mesh.material.opacity = 0; // start invisible
+        mesh.visible = false;
         scene.add(mesh);
         princeLetters.push(mesh);
     }
 }
 
-// ---------------- Animate letters coming forward with fade ----------------
+// ---------------- Animate letters coming forward with fade and tilt ----------------
 let currentLetter = 0;
 function revealNextLetter(){
     if(currentLetter < princeLetters.length){
@@ -197,9 +198,12 @@ function revealNextLetter(){
         function animateLetter(){
             if(frame <= duration){
                 let t = frame/duration;
-                mesh.position.z = -600*(1-t) + finalZ*t; // linear move forward
-                mesh.scale.set(0.1 + 0.9*t, 0.1 + 0.9*t, 0.1 + 0.9*t); // scale up
-                mesh.material.opacity = t; // fade in
+                mesh.position.z = -600*(1-t) + finalZ*t;
+                mesh.scale.set(0.1 + 0.9*t, 0.1 + 0.9*t, 0.1 + 0.9*t);
+                mesh.material.opacity = t;
+                // Reduce tilt as it moves forward
+                mesh.rotation.x *= (1-t);
+                mesh.rotation.y *= (1-t);
                 frame++;
                 requestAnimationFrame(animateLetter);
             }
@@ -207,7 +211,7 @@ function revealNextLetter(){
         animateLetter();
 
         currentLetter++;
-        setTimeout(revealNextLetter, 500); // next letter after 0.5s
+        setTimeout(revealNextLetter, 500);
     }
 }
 
@@ -216,26 +220,21 @@ let angle=0;
 function animate(){
     requestAnimationFrame(animate);
 
-    // Rotate stars
     stars.rotation.y += 0.0005;
 
-    // Twinkle stars
     let positions = stars.geometry.attributes.position.array;
     for(let i=0;i<starCount;i++){
         positions[i*3+2] += Math.sin(Date.now()*0.001 + i)*0.01*starVel[i];
     }
     stars.geometry.attributes.position.needsUpdate = true;
 
-    // Camera orbit
     angle += 0.0012;
     camera.position.x = Math.sin(angle)*400;
     camera.position.z = Math.cos(angle)*400;
     camera.lookAt(0,50,0);
 
-    // Nebula animation
     nebulaMat.uniforms.time.value += 0.03;
 
-    // Glowing pulse for HAPPY BIRTHDAY
     if(birthdayMesh){
         let glow = 0.5 + 0.5*Math.sin(Date.now()*0.002);
         birthdayMesh.material.emissiveIntensity = glow;
@@ -246,7 +245,6 @@ function animate(){
 }
 animate();
 
-// ---------------- Responsive ----------------
 window.addEventListener("resize",()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();

@@ -100,16 +100,21 @@ const nebulaMat = new THREE.ShaderMaterial({
 });
 
 // ---------------- Text ----------------
-let princeMesh=null, birthdayMesh=null, oneMesh=null;
+let princeLetters = [];
+let birthdayMesh=null, oneMesh=null;
+const princeText = "PRINCE";
+let loadedFont=null;
 
+// ---------------- Load Font ----------------
 new THREE.FontLoader().load(
     "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
     font => {
+        loadedFont = font;
 
-        // ------- Background "1" (behind HAPPY BIRTHDAY) -------
+        // Background "1" behind HAPPY BIRTHDAY
         let oneGeo = new THREE.TextGeometry("1",{
             font: font,
-            size: 120, // slightly smaller
+            size: 120,
             height: 10,
             bevelEnabled:true,
             bevelThickness:5,
@@ -117,31 +122,17 @@ new THREE.FontLoader().load(
         });
         oneGeo.center();
         let oneMat = new THREE.MeshStandardMaterial({
-            color:0x3399ff, // subtle deep blue
+            color:0x3399ff,
             emissive:0x112244,
             metalness:0.5,
             roughness:0.6
         });
         oneMesh = new THREE.Mesh(oneGeo, oneMat);
-        oneMesh.position.y = 180; // same Y as HAPPY BIRTHDAY
-        oneMesh.position.z = -50; // behind text
+        oneMesh.position.y = 180;
+        oneMesh.position.z = -50;
         scene.add(oneMesh);
 
-        // ------- PRINCE (fullscreen with glowing nebula) -------
-        let princeGeo = new THREE.TextGeometry("PRINCE",{
-            font: font,
-            size: 180,
-            height: 12,
-            bevelEnabled:true,
-            bevelThickness:5,
-            bevelSize:3
-        });
-        princeGeo.center();
-        princeMesh = new THREE.Mesh(princeGeo, nebulaMat);
-        princeMesh.position.y = 0;
-        scene.add(princeMesh);
-
-        // ------- HAPPY BIRTHDAY with glowing pulse -------
+        // HAPPY BIRTHDAY
         let birthdayGeo = new THREE.TextGeometry("HAPPY BIRTHDAY",{
             font: font,
             size: 36,
@@ -160,8 +151,47 @@ new THREE.FontLoader().load(
         birthdayMesh = new THREE.Mesh(birthdayGeo, birthdayMat);
         birthdayMesh.position.y = 180; 
         scene.add(birthdayMesh);
+
+        // Initialize PRINCE letters (hidden initially)
+        createPrinceLetters();
     }
 );
+
+// ---------------- Create individual letters ----------------
+function createPrinceLetters(){
+    const total = princeText.length;
+    const size = 180;
+    const height = 12;
+    let xOffset = -((total-1)/2)*size*0.6; // spacing
+    for(let i=0;i<total;i++){
+        let geo = new THREE.TextGeometry(princeText[i],{
+            font: loadedFont,
+            size: size,
+            height: height,
+            bevelEnabled:true,
+            bevelThickness:5,
+            bevelSize:3
+        });
+        geo.center();
+        let mesh = new THREE.Mesh(geo, nebulaMat);
+        mesh.position.y = 0;
+        mesh.position.x = xOffset + i*size*0.6;
+        mesh.visible = false; // start hidden
+        scene.add(mesh);
+        princeLetters.push(mesh);
+    }
+}
+
+// ---------------- Reveal letters one by one ----------------
+let currentLetter = 0;
+function revealNextLetter(){
+    if(currentLetter < princeLetters.length){
+        princeLetters[currentLetter].visible = true;
+        currentLetter++;
+        setTimeout(revealNextLetter, 500); // 0.5s delay per letter
+    }
+}
+setTimeout(revealNextLetter, 1000); // start after 1s delay
 
 // ---------------- Camera Orbit + Animate ----------------
 let angle=0;
@@ -185,7 +215,7 @@ function animate(){
     camera.lookAt(0,50,0);
 
     // Nebula animation
-    if(princeMesh) nebulaMat.uniforms.time.value += 0.03;
+    nebulaMat.uniforms.time.value += 0.03;
 
     // Glowing pulse for HAPPY BIRTHDAY
     if(birthdayMesh){

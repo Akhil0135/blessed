@@ -28,22 +28,6 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// ---------------- Stars ----------------
-let starGeo = new THREE.BufferGeometry();
-let starCount = 2500;
-let starArr = new Float32Array(starCount * 3);
-for(let i=0;i<starCount*3;i++){
-    starArr[i] = (Math.random() - 0.5) * 3000;
-}
-starGeo.setAttribute("position", new THREE.BufferAttribute(starArr, 3));
-
-let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
-let stars = new THREE.Points(starGeo, starMat);
-scene.add(stars);
-
-let starVel = new Float32Array(starCount);
-for(let i=0;i<starCount;i++){ starVel[i] = Math.random()*0.02 + 0.01; }
-
 // ---------------- Lights ----------------
 let ambient = new THREE.AmbientLight(0x666666, 0.5);
 scene.add(ambient);
@@ -55,43 +39,6 @@ scene.add(keyLight);
 let warmLight = new THREE.PointLight(0xffddaa, 1.8, 2000);
 warmLight.position.set(-120, 160, -80);
 scene.add(warmLight);
-
-// ---------------- Glowing Nebula Shader ----------------
-const nebulaMat = new THREE.ShaderMaterial({
-    uniforms: { time:{ value:0 } },
-    vertexShader: `
-      varying vec2 vUv;
-      void main(){
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-      }
-    `,
-    fragmentShader: `
-      varying vec2 vUv;
-      uniform float time;
-      float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
-      float noise(vec2 p){
-          vec2 i=floor(p);
-          vec2 f=fract(p);
-          float a=hash(i);
-          float b=hash(i+vec2(1.0,0.0));
-          float c=hash(i+vec2(0.0,1.0));
-          float d=hash(i+vec2(1.0,1.0));
-          vec2 u=f*f*(3.0-2.0*f);
-          return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
-      }
-      void main(){
-          float t = time*0.3;
-          float n = noise(vUv*10.0 + vec2(t*0.5,-t*0.3));
-          float glow = smoothstep(0.2,0.7,n);
-          vec3 col = vec3(0.3 + glow*0.7, 0.2 + glow*0.5, 0.6 + glow*0.9);
-          gl_FragColor = vec4(col,1.0);
-      }
-    `,
-    metalness: 1,
-    roughness: 0.25,
-    transparent: true
-});
 
 // ---------------- Text ----------------
 let princeLetters = [];
@@ -105,7 +52,7 @@ new THREE.FontLoader().load(
     font => {
         loadedFont = font;
 
-        // Background "1" behind HAPPY BIRTHDAY
+        // Background "1"
         let oneGeo = new THREE.TextGeometry("1",{
             font: font,
             size: 120,
@@ -146,20 +93,42 @@ new THREE.FontLoader().load(
         birthdayMesh.position.y = 180; 
         scene.add(birthdayMesh);
 
-        // Initialize PRINCE letters (full screen width)
+        // PRINCE letters
         createPrinceLetters();
-        setTimeout(revealNextLetter, 800); // start reveal after 0.8s
+        setTimeout(revealNextLetter, 800);
     }
 );
 
-// ---------------- Create letters with reduced spacing ----------------
+// ---------------- Create letters with proper spacing ----------------
 function createPrinceLetters(){
     const total = princeText.length;
-    const size = 250; // Big letters
+    const size = 180; // reduced to fit screen
     const height = 15;
-    const spacing = size * 0.78; // reduced spacing further
-    const totalWidth = (total-1)*spacing;
-    const xOffset = -totalWidth/2;
+    const meshes = [];
+
+    // Measure width of each letter
+    let totalWidth = 0;
+    let letterWidths = [];
+
+    for(let i=0;i<total;i++){
+        let geo = new THREE.TextGeometry(princeText[i],{
+            font: loadedFont,
+            size: size,
+            height: height,
+            bevelEnabled:true,
+            bevelThickness:5,
+            bevelSize:3
+        });
+        geo.computeBoundingBox();
+        let w = geo.boundingBox.max.x - geo.boundingBox.min.x;
+        letterWidths.push(w);
+        totalWidth += w;
+    }
+
+    // Add small spacing between letters
+    const spacing = 15; 
+    totalWidth += spacing * (total - 1);
+    let xOffset = -totalWidth/2;
 
     for(let i=0;i<total;i++){
         let geo = new THREE.TextGeometry(princeText[i],{
@@ -171,21 +140,21 @@ function createPrinceLetters(){
             bevelSize:3
         });
         geo.center();
-        let mesh = new THREE.Mesh(geo, nebulaMat);
+        let mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color:0xffffff}));
         mesh.position.y = 0;
-        mesh.position.x = xOffset + i*spacing;
-        mesh.position.z = -800; // start far back
+        mesh.position.x = xOffset + letterWidths[i]/2;
+        mesh.position.z = -800;
         mesh.scale.set(0.1,0.1,0.1); 
-        mesh.rotation.x = (Math.random()-0.5)*0.5; 
-        mesh.rotation.y = (Math.random()-0.5)*0.5;
-        mesh.material.opacity = 0;
+        mesh.rotation.x = (Math.random()-0.5)*0.3; 
+        mesh.rotation.y = (Math.random()-0.5)*0.3;
         mesh.visible = false;
         princeLetters.push(mesh);
         scene.add(mesh);
+        xOffset += letterWidths[i] + spacing;
     }
 }
 
-// ---------------- Animate letters with bounce ----------------
+// ---------------- Animate letters ----------------
 let currentLetter = 0;
 function revealNextLetter(){
     if(currentLetter < princeLetters.length){
@@ -198,47 +167,27 @@ function revealNextLetter(){
         function animateLetter(){
             if(frame <= duration){
                 let t = frame/duration;
-                let overshoot = 1 + 0.2*Math.sin(t*Math.PI); // bounce
+                let overshoot = 1 + 0.2*Math.sin(t*Math.PI);
                 mesh.position.z = -800*(1-t) + finalZ*t;
                 mesh.scale.set((0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot);
-                mesh.material.opacity = t;
-                mesh.rotation.x *= (1-t);
-                mesh.rotation.y *= (1-t);
                 frame++;
                 requestAnimationFrame(animateLetter);
             }
         }
         animateLetter();
         currentLetter++;
-        setTimeout(revealNextLetter, 350); // stagger timing
+        setTimeout(revealNextLetter, 350);
     }
 }
 
-// ---------------- Camera Orbit + Animate ----------------
+// ---------------- Animate ----------------
 let angle=0;
 function animate(){
     requestAnimationFrame(animate);
-
-    stars.rotation.y += 0.0005;
-    let positions = stars.geometry.attributes.position.array;
-    for(let i=0;i<starCount;i++){
-        positions[i*3+2] += Math.sin(Date.now()*0.001 + i)*0.01*starVel[i];
-    }
-    stars.geometry.attributes.position.needsUpdate = true;
-
     angle += 0.0012;
     camera.position.x = Math.sin(angle)*400;
     camera.position.z = Math.cos(angle)*400;
     camera.lookAt(0,50,0);
-
-    nebulaMat.uniforms.time.value += 0.03;
-
-    if(birthdayMesh){
-        let glow = 0.5 + 0.5*Math.sin(Date.now()*0.002);
-        birthdayMesh.material.emissiveIntensity = glow;
-        birthdayMesh.material.emissive.setHex(0xffaa33);
-    }
-
     renderer.render(scene,camera);
 }
 animate();

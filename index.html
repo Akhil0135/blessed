@@ -18,6 +18,8 @@
 <script>
 // ---------------- Scene + Camera ----------------
 let scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000000, 0.0012);
+
 let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
 camera.position.set(0, 50, 400);
 
@@ -27,7 +29,8 @@ renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
 // ---------------- Lights ----------------
-scene.add(new THREE.AmbientLight(0x666666, 0.5));
+let ambient = new THREE.AmbientLight(0x666666, 0.5);
+scene.add(ambient);
 
 let keyLight = new THREE.PointLight(0x99ccff, 2, 2000);
 keyLight.position.set(180, 200, 140);
@@ -38,10 +41,10 @@ warmLight.position.set(-120, 160, -80);
 scene.add(warmLight);
 
 // ---------------- Text ----------------
-const princeText = "PRINCE";
 let princeLetters = [];
-let birthdayMesh = null, oneMesh = null;
-let loadedFont = null;
+let birthdayMesh=null, oneMesh=null;
+const princeText = "PRINCE";
+let loadedFont=null;
 
 // ---------------- Load Font ----------------
 new THREE.FontLoader().load(
@@ -90,33 +93,29 @@ new THREE.FontLoader().load(
         birthdayMesh.position.y = 180; 
         scene.add(birthdayMesh);
 
-        createPrinceLetters(); // create letters dynamically
+        // PRINCE letters
+        createPrinceLetters();
         setTimeout(revealNextLetter, 800);
     }
 );
 
-// ---------------- Create letters dynamically ----------------
-function createPrinceLetters() {
-    princeLetters.forEach(l => scene.remove(l));
-    princeLetters = [];
-
+// ---------------- Create letters with proper spacing ----------------
+function createPrinceLetters(){
     const total = princeText.length;
-    let screenWidth = window.innerWidth;
-    let size = screenWidth / (total * 1.2); // automatically fit screen
-    let height = size * 0.08;
-
-    let letterWidths = [];
+    const size = 180; // fixed size
+    const height = 15;
+    const letterWidths = [];
     let totalWidth = 0;
 
-    // Compute letter widths
+    // measure letter widths
     for(let i=0;i<total;i++){
         let geo = new THREE.TextGeometry(princeText[i],{
             font: loadedFont,
             size: size,
             height: height,
             bevelEnabled:true,
-            bevelThickness: size*0.03,
-            bevelSize: size*0.015
+            bevelThickness:5,
+            bevelSize:3
         });
         geo.computeBoundingBox();
         let w = geo.boundingBox.max.x - geo.boundingBox.min.x;
@@ -124,9 +123,8 @@ function createPrinceLetters() {
         totalWidth += w;
     }
 
-    // spacing proportional
-    const spacing = size * 0.05;
-    totalWidth += spacing * (total-1);
+    const spacing = 15; 
+    totalWidth += spacing*(total-1);
     let xOffset = -totalWidth/2;
 
     for(let i=0;i<total;i++){
@@ -135,8 +133,8 @@ function createPrinceLetters() {
             size: size,
             height: height,
             bevelEnabled:true,
-            bevelThickness: size*0.03,
-            bevelSize: size*0.015
+            bevelThickness:5,
+            bevelSize:3
         });
         geo.center();
         let mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color:0xffffff}));
@@ -155,7 +153,7 @@ function createPrinceLetters() {
 
 // ---------------- Animate letters ----------------
 let currentLetter = 0;
-function revealNextLetter() {
+function revealNextLetter(){
     if(currentLetter < princeLetters.length){
         let mesh = princeLetters[currentLetter];
         mesh.visible = true;
@@ -196,7 +194,6 @@ window.addEventListener("resize",()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    if(loadedFont) createPrinceLetters(); // re-calc spacing & size
 });
 </script>
 

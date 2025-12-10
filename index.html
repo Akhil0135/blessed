@@ -146,61 +146,64 @@ new THREE.FontLoader().load(
         birthdayMesh.position.y = 180; 
         scene.add(birthdayMesh);
 
-        // Initialize PRINCE letters (start far back)
+        // Initialize PRINCE letters (full screen width)
         createPrinceLetters();
-        setTimeout(revealNextLetter, 1000); // start reveal after 1s
+        setTimeout(revealNextLetter, 800); // start reveal after 0.8s
     }
 );
 
-// ---------------- Create individual letters with proper spacing ----------------
+// ---------------- Create letters ----------------
 function createPrinceLetters(){
     const total = princeText.length;
-    const size = 180;
-    const height = 12;
-    const spacing = size * 1.2; // Increased spacing to avoid merge
+    const screenWidth = window.innerWidth;
+    const size = 250; // Big letters to fill screen
+    const height = 15;
+    const spacing = size * 1.1; // proper spacing for full screen
     const totalWidth = (total-1)*spacing;
     const xOffset = -totalWidth/2;
+
     for(let i=0;i<total;i++){
         let geo = new THREE.TextGeometry(princeText[i],{
             font: loadedFont,
             size: size,
             height: height,
-            bevelEnabled: true,
-            bevelThickness: 5,
-            bevelSize: 3
+            bevelEnabled:true,
+            bevelThickness:5,
+            bevelSize:3
         });
         geo.center();
         let mesh = new THREE.Mesh(geo, nebulaMat);
         mesh.position.y = 0;
         mesh.position.x = xOffset + i*spacing;
-        mesh.position.z = -600; // start far back
-        mesh.scale.set(0.1,0.1,0.1); // start small
-        mesh.rotation.x = (Math.random()-0.5)*0.5; // initial tilt
+        mesh.position.z = -800; // start far back
+        mesh.scale.set(0.1,0.1,0.1); 
+        mesh.rotation.x = (Math.random()-0.5)*0.5; 
         mesh.rotation.y = (Math.random()-0.5)*0.5;
-        mesh.material.opacity = 0; 
+        mesh.material.opacity = 0;
         mesh.visible = false;
-        scene.add(mesh);
         princeLetters.push(mesh);
+        scene.add(mesh);
     }
 }
 
-// ---------------- Animate letters with staggered rotation and pop ----------------
+// ---------------- Animate letters with pop/bounce ----------------
 let currentLetter = 0;
 function revealNextLetter(){
     if(currentLetter < princeLetters.length){
         let mesh = princeLetters[currentLetter];
         mesh.visible = true;
         let finalZ = 0;
-        let duration = 120; // frames
+        let duration = 120;
         let frame = 0;
 
         function animateLetter(){
             if(frame <= duration){
                 let t = frame/duration;
-                mesh.position.z = -600*(1-t) + finalZ*t;
-                mesh.scale.set(0.1 + 0.9*t, 0.1 + 0.9*t, 0.1 + 0.9*t);
+                let overshoot = 1 + 0.2*Math.sin(t*Math.PI); // small bounce
+                mesh.position.z = -800*(1-t) + finalZ*t;
+                mesh.scale.set((0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot);
                 mesh.material.opacity = t;
-                mesh.rotation.x *= (1-t); // reduce tilt gradually
+                mesh.rotation.x *= (1-t);
                 mesh.rotation.y *= (1-t);
                 frame++;
                 requestAnimationFrame(animateLetter);
@@ -209,7 +212,7 @@ function revealNextLetter(){
         animateLetter();
 
         currentLetter++;
-        setTimeout(revealNextLetter, 400); // staggered per letter
+        setTimeout(revealNextLetter, 400); // stagger letters
     }
 }
 
@@ -219,7 +222,6 @@ function animate(){
     requestAnimationFrame(animate);
 
     stars.rotation.y += 0.0005;
-
     let positions = stars.geometry.attributes.position.array;
     for(let i=0;i<starCount;i++){
         positions[i*3+2] += Math.sin(Date.now()*0.001 + i)*0.01*starVel[i];
@@ -241,7 +243,6 @@ function animate(){
 
     renderer.render(scene,camera);
 }
-
 animate();
 
 // ---------------- Responsive ----------------

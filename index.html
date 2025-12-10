@@ -157,7 +157,7 @@ function createPrinceLetters(){
     const total = princeText.length;
     const size = 180;
     const height = 12;
-    const spacing = size * 0.9; // Increased spacing
+    const spacing = size * 1.2; // Increased spacing to avoid merge
     const totalWidth = (total-1)*spacing;
     const xOffset = -totalWidth/2;
     for(let i=0;i<total;i++){
@@ -165,9 +165,9 @@ function createPrinceLetters(){
             font: loadedFont,
             size: size,
             height: height,
-            bevelEnabled:true,
-            bevelThickness:5,
-            bevelSize:3
+            bevelEnabled: true,
+            bevelThickness: 5,
+            bevelSize: 3
         });
         geo.center();
         let mesh = new THREE.Mesh(geo, nebulaMat);
@@ -175,23 +175,22 @@ function createPrinceLetters(){
         mesh.position.x = xOffset + i*spacing;
         mesh.position.z = -600; // start far back
         mesh.scale.set(0.1,0.1,0.1); // start small
-        mesh.rotation.x = (Math.random()-0.5)*0.3; // small random tilt
-        mesh.rotation.y = (Math.random()-0.5)*0.3;
-        mesh.material.opacity = 0; // start invisible
+        mesh.rotation.x = (Math.random()-0.5)*0.5; // initial tilt
+        mesh.rotation.y = (Math.random()-0.5)*0.5;
+        mesh.material.opacity = 0; 
         mesh.visible = false;
         scene.add(mesh);
         princeLetters.push(mesh);
     }
 }
 
-// ---------------- Animate letters coming forward with fade and tilt ----------------
+// ---------------- Animate letters with staggered rotation and pop ----------------
 let currentLetter = 0;
 function revealNextLetter(){
     if(currentLetter < princeLetters.length){
         let mesh = princeLetters[currentLetter];
         mesh.visible = true;
         let finalZ = 0;
-        let finalScale = 1;
         let duration = 120; // frames
         let frame = 0;
 
@@ -201,8 +200,7 @@ function revealNextLetter(){
                 mesh.position.z = -600*(1-t) + finalZ*t;
                 mesh.scale.set(0.1 + 0.9*t, 0.1 + 0.9*t, 0.1 + 0.9*t);
                 mesh.material.opacity = t;
-                // Reduce tilt as it moves forward
-                mesh.rotation.x *= (1-t);
+                mesh.rotation.x *= (1-t); // reduce tilt gradually
                 mesh.rotation.y *= (1-t);
                 frame++;
                 requestAnimationFrame(animateLetter);
@@ -211,7 +209,7 @@ function revealNextLetter(){
         animateLetter();
 
         currentLetter++;
-        setTimeout(revealNextLetter, 500);
+        setTimeout(revealNextLetter, 400); // staggered per letter
     }
 }
 
@@ -243,8 +241,10 @@ function animate(){
 
     renderer.render(scene,camera);
 }
+
 animate();
 
+// ---------------- Responsive ----------------
 window.addEventListener("resize",()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();

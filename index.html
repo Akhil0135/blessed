@@ -20,7 +20,7 @@
 let scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x000000, 0.0012);
 
-let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 2000);
+let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
 camera.position.set(0, 50, 400);
 
 let renderer = new THREE.WebGLRenderer({antialias:true});
@@ -30,16 +30,34 @@ document.body.appendChild(renderer.domElement);
 
 // ---------------- Stars ----------------
 let starGeo = new THREE.BufferGeometry();
-let count = 2000;
-let arr = new Float32Array(count * 3);
-for(let i=0;i<count*3;i++){
-    arr[i] = (Math.random() - 0.5) * 3000;
+let starCount = 2500;
+let starArr = new Float32Array(starCount * 3);
+for(let i=0;i<starCount*3;i++){
+    starArr[i] = (Math.random() - 0.5) * 3000;
 }
-starGeo.setAttribute("position", new THREE.BufferAttribute(arr, 3));
+starGeo.setAttribute("position", new THREE.BufferAttribute(starArr, 3));
 
 let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
 let stars = new THREE.Points(starGeo, starMat);
 scene.add(stars);
+
+// Twinkling effect
+let starVel = new Float32Array(starCount);
+for(let i=0;i<starCount;i++){ starVel[i] = Math.random()*0.02 + 0.01; }
+
+// ---------------- Shooting Stars ----------------
+let shootingStarGeo = new THREE.BufferGeometry();
+let shootingCount = 15;
+let shootingArr = new Float32Array(shootingCount*3);
+for(let i=0;i<shootingCount*3;i+=3){
+    shootingArr[i] = Math.random()*400 - 200;
+    shootingArr[i+1] = Math.random()*200 + 50;
+    shootingArr[i+2] = Math.random()*400 - 200;
+}
+shootingStarGeo.setAttribute("position", new THREE.BufferAttribute(shootingArr,3));
+let shootingStarMat = new THREE.PointsMaterial({ color:0xffffff, size:3 });
+let shootingStars = new THREE.Points(shootingStarGeo, shootingStarMat);
+scene.add(shootingStars);
 
 // ---------------- Lights ----------------
 let ambient = new THREE.AmbientLight(0x666666, 0.5);
@@ -67,7 +85,7 @@ const nebulaMat = new THREE.ShaderMaterial({
       varying vec2 vUv;
       uniform float time;
       void main(){
-          float t = time * 0.2;
+          float t = time*0.2;
           float neb = sin((vUv.x+t)*8.0)*0.4 + sin((vUv.y-t)*10.0)*0.3;
           vec3 col = vec3(0.2 + neb*0.4, 0.3 + neb*0.2, 0.8 + neb*0.5);
           gl_FragColor = vec4(col,1.0);
@@ -76,6 +94,20 @@ const nebulaMat = new THREE.ShaderMaterial({
     metalness:1,
     roughness:0.25
 });
+
+// ---------------- Particle Glow Around PRINCE ----------------
+let particleGeo = new THREE.BufferGeometry();
+let particleCount = 500;
+let particleArr = new Float32Array(particleCount*3);
+for(let i=0;i<particleCount*3;i+=3){
+    particleArr[i] = (Math.random()-0.5)*220;
+    particleArr[i+1] = (Math.random()-0.5)*80;
+    particleArr[i+2] = (Math.random()-0.5)*20;
+}
+particleGeo.setAttribute("position", new THREE.BufferAttribute(particleArr,3));
+let particleMat = new THREE.PointsMaterial({ color:0xffffff, size:4, transparent:true, opacity:0.7 });
+let particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
 
 // ---------------- Text ----------------
 let princeMesh=null, birthdayMesh=null, oneMesh=null;
@@ -108,7 +140,7 @@ new THREE.FontLoader().load(
         // ------- PRINCE (fullscreen) -------
         let princeGeo = new THREE.TextGeometry("PRINCE",{
             font: font,
-            size: 180,    // fullscreen size
+            size: 180,
             height: 12,
             bevelEnabled:true,
             bevelThickness:5,
@@ -136,31 +168,55 @@ new THREE.FontLoader().load(
             roughness:0.35
         });
         birthdayMesh = new THREE.Mesh(birthdayGeo, birthdayMat);
-        birthdayMesh.position.y = 180;  // above PRINCE
+        birthdayMesh.position.y = 180; 
         scene.add(birthdayMesh);
     }
 );
 
-// ---------------- Camera Orbit ----------------
-let angle = 0;
+// ---------------- Camera Orbit + Animate ----------------
+let angle=0;
 function animate(){
     requestAnimationFrame(animate);
 
+    // Rotate stars
     stars.rotation.y += 0.0005;
 
-    angle += 0.0014;
+    // Twinkle stars
+    let positions = stars.geometry.attributes.position.array;
+    for(let i=0;i<starCount;i++){
+        positions[i*3+2] += Math.sin(Date.now()*0.001 + i)*0.01*starVel[i];
+    }
+    stars.geometry.attributes.position.needsUpdate = true;
+
+    // Move shooting stars
+    let shootPos = shootingStars.geometry.attributes.position.array;
+    for(let i=0;i<shootingCount;i++){
+        shootPos[i*3] -= 2; 
+        if(shootPos[i*3] < -250){
+            shootPos[i*3] = 250;
+            shootPos[i*3+1] = Math.random()*200 + 50;
+            shootPos[i*3+2] = Math.random()*400 - 200;
+        }
+    }
+    shootingStars.geometry.attributes.position.needsUpdate = true;
+
+    // Particle shimmer
+    particles.material.opacity = 0.5 + 0.2*Math.sin(Date.now()*0.003);
+
+    // Camera orbit
+    angle += 0.0012;
     camera.position.x = Math.sin(angle)*400;
     camera.position.z = Math.cos(angle)*400;
-    camera.lookAt(0, 50, 0);
+    camera.lookAt(0,50,0);
 
     if(princeMesh) nebulaMat.uniforms.time.value += 0.03;
 
-    renderer.render(scene, camera);
+    renderer.render(scene,camera);
 }
 animate();
 
 // ---------------- Responsive ----------------
-window.addEventListener("resize", ()=>{
+window.addEventListener("resize",()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);

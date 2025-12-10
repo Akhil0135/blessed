@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Phase 4 — Nolan Birthday Scene</title>
+<title>IMAX – PRINCE Birthday Cinematic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { margin:0; overflow:hidden; background:#000; }
@@ -16,110 +16,176 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
 
 <script>
-let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
-camera.position.set(0, 70, 260);
 
-let renderer = new THREE.WebGLRenderer({antialias:true});
+// --------------------------------------------------------------------
+// Scene + Camera
+// --------------------------------------------------------------------
+let scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000000, 0.0012);
+
+let camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    2000
+);
+camera.position.set(0, 45, 260);
+
+let renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// ---------------- GALAXY BACKGROUND ----------------
+// --------------------------------------------------------------------
+// IMAX Background Stars
+// --------------------------------------------------------------------
 let starGeo = new THREE.BufferGeometry();
-let starCount = 1400;
-let starPositions = new Float32Array(starCount * 3);
-for (let i = 0; i < starCount * 3; i++) starPositions[i] = (Math.random() - 0.5) * 2600;
+let count = 1500;
+let arr = new Float32Array(count * 3);
 
-starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-let starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
+for (let i = 0; i < count * 3; i++) {
+    arr[i] = (Math.random() - 0.5) * 2600;
+}
+
+starGeo.setAttribute("position", new THREE.BufferAttribute(arr, 3));
+
+let starMat = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 2.2
+});
+
 let stars = new THREE.Points(starGeo, starMat);
 scene.add(stars);
 
-// ---------------- LIGHTING (IMAX / NOLAN STYLE) ----------------
-scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+// --------------------------------------------------------------------
+// Cinematic Lighting
+// --------------------------------------------------------------------
+let ambient = new THREE.AmbientLight(0x666666, 0.5);
+scene.add(ambient);
 
-let keyLight = new THREE.DirectionalLight(0xfff2cc, 1.0);
-keyLight.position.set(150, 200, 100);
+let keyLight = new THREE.PointLight(0x99ccff, 2, 2000);
+keyLight.position.set(180, 200, 140);
 scene.add(keyLight);
 
-let rimLight = new THREE.PointLight(0xffcc66, 1.5, 2000);
-rimLight.position.set(-120, 160, -200);
-scene.add(rimLight);
+let warmLight = new THREE.PointLight(0xffddaa, 1.8, 2000);
+warmLight.position.set(-120, 160, -80);
+scene.add(warmLight);
 
-// ---------------- TEXT ----------------
-const loader = new THREE.FontLoader();
+// --------------------------------------------------------------------
+// Nebula Shader Material for PRINCE text
+// --------------------------------------------------------------------
+const nebulaMat = new THREE.ShaderMaterial({
+    uniforms: {
+        time: { value: 0 }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform float time;
 
-let textMain, textPrince;
+      void main() {
+          float t = time * 0.2;
 
-loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+          float neb = sin((vUv.x + t) * 8.0) * 0.4 +
+                      sin((vUv.y - t) * 10.0) * 0.3;
 
-    // HAPPY BIRTHDAY
-    let hbGeo = new THREE.TextGeometry("HAPPY BIRTHDAY", {
-        font: font,
-        size: 18,
-        height: 3,
-        curveSegments: 12
-    });
-    hbGeo.center();
-    let hbMat = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        metalness: 0.3,
-        roughness: 0.35
-    });
-    textMain = new THREE.Mesh(hbGeo, hbMat);
-    textMain.position.y = 30;
-    scene.add(textMain);
+          vec3 col = vec3(
+              0.2 + neb * 0.4,   // blue mix
+              0.3 + neb * 0.2,   // gold + blue
+              0.8 + neb * 0.5    // bright IMAX blue
+          );
 
-    // PRINCE (NOLAN STYLE UPGRADE)
-    let princeGeo = new THREE.TextGeometry("PRINCE", {
-        font: font,
-        size: 34,
-        height: 6,
-        curveSegments: 18,
-        bevelEnabled: true,
-        bevelThickness: 2,
-        bevelSize: 1.2,
-        bevelSegments: 6
-    });
-    princeGeo.center();
-
-    // Premium metallic chrome + gold
-    let princeMat = new THREE.MeshStandardMaterial({
-        color: 0xcccccc,
-        metalness: 0.95,
-        roughness: 0.1,
-        emissive: 0x331a00,  
-        emissiveIntensity: 0.25
-    });
-
-    textPrince = new THREE.Mesh(princeGeo, princeMat);
-    textPrince.position.y = -10;
-    scene.add(textPrince);
+          gl_FragColor = vec4(col, 1.0);
+      }
+    `,
+    metalness: 1,
+    roughness: 0.2
 });
 
-// ---------------- CAMERA ORBIT ----------------
+// --------------------------------------------------------------------
+// TEXT: PRINCE + BACK “1”
+// --------------------------------------------------------------------
+let princeMesh = null;
+let oneMesh = null;
+
+new THREE.FontLoader().load(
+    "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
+    font => {
+
+        // ------------ BACK BIG 1 -----------------
+        let oneGeo = new THREE.TextGeometry("1", {
+            font: font,
+            size: 120,
+            height: 10,
+            bevelEnabled: true,
+            bevelThickness: 4,
+            bevelSize: 3
+        });
+        oneGeo.center();
+
+        let oneMat = new THREE.MeshStandardMaterial({
+            color: 0x222244,
+            emissive: 0x111122,
+            metalness: 0.6,
+            roughness: 0.7
+        });
+
+        oneMesh = new THREE.Mesh(oneGeo, oneMat);
+        oneMesh.position.y = -10;
+        oneMesh.position.z = -60;
+        scene.add(oneMesh);
+
+        // ------------- PRINCE ---------------------
+        let princeGeo = new THREE.TextGeometry("PRINCE", {
+            font: font,
+            size: 32,
+            height: 5,
+            bevelEnabled: true,
+            bevelThickness: 2.5,
+            bevelSize: 1.4
+        });
+        princeGeo.center();
+
+        princeMesh = new THREE.Mesh(princeGeo, nebulaMat);
+        princeMesh.position.y = 30;
+        scene.add(princeMesh);
+    }
+);
+
+// --------------------------------------------------------------------
+// CAMERA ORBIT ANIMATION
+// --------------------------------------------------------------------
 let angle = 0;
 
-function animate(){
+function animate() {
     requestAnimationFrame(animate);
 
-    stars.rotation.y += 0.0004;
-    stars.rotation.x += 0.00015;
+    stars.rotation.y += 0.0005;
 
-    angle += 0.0018;
-
+    angle += 0.0014;
     camera.position.x = Math.sin(angle) * 260;
     camera.position.z = Math.cos(angle) * 260;
-    camera.lookAt(0, 10, 0);
+
+    camera.lookAt(0, 30, 0);
+
+    if (princeMesh) nebulaMat.uniforms.time.value += 0.03;
 
     renderer.render(scene, camera);
 }
+
 animate();
 
-// ---------------- RESIZE ----------------
-window.addEventListener("resize", ()=>{
-    camera.aspect = window.innerWidth/window.innerHeight;
+// --------------------------------------------------------------------
+// Responsive
+// --------------------------------------------------------------------
+window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });

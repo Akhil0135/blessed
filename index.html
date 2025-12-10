@@ -70,7 +70,6 @@ const nebulaMat = new THREE.ShaderMaterial({
     fragmentShader: `
       varying vec2 vUv;
       uniform float time;
-
       float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
       float noise(vec2 p){
           vec2 i=floor(p);
@@ -82,16 +81,11 @@ const nebulaMat = new THREE.ShaderMaterial({
           vec2 u=f*f*(3.0-2.0*f);
           return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
       }
-
       void main(){
           float t = time*0.3;
           float n = noise(vUv*10.0 + vec2(t*0.5,-t*0.3));
           float glow = smoothstep(0.2,0.7,n);
-          vec3 col = vec3(
-              0.3 + glow*0.7,
-              0.2 + glow*0.5,
-              0.6 + glow*0.9
-          );
+          vec3 col = vec3(0.3 + glow*0.7, 0.2 + glow*0.5, 0.6 + glow*0.9);
           gl_FragColor = vec4(col,1.0);
       }
     `,
@@ -152,8 +146,9 @@ new THREE.FontLoader().load(
         birthdayMesh.position.y = 180; 
         scene.add(birthdayMesh);
 
-        // Initialize PRINCE letters (hidden initially)
+        // Initialize PRINCE letters (start far back)
         createPrinceLetters();
+        setTimeout(revealNextLetter, 1000); // start reveal after 1s
     }
 );
 
@@ -162,7 +157,8 @@ function createPrinceLetters(){
     const total = princeText.length;
     const size = 180;
     const height = 12;
-    let xOffset = -((total-1)/2)*size*0.6; // spacing
+    let spacing = size * 0.65;
+    let xOffset = -spacing*(total-1)/2;
     for(let i=0;i<total;i++){
         let geo = new THREE.TextGeometry(princeText[i],{
             font: loadedFont,
@@ -175,23 +171,40 @@ function createPrinceLetters(){
         geo.center();
         let mesh = new THREE.Mesh(geo, nebulaMat);
         mesh.position.y = 0;
-        mesh.position.x = xOffset + i*size*0.6;
-        mesh.visible = false; // start hidden
+        mesh.position.x = xOffset + i*spacing;
+        mesh.position.z = -600; // start far back
+        mesh.scale.set(0.1,0.1,0.1); // start very small
         scene.add(mesh);
         princeLetters.push(mesh);
     }
 }
 
-// ---------------- Reveal letters one by one ----------------
+// ---------------- Animate letters coming forward ----------------
 let currentLetter = 0;
 function revealNextLetter(){
     if(currentLetter < princeLetters.length){
-        princeLetters[currentLetter].visible = true;
+        let mesh = princeLetters[currentLetter];
+        mesh.visible = true;
+        let finalZ = 0;
+        let finalScale = 1;
+        let duration = 120; // frames
+        let frame = 0;
+
+        function animateLetter(){
+            if(frame <= duration){
+                let t = frame/duration;
+                mesh.position.z = -600*(1-t) + finalZ*t; // linear move
+                mesh.scale.set(0.1 + 0.9*t, 0.1 + 0.9*t, 0.1 + 0.9*t); // scale up
+                frame++;
+                requestAnimationFrame(animateLetter);
+            }
+        }
+        animateLetter();
+
         currentLetter++;
-        setTimeout(revealNextLetter, 500); // 0.5s delay per letter
+        setTimeout(revealNextLetter, 500); // next letter after 0.5s
     }
 }
-setTimeout(revealNextLetter, 1000); // start after 1s delay
 
 // ---------------- Camera Orbit + Animate ----------------
 let angle=0;

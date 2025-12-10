@@ -106,25 +106,25 @@ new THREE.FontLoader().load(
     "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
     font => {
 
-        // ------- Background "1" -------
+        // ------- Background "1" (behind HAPPY BIRTHDAY) -------
         let oneGeo = new THREE.TextGeometry("1",{
             font: font,
-            size: 220, // increased size
-            height: 12,
+            size: 120, // slightly smaller
+            height: 10,
             bevelEnabled:true,
-            bevelThickness:6,
-            bevelSize:4
+            bevelThickness:5,
+            bevelSize:3
         });
         oneGeo.center();
         let oneMat = new THREE.MeshStandardMaterial({
-            color:0xff4444, // changed color
-            emissive:0x660000,
-            metalness:0.6,
-            roughness:0.7
+            color:0x3399ff, // subtle deep blue
+            emissive:0x112244,
+            metalness:0.5,
+            roughness:0.6
         });
         oneMesh = new THREE.Mesh(oneGeo, oneMat);
-        oneMesh.position.y = -10;
-        oneMesh.position.z = -100;
+        oneMesh.position.y = 180; // same Y as HAPPY BIRTHDAY
+        oneMesh.position.z = -50; // behind text
         scene.add(oneMesh);
 
         // ------- PRINCE (fullscreen with glowing nebula) -------

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>IMAX – PRINCE Birthday Cinematic</title>
+<title>IMAX – HAPPY BIRTHDAY PRINCE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { margin:0; overflow:hidden; background:#000; }
@@ -16,50 +16,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
 
 <script>
-
-// --------------------------------------------------------------------
-// Scene + Camera
-// --------------------------------------------------------------------
+// ---------------- Scene + Camera ----------------
 let scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x000000, 0.0012);
 
-let camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    2000
-);
-camera.position.set(0, 45, 260);
+let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 2000);
+camera.position.set(0, 50, 400);
 
-let renderer = new THREE.WebGLRenderer({ antialias: true });
+let renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// --------------------------------------------------------------------
-// IMAX Background Stars
-// --------------------------------------------------------------------
+// ---------------- Stars ----------------
 let starGeo = new THREE.BufferGeometry();
-let count = 1500;
+let count = 2000;
 let arr = new Float32Array(count * 3);
-
-for (let i = 0; i < count * 3; i++) {
-    arr[i] = (Math.random() - 0.5) * 2600;
+for(let i=0;i<count*3;i++){
+    arr[i] = (Math.random() - 0.5) * 3000;
 }
-
 starGeo.setAttribute("position", new THREE.BufferAttribute(arr, 3));
 
-let starMat = new THREE.PointsMaterial({
-    color: 0xffffff,
-    size: 2.2
-});
-
+let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
 let stars = new THREE.Points(starGeo, starMat);
 scene.add(stars);
 
-// --------------------------------------------------------------------
-// Cinematic Lighting
-// --------------------------------------------------------------------
+// ---------------- Lights ----------------
 let ambient = new THREE.AmbientLight(0x666666, 0.5);
 scene.add(ambient);
 
@@ -71,121 +53,115 @@ let warmLight = new THREE.PointLight(0xffddaa, 1.8, 2000);
 warmLight.position.set(-120, 160, -80);
 scene.add(warmLight);
 
-// --------------------------------------------------------------------
-// Nebula Shader Material for PRINCE text
-// --------------------------------------------------------------------
+// ---------------- Nebula Shader ----------------
 const nebulaMat = new THREE.ShaderMaterial({
-    uniforms: {
-        time: { value: 0 }
-    },
-    vertexShader: `
+    uniforms:{ time:{value:0} },
+    vertexShader:`
       varying vec2 vUv;
-      void main() {
+      void main(){
           vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
       }
     `,
-    fragmentShader: `
+    fragmentShader:`
       varying vec2 vUv;
       uniform float time;
-
-      void main() {
+      void main(){
           float t = time * 0.2;
-
-          float neb = sin((vUv.x + t) * 8.0) * 0.4 +
-                      sin((vUv.y - t) * 10.0) * 0.3;
-
-          vec3 col = vec3(
-              0.2 + neb * 0.4,   // blue mix
-              0.3 + neb * 0.2,   // gold + blue
-              0.8 + neb * 0.5    // bright IMAX blue
-          );
-
-          gl_FragColor = vec4(col, 1.0);
+          float neb = sin((vUv.x+t)*8.0)*0.4 + sin((vUv.y-t)*10.0)*0.3;
+          vec3 col = vec3(0.2 + neb*0.4, 0.3 + neb*0.2, 0.8 + neb*0.5);
+          gl_FragColor = vec4(col,1.0);
       }
     `,
-    metalness: 1,
-    roughness: 0.2
+    metalness:1,
+    roughness:0.25
 });
 
-// --------------------------------------------------------------------
-// TEXT: PRINCE + BACK “1”
-// --------------------------------------------------------------------
-let princeMesh = null;
-let oneMesh = null;
+// ---------------- Text ----------------
+let princeMesh=null, birthdayMesh=null, oneMesh=null;
 
 new THREE.FontLoader().load(
     "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
     font => {
 
-        // ------------ BACK BIG 1 -----------------
-        let oneGeo = new THREE.TextGeometry("1", {
+        // ------- Background "1" -------
+        let oneGeo = new THREE.TextGeometry("1",{
             font: font,
-            size: 120,
-            height: 10,
-            bevelEnabled: true,
-            bevelThickness: 4,
-            bevelSize: 3
+            size: 180,
+            height: 12,
+            bevelEnabled:true,
+            bevelThickness:6,
+            bevelSize:4
         });
         oneGeo.center();
-
         let oneMat = new THREE.MeshStandardMaterial({
-            color: 0x222244,
-            emissive: 0x111122,
-            metalness: 0.6,
-            roughness: 0.7
+            color:0x222244,
+            emissive:0x111122,
+            metalness:0.6,
+            roughness:0.7
         });
-
         oneMesh = new THREE.Mesh(oneGeo, oneMat);
         oneMesh.position.y = -10;
-        oneMesh.position.z = -60;
+        oneMesh.position.z = -80;
         scene.add(oneMesh);
 
-        // ------------- PRINCE ---------------------
-        let princeGeo = new THREE.TextGeometry("PRINCE", {
+        // ------- PRINCE (fullscreen) -------
+        let princeGeo = new THREE.TextGeometry("PRINCE",{
             font: font,
-            size: 32,
-            height: 5,
-            bevelEnabled: true,
-            bevelThickness: 2.5,
-            bevelSize: 1.4
+            size: 180,    // fullscreen size
+            height: 12,
+            bevelEnabled:true,
+            bevelThickness:5,
+            bevelSize:3
         });
         princeGeo.center();
-
         princeMesh = new THREE.Mesh(princeGeo, nebulaMat);
-        princeMesh.position.y = 30;
+        princeMesh.position.y = 0;
         scene.add(princeMesh);
+
+        // ------- HAPPY BIRTHDAY -------
+        let birthdayGeo = new THREE.TextGeometry("HAPPY BIRTHDAY",{
+            font: font,
+            size: 36,
+            height: 6,
+            bevelEnabled:true,
+            bevelThickness:3,
+            bevelSize:1.5
+        });
+        birthdayGeo.center();
+        let birthdayMat = new THREE.MeshStandardMaterial({
+            color:0xffd98c,
+            emissive:0xcc8844,
+            metalness:0.8,
+            roughness:0.35
+        });
+        birthdayMesh = new THREE.Mesh(birthdayGeo, birthdayMat);
+        birthdayMesh.position.y = 180;  // above PRINCE
+        scene.add(birthdayMesh);
     }
 );
 
-// --------------------------------------------------------------------
-// CAMERA ORBIT ANIMATION
-// --------------------------------------------------------------------
+// ---------------- Camera Orbit ----------------
 let angle = 0;
-
-function animate() {
+function animate(){
     requestAnimationFrame(animate);
 
     stars.rotation.y += 0.0005;
 
     angle += 0.0014;
-    camera.position.x = Math.sin(angle) * 260;
-    camera.position.z = Math.cos(angle) * 260;
+    camera.position.x = Math.sin(angle)*400;
+    camera.position.z = Math.cos(angle)*400;
+    camera.lookAt(0, 50, 0);
 
-    camera.lookAt(0, 30, 0);
-
-    if (princeMesh) nebulaMat.uniforms.time.value += 0.03;
+    if(princeMesh) nebulaMat.uniforms.time.value += 0.03;
 
     renderer.render(scene, camera);
 }
-
 animate();
 
-// --------------------------------------------------------------------
-// Responsive
-// --------------------------------------------------------------------
-window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+// ---------------- Responsive ----------------
+window.addEventListener("resize", ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });

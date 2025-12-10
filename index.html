@@ -90,7 +90,8 @@ const nebulaMat = new THREE.ShaderMaterial({
       }
     `,
     metalness: 1,
-    roughness: 0.25
+    roughness: 0.25,
+    transparent: true
 });
 
 // ---------------- Text ----------------
@@ -157,8 +158,10 @@ function createPrinceLetters(){
     const total = princeText.length;
     const size = 180;
     const height = 12;
-    let spacing = size * 0.65;
-    let xOffset = -spacing*(total-1)/2;
+    const screenWidth = window.innerWidth;
+    const spacing = size * 0.7; // proper spacing
+    const totalWidth = (total-1)*spacing;
+    const xOffset = -totalWidth/2;
     for(let i=0;i<total;i++){
         let geo = new THREE.TextGeometry(princeText[i],{
             font: loadedFont,
@@ -174,12 +177,13 @@ function createPrinceLetters(){
         mesh.position.x = xOffset + i*spacing;
         mesh.position.z = -600; // start far back
         mesh.scale.set(0.1,0.1,0.1); // start very small
+        mesh.material.opacity = 0; // start invisible
         scene.add(mesh);
         princeLetters.push(mesh);
     }
 }
 
-// ---------------- Animate letters coming forward ----------------
+// ---------------- Animate letters coming forward with fade ----------------
 let currentLetter = 0;
 function revealNextLetter(){
     if(currentLetter < princeLetters.length){
@@ -193,8 +197,9 @@ function revealNextLetter(){
         function animateLetter(){
             if(frame <= duration){
                 let t = frame/duration;
-                mesh.position.z = -600*(1-t) + finalZ*t; // linear move
+                mesh.position.z = -600*(1-t) + finalZ*t; // linear move forward
                 mesh.scale.set(0.1 + 0.9*t, 0.1 + 0.9*t, 0.1 + 0.9*t); // scale up
+                mesh.material.opacity = t; // fade in
                 frame++;
                 requestAnimationFrame(animateLetter);
             }

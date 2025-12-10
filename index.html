@@ -152,12 +152,12 @@ new THREE.FontLoader().load(
     }
 );
 
-// ---------------- Create letters ----------------
+// ---------------- Create letters with reduced spacing ----------------
 function createPrinceLetters(){
     const total = princeText.length;
     const size = 250; // Big letters
     const height = 15;
-    const spacing = size * 1.0; // reduced spacing for full screen
+    const spacing = size * 0.78; // reduced spacing further
     const totalWidth = (total-1)*spacing;
     const xOffset = -totalWidth/2;
 
@@ -210,7 +210,7 @@ function revealNextLetter(){
         }
         animateLetter();
         currentLetter++;
-        setTimeout(revealNextLetter, 350); // slightly faster stagger
+        setTimeout(revealNextLetter, 350); // stagger timing
     }
 }
 

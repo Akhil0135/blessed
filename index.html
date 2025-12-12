@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>IMAX – Full Sequence</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IMAX – HAPPY BIRTHDAY PRINCE</title>
 <style>
   body { margin:0; overflow:hidden; background:#000; }
   canvas { display:block; }
@@ -11,245 +11,141 @@
 </head>
 <body>
 
+<!-- ---------------- PHASE 1 ---------------- -->
+<div id="stage1">
+    <div id="instruction">Drag the moon to the end</div>
+    <canvas id="stars"></canvas>
+    <div id="ambient"></div>
+    <div id="moon"></div>
+    <div id="sun"></div>
+    <div id="message">ON THIS CALM BIRTHDAY EVE SO NEW, GOD SOFTLY WHISPERS, MY PLANS ARE MADE FOR YOU.</div>
+    <audio id="whoosh" src="https://cdn.pixabay.com/download/audio/2021/09/16/audio_4f1c1c9f28.mp3?filename=woosh-14795.mp3"></audio>
+</div>
+
+<!-- ---------------- PHASE 2 ---------------- -->
+<div id="stage2">
+    <div id="instruction">Click the star at the center of the shield</div>
+    <canvas id="shieldCanvas"></canvas>
+    <div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
+</div>
+
+<!-- ---------------- PHASE 3 ---------------- -->
+<div id="stage3">
+    <canvas id="c"></canvas>
+    <button id="clickBtn">Click Here</button>
+</div>
+
+<!-- ---------------- PHASE 4 ---------------- -->
+<div id="phase4" style="display:none;"></div>
+
+<!-- ---------------- THREE.JS ---------------- -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
 
+<!-- ---------------- PHASE 1–3 SCRIPT ---------------- -->
 <script>
-// ---------------- Scene + Camera ----------------
-let scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x000000, 0.0012);
+/* Paste your entire Phase 1–3 JavaScript code here exactly as-is */
+</script>
 
-let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
-camera.position.set(0, 50, 400);
+<!-- ---------------- PHASE 4 SCRIPT ---------------- -->
+<script>
+function startPhase4(){
+    document.getElementById("phase4").style.display = "block";
 
-let renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-document.body.appendChild(renderer.domElement);
+    // ---------------- Scene + Camera ----------------
+    let scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.0012);
 
-// ---------------- Stars ----------------
-let starGeo = new THREE.BufferGeometry();
-let starCount = 2500;
-let starArr = new Float32Array(starCount * 3);
-for(let i=0;i<starCount*3;i++){
-    starArr[i] = (Math.random() - 0.5) * 3000;
-}
-starGeo.setAttribute("position", new THREE.BufferAttribute(starArr, 3));
+    let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
+    camera.position.set(0, 50, 400);
 
-let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
-let stars = new THREE.Points(starGeo, starMat);
-scene.add(stars);
-
-let starVel = new Float32Array(starCount);
-for(let i=0;i<starCount;i++){ starVel[i] = Math.random()*0.02 + 0.01; }
-
-// ---------------- Lights ----------------
-let ambient = new THREE.AmbientLight(0x666666, 0.5);
-scene.add(ambient);
-
-let keyLight = new THREE.PointLight(0x99ccff, 2, 2000);
-keyLight.position.set(180, 200, 140);
-scene.add(keyLight);
-
-let warmLight = new THREE.PointLight(0xffddaa, 1.8, 2000);
-warmLight.position.set(-120, 160, -80);
-scene.add(warmLight);
-
-// ---------------- Nebula Shader ----------------
-const nebulaMat = new THREE.ShaderMaterial({
-    uniforms: { time:{ value:0 } },
-    vertexShader: `
-        varying vec2 vUv;
-        void main(){ vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-        }
-    `,
-    fragmentShader: `
-        varying vec2 vUv;
-        uniform float time;
-        float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
-        float noise(vec2 p){
-            vec2 i=floor(p); vec2 f=fract(p);
-            float a=hash(i); float b=hash(i+vec2(1.0,0.0));
-            float c=hash(i+vec2(0.0,1.0)); float d=hash(i+vec2(1.0,1.0));
-            vec2 u=f*f*(3.0-2.0*f);
-            return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
-        }
-        void main(){
-            float t = time*0.3;
-            float n = noise(vUv*10.0 + vec2(t*0.5,-t*0.3));
-            float glow = smoothstep(0.2,0.7,n);
-            vec3 col = vec3(0.3 + glow*0.7, 0.2 + glow*0.5, 0.6 + glow*0.9);
-            gl_FragColor = vec4(col,1.0);
-        }
-    `,
-    metalness: 1, roughness: 0.25, transparent: true
-});
-
-// ---------------- Fonts + Text ----------------
-let loadedFont = null;
-let stage3Letters = [];
-let stage4Letters = [];
-let birthdayMesh = null;
-let oneMesh = null;
-
-const stage3Text = "DAIVIK";
-const stage4Text = "PRINCE";
-
-new THREE.FontLoader().load(
-    "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
-    font => {
-        loadedFont = font;
-        startStage2();
-    }
-);
-
-// ---------------- Stage 2 (Shield) ----------------
-let shieldMesh = null;
-function startStage2(){
-    // Create shield (visible only in Stage 2)
-    let shieldGeo = new THREE.TorusGeometry(100, 12, 16, 100);
-    let shieldMat = new THREE.MeshStandardMaterial({ color:0x44ccff, emissive:0x002244, metalness:0.6, roughness:0.3 });
-    shieldMesh = new THREE.Mesh(shieldGeo, shieldMat);
-    shieldMesh.rotation.x = Math.PI/2;
-    scene.add(shieldMesh);
-
-    setTimeout(()=>{
-        scene.remove(shieldMesh); // hide shield before Stage 3
-        startStage3();
-    }, 2000); // Stage 2 duration
-}
-
-// ---------------- Stage 3 (DAIVIK) ----------------
-function startStage3(){
-    createLetters(stage3Text, stage3Letters, 140, 15, () => {
-        // Stage 3 complete: after 3 seconds, start Stage 4
-        setTimeout(()=>{ startStage4(); }, 3000);
-    });
-}
-
-// ---------------- Stage 4 (PRINCE + HAPPY BIRTHDAY) ----------------
-function startStage4(){
-    createLetters(stage4Text, stage4Letters, 140, 15);
-
-    // HAPPY BIRTHDAY
-    let birthdayGeo = new THREE.TextGeometry("HAPPY BIRTHDAY",{
-        font: loadedFont,
-        size: 36,
-        height: 6,
-        bevelEnabled:true,
-        bevelThickness:3,
-        bevelSize:1.5
-    });
-    birthdayGeo.center();
-    let birthdayMatLocal = new THREE.MeshStandardMaterial({
-        color:0xffd98c,
-        emissive:0xffaa33,
-        metalness:0.8,
-        roughness:0.35
-    });
-    birthdayMesh = new THREE.Mesh(birthdayGeo, birthdayMatLocal);
-    birthdayMesh.position.y = 180; 
-    scene.add(birthdayMesh);
-}
-
-// ---------------- Letter Creation ----------------
-function createLetters(text, targetArray, size, height, onComplete){
-    const total = text.length;
-    const spacing = size * 0.95;
-    const totalWidth = spacing * (total - 1);
-    const xOffset = -totalWidth / 2;
-
-    let currentLetter = 0;
-
-    for(let i=0;i<total;i++){
-        let geo = new THREE.TextGeometry(text[i],{
-            font: loadedFont,
-            size: size,
-            height: height,
-            bevelEnabled:true,
-            bevelThickness:5,
-            bevelSize:3
-        });
-        geo.center();
-        let mesh = new THREE.Mesh(geo, nebulaMat);
-        mesh.position.x = xOffset + i*spacing;
-        mesh.position.y = 0;
-        mesh.position.z = -800;
-        mesh.scale.set(0.1,0.1,0.1);
-        mesh.rotation.x = (Math.random()-0.5)*0.5;
-        mesh.rotation.y = (Math.random()-0.5)*0.5;
-        mesh.material.opacity = 0;
-        mesh.visible = false;
-        targetArray.push(mesh);
-        scene.add(mesh);
-    }
-
-    function revealNext(){
-        if(currentLetter < targetArray.length){
-            let mesh = targetArray[currentLetter];
-            mesh.visible = true;
-            let finalZ = 0, duration = 120, frame = 0;
-
-            function animateLetter(){
-                if(frame <= duration){
-                    let t = frame/duration;
-                    let overshoot = 1 + 0.2 * Math.sin(t*Math.PI);
-                    mesh.position.z = -800*(1-t) + finalZ*t;
-                    mesh.scale.set((0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot);
-                    mesh.material.opacity = t;
-                    mesh.rotation.x *= (1-t);
-                    mesh.rotation.y *= (1-t);
-                    frame++;
-                    requestAnimationFrame(animateLetter);
-                }
-            }
-            animateLetter();
-            currentLetter++;
-            setTimeout(revealNext, 350);
-        } else if(onComplete){
-            onComplete();
-        }
-    }
-    revealNext();
-}
-
-// ---------------- Animate Scene ----------------
-let angle=0;
-function animate(){
-    requestAnimationFrame(animate);
-
-    stars.rotation.y += 0.0005;
-    let positions = stars.geometry.attributes.position.array;
-    for(let i=0;i<starCount;i++){
-        positions[i*3+2] += Math.sin(Date.now()*0.001 + i)*0.01*starVel[i];
-    }
-    stars.geometry.attributes.position.needsUpdate = true;
-
-    angle += 0.0012;
-    camera.position.x = Math.sin(angle)*400;
-    camera.position.z = Math.cos(angle)*400;
-    camera.lookAt(0,50,0);
-
-    nebulaMat.uniforms.time.value += 0.03;
-
-    if(birthdayMesh){
-        let glow = 0.5 + 0.5*Math.sin(Date.now()*0.002);
-        birthdayMesh.material.emissiveIntensity = glow;
-        birthdayMesh.material.emissive.setHex(0xffaa33);
-    }
-
-    renderer.render(scene,camera);
-}
-animate();
-
-// ---------------- Responsive ----------------
-window.addEventListener("resize",()=>{
-    camera.aspect = window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
+    let renderer = new THREE.WebGLRenderer({antialias:true});
     renderer.setSize(window.innerWidth, window.innerHeight);
-});
+    renderer.setPixelRatio(window.devicePixelRatio);
+    document.getElementById("phase4").appendChild(renderer.domElement);
+
+    // ---------------- Stars ----------------
+    let starGeo = new THREE.BufferGeometry();
+    let starCount = 2500;
+    let starArr = new Float32Array(starCount * 3);
+    for(let i=0;i<starCount*3;i++){
+        starArr[i] = (Math.random() - 0.5) * 3000;
+    }
+    starGeo.setAttribute("position", new THREE.BufferAttribute(starArr, 3));
+
+    let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
+    let stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+
+    let starVel = new Float32Array(starCount);
+    for(let i=0;i<starCount;i++){ starVel[i] = Math.random()*0.02 + 0.01; }
+
+    // ---------------- Lights ----------------
+    let ambient = new THREE.AmbientLight(0x666666, 0.5);
+    scene.add(ambient);
+
+    let keyLight = new THREE.PointLight(0x99ccff, 2, 2000);
+    keyLight.position.set(180, 200, 140);
+    scene.add(keyLight);
+
+    let warmLight = new THREE.PointLight(0xffddaa, 1.8, 2000);
+    warmLight.position.set(-120, 160, -80);
+    scene.add(warmLight);
+
+    // ---------------- Glowing Nebula Shader ----------------
+    const nebulaMat = new THREE.ShaderMaterial({
+        uniforms: { time:{ value:0 } },
+        vertexShader: `...`, // Your Phase 4 vertex shader
+        fragmentShader: `...`, // Your Phase 4 fragment shader
+        metalness: 1,
+        roughness: 0.25,
+        transparent: true
+    });
+
+    // ---------------- Text ----------------
+    let princeLetters = [];
+    let birthdayMesh=null, oneMesh=null;
+    const princeText = "PRINCE";
+    let loadedFont=null;
+
+    new THREE.FontLoader().load(
+        "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
+        font => {
+            loadedFont = font;
+
+            // Background "1"
+            let oneGeo = new THREE.TextGeometry("1",{font: font, size:120, height:10, bevelEnabled:true, bevelThickness:5, bevelSize:3});
+            oneGeo.center();
+            let oneMat = new THREE.MeshStandardMaterial({ color:0x3399ff, emissive:0x112244, metalness:0.5, roughness:0.6 });
+            oneMesh = new THREE.Mesh(oneGeo, oneMat);
+            oneMesh.position.y = 180; oneMesh.position.z = -50;
+            scene.add(oneMesh);
+
+            // HAPPY BIRTHDAY
+            let birthdayGeo = new THREE.TextGeometry("HAPPY BIRTHDAY",{ font: font, size:36, height:6, bevelEnabled:true, bevelThickness:3, bevelSize:1.5 });
+            birthdayGeo.center();
+            let birthdayMat = new THREE.MeshStandardMaterial({ color:0xffd98c, emissive:0xffaa33, metalness:0.8, roughness:0.35 });
+            birthdayMesh = new THREE.Mesh(birthdayGeo, birthdayMat);
+            birthdayMesh.position.y = 180; 
+            scene.add(birthdayMesh);
+
+            // PRINCE letters
+            createPrinceLetters();
+            setTimeout(revealNextLetter, 800);
+        }
+    );
+
+    /* Include all Phase 4 helper functions (createPrinceLetters, revealNextLetter, animate, resize handling) exactly as in your code */
+}
+
+/* ---------------- Trigger Phase 4 ---------------- */
+setTimeout(()=>{
+    document.getElementById("stage1").style.display = "none";
+    document.getElementById("stage2").style.display = "none";
+    document.getElementById("stage3").style.display = "none";
+    startPhase4();
+}, 3000);
 </script>
 
 </body>

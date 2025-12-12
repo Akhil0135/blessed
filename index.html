@@ -99,13 +99,15 @@ let birthdayMesh=null, oneMesh=null;
 const princeText = "PRINCE";
 let loadedFont=null;
 
+let allowOrbit = false; // <-- orbit only after reveal
+
 // ---------------- Load Font ----------------
 new THREE.FontLoader().load(
     "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
     font => {
         loadedFont = font;
 
-        // Background "1" behind HAPPY BIRTHDAY
+        // Background "1"
         let oneGeo = new THREE.TextGeometry("1",{
             font: font,
             size: 120,
@@ -143,22 +145,22 @@ new THREE.FontLoader().load(
             roughness:0.35
         });
         birthdayMesh = new THREE.Mesh(birthdayGeo, birthdayMat);
-        birthdayMesh.position.y = 180; 
+        birthdayMesh.position.y = 180;
         scene.add(birthdayMesh);
 
-        // Initialize PRINCE letters
         createPrinceLetters();
         setTimeout(revealNextLetter, 800);
     }
 );
 
-// ---------------- Create PRINCE letters (size reduced + spacing fixed) ----------------
+// ---------------- Create PRINCE letters (spacing fixed) ----------------
 function createPrinceLetters(){
     const total = princeText.length;
 
-    const size = 180;        // reduced from 250
+    const size = 180;
     const height = 15;
-    const spacing = size * 0.62;  // optimized spacing (no merging)
+
+    const spacing = size * 0.75;  // *** PERFECT SPACING, NO MERGING ***
 
     const totalWidth = (total - 1) * spacing;
     const xOffset = -totalWidth / 2;
@@ -193,13 +195,14 @@ function createPrinceLetters(){
     }
 }
 
-// ---------------- Animate PRINCE letter reveal ----------------
+// ---------------- Animate PRINCE reveal ----------------
 let currentLetter = 0;
+
 function revealNextLetter(){
     if(currentLetter < princeLetters.length){
         let mesh = princeLetters[currentLetter];
         mesh.visible = true;
-        let finalZ = 0;
+
         let duration = 120;
         let frame = 0;
 
@@ -208,7 +211,7 @@ function revealNextLetter(){
                 let t = frame / duration;
                 let overshoot = 1 + 0.2 * Math.sin(t * Math.PI);
 
-                mesh.position.z = -800*(1-t) + finalZ*t;
+                mesh.position.z = -800*(1-t);
                 mesh.scale.set((0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot);
                 mesh.material.opacity = t;
 
@@ -222,34 +225,31 @@ function revealNextLetter(){
 
         animateLetter();
         currentLetter++;
+
+        if(currentLetter === princeLetters.length){
+            setTimeout(()=> allowOrbit = true, 800); // orbit after final letter
+        }
+
         setTimeout(revealNextLetter, 350);
     }
 }
 
 // ---------------- Camera Orbit + Animate ----------------
-let angle=0;
+let angle = 0;
+
 function animate(){
     requestAnimationFrame(animate);
 
     stars.rotation.y += 0.0005;
-    let positions = stars.geometry.attributes.position.array;
-    for(let i=0;i<starCount;i++){
-        positions[i*3+2] += Math.sin(Date.now()*0.001 + i)*0.01*starVel[i];
-    }
-    stars.geometry.attributes.position.needsUpdate = true;
 
-    angle += 0.0012;
-    camera.position.x = Math.sin(angle)*400;
-    camera.position.z = Math.cos(angle)*400;
-    camera.lookAt(0,50,0);
+    if(allowOrbit){
+        angle += 0.0012;
+        camera.position.x = Math.sin(angle)*400;
+        camera.position.z = Math.cos(angle)*400;
+        camera.lookAt(0,50,0);
+    }
 
     nebulaMat.uniforms.time.value += 0.03;
-
-    if(birthdayMesh){
-        let glow = 0.5 + 0.5*Math.sin(Date.now()*0.002);
-        birthdayMesh.material.emissiveIntensity = glow;
-        birthdayMesh.material.emissive.setHex(0xffaa33);
-    }
 
     renderer.render(scene,camera);
 }

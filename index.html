@@ -1,115 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PRINCE Cinematic — Fixed</title>
-
+<meta charset="utf-8">
+<title>IMAX – HAPPY BIRTHDAY PRINCE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-    body,html{
-        margin:0;
-        padding:0;
-        overflow:hidden;
-        background:#000;
-    }
-    #prince{
-        position:absolute;
-        top:50%;
-        left:50%;
-        transform:translate(-50%,-50%);
-        font-size:90px;
-        font-family:Arial Black, sans-serif;
-        letter-spacing:18px;
-        color:white;
-        opacity:0;
-        transition:1.5s ease;
-        background:linear-gradient(90deg,#00c9ff,#9d4dff,#ff2dfb);
-        -webkit-background-clip:text;
-        color:transparent;
-        filter:drop-shadow(0 0 20px #00aaff);
-    }
+  body { margin:0; overflow:hidden; background:#000; }
+  canvas { display:block; }
 </style>
 </head>
-
 <body>
 
-<div id="prince">PRINCE</div>
-
-<!-- Reliable CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
 
 <script>
+// ---------------- Scene + Camera ----------------
+let scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000000, 0.0012);
 
-// --------- SCENE SETUP --------- //
-const scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
+camera.position.set(0, 50, 400);
 
-const camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-);
-camera.position.set(0, 0, 15);
-
-const renderer = new THREE.WebGLRenderer({antialias:true});
+let renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// --------- SIMPLE STAR FIELD (works 100%) --------- //
-const starGeo = new THREE.BufferGeometry();
-const starCount = 800;
-const positions = [];
-
-for(let i=0;i<starCount;i++){
-    positions.push(
-        (Math.random()-0.5)*200,
-        (Math.random()-0.5)*200,
-        (Math.random()-0.5)*200
-    );
+// ---------------- Stars ----------------
+let starGeo = new THREE.BufferGeometry();
+let starCount = 2500;
+let starArr = new Float32Array(starCount * 3);
+for(let i=0;i<starCount*3;i++){
+    starArr[i] = (Math.random() - 0.5) * 3000;
 }
+starGeo.setAttribute("position", new THREE.BufferAttribute(starArr, 3));
 
-starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
-const starMat = new THREE.PointsMaterial({color:0xffffff, size:1});
-const stars = new THREE.Points(starGeo, starMat);
+let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
+let stars = new THREE.Points(starGeo, starMat);
 scene.add(stars);
 
-// --------- TEST SPHERE (so screen never stays black) --------- //
-const testSphere = new THREE.Mesh(
-    new THREE.SphereGeometry(3, 32, 32),
-    new THREE.MeshBasicMaterial({color:0x5555ff})
+let starVel = new Float32Array(starCount);
+for(let i=0;i<starCount;i++){ starVel[i] = Math.random()*0.02 + 0.01; }
+
+// ---------------- Lights ----------------
+let ambient = new THREE.AmbientLight(0x666666, 0.5);
+scene.add(ambient);
+
+let keyLight = new THREE.PointLight(0x99ccff, 2, 2000);
+keyLight.position.set(180, 200, 140);
+scene.add(keyLight);
+
+let warmLight = new THREE.PointLight(0xffddaa, 1.8, 2000);
+warmLight.position.set(-120, 160, -80);
+scene.add(warmLight);
+
+// ---------------- Glowing Nebula Shader ----------------
+const nebulaMat = new THREE.ShaderMaterial({
+    uniforms: { time:{ value:0 } },
+    vertexShader: `
+      varying vec2 vUv;
+      void main(){
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform float time;
+      float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
+      float noise(vec2 p){
+          vec2 i=floor(p);
+          vec2 f=fract(p);
+          float a=hash(i);
+          float b=hash(i+vec2(1.0,0.0));
+          float c=hash(i+vec2(0.0,1.0));
+          float d=hash(i+vec2(1.0,1.0));
+          vec2 u=f*f*(3.0-2.0*f);
+          return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
+      }
+      void main(){
+          float t = time*0.3;
+          float n = noise(vUv*10.0 + vec2(t*0.5,-t*0.3));
+          float glow = smoothstep(0.2,0.7,n);
+          vec3 col = vec3(0.3 + glow*0.7, 0.2 + glow*0.5, 0.6 + glow*0.9);
+          gl_FragColor = vec4(col,1.0);
+      }
+    `,
+    metalness: 1,
+    roughness: 0.25,
+    transparent: true
+});
+
+// ---------------- Text ----------------
+let princeLetters = [];
+let birthdayMesh=null, oneMesh=null;
+const princeText = "PRINCE";
+let loadedFont=null;
+
+// ---------------- Load Font ----------------
+new THREE.FontLoader().load(
+    "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
+    font => {
+        loadedFont = font;
+
+        // Background "1" behind HAPPY BIRTHDAY
+        let oneGeo = new THREE.TextGeometry("1",{
+            font: font,
+            size: 120,
+            height: 10,
+            bevelEnabled:true,
+            bevelThickness:5,
+            bevelSize:3
+        });
+        oneGeo.center();
+        let oneMat = new THREE.MeshStandardMaterial({
+            color:0x3399ff,
+            emissive:0x112244,
+            metalness:0.5,
+            roughness:0.6
+        });
+        oneMesh = new THREE.Mesh(oneGeo, oneMat);
+        oneMesh.position.y = 180;
+        oneMesh.position.z = -50;
+        scene.add(oneMesh);
+
+        // HAPPY BIRTHDAY
+        let birthdayGeo = new THREE.TextGeometry("HAPPY BIRTHDAY",{
+            font: font,
+            size: 36,
+            height: 6,
+            bevelEnabled:true,
+            bevelThickness:3,
+            bevelSize:1.5
+        });
+        birthdayGeo.center();
+        let birthdayMat = new THREE.MeshStandardMaterial({
+            color:0xffd98c,
+            emissive:0xffaa33,
+            metalness:0.8,
+            roughness:0.35
+        });
+        birthdayMesh = new THREE.Mesh(birthdayGeo, birthdayMat);
+        birthdayMesh.position.y = 180; 
+        scene.add(birthdayMesh);
+
+        // Initialize PRINCE letters
+        createPrinceLetters();
+        setTimeout(revealNextLetter, 800);
+    }
 );
-scene.add(testSphere);
 
-// --------- CAMERA ORBIT --------- //
-let orbit = false;
-let angle = 0;
+// ---------------- Create PRINCE letters (size reduced + spacing fixed) ----------------
+function createPrinceLetters(){
+    const total = princeText.length;
 
-// PRINCE reveal then orbit
-setTimeout(()=>{
-    document.getElementById("prince").style.opacity = 1;
-    setTimeout(()=>{ orbit = true; }, 2000);
-}, 2000);
+    const size = 180;        // reduced from 250
+    const height = 15;
+    const spacing = size * 0.62;  // optimized spacing (no merging)
 
-// --------- ANIMATION LOOP --------- //
+    const totalWidth = (total - 1) * spacing;
+    const xOffset = -totalWidth / 2;
+
+    for(let i = 0; i < total; i++){
+        let geo = new THREE.TextGeometry(princeText[i],{
+            font: loadedFont,
+            size: size,
+            height: height,
+            bevelEnabled:true,
+            bevelThickness:5,
+            bevelSize:3
+        });
+
+        geo.center();
+
+        let mesh = new THREE.Mesh(geo, nebulaMat);
+
+        mesh.position.y = 0;
+        mesh.position.x = xOffset + i * spacing;
+        mesh.position.z = -800;
+
+        mesh.scale.set(0.1,0.1,0.1);
+        mesh.rotation.x = (Math.random()-0.5)*0.5;
+        mesh.rotation.y = (Math.random()-0.5)*0.5;
+
+        mesh.material.opacity = 0;
+        mesh.visible = false;
+
+        princeLetters.push(mesh);
+        scene.add(mesh);
+    }
+}
+
+// ---------------- Animate PRINCE letter reveal ----------------
+let currentLetter = 0;
+function revealNextLetter(){
+    if(currentLetter < princeLetters.length){
+        let mesh = princeLetters[currentLetter];
+        mesh.visible = true;
+        let finalZ = 0;
+        let duration = 120;
+        let frame = 0;
+
+        function animateLetter(){
+            if(frame <= duration){
+                let t = frame / duration;
+                let overshoot = 1 + 0.2 * Math.sin(t * Math.PI);
+
+                mesh.position.z = -800*(1-t) + finalZ*t;
+                mesh.scale.set((0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot,(0.1 + 0.9*t)*overshoot);
+                mesh.material.opacity = t;
+
+                mesh.rotation.x *= (1-t);
+                mesh.rotation.y *= (1-t);
+
+                frame++;
+                requestAnimationFrame(animateLetter);
+            }
+        }
+
+        animateLetter();
+        currentLetter++;
+        setTimeout(revealNextLetter, 350);
+    }
+}
+
+// ---------------- Camera Orbit + Animate ----------------
+let angle=0;
 function animate(){
     requestAnimationFrame(animate);
 
-    stars.rotation.y += 0.0008;
-    testSphere.rotation.y += 0.002;
+    stars.rotation.y += 0.0005;
+    let positions = stars.geometry.attributes.position.array;
+    for(let i=0;i<starCount;i++){
+        positions[i*3+2] += Math.sin(Date.now()*0.001 + i)*0.01*starVel[i];
+    }
+    stars.geometry.attributes.position.needsUpdate = true;
 
-    if(orbit){
-        angle += 0.004;
-        camera.position.x = Math.sin(angle)*15;
-        camera.position.z = Math.cos(angle)*15;
-        camera.lookAt(0,0,0);
+    angle += 0.0012;
+    camera.position.x = Math.sin(angle)*400;
+    camera.position.z = Math.cos(angle)*400;
+    camera.lookAt(0,50,0);
+
+    nebulaMat.uniforms.time.value += 0.03;
+
+    if(birthdayMesh){
+        let glow = 0.5 + 0.5*Math.sin(Date.now()*0.002);
+        birthdayMesh.material.emissiveIntensity = glow;
+        birthdayMesh.material.emissive.setHex(0xffaa33);
     }
 
-    renderer.render(scene, camera);
+    renderer.render(scene,camera);
 }
 animate();
 
-// --------- RESIZE --------- //
-window.addEventListener("resize", ()=>{
+// ---------------- Responsive ----------------
+window.addEventListener("resize",()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>IMAX Cinematic Full with Phase 4</title>
 <style>
-/* ---------------- Common Reset ---------------- */
 html, body {
     margin: 0;
     padding: 0;
@@ -14,7 +13,7 @@ html, body {
 }
 canvas { display: block; }
 
-/* ---------------- Stage 1 ---------------- */
+/* Stage 1 */
 #stage1 { position: relative; width: 100%; height: 100%; }
 #stage1 #instruction {
     position: absolute;
@@ -63,12 +62,7 @@ canvas { display: block; }
     top: 40px;
     border-radius: 50%;
     cursor: grab;
-    background: radial-gradient(circle at 30% 30%, 
-        #d9d9d9 0%, 
-        #c0c0c0 20%, 
-        #9a9a9a 45%, 
-        #6d6d6d 70%, 
-        #2a2a2a 100%);
+    background: radial-gradient(circle at 30% 30%, #d9d9d9 0%, #c0c0c0 20%, #9a9a9a 45%, #6d6d6d 70%, #2a2a2a 100%);
     box-shadow: 0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5);
     transition: box-shadow 0.3s ease;
     z-index: 5;
@@ -82,7 +76,7 @@ canvas { display: block; }
     z-index: 1;
 }
 
-/* ---------------- Stage 2 ---------------- */
+/* Stage 2 */
 #stage2 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
 #stage2 #instruction {
     position: absolute;
@@ -111,7 +105,7 @@ canvas { display: block; }
     z-index:5;
 }
 
-/* ---------------- Stage 3 ---------------- */
+/* Stage 3 */
 #stage3 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
 #stage3 #clickBtn {
     position: absolute;
@@ -132,7 +126,7 @@ canvas { display: block; }
     z-index: 1000;
 }
 
-/* ---------------- Phase 4 ---------------- */
+/* Phase 4 */
 #phase4Canvas { display:none; position:absolute; top:0; left:0; width:100%; height:100%; z-index:10000; }
 </style>
 </head>
@@ -170,7 +164,7 @@ canvas { display: block; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
 
 <script>
-/* ---------------- Stage 1 Script ---------------- */
+// =================== Stage 1 ===================
 const stage1 = document.getElementById("stage1");
 const moon = document.getElementById("moon");
 const message = document.getElementById("message");
@@ -194,16 +188,27 @@ function drawStars() {
     });
 }
 
-// Drag moon logic
 let dragging=false, offsetX, offsetY, revealIndex=0;
 const fullMsg = message.innerText; message.innerText="";
 moon.addEventListener("mousedown", e=>{ dragging=true; offsetX=e.clientX-moon.offsetLeft; offsetY=e.clientY-moon.offsetTop; moon.style.cursor="grabbing"; whoosh.currentTime=0; whoosh.play(); });
 document.addEventListener("mouseup", ()=>{ dragging=false; moon.style.cursor="grab"; });
-document.addEventListener("mousemove", e=>{ if(!dragging) return; moon.style.left=(e.clientX-offsetX)+"px"; moon.style.top=(e.clientY-offsetY)+"px"; if(revealIndex<fullMsg.length){ message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++);} stars.forEach(s=>s.tw=0); if(revealIndex>=fullMsg.length){ moon.style.opacity=0; setTimeout(()=>{ sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px"; stars=[]; setTimeout(()=>{ startStage2(); }, 5000); },800); }});
-
+document.addEventListener("mousemove", e=>{
+    if(!dragging) return;
+    moon.style.left=(e.clientX-offsetX)+"px";
+    moon.style.top=(e.clientY-offsetY)+"px";
+    if(revealIndex<fullMsg.length){ message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++);}
+    if(revealIndex>=fullMsg.length){
+        moon.style.opacity=0;
+        setTimeout(()=>{
+            sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px";
+            stars=[];
+            setTimeout(()=>{ startStage2(); }, 5000);
+        },800);
+    }
+});
 function animate1(){ drawStars(); requestAnimationFrame(animate1); } animate1();
 
-/* ---------------- Stage 2 Script ---------------- */
+// =================== Stage 2 ===================
 const stage2 = document.getElementById("stage2");
 const shieldCanvas=document.getElementById("shieldCanvas");
 const shieldCtx=shieldCanvas.getContext("2d");
@@ -214,18 +219,51 @@ let shieldX=width/2, shieldY=height/2;
 let R=Math.min(width,height)/3;
 let starSpin=false, starAngle=0;
 
-// background stars
 const bgStars2=[]; for(let i=0;i<200;i++){ bgStars2.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005}); }
 
-function drawShield(){ /* same shield drawing code as before */ shieldCtx.clearRect(0,0,width,height); bgStars2.forEach(s=>{ const glow=(Math.sin(Date.now()*s.tw)+1)*0.5; shieldCtx.fillStyle=`rgba(255,255,255,${glow})`; shieldCtx.beginPath(); shieldCtx.arc(s.x,s.y,s.r,0,Math.PI*2); shieldCtx.fill(); }); /* draw shield star */ }
+function drawShield(){
+    shieldCtx.fillStyle="#0a0d19"; shieldCtx.fillRect(0,0,width,height);
+    bgStars2.forEach(s=>{
+        const glow=(Math.sin(Date.now()*s.tw)+1)*0.5;
+        shieldCtx.fillStyle=`rgba(255,255,255,${glow})`;
+        shieldCtx.beginPath(); shieldCtx.arc(s.x,s.y,s.r,0,Math.PI*2); shieldCtx.fill();
+    });
+    shieldCtx.save();
+    shieldCtx.translate(shieldX,shieldY);
+    if(starSpin) shieldCtx.rotate(starAngle);
+    let starR=R*0.28;
+    shieldCtx.beginPath();
+    for(let i=0;i<5;i++){
+        let o=(Math.PI*2/5)*i-Math.PI/2;
+        let n=o+Math.PI/5;
+        shieldCtx.lineTo(Math.cos(o)*starR,Math.sin(o)*starR);
+        shieldCtx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45);
+    }
+    shieldCtx.closePath();
+    shieldCtx.shadowColor="rgba(255,255,255,0.25)"; shieldCtx.shadowBlur=5;
+    let sg=shieldCtx.createRadialGradient(0,0,starR*0.1,0,0,starR);
+    sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
+    shieldCtx.fillStyle=sg; shieldCtx.fill();
+    shieldCtx.restore();
+}
 
 function animate2(){ drawShield(); if(starSpin) starAngle+=0.035; requestAnimationFrame(animate2); }
 function startStage2(){ stage1.style.display="none"; stage2.style.display="block"; animate2(); }
 
 const verseDiv=document.getElementById("verse");
-shieldCanvas.addEventListener("click", e=>{ starSpin=true; verseDiv.style.opacity=1; verseDiv.style.transform="translateX(-50%) scale(1)"; setTimeout(()=>{ startStage3(); },7000); document.getElementById("stage2").querySelector("#instruction").style.opacity=0; });
+shieldCanvas.addEventListener("click", e=>{
+    const dx=e.clientX-shieldX;
+    const dy=e.clientY-shieldY;
+    if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
+        starSpin=true;
+        verseDiv.style.opacity=1;
+        verseDiv.style.transform="translateX(-50%) scale(1)";
+        setTimeout(()=>{ startStage3(); },7000);
+        document.getElementById("stage2").querySelector("#instruction").style.opacity=0;
+    }
+});
 
-/* ---------------- Stage 3 Script ---------------- */
+// =================== Stage 3 ===================
 const stage3 = document.getElementById("stage3");
 const c = document.getElementById("c");
 const ctx3 = c.getContext("2d");
@@ -247,7 +285,6 @@ function animate3(){ ctx3.clearRect(0,0,c.width,c.height); applyCamera(); drawSt
 
 function startStage3(){ stage2.style.display="none"; stage3.style.display="block"; animate3(); setTimeout(()=>{ btn.style.opacity=1; },3000); }
 
-/* DAIVIK Transformation + Phase 4 trigger */
 btn.addEventListener("click", ()=>{
     btn.style.display="none";
     const newText="DAIVIK";
@@ -256,7 +293,7 @@ btn.addEventListener("click", ()=>{
     setTimeout(()=> startPhase4(),2500);
 });
 
-/* ---------------- Phase 4 Script ---------------- */
+// =================== Phase 4 ===================
 const phase4Canvas = document.getElementById("phase4Canvas");
 let phase4Started=false;
 
@@ -266,16 +303,16 @@ function startPhase4(){
     stage3.style.display="none";
     phase4Canvas.style.display="block";
 
+    // Three.js Scene
     let scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x000000, 0.0012);
+    scene.fog = new THREE.FogExp2(0x000000, 0.0015);
     let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight,0.1,3000);
     camera.position.set(0,50,400);
-
     let renderer = new THREE.WebGLRenderer({ canvas: phase4Canvas, antialias:true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-    // Stars
+    // Galactic stars
     let starGeo = new THREE.BufferGeometry();
     let starCount = 2500;
     let starArr = new Float32Array(starCount*3);
@@ -284,66 +321,59 @@ function startPhase4(){
     let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
     let stars = new THREE.Points(starGeo, starMat);
     scene.add(stars);
-    let starVel = new Float32Array(starCount); for(let i=0;i<starCount;i++) starVel[i]=Math.random()*0.02+0.01;
 
     // Lights
-    let ambient = new THREE.AmbientLight(0x666666,0.5); scene.add(ambient);
+    scene.add(new THREE.AmbientLight(0x666666,0.5));
     let keyLight = new THREE.PointLight(0x99ccff,2,2000); keyLight.position.set(180,200,140); scene.add(keyLight);
     let warmLight = new THREE.PointLight(0xffddaa,1.8,2000); warmLight.position.set(-120,160,-80); scene.add(warmLight);
 
-    // Nebula Shader
-    const nebulaMat = new THREE.ShaderMaterial({
-        uniforms:{ time:{ value:0 } },
-        vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-        fragmentShader:`varying vec2 vUv; uniform float time; float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);} float noise(vec2 p){ vec2 i=floor(p); vec2 f=fract(p); float a=hash(i); float b=hash(i+vec2(1.0,0.0)); float c=hash(i+vec2(0.0,1.0)); float d=hash(i+vec2(1.0,1.0)); vec2 u=f*f*(3.0-2.0*f); return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;} void main(){ float t=time*0.3; float n=noise(vUv*10.0+vec2(t*0.5,-t*0.3)); float glow=smoothstep(0.2,0.7,n); vec3 col=vec3(0.3+glow*0.7,0.2+glow*0.5,0.6+glow*0.9); gl_FragColor=vec4(col,1.0); }`,
-        metalness:1, roughness:0.25, transparent:true
+    // HAPPY BIRTHDAY Text
+    let birthdayTextMesh;
+    new THREE.FontLoader().load("https://threejs.org/examples/fonts/helvetiker_bold.typeface.json", font=>{
+        let geom = new THREE.TextGeometry("HAPPY BIRTHDAY", { font: font, size:50, height:10, bevelEnabled:true, bevelThickness:3, bevelSize:2 });
+        geom.center();
+        let mat = new THREE.MeshPhongMaterial({ color:0xffcc33, shininess:80 });
+        birthdayTextMesh = new THREE.Mesh(geom, mat);
+        birthdayTextMesh.position.y = 100;
+        scene.add(birthdayTextMesh);
     });
 
-    // PRINCE Letters
+    // PRINCE Letters in nebula
     let princeLetters = [];
     const princeText="PRINCE";
-    let loadedFont=null;
     new THREE.FontLoader().load("https://threejs.org/examples/fonts/helvetiker_bold.typeface.json", font=>{
-        loadedFont=font; createPrinceLetters(); setTimeout(revealNextLetter,800);
+        const size=100; const height=12; const spacing=size*0.9; const totalWidth=(princeText.length-1)*spacing; const xOffset=-totalWidth/2;
+        for(let i=0;i<princeText.length;i++){
+            let geo = new THREE.TextGeometry(princeText[i], { font: font, size: size, height: height, bevelEnabled:true, bevelThickness:4, bevelSize:2.5 });
+            geo.center();
+            let mat = new THREE.MeshStandardMaterial({ color:0xffffff, emissive:0x8844ff, metalness:0.8, roughness:0.3 });
+            let mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(xOffset+i*spacing,0,-800);
+            mesh.scale.set(0.1,0.1,0.1);
+            mesh.rotation.set((Math.random()-0.5)*0.5,(Math.random()-0.5)*0.5,0);
+            mesh.visible=false;
+            princeLetters.push(mesh);
+            scene.add(mesh);
+        }
+        revealLetters(0);
     });
 
-    function createPrinceLetters(){
-        const total=princeText.length; const size=140; const height=12;
-        const spacing=size*0.82; const totalWidth=spacing*(total-1); const xOffset=-totalWidth/2;
-        for(let i=0;i<total;i++){
-            let geo=new THREE.TextGeometry(princeText[i], { font:loadedFont, size:size, height:height, bevelEnabled:true, bevelThickness:4, bevelSize:2.5 });
-            geo.center();
-            let mesh=new THREE.Mesh(geo, nebulaMat);
-            mesh.position.x=xOffset+i*spacing; mesh.position.y=0; mesh.position.z=-800;
-            mesh.scale.set(0.1,0.1,0.1);
-            mesh.rotation.x=(Math.random()-0.5)*0.5; mesh.rotation.y=(Math.random()-0.5)*0.5;
-            mesh.material.opacity=0; mesh.visible=false;
-            princeLetters.push(mesh); scene.add(mesh);
-        }
+    let orbitStart=false;
+    function revealLetters(i){
+        if(i>=princeLetters.length){ orbitStart=true; return; }
+        let mesh=princeLetters[i]; mesh.visible=true;
+        let frame=0, duration=100;
+        function anim(){ if(frame<=duration){ let t=frame/duration; let overshoot=1+0.15*Math.sin(t*Math.PI); mesh.position.z=-800*(1-t); mesh.scale.set((0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot); frame++; requestAnimationFrame(anim); } }
+        anim(); setTimeout(()=> revealLetters(i+1),300);
     }
 
-    let currentLetter=0; let orbitStart=false;
-    function revealNextLetter(){
-        if(currentLetter<princeLetters.length){
-            let mesh=princeLetters[currentLetter]; mesh.visible=true;
-            let finalZ=0; let duration=120; let frame=0;
-            function animateLetter(){ if(frame<=duration){ let t=frame/duration; let overshoot=1+0.2*Math.sin(t*Math.PI); mesh.position.z=-800*(1-t)+finalZ*t; mesh.scale.set((0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot); mesh.material.opacity=t; mesh.rotation.x*=(1-t); mesh.rotation.y*=(1-t); frame++; requestAnimationFrame(animateLetter); } }
-            animateLetter(); currentLetter++;
-            if(currentLetter===princeLetters.length) setTimeout(()=>orbitStart=true,600);
-            setTimeout(revealNextLetter,350);
-        }
-    }
-
+    // Animate
     let angle=0;
     function animatePhase4(){
         requestAnimationFrame(animatePhase4);
         stars.rotation.y+=0.0005;
-        let positions=stars.geometry.attributes.position.array;
-        for(let i=0;i<starCount;i++) positions[i*3+2]+=Math.sin(Date.now()*0.001+i)*0.01*starVel[i];
-        stars.geometry.attributes.position.needsUpdate=true;
         if(orbitStart){ angle+=0.0012; camera.position.x=Math.sin(angle)*400; camera.position.z=Math.cos(angle)*400; }
         camera.lookAt(0,50,0);
-        nebulaMat.uniforms.time.value+=0.03;
         renderer.render(scene,camera);
     }
     animatePhase4();
@@ -354,6 +384,5 @@ function startPhase4(){
     });
 }
 </script>
-
 </body>
 </html>

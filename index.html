@@ -53,75 +53,39 @@ canvas { display:block; }
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
 
 <script>
-/* ---------------- Stage 1 ---------------- */
-const stage1=document.getElementById("stage1"),
-      stage2=document.getElementById("stage2"),
-      stage3=document.getElementById("stage3"),
-      moon=document.getElementById("moon"),
-      message=document.getElementById("message"),
-      sun=document.getElementById("sun"),
-      whoosh=document.getElementById("whoosh"),
-      starsCanvas=document.getElementById("stars"),
-      starsCtx=starsCanvas.getContext("2d");
-
+/* ---------------- Stage 1 Script ---------------- */
+const stage1=document.getElementById("stage1"), stage2=document.getElementById("stage2"), stage3=document.getElementById("stage3");
+const moon=document.getElementById("moon"), message=document.getElementById("message"), sun=document.getElementById("sun"), whoosh=document.getElementById("whoosh");
+const starsCanvas=document.getElementById("stars"), starsCtx=starsCanvas.getContext("2d");
 function resize1(){ starsCanvas.width=window.innerWidth; starsCanvas.height=window.innerHeight; }
 resize1(); window.onresize=resize1;
 
-let stars=[];
-for(let i=0;i<250;i++){ stars.push({x:Math.random()*starsCanvas.width,y:Math.random()*starsCanvas.height,z:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005}); }
+let stars=[]; for(let i=0;i<250;i++){ stars.push({x:Math.random()*starsCanvas.width,y:Math.random()*starsCanvas.height,z:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005}); }
 function drawStars(){ starsCtx.clearRect(0,0,starsCanvas.width,starsCanvas.height); stars.forEach(s=>{ let glow=(Math.sin(Date.now()*s.tw)+1)*0.5; starsCtx.fillStyle=`rgba(255,255,255,${glow})`; starsCtx.beginPath(); starsCtx.arc(s.x,s.y,s.z,0,Math.PI*2); starsCtx.fill(); }); }
 
 let dragging=false, offsetX, offsetY, revealIndex=0;
 const fullMsg=message.innerText; message.innerText="";
 moon.addEventListener("mousedown", e=>{ dragging=true; offsetX=e.clientX-moon.offsetLeft; offsetY=e.clientY-moon.offsetTop; moon.style.cursor="grabbing"; whoosh.currentTime=0; whoosh.play(); });
 document.addEventListener("mouseup", ()=>{ dragging=false; moon.style.cursor="grab"; });
-document.addEventListener("mousemove", e=>{ 
-    if(!dragging)return; 
-    moon.style.left=(e.clientX-offsetX)+"px"; 
-    moon.style.top=(e.clientY-offsetY)+"px"; 
-    if(revealIndex<fullMsg.length){ message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++); } 
-    stars.forEach(s=>s.tw=0); 
-    if(revealIndex>=fullMsg.length){ 
-        moon.style.opacity=0; 
-        setTimeout(()=>{ 
-            sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px"; 
-            stars=[]; setTimeout(()=>{ startStage2(); },5000); 
-        },800); 
-    } 
-});
+document.addEventListener("mousemove", e=>{ if(!dragging)return; moon.style.left=(e.clientX-offsetX)+"px"; moon.style.top=(e.clientY-offsetY)+"px"; if(revealIndex<fullMsg.length){ message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++); } stars.forEach(s=>s.tw=0); if(revealIndex>=fullMsg.length){ moon.style.opacity=0; setTimeout(()=>{ sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px"; stars=[]; setTimeout(()=>{ startStage2(); },5000); },800); } });
 function animate1(){ drawStars(); requestAnimationFrame(animate1); } animate1();
 
-/* ---------------- Stage 2 ---------------- */
+/* ---------------- Stage 2 Script ---------------- */
 const shieldCanvas=document.getElementById("shieldCanvas"), shieldCtx=shieldCanvas.getContext("2d");
 let width=window.innerWidth,height=window.innerHeight; shieldCanvas.width=width; shieldCanvas.height=height;
 let shieldX=width/2, shieldY=height/2, R=Math.min(width,height)/3, starSpin=false, starAngle=0;
 const bgStars2=[]; for(let i=0;i<200;i++){ bgStars2.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005}); }
-function drawShield(){ 
-    shieldCtx.save(); 
-    shieldCtx.translate(shieldX,shieldY); 
-    let g1=shieldCtx.createRadialGradient(0,0,R*0.2,0,0,R); g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000"); shieldCtx.fillStyle=g1; 
-    shieldCtx.beginPath(); shieldCtx.arc(0,0,R,0,Math.PI*2); shieldCtx.fill(); 
-    let g2=shieldCtx.createRadialGradient(0,0,R*0.1,0,0,R*0.75); g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5"); shieldCtx.fillStyle=g2; 
-    shieldCtx.beginPath(); shieldCtx.arc(0,0,R*0.75,0,Math.PI*2); shieldCtx.fill(); 
-    let g3=shieldCtx.createRadialGradient(0,0,R*0.1,0,0,R*0.5); g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000"); shieldCtx.fillStyle=g3; 
-    shieldCtx.beginPath(); shieldCtx.arc(0,0,R*0.5,0,Math.PI*2); shieldCtx.fill(); 
-    let g4=shieldCtx.createRadialGradient(0,0,R*0.05,0,0,R*0.35); g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933"); shieldCtx.fillStyle=g4; 
-    shieldCtx.beginPath(); shieldCtx.arc(0,0,R*0.35,0,Math.PI*2); shieldCtx.fill(); 
-    shieldCtx.save(); if(starSpin) shieldCtx.rotate(starAngle); let starR=R*0.28; shieldCtx.beginPath(); for(let i=0;i<5;i++){ let o=(Math.PI*2/5)*i-Math.PI/2; let n=o+Math.PI/5; shieldCtx.lineTo(Math.cos(o)*starR,Math.sin(o)*starR); shieldCtx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45); } shieldCtx.closePath(); shieldCtx.shadowColor="rgba(255,255,255,0.25)"; shieldCtx.shadowBlur=5; let sg=shieldCtx.createRadialGradient(0,0,starR*0.1,0,0,starR); sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a"); shieldCtx.fillStyle=sg; shieldCtx.fill(); shieldCtx.restore(); 
-    shieldCtx.restore(); 
-}
-function animate2(){ 
-    shieldCtx.fillStyle="#0a0d19"; shieldCtx.fillRect(0,0,width,height); 
-    bgStars2.forEach(s=>{ let glow=(Math.sin(Date.now()*s.tw)+1)*0.5; shieldCtx.fillStyle=`rgba(255,255,255,${glow})`; shieldCtx.beginPath(); shieldCtx.arc(s.x,s.y,s.r,0,Math.PI*2); shieldCtx.fill(); }); 
-    drawShield(); if(starSpin) starAngle+=0.035; requestAnimationFrame(animate2); 
-}
+function drawShield(){ shieldCtx.save(); shieldCtx.translate(shieldX,shieldY); let g1=shieldCtx.createRadialGradient(0,0,R*0.2,0,0,R); g1.addColorStop(0,"#3c0000"); g1.addColorStop(1,"#7a0000"); shieldCtx.fillStyle=g1; shieldCtx.beginPath(); shieldCtx.arc(0,0,R,0,Math.PI*2); shieldCtx.fill(); let g2=shieldCtx.createRadialGradient(0,0,R*0.1,0,0,R*0.75); g2.addColorStop(0,"#dadada"); g2.addColorStop(1,"#f5f5f5"); shieldCtx.fillStyle=g2; shieldCtx.beginPath(); shieldCtx.arc(0,0,R*0.75,0,Math.PI*2); shieldCtx.fill(); let g3=shieldCtx.createRadialGradient(0,0,R*0.1,0,0,R*0.5); g3.addColorStop(0,"#4b0000"); g3.addColorStop(1,"#8c0000"); shieldCtx.fillStyle=g3; shieldCtx.beginPath(); shieldCtx.arc(0,0,R*0.5,0,Math.PI*2); shieldCtx.fill(); let g4=shieldCtx.createRadialGradient(0,0,R*0.05,0,0,R*0.35); g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933"); shieldCtx.fillStyle=g4; shieldCtx.beginPath(); shieldCtx.arc(0,0,R*0.35,0,Math.PI*2); shieldCtx.fill(); shieldCtx.save(); if(starSpin) shieldCtx.rotate(starAngle); let starR=R*0.28; shieldCtx.beginPath(); for(let i=0;i<5;i++){ let o=(Math.PI*2/5)*i-Math.PI/2; let n=o+Math.PI/5; shieldCtx.lineTo(Math.cos(o)*starR,Math.sin(o)*starR); shieldCtx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45); } shieldCtx.closePath(); shieldCtx.shadowColor="rgba(255,255,255,0.25)"; shieldCtx.shadowBlur=5; let sg=shieldCtx.createRadialGradient(0,0,starR*0.1,0,0,starR); sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a"); shieldCtx.fillStyle=sg; shieldCtx.fill(); shieldCtx.restore(); shieldCtx.restore(); }
+function animate2(){ shieldCtx.fillStyle="#0a0d19"; shieldCtx.fillRect(0,0,width,height); bgStars2.forEach(s=>{ let glow=(Math.sin(Date.now()*s.tw)+1)*0.5; shieldCtx.fillStyle=`rgba(255,255,255,${glow})`; shieldCtx.beginPath(); shieldCtx.arc(s.x,s.y,s.r,0,Math.PI*2); shieldCtx.fill(); }); drawShield(); if(starSpin) starAngle+=0.035; requestAnimationFrame(animate2); }
 function startStage2(){ stage1.style.display="none"; stage2.style.display="block"; animate2(); }
 const verseDiv=document.getElementById("verse");
 shieldCanvas.addEventListener("click", e=>{ const dx=e.clientX-shieldX; const dy=e.clientY-shieldY; if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){ starSpin=true; verseDiv.style.opacity=1; verseDiv.style.transform="translateX(-50%) scale(1)"; setTimeout(()=>{ startStage3(); },7000); document.getElementById("stage2").querySelector("#instruction").style.opacity=0; } });
 
-/* ---------------- Stage 3 ---------------- */
+/* ---------------- Stage 3 Script ---------------- */
 const c=document.getElementById("c"), ctx3=c.getContext("2d"), btn=document.getElementById("clickBtn");
 function resize3(){ c.width=window.innerWidth; c.height=window.innerHeight; } resize3(); window.onresize=resize3;
 const bgStars3=[]; const bgStarCount=180;
@@ -132,16 +96,17 @@ let currentText="PRINCE";
 let letterPoints=mapTextToPoints(currentText);
 const particles=letterPoints.map(p=>({x:Math.random()*c.width,y:Math.random()*c.height,tx:p.x,ty:p.y,speed:Math.random()*0.08+0.04,size:Math.random()*1.8+1.2,color:null}));
 let camera={dx:0,dy:0,zoom:1};
-function applyCamera(){ camera.dx=Math.sin(Date.now()*0.0008)*35; camera.dy=Math.cos(Date.now()*0.0007)*35; camera.zoom=1+0.04*Math.sin(Date.now()*0.0005); ctx3.save(); ctx3.translate(c.width/2+camera.dx,c.height/2+camera.dy); ctx3.scale(camera.zoom,camera.zoom); ctx3.translate(-c.width/2,-c.height/2); }
+function applyCamera(){ camera.dx=Math.sin(Date.now()*0.0003)*15; camera.dy=Math.cos(Date.now()*0.00025)*15; camera.zoom=1+0.02*Math.sin(Date.now()*0.0002); ctx3.save(); ctx3.translate(c.width/2+camera.dx,c.height/2+camera.dy); ctx3.scale(camera.zoom,camera.zoom); ctx3.translate(-c.width/2,-c.height/2); }
 let daivikFormed=false;
 function animate3(){ ctx3.clearRect(0,0,c.width,c.height); applyCamera(); drawStarShape(); const time=Date.now(); particles.forEach(p=>{ p.x+=(p.tx-p.x)*p.speed; p.y+=(p.ty-p.y)*p.speed; let fillColor=p.color||`hsl(${(p.x+p.y)%360},90%,70%)`; let shadowIntensity=p.color?(Math.sin(time*0.005)*0.5+0.5)*20:18; ctx3.fillStyle=fillColor; ctx3.shadowBlur=shadowIntensity; ctx3.shadowColor=fillColor; ctx3.beginPath(); ctx3.arc(p.x,p.y,p.size,0,Math.PI*2); ctx3.fill(); }); ctx3.restore(); requestAnimationFrame(animate3); }
 function startStage3(){ stage2.style.display="none"; stage3.style.display="block"; animate3(); setTimeout(()=>{ btn.style.opacity=1; },3000); }
 btn.addEventListener("click", ()=>{ btn.style.display="none"; const newText="DAIVIK"; const newPoints=mapTextToPoints(newText); particles.forEach((p,i)=>{ const np=newPoints[i%newPoints.length]; p.tx=np.x; p.ty=np.y; p.color="#fff"; }); daivikFormed=true; setTimeout(()=>{ startPhase4(); },7000); });
 
-/* ---------------- Phase 4 ---------------- */
+/* ---------------- Phase 4 (Three.js PRINCE + Happy Birthday) ---------------- */
 let phase4Started=false;
 function startPhase4(){
-    if(phase4Started) return; phase4Started=true;
+    if(phase4Started) return;
+    phase4Started=true;
     stage3.style.display="none";
 
     let scene = new THREE.Scene();
@@ -153,7 +118,6 @@ function startPhase4(){
     renderer.setPixelRatio(window.devicePixelRatio);
     document.body.appendChild(renderer.domElement);
 
-    // Stars
     let starGeo = new THREE.BufferGeometry();
     let starCount=2500;
     let starArr=new Float32Array(starCount*3);
@@ -162,29 +126,73 @@ function startPhase4(){
     let starMat = new THREE.PointsMaterial({color:0xffffff,size:2.2});
     let stars = new THREE.Points(starGeo,starMat);
     scene.add(stars);
+    let starVel = new Float32Array(starCount);
+    for(let i=0;i<starCount;i++){ starVel[i]=Math.random()*0.02+0.01; }
 
-    // Lights
     scene.add(new THREE.AmbientLight(0x666666,0.5));
     let keyLight = new THREE.PointLight(0x99ccff,2,2000); keyLight.position.set(180,200,140); scene.add(keyLight);
     let warmLight = new THREE.PointLight(0xffddaa,1.8,2000); warmLight.position.set(-120,160,-80); scene.add(warmLight);
 
-    // Text PRINCE with nebula
-    const loader = new THREE.FontLoader();
-    loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font){
-        const textGeo = new THREE.TextGeometry('PRINCE', {font: font, size: 60, height: 8, bevelEnabled:true, bevelThickness:3, bevelSize:2, bevelSegments:5});
-        const nebMat = new THREE.MeshStandardMaterial({color:0x8899ff,emissive:0x3344aa,metalness:0.9,roughness:0.2});
-        const textMesh = new THREE.Mesh(textGeo, nebMat);
-        textMesh.position.set(-180,0,0);
-        scene.add(textMesh);
-        animatePhase4();
+    let nebulaMat = new THREE.MeshStandardMaterial({color:0x8899ff,emissive:0x3344aa,metalness:0.9,roughness:0.2});
+    let princeLetters=[], birthdayMesh=null;
+    const princeText="PRINCE"; let loadedFont=null;
+
+    new THREE.FontLoader().load("https://threejs.org/examples/fonts/helvetiker_bold.typeface.json", font=>{
+        loadedFont=font;
+
+        let birthdayGeo=new THREE.TextGeometry("HAPPY BIRTHDAY",{font:font,size:40,height:6,bevelEnabled:true,bevelThickness:3,bevelSize:1.5});
+        birthdayGeo.center();
+        let birthdayMat=new THREE.MeshStandardMaterial({color:0xffd98c,emissive:0xffaa33,metalness:0.8,roughness:0.35});
+        birthdayMesh=new THREE.Mesh(birthdayGeo,birthdayMat); 
+        birthdayMesh.position.y=250; scene.add(birthdayMesh);
+
+        createPrinceLetters(); setTimeout(revealNextLetter,800);
     });
 
-    function animatePhase4(){
-        requestAnimationFrame(animatePhase4);
-        stars.rotation.y+=0.0015; // faster rotation
-        renderer.render(scene,camera);
+    function createPrinceLetters(){
+        const total=princeText.length; const size=140; const height=15; const spacing=size*0.95;
+        const totalWidth=spacing*(total-1); const xOffset=-totalWidth/2;
+        for(let i=0;i<total;i++){
+            let geo=new THREE.TextGeometry(princeText[i],{font:loadedFont,size:size,height:height,bevelEnabled:true,bevelThickness:5,bevelSize:3});
+            geo.center();
+            let mesh=new THREE.Mesh(geo,nebulaMat);
+            mesh.position.x=xOffset+i*spacing; mesh.position.y=0; mesh.position.z=-800;
+            mesh.scale.set(0.1,0.1,0.1); mesh.rotation.x=(Math.random()-0.5)*0.5; mesh.rotation.y=(Math.random()-0.5)*0.5; mesh.visible=false;
+            princeLetters.push(mesh); scene.add(mesh);
+        }
     }
+
+    let currentLetter=0; let orbitStart=false;
+    function revealNextLetter(){
+        if(currentLetter<princeLetters.length){
+            let mesh=princeLetters[currentLetter]; mesh.visible=true;
+            let finalZ=0; let duration=120; let frame=0;
+            function anim(){ if(frame<=duration){ let t=frame/duration; let overshoot=1+0.2*Math.sin(t*Math.PI); mesh.position.z=-800*(1-t)+finalZ*t; mesh.scale.set((0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot); mesh.rotation.x*=(1-t); mesh.rotation.y*=(1-t); frame++; requestAnimationFrame(anim); } }
+            anim(); currentLetter++; if(currentLetter===princeLetters.length){ setTimeout(()=>orbitStart=true,600); } setTimeout(revealNextLetter,350);
+        }
+    }
+
+    let angle=0; let glowDir=1;
+    function animate(){
+        requestAnimationFrame(animate); stars.rotation.y+=0.0005;
+        let pos=stars.geometry.attributes.position.array;
+        for(let i=0;i<starCount;i++){ pos[i*3+2]+=Math.sin(Date.now()*0.001+i)*0.01*starVel[i]; }
+        stars.geometry.attributes.position.needsUpdate=true;
+        if(orbitStart){ angle+=0.01; camera.position.x=Math.sin(angle)*420; camera.position.z=Math.cos(angle)*420; }
+
+        // Glowing effect for HAPPY BIRTHDAY
+        if(birthdayMesh){
+            birthdayMesh.material.emissiveIntensity+=0.005*glowDir;
+            if(birthdayMesh.material.emissiveIntensity>1.2 || birthdayMesh.material.emissiveIntensity<0.3) glowDir*=-1;
+        }
+
+        camera.lookAt(0,50,0); renderer.render(scene,camera);
+    }
+
+    animate();
+    window.addEventListener("resize",()=>{ camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); });
 }
 </script>
+
 </body>
 </html>

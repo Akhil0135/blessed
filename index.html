@@ -193,8 +193,14 @@ function startPhase4(){
         oneMesh=new THREE.Mesh(oneGeo,oneMat); oneMesh.position.y=180; oneMesh.position.z=-50; scene.add(oneMesh);
         // HAPPY BIRTHDAY
         let birthdayGeo=new THREE.TextGeometry("HAPPY BIRTHDAY",{font:font,size:36,height:6,bevelEnabled:true,bevelThickness:3,bevelSize:1.5});
+        birthdayGeo.center(); // <-- CENTER GEOMETRY
         let birthdayMat=new THREE.MeshStandardMaterial({color:0xffd98c,emissive:0xffaa33,metalness:0.8,roughness:0.35});
-        birthdayMesh=new THREE.Mesh(birthdayGeo,birthdayMat); birthdayMesh.position.y=180; scene.add(birthdayMesh);
+        birthdayMesh=new THREE.Mesh(birthdayGeo,birthdayMat);
+        // place at TOP CENTER
+        birthdayMesh.position.x = 0;
+        birthdayMesh.position.y = 200;
+        birthdayMesh.position.z = 0;
+        scene.add(birthdayMesh);
         // Create PRINCE letters
         createPrinceLetters(); setTimeout(revealNextLetter,800);
     });

@@ -151,14 +151,13 @@ new THREE.FontLoader().load(
     }
 );
 
-// ---------------- Create PRINCE letters (updated spacing) ----------------
+// ---------------- Create PRINCE letters (perfect spacing 0.82x) ----------------
 function createPrinceLetters(){
     const total = princeText.length;
-
     const size = 180;
     const height = 15;
-    const spacing = size * 0.74;   // EVEN IDEAL SPACING
 
+    const spacing = size * 0.82;   // **BEST PERFECT SPACING**
     const totalWidth = spacing * (total - 1);
     const xOffset = -totalWidth / 2;
 

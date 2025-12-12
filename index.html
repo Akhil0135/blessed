@@ -151,13 +151,13 @@ new THREE.FontLoader().load(
     }
 );
 
-// ---------------- Create PRINCE letters (perfect spacing 0.82x) ----------------
+// ---------------- Create PRINCE letters (smaller + perfect spacing) ----------------
 function createPrinceLetters(){
     const total = princeText.length;
-    const size = 180;
+    const size = 160;   // slightly smaller
     const height = 15;
 
-    const spacing = size * 0.82;   // **BEST PERFECT SPACING**
+    const spacing = size * 0.85;   // even spacing, no merge
     const totalWidth = spacing * (total - 1);
     const xOffset = -totalWidth / 2;
 
@@ -223,7 +223,7 @@ function revealNextLetter(){
         currentLetter++;
 
         if(currentLetter === princeLetters.length){
-            setTimeout(()=> orbitStart = true, 600);
+            setTimeout(()=> orbitStart = true, 600); // orbit starts after all letters
         }
 
         setTimeout(revealNextLetter, 350);

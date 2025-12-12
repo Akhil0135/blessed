@@ -6,131 +6,25 @@
 <title>IMAX Cinematic Full + Phase 4</title>
 <style>
 /* ---------------- Common Reset ---------------- */
-html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background: #000;
-}
-canvas { display: block; }
+html, body { margin:0; padding:0; overflow:hidden; background:#000; }
+canvas { display:block; }
 
 /* ---------------- Stage 1 ---------------- */
 #stage1 { position: relative; width: 100%; height: 100%; }
-#stage1 #instruction {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 22px;
-    color: #fff;
-    text-shadow: 0 0 8px #000;
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: 5;
-}
-#stage1 #message {
-    position: absolute;
-    bottom: 80px;
-    width: 100%;
-    text-align: center;
-    font-size: 26px;
-    font-weight: 600;
-    color: #ffd27f; /* Soft golden */
-    letter-spacing: 2px;
-    text-shadow: 0 0 5px #d9a441;
-    opacity: 0;
-    transition: opacity 1.5s ease;
-    z-index: 5;
-}
-#stage1 #sun {
-    position: absolute;
-    width: 260px;
-    height: 260px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #fff7c0 0%, #ffcc33 40%, #d68b00 70%, #000 100%);
-    box-shadow: 0 0 50px #ffb300;
-    top: -300px;
-    right: -300px;
-    opacity: 0;
-    transition: all 2.5s ease-in-out;
-    z-index: 3;
-}
-#stage1 #moon {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    left: 40px;
-    top: 40px;
-    border-radius: 50%;
-    cursor: grab;
-    background: radial-gradient(circle at 30% 30%, 
-        #d9d9d9 0%, 
-        #c0c0c0 20%, 
-        #9a9a9a 45%, 
-        #6d6d6d 70%, 
-        #2a2a2a 100%);
-    box-shadow: 0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5);
-    transition: box-shadow 0.3s ease;
-    z-index: 5;
-}
-#stage1 #ambient {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%);
-    pointer-events: none;
-    z-index: 1;
-}
+#stage1 #instruction { position: absolute; top: 20px; width: 100%; text-align: center; font-size: 22px; color: #fff; text-shadow: 0 0 8px #000; opacity: 0.9; pointer-events: none; z-index: 5; }
+#stage1 #message { position: absolute; bottom: 80px; width: 100%; text-align: center; font-size: 26px; font-weight: 600; color: #ffd27f; letter-spacing: 2px; text-shadow: 0 0 5px #d9a441; opacity: 0; transition: opacity 1.5s ease; z-index: 5; }
+#stage1 #sun { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, #fff7c0 0%, #ffcc33 40%, #d68b00 70%, #000 100%); box-shadow: 0 0 50px #ffb300; top: -300px; right: -300px; opacity: 0; transition: all 2.5s ease-in-out; z-index: 3; }
+#stage1 #moon { position: absolute; width: 200px; height: 200px; left: 40px; top: 40px; border-radius: 50%; cursor: grab; background: radial-gradient(circle at 30% 30%, #d9d9d9 0%, #c0c0c0 20%, #9a9a9a 45%, #6d6d6d 70%, #2a2a2a 100%); box-shadow: 0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5); transition: box-shadow 0.3s ease; z-index: 5; }
+#stage1 #ambient { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%); pointer-events: none; z-index: 1; }
 
 /* ---------------- Stage 2 ---------------- */
 #stage2 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
-#stage2 #instruction {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 22px;
-    color: #fff;
-    text-shadow: 0 0 8px #000;
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: 5;
-}
-#stage2 #verse {
-    position:absolute;
-    top:40px;
-    left:50%;
-    transform:translateX(-50%) scale(0.2);
-    font-size:32px;
-    color:#ffe9a6;
-    text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
-    opacity:0;
-    transition: all 1s ease-out;
-    white-space:nowrap;
-    pointer-events:none;
-    z-index:5;
-}
+#stage2 #instruction { position: absolute; top: 20px; width: 100%; text-align: center; font-size: 22px; color: #fff; text-shadow: 0 0 8px #000; opacity: 0.9; pointer-events: none; z-index: 5; }
+#stage2 #verse { position:absolute; top:40px; left:50%; transform:translateX(-50%) scale(0.2); font-size:32px; color:#ffe9a6; text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a; opacity:0; transition: all 1s ease-out; white-space:nowrap; pointer-events:none; z-index:5; }
 
 /* ---------------- Stage 3 ---------------- */
 #stage3 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
-#stage3 #clickBtn {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 15px 30px;
-    font-size: 20px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #ff0066, #ffcc00, #00ccff);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(255,255,255,0.6);
-    color: #fff;
-    opacity: 0;
-    transition: opacity 1s ease;
-    z-index: 1000;
-}
+#stage3 #clickBtn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); padding: 15px 30px; font-size: 20px; font-weight: bold; background: linear-gradient(90deg, #ff0066, #ffcc00, #00ccff); border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 0 20px rgba(255,255,255,0.6); color: #fff; opacity: 0; transition: opacity 1s ease; z-index: 1000; }
 </style>
 </head>
 <body>
@@ -159,177 +53,97 @@ canvas { display: block; }
     <button id="clickBtn">Click Here</button>
 </div>
 
-<!-- Three.js Phase 4 Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
+<!-- Phase 4 Container -->
+<div id="phase4-container" style="display:none;"></div>
 
 <script>
-// ---------------- Stage 1–3 scripts ----------------
-// [Paste your existing Stage1, Stage2, Stage3 scripts here EXACTLY as in your code]
-// Stage 1, 2, 3 code remains completely unchanged
-// ...
+/* ---------------- Stage 1–3 scripts here ---------------- */
+/* COPY ALL YOUR ORIGINAL Stage 1–3 SCRIPT EXACTLY AS YOU HAVE IT */
+/* This includes moon drag, stars animation, Stage 2 shield click, Stage 3 PRINCE → DAIVIK particles */
+/* ... (omitted for brevity, but you keep your original code exactly as in your file) */
 
-// ---------------- Phase 4 Function ----------------
+/* ---------------- Phase 4 Script ---------------- */
 function startPhase4(){
-    let scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x000000, 0.0012);
+    document.getElementById("phase4-container").style.display="block";
 
-    let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
-    camera.position.set(0, 50, 400);
-
-    let renderer = new THREE.WebGLRenderer({antialias:true});
+    // Create a new canvas for Phase 4
+    const container = document.getElementById("phase4-container");
+    const phase4Canvas = document.createElement("canvas");
+    container.appendChild(phase4Canvas);
+    const renderer = new THREE.WebGLRenderer({canvas: phase4Canvas, antialias:true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-    document.body.appendChild(renderer.domElement);
+
+    let scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.0012);
+    let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
+    camera.position.set(0, 50, 400);
 
     // Stars
     let starGeo = new THREE.BufferGeometry();
     let starCount = 2500;
-    let starArr = new Float32Array(starCount * 3);
-    for(let i=0;i<starCount*3;i++){
-        starArr[i] = (Math.random() - 0.5) * 3000;
-    }
-    starGeo.setAttribute("position", new THREE.BufferAttribute(starArr, 3));
-
-    let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
-    let stars = new THREE.Points(starGeo, starMat);
+    let starArr = new Float32Array(starCount*3);
+    for(let i=0;i<starCount*3;i++) starArr[i]=(Math.random()-0.5)*3000;
+    starGeo.setAttribute("position", new THREE.BufferAttribute(starArr,3));
+    let starMat = new THREE.PointsMaterial({color:0xffffff,size:2.2});
+    let stars = new THREE.Points(starGeo,starMat);
     scene.add(stars);
-
     let starVel = new Float32Array(starCount);
-    for(let i=0;i<starCount;i++){ starVel[i] = Math.random()*0.02 + 0.01; }
+    for(let i=0;i<starCount;i++) starVel[i]=Math.random()*0.02+0.01;
 
     // Lights
-    let ambient = new THREE.AmbientLight(0x666666, 0.5);
-    scene.add(ambient);
-    let keyLight = new THREE.PointLight(0x99ccff, 2, 2000);
-    keyLight.position.set(180, 200, 140);
-    scene.add(keyLight);
-    let warmLight = new THREE.PointLight(0xffddaa, 1.8, 2000);
-    warmLight.position.set(-120, 160, -80);
-    scene.add(warmLight);
+    scene.add(new THREE.AmbientLight(0x666666,0.5));
+    let keyLight=new THREE.PointLight(0x99ccff,2,2000); keyLight.position.set(180,200,140); scene.add(keyLight);
+    let warmLight=new THREE.PointLight(0xffddaa,1.8,2000); warmLight.position.set(-120,160,-80); scene.add(warmLight);
 
-    // Nebula Shader
+    // Nebula shader
     const nebulaMat = new THREE.ShaderMaterial({
-        uniforms: { time:{ value:0 } },
-        vertexShader: `
-            varying vec2 vUv;
-            void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
-        `,
-        fragmentShader: `
-            varying vec2 vUv;
-            uniform float time;
-            float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
-            float noise(vec2 p){
-                vec2 i=floor(p);
-                vec2 f=fract(p);
-                float a=hash(i); float b=hash(i+vec2(1.0,0.0));
-                float c=hash(i+vec2(0.0,1.0)); float d=hash(i+vec2(1.0,1.0));
-                vec2 u=f*f*(3.0-2.0*f);
-                return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
-            }
-            void main(){
-                float t = time*0.3;
-                float n = noise(vUv*10.0 + vec2(t*0.5,-t*0.3));
-                float glow = smoothstep(0.2,0.7,n);
-                vec3 col = vec3(0.3 + glow*0.7, 0.2 + glow*0.5, 0.6 + glow*0.9);
-                gl_FragColor = vec4(col,1.0);
-            }
-        `,
-        metalness: 1, roughness:0.25, transparent:true
+        uniforms:{time:{value:0}},
+        vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+        fragmentShader:`varying vec2 vUv; uniform float time;
+        float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
+        float noise(vec2 p){vec2 i=floor(p);vec2 f=fract(p);
+            float a=hash(i);float b=hash(i+vec2(1.0,0.0));float c=hash(i+vec2(0.0,1.0));float d=hash(i+vec2(1.0,1.0));
+            vec2 u=f*f*(3.0-2.0*f); return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;}
+        void main(){float t=time*0.3; float n=noise(vUv*10.0+vec2(t*0.5,-t*0.3)); float glow=smoothstep(0.2,0.7,n);
+        vec3 col=vec3(0.3+glow*0.7,0.2+glow*0.5,0.6+glow*0.9); gl_FragColor=vec4(col,1.0);}`
     });
 
-    // Text
-    let princeLetters = [];
-    let birthdayMesh=null, oneMesh=null;
-    const princeText = "PRINCE";
-    let loadedFont=null;
-
-    new THREE.FontLoader().load(
-        "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
-        font => {
-            loadedFont = font;
-            createPrinceLetters();
-            setTimeout(revealNextLetter, 800);
-        }
-    );
-
-    function createPrinceLetters(){
-        const total = princeText.length;
-        const size = 140;
-        const height = 15;
-        const spacing = size * 0.95;
-        const totalWidth = spacing * (total - 1);
-        const xOffset = -totalWidth / 2;
-        for(let i=0;i<total;i++){
-            let geo = new THREE.TextGeometry(princeText[i],{font:loadedFont,size:size,height:height,bevelEnabled:true,bevelThickness:5,bevelSize:3});
+    // PRINCE letters (simplified)
+    const princeText="PRINCE"; let princeLetters=[];
+    new THREE.FontLoader().load("https://threejs.org/examples/fonts/helvetiker_bold.typeface.json", font=>{
+        const size=140; const height=15; const spacing=size*0.95; const xOffset=-spacing*(princeText.length-1)/2;
+        for(let i=0;i<princeText.length;i++){
+            let geo=new THREE.TextGeometry(princeText[i],{font:font,size:size,height:height,bevelEnabled:true,bevelThickness:5,bevelSize:3});
             geo.center();
-            let mesh = new THREE.Mesh(geo, nebulaMat);
-            mesh.position.x = xOffset + i * spacing;
-            mesh.position.y = 0; mesh.position.z = -800;
-            mesh.scale.set(0.1,0.1,0.1);
-            mesh.rotation.x = (Math.random()-0.5)*0.5;
-            mesh.rotation.y = (Math.random()-0.5)*0.5;
-            mesh.material.opacity = 0; mesh.visible = false;
-            princeLetters.push(mesh); scene.add(mesh);
+            let mesh=new THREE.Mesh(geo,nebulaMat);
+            mesh.position.set(xOffset+i*spacing,0,-800); mesh.scale.set(0.1,0.1,0.1); mesh.rotation.x=(Math.random()-0.5)*0.5; mesh.rotation.y=(Math.random()-0.5)*0.5;
+            mesh.material.opacity=0; mesh.visible=false; princeLetters.push(mesh); scene.add(mesh);
         }
-    }
+        let currentLetter=0; function revealNextLetter(){if(currentLetter<princeLetters.length){
+            let mesh=princeLetters[currentLetter]; mesh.visible=true; let finalZ=0,duration=120,frame=0;
+            function animateLetter(){if(frame<=duration){let t=frame/duration,overshoot=1+0.2*Math.sin(t*Math.PI);
+                mesh.position.z=-800*(1-t)+finalZ*t; mesh.scale.set((0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot);
+                mesh.material.opacity=t; mesh.rotation.x*=(1-t); mesh.rotation.y*=(1-t); frame++; requestAnimationFrame(animateLetter);}}
+            animateLetter(); currentLetter++; setTimeout(revealNextLetter,350);}
+        } revealNextLetter();
+    });
 
-    let currentLetter = 0; let orbitStart=false;
-    function revealNextLetter(){
-        if(currentLetter < princeLetters.length){
-            let mesh = princeLetters[currentLetter];
-            mesh.visible = true;
-            let finalZ=0; let duration=120; let frame=0;
-            function animateLetter(){
-                if(frame<=duration){
-                    let t=frame/duration; let overshoot=1+0.2*Math.sin(t*Math.PI);
-                    mesh.position.z = -800*(1-t) + finalZ*t;
-                    mesh.scale.set((0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot);
-                    mesh.material.opacity = t;
-                    mesh.rotation.x *= (1-t); mesh.rotation.y *= (1-t);
-                    frame++; requestAnimationFrame(animateLetter);
-                }
-            }
-            animateLetter(); currentLetter++;
-            if(currentLetter===princeLetters.length){ setTimeout(()=> orbitStart=true,600);}
-            setTimeout(revealNextLetter,350);
-        }
-    }
-
-    let angle=0;
-    function animate(){
-        requestAnimationFrame(animate);
-        stars.rotation.y += 0.0005;
-        let positions = stars.geometry.attributes.position.array;
-        for(let i=0;i<starCount;i++){ positions[i*3+2] += Math.sin(Date.now()*0.001+i)*0.01*starVel[i]; }
-        stars.geometry.attributes.position.needsUpdate=true;
-        if(orbitStart){ angle+=0.0012; camera.position.x = Math.sin(angle)*400; camera.position.z = Math.cos(angle)*400; }
-        camera.lookAt(0,50,0);
-        nebulaMat.uniforms.time.value += 0.03;
+    let angle=0; function animate(){ requestAnimationFrame(animate);
+        stars.rotation.y+=0.0005; let pos=stars.geometry.attributes.position.array;
+        for(let i=0;i<starCount;i++) pos[i*3+2]+=Math.sin(Date.now()*0.001+i)*0.01*starVel[i];
+        stars.geometry.attributes.position.needsUpdate=true; angle+=0.0012;
+        camera.position.x=Math.sin(angle)*400; camera.position.z=Math.cos(angle)*400; camera.lookAt(0,50,0); nebulaMat.uniforms.time.value+=0.03;
         renderer.render(scene,camera);
-    }
-    animate();
+    } animate();
 
     window.addEventListener("resize",()=>{ camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); });
 }
 
-// ---------------- Call Phase 4 3 seconds after Stage 3 completes ----------------
-function startPhase4AfterStage3(){
-    setTimeout(()=>{ startPhase4(); }, 3000);
-}
-
-// Add call after Stage 3 "DAIVIK" button click or animation
-// Example: inside btn click after particles transform
-btn.addEventListener("click", ()=>{
-    btn.style.display="none";
-    const newText="DAIVIK";
-    const newPoints=mapTextToPoints(newText);
-    particles.forEach((p,i)=>{ const np=newPoints[i%newPoints.length]; p.tx=np.x; p.ty=np.y; p.color="#fff"; });
-    // Phase 4 starts 3s after
-    startPhase4AfterStage3();
+// Trigger Phase 4 **3 seconds after Stage 3 click**
+document.getElementById("clickBtn").addEventListener("click", ()=>{
+    setTimeout(()=>{ startPhase4(); },3000);
 });
 </script>
-
 </body>
 </html>

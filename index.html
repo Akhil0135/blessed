@@ -42,12 +42,8 @@ canvas { display: block; }
 
 /* Stage 2 */
 #stage2 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
-#stage2 #instructionStar {
-    position:absolute; top:20px; width:100%; text-align:center;
-    font-size:22px; color:#fff; text-shadow:0 0 8px #000; z-index:5;
-}
 #stage2 #verse {
-    position:absolute; top:60px; left:50%; transform:translateX(-50%) scale(0.2);
+    position:absolute; top:40px; left:50%; transform:translateX(-50%) scale(0.2);
     font-size:32px; color:#ffe9a6; text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
     opacity:0; transition: all 1s ease-out; white-space:nowrap; z-index:5;
 }
@@ -82,7 +78,6 @@ canvas { display: block; }
 <!-- Stage 2 -->
 <div id="stage2">
     <canvas id="shieldCanvas"></canvas>
-    <div id="instructionStar">Click the star</div>
     <div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 </div>
 
@@ -175,7 +170,7 @@ btn.addEventListener("click", ()=>{
     btn2.addEventListener("click", startPhase4);
 });
 
-/* ---------------- PHASE 4 DIRECT EMBEDDED ---------------- */
+/* ---------------- PHASE 4 ---------------- */
 function startPhase4(){
     stage3.style.display="none";
     const phaseDiv=document.getElementById("phase4");
@@ -183,6 +178,7 @@ function startPhase4(){
 
     let scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.0012);
+
     let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
     camera.position.set(0,50,400);
 
@@ -191,16 +187,47 @@ function startPhase4(){
     renderer.setPixelRatio(window.devicePixelRatio);
     phaseDiv.appendChild(renderer.domElement);
 
+    // Stars
     let starGeo = new THREE.BufferGeometry();
     let starCount = 2500;
     let starArr = new Float32Array(starCount*3);
-    for(let i=0;i<starCount*3;i++){ starArr[i]=(Math.random()-0.5)*3000; }
+    for(let i=0;i<starCount*3;i++){ starArr[i] = (Math.random()-0.5)*3000; }
     starGeo.setAttribute("position", new THREE.BufferAttribute(starArr,3));
-    let starMat = new THREE.PointsMaterial({color:0xffffff,size:1});
+    let starMat = new THREE.PointsMaterial({color:0xffffff,size:1.5});
     let stars = new THREE.Points(starGeo, starMat);
     scene.add(stars);
 
-    function animatePhase4(){ requestAnimationFrame(animatePhase4); stars.rotation.y+=0.0006; renderer.render(scene,camera); }
+    // Lighting
+    let light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(0,200,200);
+    scene.add(light);
+
+    // Text
+    let loader = new THREE.FontLoader();
+    loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font){
+        let textGeo = new THREE.TextGeometry("HAPPY BIRTHDAY PRINCE", {
+            font: font,
+            size: 25,
+            height: 5,
+            curveSegments: 12,
+            bevelEnabled: true,
+            bevelThickness: 1,
+            bevelSize: 1,
+            bevelOffset: 0,
+            bevelSegments: 5
+        });
+        textGeo.center();
+        let textMat = new THREE.MeshPhongMaterial({color:0xffdd33, shininess:100});
+        let mesh = new THREE.Mesh(textGeo, textMat);
+        mesh.position.set(0,0,0);
+        scene.add(mesh);
+    });
+
+    function animatePhase4(){
+        requestAnimationFrame(animatePhase4);
+        stars.rotation.y += 0.0005;
+        renderer.render(scene,camera);
+    }
     animatePhase4();
 }
 </script>

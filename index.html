@@ -1,3 +1,5 @@
+this is the code....dont touch anything....
+this is my code...
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,12 +44,8 @@ canvas { display: block; }
 
 /* Stage 2 */
 #stage2 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
-#stage2 #clickStarMsg {
-    position:absolute; top:20px; width:100%; text-align:center;
-    font-size:24px; color:#fff; text-shadow:0 0 8px #000; z-index:5;
-}
 #stage2 #verse {
-    position:absolute; top:60px; left:50%; transform:translateX(-50%) scale(0.2);
+    position:absolute; top:40px; left:50%; transform:translateX(-50%) scale(0.2);
     font-size:32px; color:#ffe9a6; text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
     opacity:0; transition: all 1s ease-out; white-space:nowrap; z-index:5;
 }
@@ -82,7 +80,6 @@ canvas { display: block; }
 <!-- Stage 2 -->
 <div id="stage2">
     <canvas id="shieldCanvas"></canvas>
-    <div id="clickStarMsg">Click the star</div>
     <div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 </div>
 
@@ -182,7 +179,7 @@ function startPhase4(){
     const phaseDiv=document.getElementById("phase4");
     phaseDiv.style.display="block";
 
-    // Three.js Phase 4 Scene
+    // -------- Three.js Phase 4 Scene --------
     let scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.0012);
     let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 3000);
@@ -197,28 +194,59 @@ function startPhase4(){
     let starGeo = new THREE.BufferGeometry();
     let starCount = 2500;
     let starArr = new Float32Array(starCount*3);
-    for(let i=0;i<starCount*3;i++){ starArr[i]=(Math.random()-0.5)*2000; }
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starArr,3));
-    let starMat = new THREE.PointsMaterial({color:0xffffff, size:1.5});
-    let stars = new THREE.Points(starGeo, starMat); scene.add(stars);
+    for(let i=0;i<starCount*3;i++){ starArr[i]=(Math.random()-0.5)*3000; }
+    starGeo.setAttribute("position", new THREE.BufferAttribute(starArr,3));
+    let starMat = new THREE.PointsMaterial({ color:0xffffff, size:2.2 });
+    let stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+    let starVel = new Float32Array(starCount); for(let i=0;i<starCount;i++){ starVel[i]=Math.random()*0.02+0.01; }
 
-    // Text
-    const loader = new THREE.FontLoader();
-    loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font){
-        let textGeo = new THREE.TextGeometry('HAPPY BIRTHDAY DAIVIK', {font: font, size:30, height:2});
-        let textMat = new THREE.MeshBasicMaterial({color:0xffcc33});
-        let textMesh = new THREE.Mesh(textGeo, textMat);
-        textGeo.center();
-        textMesh.position.set(0,0,0);
-        scene.add(textMesh);
+    // Lights
+    let ambient = new THREE.AmbientLight(0x666666,0.5); scene.add(ambient);
+    let keyLight = new THREE.PointLight(0x99ccff,2,2000); keyLight.position.set(180,200,140); scene.add(keyLight);
+    let warmLight = new THREE.PointLight(0xffddaa,1.8,2000); warmLight.position.set(-120,160,-80); scene.add(warmLight);
+
+    // Nebula Shader
+    const nebulaMat = new THREE.ShaderMaterial({
+        uniforms: { time:{ value:0 } },
+        vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+        fragmentShader:`varying vec2 vUv;uniform float time;float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);} float noise(vec2 p){ vec2 i=floor(p); vec2 f=fract(p); float a=hash(i); float b=hash(i+vec2(1.0,0.0)); float c=hash(i+vec2(0.0,1.0)); float d=hash(i+vec2(1.0,1.0)); vec2 u=f*f*(3.0-2.0*f); return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;} void main(){ float t=time*0.3; float n=noise(vUv*10.0+vec2(t*0.5,-t*0.3)); float glow=smoothstep(0.2,0.7,n); vec3 col=vec3(0.3+glow*0.7,0.2+glow*0.5,0.6+glow*0.9); gl_FragColor=vec4(col,1.0);}`,
+        metalness:1, roughness:0.25, transparent:true
     });
 
-    function animatePhase4(){
-        requestAnimationFrame(animatePhase4);
-        stars.rotation.y+=0.0007;
-        renderer.render(scene,camera);
-    }
-    animatePhase4();
+    // Text
+    let princeLetters=[], birthdayMesh=null, oneMesh=null;
+    const princeText="PRINCE";
+    let loadedFont=null;
+
+    new THREE.FontLoader().load("https://threejs.org/examples/fonts/helvetiker_bold.typeface.json", font=>{
+        loadedFont=font;
+
+        // Background 1
+        let oneGeo=new THREE.TextGeometry("1",{ font: font, size:120, height:10, bevelEnabled:true, bevelThickness:5, bevelSize:3});
+        oneGeo.center();
+        let oneMat=new THREE.MeshStandardMaterial({ color:0x3399ff, emissive:0x112244, metalness:0.5, roughness:0.6 });
+        oneMesh=new THREE.Mesh(oneGeo, oneMat); oneMesh.position.y=180; oneMesh.position.z=-50; scene.add(oneMesh);
+
+        // HAPPY BIRTHDAY
+        let birthdayGeo=new THREE.TextGeometry("HAPPY BIRTHDAY",{ font: font, size:36, height:6, bevelEnabled:true, bevelThickness:3, bevelSize:1.5});
+        birthdayGeo.center();
+        let birthdayMat=new THREE.MeshStandardMaterial({ color:0xffd98c, emissive:0xffaa33, metalness:0.8, roughness:0.35});
+        birthdayMesh=new THREE.Mesh(birthdayGeo,birthdayMat); birthdayMesh.position.y=180; scene.add(birthdayMesh);
+
+        createPrinceLetters(); setTimeout(revealNextLetter,800);
+    });
+
+    function createPrinceLetters(){ const total=princeText.length; const size=140; const height=15; const spacing=size*0.95; const totalWidth=spacing*(total-1); const xOffset=-totalWidth/2; for(let i=0;i<total;i++){ let geo=new THREE.TextGeometry(princeText[i],{ font: loadedFont, size:size, height:height, bevelEnabled:true, bevelThickness:5, bevelSize:3}); geo.center(); let mesh=new THREE.Mesh(geo,nebulaMat); mesh.position.x=xOffset+i*spacing; mesh.position.y=0; mesh.position.z=-800; mesh.scale.set(0.1,0.1,0.1); mesh.rotation.x=(Math.random()-0.5)*0.5; mesh.rotation.y=(Math.random()-0.5)*0.5; mesh.material.opacity=0; mesh.visible=false; princeLetters.push(mesh); scene.add(mesh); } }
+
+    let currentLetter=0, orbitStart=false;
+    function revealNextLetter(){ if(currentLetter<princeLetters.length){ let mesh=princeLetters[currentLetter]; mesh.visible=true; let finalZ=0; let duration=120; let frame=0; function animateLetter(){ if(frame<=duration){ let t=frame/duration; let overshoot=1+0.2*Math.sin(t*Math.PI); mesh.position.z=-800*(1-t)+finalZ*t; mesh.scale.set((0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot,(0.1+0.9*t)*overshoot); mesh.material.opacity=t; mesh.rotation.x*=(1-t); mesh.rotation.y*=(1-t); frame++; requestAnimationFrame(animateLetter); } } animateLetter(); currentLetter++; if(currentLetter===princeLetters.length){ setTimeout(()=>orbitStart=true,600); } setTimeout(revealNextLetter,350); } }
+
+    let angle=0;
+    function animate(){ requestAnimationFrame(animate); stars.rotation.y+=0.0005; let positions=stars.geometry.attributes.position.array; for(let i=0;i<starCount;i++){ positions[i*3+2]+=Math.sin(Date.now()*0.001+i)*0.01*starVel[i]; } stars.geometry.attributes.position.needsUpdate=true; if(orbitStart){ angle+=0.0012; camera.position.x=Math.sin(angle)*400; camera.position.z=Math.cos(angle)*400; } camera.lookAt(0,50,0); nebulaMat.uniforms.time.value+=0.03; if(birthdayMesh){ let glow=0.5+0.5*Math.sin(Date.now()*0.002); birthdayMesh.material.emissiveIntensity=glow; birthdayMesh.material.emissive.setHex(0xffaa33); } renderer.render(scene,camera); }
+    animate();
+
+    window.addEventListener("resize",()=>{ camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); });
 }
 </script>
 </body>

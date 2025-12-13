@@ -85,6 +85,8 @@ canvas { display: block; }
     font-size: 22px;
     color: #fff;
     text-shadow: 0 0 8px #000;
+    opacity: 0.9;
+    pointer-events: none;
     z-index: 5;
 }
 #stage2 #verse {
@@ -97,13 +99,14 @@ canvas { display: block; }
     text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
     opacity:0;
     transition: all 1s ease-out;
+    white-space:nowrap;
+    pointer-events:none;
     z-index:5;
 }
 
 /* ---------------- Stage 3 ---------------- */
 #stage3 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
-
-button {
+#stage3 button {
     position: absolute;
     bottom: 40px;
     left: 50%;
@@ -118,14 +121,15 @@ button {
     box-shadow: 0 0 20px rgba(255,255,255,0.6);
     color: #fff;
     opacity: 0;
+    transition: opacity 1s ease;
     z-index: 1000;
 }
+#clickBtn2 { display:none; }
 </style>
 </head>
 
 <body>
 
-<!-- Stage 1 -->
 <div id="stage1">
     <div id="instruction">Drag the moon to the end</div>
     <canvas id="stars"></canvas>
@@ -136,39 +140,33 @@ button {
     <audio id="whoosh" src="https://cdn.pixabay.com/download/audio/2021/09/16/audio_4f1c1c9f28.mp3"></audio>
 </div>
 
-<!-- Stage 2 -->
 <div id="stage2">
     <div id="instruction">Click the star at the center of the shield</div>
     <canvas id="shieldCanvas"></canvas>
     <div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 </div>
 
-<!-- Stage 3 -->
 <div id="stage3">
     <canvas id="c"></canvas>
-    <button id="btnPrince">Click Here</button>
-    <button id="btnDaivik">Click Here</button>
+    <button id="clickBtn">Click Here</button>
+    <button id="clickBtn2">Click Here</button>
 </div>
 
 <script>
-/* ---------------- Stage 3 Only Changes ---------------- */
-const btnPrince = document.getElementById("btnPrince");
-const btnDaivik = document.getElementById("btnDaivik");
-btnDaivik.style.display = "none";
+/* ---------------- Stage 3 Script (ONLY ADDITIONS BELOW) ---------------- */
+const btn = document.getElementById("clickBtn");
+const btn2 = document.getElementById("clickBtn2");
 
-let awaitingDaivikCompletion = false;
-let daivikCompleted = false;
+let waitingForDaivik = false;
+let daivikDone = false;
 
-/* ORIGINAL STAGE 3 CODE CONTINUES UNCHANGED ABOVE */
-
-btnPrince.addEventListener("click", ()=>{
-    btnPrince.style.display = "none";
-
+btn.addEventListener("click", ()=>{
+    btn.style.display="none";
     const newText="DAIVIK";
     const newPoints=mapTextToPoints(newText);
 
-    awaitingDaivikCompletion = true;
-    daivikCompleted = false;
+    waitingForDaivik = true;
+    daivikDone = false;
 
     particles.forEach((p,i)=>{
         const np=newPoints[i%newPoints.length];
@@ -178,32 +176,35 @@ btnPrince.addEventListener("click", ()=>{
     });
 });
 
-/* Injected EXACT-frame detection */
-function checkDaivikCompletion() {
-    if (awaitingDaivikCompletion && !daivikCompleted) {
-        let settled = true;
-        for (let p of particles) {
-            if (Math.abs(p.x - p.tx) > 0.8 || Math.abs(p.y - p.ty) > 0.8) {
-                settled = false;
-                break;
-            }
+function animate3(){
+    ctx3.clearRect(0,0,c.width,c.height);
+    applyCamera(); drawStarShape();
+
+    particles.forEach(p=>{
+        p.x+=(p.tx-p.x)*p.speed;
+        p.y+=(p.ty-p.y)*p.speed;
+        ctx3.fillStyle=p.color||"#fff";
+        ctx3.beginPath();
+        ctx3.arc(p.x,p.y,p.size,0,Math.PI*2);
+        ctx3.fill();
+    });
+
+    if(waitingForDaivik && !daivikDone){
+        let settled=true;
+        for(let p of particles){
+            if(Math.abs(p.x-p.tx)>0.8 || Math.abs(p.y-p.ty)>0.8){ settled=false; break; }
         }
-        if (settled) {
-            daivikCompleted = true;
-            awaitingDaivikCompletion = false;
-            btnDaivik.style.display = "block";
-            btnDaivik.style.opacity = 1;
+        if(settled){
+            daivikDone=true;
+            waitingForDaivik=false;
+            btn2.style.display="block";
+            btn2.style.opacity=1;
         }
     }
+
+    ctx3.restore();
+    requestAnimationFrame(animate3);
 }
-
-/* Hook into existing animation loop safely */
-const originalAnimate3 = animate3;
-animate3 = function(){
-    originalAnimate3();
-    checkDaivikCompletion();
-};
 </script>
-
 </body>
 </html>

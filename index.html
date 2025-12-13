@@ -5,122 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>IMAX Cinematic Full – Phase 1 to 4</title>
 <style>
-/* ---------------- Common Reset ---------------- */
-html, body { margin: 0; padding: 0; overflow: hidden; background: #000; }
-canvas { display: block; }
+html, body { margin:0; padding:0; overflow:hidden; background:#000; }
+canvas { display:block; }
 
-/* ---------------- Stage 1 ---------------- */
+/* Stage 1 */
 #stage1 { position: relative; width: 100%; height: 100%; }
-#stage1 #instruction {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 22px;
-    color: #fff;
-    text-shadow: 0 0 8px #000;
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: 5;
-}
-#stage1 #message {
-    position: absolute;
-    bottom: 80px;
-    width: 100%;
-    text-align: center;
-    font-size: 26px;
-    font-weight: 600;
-    color: #ffd27f;
-    letter-spacing: 2px;
-    text-shadow: 0 0 5px #d9a441;
-    opacity: 0;
-    transition: opacity 1.5s ease;
-    z-index: 5;
-}
-#stage1 #sun {
-    position: absolute;
-    width: 260px;
-    height: 260px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #fff7c0 0%, #ffcc33 40%, #d68b00 70%, #000 100%);
-    box-shadow: 0 0 50px #ffb300;
-    top: -300px;
-    right: -300px;
-    opacity: 0;
-    transition: all 2.5s ease-in-out;
-    z-index: 3;
-}
-#stage1 #moon {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    left: 40px;
-    top: 40px;
-    border-radius: 50%;
-    cursor: grab;
-    background: radial-gradient(circle at 30% 30%, #d9d9d9 0%, #c0c0c0 20%, #9a9a9a 45%, #6d6d6d 70%, #2a2a2a 100%);
-    box-shadow: 0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5);
-    transition: box-shadow 0.3s ease;
-    z-index: 5;
-}
-#stage1 #ambient {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%);
-    pointer-events: none;
-    z-index: 1;
-}
+#stage1 #instruction { position:absolute; top:20px; width:100%; text-align:center; font-size:22px; color:#fff; text-shadow:0 0 8px #000; opacity:0.9; }
+#stage1 #message { position:absolute; bottom:80px; width:100%; text-align:center; font-size:26px; font-weight:600; color:#ffd27f; letter-spacing:2px; text-shadow:0 0 5px #d9a441; opacity:0; transition:opacity 1.5s ease; }
+#stage1 #sun { position:absolute; width:260px; height:260px; border-radius:50%; background: radial-gradient(circle,#fff7c0 0%,#ffcc33 40%,#d68b00 70%,#000 100%); box-shadow:0 0 50px #ffb300; top:-300px; right:-300px; opacity:0; transition:all 2.5s ease-in-out; }
+#stage1 #moon { position:absolute; width:200px; height:200px; left:40px; top:40px; border-radius:50%; cursor:grab; background: radial-gradient(circle at 30% 30%, #d9d9d9 0%, #c0c0c0 20%, #9a9a9a 45%, #6d6d6d 70%, #2a2a2a 100%); box-shadow:0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5); transition:box-shadow 0.3s ease; }
+#stage1 #ambient { position:absolute; width:100%; height:100%; background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%); pointer-events:none; }
 
-/* ---------------- Stage 2 ---------------- */
+/* Stage 2 */
 #stage2 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
-#stage2 #instruction {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 22px;
-    color: #fff;
-    text-shadow: 0 0 8px #000;
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: 5;
-}
-#stage2 #verse {
-    position:absolute;
-    top:40px;
-    left:50%;
-    transform:translateX(-50%) scale(0.2);
-    font-size:32px;
-    color:#ffe9a6;
-    text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
-    opacity:0;
-    transition: all 1s ease-out;
-    white-space:nowrap;
-    pointer-events:none;
-    z-index:5;
-}
+#stage2 #verse { position:absolute; top:40px; left:50%; transform:translateX(-50%) scale(0.2); font-size:32px; color:#ffe9a6; text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a; opacity:0; transition: all 1s ease-out; white-space:nowrap; }
 
-/* ---------------- Stage 3 ---------------- */
+/* Stage 3 */
 #stage3 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
-#stage3 #clickBtn {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 15px 30px;
-    font-size: 20px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #ff0066, #ffcc00, #00ccff);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(255,255,255,0.6);
-    color: #fff;
-    opacity: 0;
-    transition: opacity 1s ease;
-    z-index: 1000;
-}
+#stage3 #clickBtn { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); padding:15px 30px; font-size:20px; font-weight:bold; background: linear-gradient(90deg,#ff0066,#ffcc00,#00ccff); border:none; border-radius:10px; cursor:pointer; box-shadow:0 0 20px rgba(255,255,255,0.6); color:#fff; opacity:1; z-index:1000; }
 </style>
 </head>
 <body>
@@ -138,7 +40,6 @@ canvas { display: block; }
 
 <!-- Stage 2 -->
 <div id="stage2">
-    <div id="instruction">Click the star at the center of the shield</div>
     <canvas id="shieldCanvas"></canvas>
     <div id="verse">He counts the stars and calls them each by name — Psalm 147:4</div>
 </div>
@@ -149,7 +50,7 @@ canvas { display: block; }
     <button id="clickBtn">Click Here</button>
 </div>
 
-<!-- Phase 4: Three.js Scene -->
+<!-- Phase 4 will be loaded by JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/FontLoader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/geometries/TextGeometry.js"></script>
@@ -163,22 +64,16 @@ const sun = document.getElementById("sun");
 const whoosh = document.getElementById("whoosh");
 const starsCanvas = document.getElementById("stars");
 const starsCtx = starsCanvas.getContext("2d");
-
-function resize1() { starsCanvas.width=window.innerWidth; starsCanvas.height=window.innerHeight; }
-resize1(); window.onresize = resize1;
-
-let stars=[]; for(let i=0;i<250;i++){ stars.push({x:Math.random()*starsCanvas.width, y:Math.random()*starsCanvas.height, z:Math.random()*1.5+0.5, tw:Math.random()*0.02+0.005}); }
-
-function drawStars() { starsCtx.clearRect(0,0,starsCanvas.width,starsCanvas.height); stars.forEach(s=>{ let glow=(Math.sin(Date.now()*s.tw)+1)*0.5; starsCtx.fillStyle=`rgba(255,255,255,${glow})`; starsCtx.beginPath(); starsCtx.arc(s.x,s.y,s.z,0,Math.PI*2); starsCtx.fill(); }); }
+function resize1(){ starsCanvas.width=window.innerWidth; starsCanvas.height=window.innerHeight; }
+resize1(); window.onresize=resize1;
+let stars=[]; for(let i=0;i<250;i++){ stars.push({x:Math.random()*starsCanvas.width,y:Math.random()*starsCanvas.height,z:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005}); }
+function drawStars(){ starsCtx.clearRect(0,0,starsCanvas.width,starsCanvas.height); stars.forEach(s=>{ let glow=(Math.sin(Date.now()*s.tw)+1)*0.5; starsCtx.fillStyle=`rgba(255,255,255,${glow})`; starsCtx.beginPath(); starsCtx.arc(s.x,s.y,s.z,0,Math.PI*2); starsCtx.fill(); }); }
 
 let dragging=false, offsetX, offsetY, revealIndex=0;
-const fullMsg = message.innerText;
-message.innerText="";
-
+const fullMsg = message.innerText; message.innerText="";
 moon.addEventListener("mousedown", e=>{ dragging=true; offsetX=e.clientX-moon.offsetLeft; offsetY=e.clientY-moon.offsetTop; moon.style.cursor="grabbing"; whoosh.currentTime=0; whoosh.play(); });
 document.addEventListener("mouseup", ()=>{ dragging=false; moon.style.cursor="grab"; });
-document.addEventListener("mousemove", e=>{ if(!dragging) return; moon.style.left=(e.clientX-offsetX)+"px"; moon.style.top=(e.clientY-offsetY)+"px"; if(revealIndex<fullMsg.length){ message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++);} stars.forEach(s=>s.tw=0); starsCtx.globalAlpha-=0.01; if(starsCtx.globalAlpha<0) starsCtx.globalAlpha=0; if(revealIndex>=fullMsg.length){ moon.style.opacity=0; setTimeout(()=>{ sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px"; stars=[]; setTimeout(()=>{ startStage2(); }, 5000); },800); } });
-
+document.addEventListener("mousemove", e=>{ if(!dragging) return; moon.style.left=(e.clientX-offsetX)+"px"; moon.style.top=(e.clientY-offsetY)+"px"; if(revealIndex<fullMsg.length){ message.style.opacity=1; message.innerText=fullMsg.substring(0,revealIndex++);} if(revealIndex>=fullMsg.length){ moon.style.opacity=0; setTimeout(()=>{ sun.style.opacity=1; sun.style.top="40px"; sun.style.right="40px"; setTimeout(()=>{ startStage2(); },2000); },800); } });
 function animate1(){ drawStars(); requestAnimationFrame(animate1); }
 animate1();
 
@@ -188,14 +83,10 @@ const shieldCanvas=document.getElementById("shieldCanvas");
 const shieldCtx=shieldCanvas.getContext("2d");
 let width=window.innerWidth,height=window.innerHeight;
 shieldCanvas.width=width; shieldCanvas.height=height;
-
-let shieldX=width/2, shieldY=height/2;
-let R=Math.min(width,height)/3;
+let shieldX=width/2, shieldY=height/2; let R=Math.min(width,height)/3;
 let starSpin=false, starAngle=0;
-
 const bgStars2=[];
 for(let i=0;i<200;i++){ bgStars2.push({x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.5+0.5,tw:Math.random()*0.02+0.005}); }
-
 function drawShield(){
     shieldCtx.save();
     shieldCtx.translate(shieldX,shieldY);
@@ -207,29 +98,15 @@ function drawShield(){
     shieldCtx.fillStyle=g3; shieldCtx.beginPath(); shieldCtx.arc(0,0,R*0.5,0,Math.PI*2); shieldCtx.fill();
     let g4=shieldCtx.createRadialGradient(0,0,R*0.05,0,0,R*0.35); g4.addColorStop(0,"#b4c7e0"); g4.addColorStop(1,"#001933");
     shieldCtx.fillStyle=g4; shieldCtx.beginPath(); shieldCtx.arc(0,0,R*0.35,0,Math.PI*2); shieldCtx.fill();
-    shieldCtx.save();
-    if(starSpin) shieldCtx.rotate(starAngle);
-    let starR=R*0.28;
-    shieldCtx.beginPath();
+    shieldCtx.save(); if(starSpin) shieldCtx.rotate(starAngle);
+    let starR=R*0.28; shieldCtx.beginPath();
     for(let i=0;i<5;i++){ let o=(Math.PI*2/5)*i-Math.PI/2; let n=o+Math.PI/5; shieldCtx.lineTo(Math.cos(o)*starR,Math.sin(o)*starR); shieldCtx.lineTo(Math.cos(n)*starR*0.45,Math.sin(n)*starR*0.45); }
-    shieldCtx.closePath();
-    shieldCtx.shadowColor="rgba(255,255,255,0.25)"; shieldCtx.shadowBlur=5;
+    shieldCtx.closePath(); shieldCtx.shadowColor="rgba(255,255,255,0.25)"; shieldCtx.shadowBlur=5;
     let sg=shieldCtx.createRadialGradient(0,0,starR*0.1,0,0,starR); sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
-    shieldCtx.fillStyle=sg; shieldCtx.fill();
-    shieldCtx.restore(); shieldCtx.restore();
+    shieldCtx.fillStyle=sg; shieldCtx.fill(); shieldCtx.restore(); shieldCtx.restore();
 }
-
-function animate2(){
-    shieldCtx.fillStyle="#0a0d19"; shieldCtx.fillRect(0,0,width,height);
-    bgStars2.forEach(s=>{ const glow=(Math.sin(Date.now()*s.tw)+1)*0.5; shieldCtx.fillStyle=`rgba(255,255,255,${glow})`; shieldCtx.beginPath(); shieldCtx.arc(s.x,s.y,s.r,0,Math.PI*2); shieldCtx.fill(); });
-    drawShield();
-    if(starSpin) starAngle+=0.035;
-    requestAnimationFrame(animate2);
-}
-
-function startStage2(){
-    stage1.style.display="none"; stage2.style.display="block"; animate2();
-}
+function animate2(){ shieldCtx.fillStyle="#0a0d19"; shieldCtx.fillRect(0,0,width,height); bgStars2.forEach(s=>{ const glow=(Math.sin(Date.now()*s.tw)+1)*0.5; shieldCtx.fillStyle=`rgba(255,255,255,${glow})`; shieldCtx.beginPath(); shieldCtx.arc(s.x,s.y,s.r,0,Math.PI*2); shieldCtx.fill(); }); drawShield(); if(starSpin) starAngle+=0.035; requestAnimationFrame(animate2); }
+function startStage2(){ stage1.style.display="none"; stage2.style.display="block"; animate2(); }
 
 const verseDiv=document.getElementById("verse");
 shieldCanvas.addEventListener("click", e=>{
@@ -237,8 +114,7 @@ shieldCanvas.addEventListener("click", e=>{
     if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
         starSpin=true;
         verseDiv.style.opacity=1; verseDiv.style.transform="translateX(-50%) scale(1)";
-        setTimeout(()=>{ startStage3(); },7000);
-        document.getElementById("stage2").querySelector("#instruction").style.opacity=0;
+        setTimeout(()=>{ startStage3(); },2000);
     }
 });
 
@@ -251,13 +127,13 @@ function resize3(){ c.width=window.innerWidth; c.height=window.innerHeight; }
 resize3(); window.onresize=resize3;
 
 const bgStars3=[]; const bgStarCount=180;
-for(let i=0;i<bgStarCount;i++){ bgStars3.push({x:Math.random()*c.width,y:Math.random()*c.height,size:Math.random()*1.1+0.2,tw:Math.random()*0.02+0.003}); }
+for(let i=0;i<bgStarCount;i++){ bgStars3.push({x:Math.random()*c.width,y:Math.random()*c.height,size:Math.random()*1.8+0.5,tw:Math.random()*0.02+0.003}); }
 
 function drawStarShape(){ bgStars3.forEach(s=>{ const glow=(Math.sin(Date.now()*s.tw)+1)*0.5; ctx3.fillStyle=`rgba(255,255,255,${glow})`; ctx3.beginPath(); ctx3.arc(s.x,s.y,s.size,0,Math.PI*2); ctx3.fill(); }); }
 
 function mapTextToPoints(textStr){ const temp=document.createElement("canvas"); const tctx=temp.getContext("2d"); temp.width=c.width; temp.height=c.height; const fontSize=c.width/7; tctx.clearRect(0,0,temp.width,temp.height); tctx.fillStyle="#fff"; tctx.font="bold "+fontSize+"px Arial"; tctx.textAlign="center"; tctx.textBaseline="middle"; tctx.fillText(textStr,temp.width/2,temp.height/2); const imageData=tctx.getImageData(0,0,temp.width,temp.height).data; const points=[]; for(let y=0;y<temp.height;y+=6){ for(let x=0;x<temp.width;x+=6){ let index=(y*temp.width+x)*4; if(imageData[index+3]>200){ points.push({x,y}); } } } return points; }
 
-let currentText="PRINCE"; let letterPoints=mapTextToPoints(currentText);
+let currentText="DAIVIK"; let letterPoints=mapTextToPoints(currentText);
 const particles=letterPoints.map(p=>({x:Math.random()*c.width,y:Math.random()*c.height,tx:p.x,ty:p.y,speed:Math.random()*0.08+0.04,size:Math.random()*1.8+1.2,color:null}));
 
 let camera3={dx:0,dy:0,zoom:1};
@@ -277,22 +153,17 @@ function animate3(){
     ctx3.restore(); requestAnimationFrame(animate3);
 }
 
-function startStage3(){
-    stage2.style.display="none"; stage3.style.display="block"; animate3();
-    setTimeout(()=>{ btn.style.opacity=1; },3000);
-}
+function startStage3(){ stage2.style.display="none"; stage3.style.display="block"; animate3(); btn.style.opacity=1; }
 
+// ---------------- Click Button to Start Phase 4 ----------------
 btn.addEventListener("click", ()=>{
-    btn.style.display="none"; const newText="DAIVIK";
-    const newPoints=mapTextToPoints(newText);
-    particles.forEach((p,i)=>{ const np=newPoints[i%newPoints.length]; p.tx=np.x; p.ty=np.y; p.color="#fff"; });
-    // After 7s delay, start Phase 4 automatically
-    setTimeout(()=>{ startPhase4(); },7000);
+    stage3.style.display="none"; startPhase4();
 });
 
-// ---------------- Phase 4 Script (Three.js) ----------------
+// ---------------- Phase 4 Script ----------------
 function startPhase4(){
-// Your Phase 4 Three.js code here (the full script from your Phase 4)
+// PASTE your full Phase 4 Three.js PRINCE code here
+alert("Phase 4 starts now! Paste your Three.js code here for PRINCE scene.");
 }
 </script>
 </body>

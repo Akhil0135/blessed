@@ -16,20 +16,122 @@ canvas { display: block; }
 
 /* ---------------- Stage 1 ---------------- */
 #stage1 { position: relative; width: 100%; height: 100%; }
-#stage1 #instruction { position: absolute; top: 20px; width: 100%; text-align: center; font-size: 22px; color: #fff; text-shadow: 0 0 8px #000; opacity: 0.9; pointer-events: none; z-index: 5; }
-#stage1 #message { position: absolute; bottom: 80px; width: 100%; text-align: center; font-size: 26px; font-weight: 600; color: #ffd27f; letter-spacing: 2px; text-shadow: 0 0 5px #d9a441; opacity: 0; transition: opacity 1.5s ease; z-index: 5; }
-#stage1 #sun { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, #fff7c0 0%, #ffcc33 40%, #d68b00 70%, #000 100%); box-shadow: 0 0 50px #ffb300; top: -300px; right: -300px; opacity: 0; transition: all 2.5s ease-in-out; z-index: 3; }
-#stage1 #moon { position: absolute; width: 200px; height: 200px; left: 40px; top: 40px; border-radius: 50%; cursor: grab; background: radial-gradient(circle at 30% 30%, #d9d9d9 0%, #c0c0c0 20%, #9a9a9a 45%, #6d6d6d 70%, #2a2a2a 100%); box-shadow: 0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5); transition: box-shadow 0.3s ease; z-index: 5; }
-#stage1 #ambient { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%); pointer-events: none; z-index: 1; }
+#stage1 #instruction {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    color: #fff;
+    text-shadow: 0 0 8px #000;
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 5;
+}
+#stage1 #message {
+    position: absolute;
+    bottom: 80px;
+    width: 100%;
+    text-align: center;
+    font-size: 26px;
+    font-weight: 600;
+    color: #ffd27f;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px #d9a441;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    z-index: 5;
+}
+#stage1 #sun {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff7c0 0%, #ffcc33 40%, #d68b00 70%, #000 100%);
+    box-shadow: 0 0 50px #ffb300;
+    top: -300px;
+    right: -300px;
+    opacity: 0;
+    transition: all 2.5s ease-in-out;
+    z-index: 3;
+}
+#stage1 #moon {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    left: 40px;
+    top: 40px;
+    border-radius: 50%;
+    cursor: grab;
+    background: radial-gradient(circle at 30% 30%, 
+        #d9d9d9 0%, 
+        #c0c0c0 20%, 
+        #9a9a9a 45%, 
+        #6d6d6d 70%, 
+        #2a2a2a 100%);
+    box-shadow: 0 0 15px rgba(180,180,255,0.8), inset -20px -20px 40px rgba(0,0,0,0.5);
+    transition: box-shadow 0.3s ease;
+    z-index: 5;
+}
+#stage1 #ambient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 70%, rgba(30,60,150,0.25), transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+}
 
 /* ---------------- Stage 2 ---------------- */
 #stage2 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
-#stage2 #instruction { position: absolute; top: 20px; width: 100%; text-align: center; font-size: 22px; color: #fff; text-shadow: 0 0 8px #000; opacity: 0.9; pointer-events: none; z-index: 5; }
-#stage2 #verse { position:absolute; top:40px; left:50%; transform:translateX(-50%) scale(0.2); font-size:32px; color:#ffe9a6; text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a; opacity:0; transition: all 1s ease-out; white-space:nowrap; pointer-events:none; z-index:5; }
+#stage2 #instruction {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    color: #fff;
+    text-shadow: 0 0 8px #000;
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 5;
+}
+#stage2 #verse {
+    position:absolute;
+    top:40px;
+    left:50%;
+    transform:translateX(-50%) scale(0.2);
+    font-size:32px;
+    color:#ffe9a6;
+    text-shadow:0 0 8px #fff2b3,0 0 15px #e6d37a;
+    opacity:0;
+    transition: all 1s ease-out;
+    white-space:nowrap;
+    pointer-events:none;
+    z-index:5;
+}
 
 /* ---------------- Stage 3 ---------------- */
 #stage3 { display:none; position:absolute; width:100%; height:100%; top:0; left:0; }
 #stage3 #clickBtn {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #ff0066, #ffcc00, #00ccff);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255,255,255,0.6);
+    color: #fff;
+    opacity: 0;
+    transition: opacity 1s ease;
+    z-index: 1000;
+}
+#stage3 #clickBtn2 {
     position: absolute;
     bottom: 40px;
     left: 50%;
@@ -76,7 +178,7 @@ canvas { display: block; }
 </div>
 
 <script>
-/* ---------------- Stage 1 & Stage 2 scripts remain unchanged ---------------- */
+/* ---------------- Stage 1 Script ---------------- */
 const stage1 = document.getElementById("stage1");
 const moon = document.getElementById("moon");
 const message = document.getElementById("message");
@@ -105,6 +207,7 @@ function drawStars() {
     });
 }
 
+// Drag moon logic
 let dragging=false, offsetX, offsetY, revealIndex=0;
 const fullMsg = message.innerText;
 message.innerText="";
@@ -137,7 +240,7 @@ document.addEventListener("mousemove", e=>{
 function animate1(){ drawStars(); requestAnimationFrame(animate1); }
 animate1();
 
-/* ---------------- Stage 2 script ---------------- */
+/* ---------------- Stage 2 Script ---------------- */
 const stage2 = document.getElementById("stage2");
 const shieldCanvas=document.getElementById("shieldCanvas");
 const shieldCtx=shieldCanvas.getContext("2d");
@@ -174,8 +277,7 @@ function drawShield(){
     }
     shieldCtx.closePath();
     shieldCtx.shadowColor="rgba(255,255,255,0.25)"; shieldCtx.shadowBlur=5;
-    let sg=shieldCtx.createRadialGradient(0,0,starR*0.1,0,0,starR);
-    sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
+    let sg=shieldCtx.createRadialGradient(0,0,starR*0.1,0,0,starR); sg.addColorStop(0,"#ffffff"); sg.addColorStop(0.4,"#eeeeee"); sg.addColorStop(1,"#7a7a7a");
     shieldCtx.fillStyle=sg; shieldCtx.fill();
     shieldCtx.restore(); shieldCtx.restore();
 }
@@ -193,11 +295,16 @@ function animate2(){
     requestAnimationFrame(animate2);
 }
 
-function startStage2(){ stage1.style.display="none"; stage2.style.display="block"; animate2(); }
+function startStage2(){
+    stage1.style.display="none";
+    stage2.style.display="block";
+    animate2();
+}
 
 const verseDiv=document.getElementById("verse");
 shieldCanvas.addEventListener("click", e=>{
-    const dx=e.clientX-shieldX; const dy=e.clientY-shieldY;
+    const dx=e.clientX-shieldX;
+    const dy=e.clientY-shieldY;
     if(Math.sqrt(dx*dx+dy*dy)<=R*0.28){
         starSpin=true;
         verseDiv.style.opacity=1;
@@ -234,8 +341,7 @@ function mapTextToPoints(textStr){
     tctx.font="bold "+fontSize+"px Arial"; tctx.textAlign="center"; tctx.textBaseline="middle";
     tctx.fillText(textStr,temp.width/2,temp.height/2);
     const imageData=tctx.getImageData(0,0,temp.width,temp.height).data;
-    const points=[];
-    for(let y=0;y<temp.height;y+=6){ for(let x=0;x<temp.width;x+=6){
+    const points=[]; for(let y=0;y<temp.height;y+=6){ for(let x=0;x<temp.width;x+=6){
         let index=(y*temp.width+x)*4; if(imageData[index+3]>200){ points.push({x,y}); }
     }}
     return points;
@@ -262,19 +368,26 @@ function animate3(){
     ctx3.restore(); requestAnimationFrame(animate3);
 }
 
-// Start Stage 3
 function startStage3(){
     stage2.style.display="none"; stage3.style.display="block"; animate3();
-    // Show button after 3 seconds
     setTimeout(()=>{ btn.style.opacity=1; },3000);
 }
 
-// Button click transforms particles to DAIVIK
+// First button click transforms PRINCE -> DAIVIK
 btn.addEventListener("click", ()=>{
     btn.style.display="none"; 
     const newText="DAIVIK";
     const newPoints=mapTextToPoints(newText);
     particles.forEach((p,i)=>{ const np=newPoints[i%newPoints.length]; p.tx=np.x; p.ty=np.y; p.color="#fff"; });
+
+    // Second button after particles settle
+    const btn2 = document.createElement("button");
+    btn2.id = "clickBtn2";
+    btn2.innerText = "Click Here";
+    Object.assign(btn2.style,{position:"absolute",bottom:"40px",left:"50%",transform:"translateX(-50%)",padding:"15px 30px",fontSize:"20px",fontWeight:"bold",background:"linear-gradient(90deg, #ff0066, #ffcc00, #00ccff)",border:"none",borderRadius:"10px",cursor:"pointer",boxShadow:"0 0 20px rgba(255,255,255,0.6)",color:"#fff",opacity:0,transition:"opacity 1s ease",zIndex:1000});
+    stage3.appendChild(btn2);
+
+    setTimeout(()=>{ btn2.style.opacity=1; }, 3000);
 });
 </script>
 </body>

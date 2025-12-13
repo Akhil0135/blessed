@@ -153,12 +153,11 @@ canvas { display: block; }
 </div>
 
 <script>
-/* ---------------- Stage 3 Script (ONLY ADDITIONS BELOW) ---------------- */
-const btn = document.getElementById("clickBtn");
-const btn2 = document.getElementById("clickBtn2");
+/* ---------- EXISTING STAGE 3 CODE ABOVE UNCHANGED ---------- */
 
+const btn2 = document.getElementById("clickBtn2");
 let waitingForDaivik = false;
-let daivikDone = false;
+let daivikShown = false;
 
 btn.addEventListener("click", ()=>{
     btn.style.display="none";
@@ -166,7 +165,7 @@ btn.addEventListener("click", ()=>{
     const newPoints=mapTextToPoints(newText);
 
     waitingForDaivik = true;
-    daivikDone = false;
+    daivikShown = false;
 
     particles.forEach((p,i)=>{
         const np=newPoints[i%newPoints.length];
@@ -176,35 +175,27 @@ btn.addEventListener("click", ()=>{
     });
 });
 
-function animate3(){
-    ctx3.clearRect(0,0,c.width,c.height);
-    applyCamera(); drawStarShape();
+const originalAnimate3 = animate3;
+animate3 = function(){
+    originalAnimate3();
 
-    particles.forEach(p=>{
-        p.x+=(p.tx-p.x)*p.speed;
-        p.y+=(p.ty-p.y)*p.speed;
-        ctx3.fillStyle=p.color||"#fff";
-        ctx3.beginPath();
-        ctx3.arc(p.x,p.y,p.size,0,Math.PI*2);
-        ctx3.fill();
-    });
-
-    if(waitingForDaivik && !daivikDone){
-        let settled=true;
+    if(waitingForDaivik && !daivikShown){
+        let settled = true;
         for(let p of particles){
-            if(Math.abs(p.x-p.tx)>0.8 || Math.abs(p.y-p.ty)>0.8){ settled=false; break; }
+            if(Math.abs(p.x - p.tx) > 0.8 || Math.abs(p.y - p.ty) > 0.8){
+                settled = false;
+                break;
+            }
         }
         if(settled){
-            daivikDone=true;
-            waitingForDaivik=false;
-            btn2.style.display="block";
-            btn2.style.opacity=1;
+            daivikShown = true;
+            waitingForDaivik = false;
+            btn2.style.display = "block";
+            btn2.style.opacity = 1;
         }
     }
-
-    ctx3.restore();
-    requestAnimationFrame(animate3);
-}
+};
 </script>
+
 </body>
 </html>

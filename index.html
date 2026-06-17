@@ -2,9 +2,10 @@
 <html>
 <head>
 
-<title>A Story Across Time</title>
+<title>A Friendship Written In Time</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 
 <style>
 
@@ -15,45 +16,17 @@ box-sizing:border-box;
 }
 
 body{
+
 overflow:hidden;
-background:#090511;
 font-family:Georgia,serif;
 color:white;
-}
-
-
-canvas{
-position:absolute;
-width:100%;
-height:100%;
-}
-
-
-/* dreamy cartoon memory background */
-
-.scene:before{
-
-content:"";
-
-position:absolute;
-
-inset:0;
-
-background:
-radial-gradient(circle at 20% 20%,#4b2a6a,transparent 30%),
-radial-gradient(circle at 80% 70%,#744c2a,transparent 35%),
-linear-gradient(#12091f,#030208);
-
-z-index:-1;
 
 }
-
 
 
 .scene{
 
 position:absolute;
-
 width:100%;
 height:100%;
 
@@ -66,7 +39,7 @@ flex-direction:column;
 
 text-align:center;
 
-padding:30px;
+padding:40px;
 
 }
 
@@ -74,18 +47,17 @@ padding:30px;
 .active{
 
 display:flex;
-
-animation:fade 2s;
+animation:appear 2s;
 
 }
 
 
 
-@keyframes fade{
+@keyframes appear{
 
 from{
 opacity:0;
-transform:scale(.95);
+transform:scale(.9);
 }
 
 to{
@@ -97,36 +69,103 @@ transform:scale(1);
 
 
 
+/* different backgrounds */
+
+
+#p1{
+
+background:
+linear-gradient(#2d1b0e,#050505);
+
+}
+
+
+#p2{
+
+background:
+linear-gradient(#355c7d,#182848);
+
+}
+
+
+#p3{
+
+background:
+linear-gradient(#000428,#004e92);
+
+}
+
+
+#p4{
+
+background:
+linear-gradient(#141e30,#243b55);
+
+}
+
+
+#p5{
+
+background:
+linear-gradient(#42275a,#734b6d);
+
+}
+
+
+#p6{
+
+background:
+linear-gradient(#200122,#6f0000);
+
+}
+
+
+#p7{
+
+background:
+linear-gradient(#3a1c71,#d76d77,#ffaf7b);
+
+}
+
+
+#p8{
+
+background:
+linear-gradient(#000000,#42275a);
+
+}
+
+
+
+
+
 
 h1{
 
 font-size:55px;
 
-color:#ffd77a;
+color:#ffd875;
 
 text-shadow:
-0 0 30px gold,
-0 0 60px orange;
+0 0 30px gold;
+
 
 }
 
 
-
-
 p{
 
-font-size:25px;
+font-size:26px;
 
 line-height:1.7;
 
 max-width:900px;
 
-margin:30px;
+margin:25px;
 
-color:#fff1d0;
+color:#fff3d0;
 
 }
-
 
 
 
@@ -135,11 +174,11 @@ button,input{
 
 padding:15px 35px;
 
-font-size:20px;
-
 border:none;
 
 border-radius:30px;
+
+font-size:20px;
 
 }
 
@@ -160,60 +199,54 @@ cursor:pointer;
 
 background:rgba(255,255,255,.12);
 
-padding:45px;
+padding:40px;
 
 border-radius:30px;
 
-backdrop-filter:blur(12px);
+backdrop-filter:blur(10px);
 
-box-shadow:
-0 0 50px rgba(255,200,80,.5);
+box-shadow:0 0 40px #ffcc66;
 
 }
 
 
 
 
-/* diary drag */
+/* diary */
 
 
-#diary{
+#book{
 
 width:130px;
-
 height:100px;
 
-background:
-linear-gradient(135deg,#ffe3a1,#9b6530);
+background:#c9954b;
 
 border-radius:15px;
 
-position:absolute;
-
-left:70%;
-
-top:55%;
-
+font-size:55px;
 
 display:flex;
 
 align-items:center;
-
 justify-content:center;
 
+position:absolute;
 
-font-size:55px;
-
-
-box-shadow:
-0 0 30px gold,
-0 0 80px orange;
+right:120px;
+bottom:100px;
 
 
 cursor:grab;
 
 
+box-shadow:
+
+0 0 40px gold;
+
+
 animation:float 3s infinite;
+
 
 }
 
@@ -230,7 +263,7 @@ transform:translateY(-25px);
 
 
 
-.name{
+.memory{
 
 font-size:90px;
 
@@ -238,46 +271,31 @@ letter-spacing:15px;
 
 color:#ffe28a;
 
-text-shadow:0 0 40px gold;
+text-shadow:0 0 50px gold;
 
 }
-
 
 
 
 .verse{
 
-font-size:30px;
+font-size:32px;
 
-line-height:1.8;
-
-animation:flicker 2s infinite;
+animation:glow 2s infinite;
 
 }
 
 
 
-@keyframes flicker{
+@keyframes glow{
 
 50%{
-opacity:.45;
+opacity:.4;
 }
 
 }
 
 
-
-
-
-.final{
-
-font-size:75px;
-
-color:#ffd56b;
-
-text-shadow:0 0 50px gold;
-
-}
 
 
 
@@ -289,38 +307,34 @@ text-shadow:0 0 50px gold;
 <body>
 
 
-<canvas id="bg"></canvas>
-
-
-
-
 
 <!-- PAGE 1 -->
 
-
-<div class="scene active" id="page1">
+<div class="scene active" id="p1">
 
 
 <div class="card">
 
 
 <h1>
-A Story Across Time
+A Forgotten Chapter
 </h1>
 
 
 <p>
 
-Some friendships begin quietly...<br>
+A little school, a little smile,<br>
 
-in classrooms, conversations and little moments<br>
+A thousand stories after a while...<br>
 
-that become forever memories.
+Some bonds begin in simple days,<br>
+
+And quietly live in endless ways.
 
 </p>
 
 
-<button onclick="show(2)">
+<button onclick="go(2)">
 Open The Memory
 </button>
 
@@ -334,13 +348,10 @@ Open The Memory
 
 
 
-
-
-
 <!-- PAGE 2 -->
 
 
-<div class="scene" id="page2">
+<div class="scene" id="p2">
 
 
 <h1>
@@ -350,24 +361,28 @@ Vijayawada
 
 <p>
 
-Where the first chapters were written...
+Between the bells and classroom doors,<br>
 
-<br><br>
+We collected laughs and little joys...<br>
 
-Drag the diary to unlock the next memory.
+The years moved on, the pages turned,<br>
+
+But those memories always returned.
 
 </p>
 
 
-<div id="diary">
+<div id="book">
 📖
 </div>
 
 
+<p>
+Drag the diary to continue
+</p>
+
+
 </div>
-
-
-
 
 
 
@@ -377,7 +392,7 @@ Drag the diary to unlock the next memory.
 <!-- PAGE 3 -->
 
 
-<div class="scene" id="page3">
+<div class="scene" id="p3">
 
 
 <h1>
@@ -387,20 +402,18 @@ Drag the diary to unlock the next memory.
 
 <p>
 
-Years passed...
+Fourteen seasons came and went,<br>
 
-cities changed...
+Through every road and every event...<br>
 
-life moved forward.
+Yet some names stay close and true,<br>
 
-<br><br>
-
-But some friendships never disappear.
+Like old dreams becoming new.
 
 </p>
 
 
-<button onclick="show(4)">
+<button onclick="go(4)">
 Continue
 </button>
 
@@ -411,33 +424,31 @@ Continue
 
 
 
-
-
-
-
 <!-- PAGE 4 -->
 
 
-<div class="scene" id="page4">
+<div class="scene" id="p4">
 
 
 <h1>
-
-Vijayawada ✨ Hyderabad
-
+Hyderabad
 </h1>
 
 
 <p>
 
-From school benches...
+Different streets and different skies,<br>
 
-to new dreams and new journeys.
+New dreams began to rise...<br>
+
+But somewhere deep a memory stayed,<br>
+
+A friendship time could never fade.
 
 </p>
 
 
-<button onclick="show(5)">
+<button onclick="go(5)">
 Next Chapter
 </button>
 
@@ -449,28 +460,27 @@ Next Chapter
 
 
 
-
-
-
 <!-- PAGE 5 -->
 
 
-<div class="scene" id="page5">
+<div class="scene" id="p5">
 
 
 <h1>
-A Secret Name
+A Hidden Name
 </h1>
 
 
 <p>
 
-Only one person can unlock this memory...
+One little name, one little sign,<br>
+
+Unlocks a memory lost in time...
 
 </p>
 
 
-<input id="input"
+<input id="answer"
 placeholder="Enter nickname">
 
 
@@ -485,20 +495,9 @@ Unlock
 
 
 </div>
-
-
-
-
-
-
-
-
-
-
 <!-- PAGE 6 -->
 
-
-<div class="scene" id="page6">
+<div class="scene" id="p6">
 
 
 <h1>
@@ -508,16 +507,18 @@ KEERTHI
 
 <p>
 
-You were never just a memory...
+Not every friend becomes a story,<br>
 
-<br>
+Some become a piece of your heart's glory...<br>
 
-you were a chapter I never closed.
+Some moments quietly stay,<br>
+
+Even when years take them away.
 
 </p>
 
 
-<button onclick="show(7)">
+<button onclick="go(7)">
 A Blessing
 </button>
 
@@ -531,11 +532,9 @@ A Blessing
 
 
 
-
 <!-- PAGE 7 -->
 
-
-<div class="scene" id="page7">
+<div class="scene" id="p7">
 
 
 <p class="verse">
@@ -551,7 +550,7 @@ there is no flaw in you."
 </p>
 
 
-<button onclick="show(8)">
+<button onclick="go(8)">
 Continue
 </button>
 
@@ -564,35 +563,38 @@ Continue
 
 
 
-
-
 <!-- PAGE 8 -->
 
 
-<div class="scene" id="page8">
+<div class="scene" id="p8">
 
 
-<div class="final">
-
+<h1>
 HAPPY BIRTHDAY
+</h1>
+
+
+<div class="memory">
+
+CHOTI ❤️
 
 </div>
 
 
-<h1>
-
-CHOTI ❤️
-
-</h1>
-
 
 <p>
 
-14 years passed...
+Years may pass, roads may part,<br>
+
+But true friendship stays in the heart.<br>
 
 <br>
 
-but this friendship was never forgotten.
+A story started in Vijayawada...<br>
+
+A memory carried through Hyderabad...<br>
+
+And a friendship never forgotten.
 
 </p>
 
@@ -606,16 +608,122 @@ but this friendship was never forgotten.
 
 
 
-
 <script>
 
 
-// background floating memories
+// PAGE SWITCH
 
 
-const canvas=document.getElementById("bg");
+function go(n){
+
+
+document
+.querySelectorAll(".scene")
+.forEach(x=>x.classList.remove("active"));
+
+
+document
+.getElementById("p"+n)
+.classList.add("active");
+
+
+}
+
+
+
+
+
+
+// DIARY DRAG
+
+
+let book=document.getElementById("book");
+
+let dragging=false;
+
+
+book.onmousedown=function(){
+
+dragging=true;
+
+};
+
+
+
+document.onmouseup=function(){
+
+if(dragging){
+
+dragging=false;
+
+go(3);
+
+}
+
+};
+
+
+
+document.onmousemove=function(e){
+
+if(dragging){
+
+book.style.left=e.clientX-60+"px";
+
+book.style.top=e.clientY-50+"px";
+
+}
+
+};
+
+
+
+
+
+
+
+
+// PASSWORD
+
+
+function unlock(){
+
+
+let value=document
+.getElementById("answer")
+.value
+.toLowerCase();
+
+
+
+if(value=="choti"){
+
+go(6);
+
+}
+
+else{
+
+alert("A memory is waiting for the right name ✨");
+
+}
+
+}
+
+
+
+
+
+// FLOATING LIGHTS
+
+
+const canvas=document.createElement("canvas");
+
+document.body.appendChild(canvas);
+
 
 const ctx=canvas.getContext("2d");
+
 
 
 function resize(){
@@ -626,27 +734,27 @@ canvas.height=innerHeight;
 
 }
 
-
 resize();
 
-onresize=resize;
+
+window.onresize=resize;
 
 
 
-let lights=[];
+let dots=[];
 
 
-for(let i=0;i<50;i++){
+for(let i=0;i<80;i++){
 
-lights.push({
+dots.push({
 
 x:Math.random()*innerWidth,
 
 y:Math.random()*innerHeight,
 
-r:20+Math.random()*50,
+r:Math.random()*4,
 
-s:.2+Math.random()
+s:Math.random()*1
 
 });
 
@@ -656,23 +764,22 @@ s:.2+Math.random()
 
 function animate(){
 
+
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
 
-lights.forEach(l=>{
+dots.forEach(d=>{
 
 
-ctx.globalAlpha=.15;
-
-ctx.fillStyle="#ffd36b";
+ctx.fillStyle="rgba(255,220,120,.6)";
 
 
 ctx.beginPath();
 
 ctx.arc(
-l.x,
-l.y,
-l.r,
+d.x,
+d.y,
+d.r,
 0,
 Math.PI*2
 );
@@ -680,17 +787,17 @@ Math.PI*2
 ctx.fill();
 
 
-l.y-=l.s;
+d.y-=d.s;
 
 
-if(l.y<0)
-l.y=innerHeight;
+
+if(d.y<0)
+
+d.y=innerHeight;
 
 
 });
 
-
-ctx.globalAlpha=1;
 
 
 requestAnimationFrame(animate);
@@ -699,116 +806,6 @@ requestAnimationFrame(animate);
 
 
 animate();
-
-
-
-
-
-
-
-
-// scene change
-
-
-function show(n){
-
-document.querySelectorAll(".scene")
-.forEach(x=>x.classList.remove("active"));
-
-
-document
-.getElementById("page"+n)
-.classList.add("active");
-
-}
-
-
-
-
-
-
-
-
-// drag diary
-
-
-let diary=document.getElementById("diary");
-
-let drag=false;
-
-
-
-diary.onmousedown=()=>{
-
-drag=true;
-
-};
-
-
-
-document.onmouseup=()=>{
-
-if(drag){
-
-drag=false;
-
-show(3);
-
-}
-
-};
-
-
-
-
-
-document.onmousemove=e=>{
-
-if(drag){
-
-diary.style.left=e.clientX-60+"px";
-
-diary.style.top=e.clientY-50+"px";
-
-}
-
-};
-
-
-
-
-
-
-
-
-
-// unlock
-
-
-function unlock(){
-
-
-let text=document
-.getElementById("input")
-.value
-.toLowerCase();
-
-
-
-if(text=="choti"){
-
-show(6);
-
-}
-
-else{
-
-alert("That memory is waiting for the right name ✨");
-
-}
-
-
-}
 
 
 

@@ -14,20 +14,19 @@
 }
 
 body {
-  height: 100vh;
   overflow: hidden;
+  height: 100vh;
   background: black;
   color: white;
 }
 
-/* ================= SCENES ================= */
+/* SCENES */
 .scene {
   position: absolute;
   width: 100%;
   height: 100%;
   opacity: 0;
-  transform: scale(1.05);
-  transition: all 1.5s ease;
+  transition: 1.2s ease;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,255 +35,172 @@ body {
 
 .scene.active {
   opacity: 1;
-  transform: scale(1);
   z-index: 10;
 }
 
-/* ================= BACKGROUNDS ================= */
-#phase1 {
-  background: url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80");
-  background-size: cover;
-  background-position: center;
-}
+/* BACKGROUNDS */
+#p1 { background: url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80") center/cover; }
+#p2 { background: radial-gradient(circle, #0b1a3a, #000); }
+#p3 { background: url("https://images.unsplash.com/photo-1491884662610-dfcd28f30cfb?auto=format&fit=crop&w=1600&q=80") center/cover; }
+#p4 { background: #111; }
+#p5 { background: radial-gradient(circle, #1a1400, #000); }
+#p6 { background: radial-gradient(circle, #2a0000, #000); }
 
-#phase2 {
-  background: radial-gradient(circle at top, #0b1a3a, #000000 70%);
-}
-
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  animation: twinkle 2s infinite alternate;
-}
-
-@keyframes twinkle {
-  from { opacity: 0.2; transform: scale(1); }
-  to { opacity: 1; transform: scale(1.5); }
-}
-
-#phase3 {
-  background: url("https://images.unsplash.com/photo-1491884662610-dfcd28f30cfb?auto=format&fit=crop&w=1600&q=80");
-  background-size: cover;
-  background-position: center;
-}
-
-.cityOverlay {
+/* overlay */
+.overlay {
   position: absolute;
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.55);
 }
 
-#phase4 {
-  background: radial-gradient(circle at center, #1a1a1a, #000);
-}
-
-#phase5 {
-  background: radial-gradient(circle at center, #1a1400, #000);
-}
-
-.glowBG {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, rgba(255,215,0,0.15), transparent 60%);
-  animation: slowGlow 6s infinite alternate;
-}
-
-@keyframes slowGlow {
-  from { opacity: 0.4; }
-  to { opacity: 0.8; }
-}
-
-/* ================= PHASE 6 ================= */
-#phase6 {
-  background: radial-gradient(circle at center, #2a0000, #000);
-  overflow: hidden;
-}
-
-.finalBox {
+/* content */
+.box {
   position: relative;
   z-index: 2;
-  max-width: 800px;
-  padding: 30px;
-  border: 1px solid gold;
-  border-radius: 15px;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
-  animation: fadeIn 2s ease;
+  max-width: 700px;
+  padding: 20px;
 }
 
-.finalTitle {
-  font-size: 42px;
-  color: gold;
-  animation: glow 2s infinite alternate;
+h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
 }
 
-@keyframes glow {
-  from { text-shadow: 0 0 10px gold; }
-  to { text-shadow: 0 0 30px orange, 0 0 50px gold; }
-}
-
-.finalText {
-  margin-top: 15px;
+p {
   font-size: 18px;
-  line-height: 1.6;
+  opacity: 0.9;
+  line-height: 1.5;
 }
 
-.btn {
-  margin-top: 25px;
-  padding: 12px 22px;
+/* button */
+button {
+  margin-top: 20px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
   background: gold;
   color: black;
-  transition: 0.3s;
+  cursor: pointer;
+  border-radius: 8px;
 }
 
-.btn:hover {
-  transform: scale(1.1);
+/* phase 4 bubbles */
+.bubble {
+  position: absolute;
+  padding: 10px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  cursor: pointer;
 }
 
-/* fireworks */
-.firework {
+/* phase 5 verse */
+.verse {
+  border: 1px solid gold;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.5);
+}
+
+/* phase 6 fireworks */
+.fire {
   position: absolute;
   width: 6px;
   height: 6px;
   background: gold;
   border-radius: 50%;
-  animation: explode 1.5s ease-out infinite;
+  animation: boom 1s ease-out forwards;
 }
 
-@keyframes explode {
-  0% { transform: scale(0); opacity: 1; }
-  100% { transform: scale(8); opacity: 0; }
-}
-
-/* particles */
-.particle {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: rgba(255,255,255,0.7);
-  border-radius: 50%;
-  animation: floatUp 7s linear infinite;
-}
-
-@keyframes floatUp {
-  0% { transform: translateY(100vh); opacity: 0; }
-  50% { opacity: 1; }
-  100% { transform: translateY(-10vh); opacity: 0; }
+@keyframes boom {
+  from { transform: scale(0); opacity: 1; }
+  to { transform: scale(10); opacity: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- PHASE 1 -->
-<div class="scene active" id="phase1">
-  <div class="content">
+<!-- P1 -->
+<div class="scene active" id="p1">
+  <div class="box">
     <h1>Where It All Began</h1>
-    <button class="btn" onclick="nextScene()">Start Journey →</button>
+    <p>Vijayawada school days… memories started here.</p>
+    <button onclick="next()">Start</button>
   </div>
 </div>
 
-<!-- PHASE 2 -->
-<div class="scene" id="phase2">
-  <div class="content">
+<!-- P2 -->
+<div class="scene" id="p2">
+  <div class="box">
     <h1>14 Years of Silence</h1>
-    <button class="btn" onclick="nextScene()">Continue →</button>
+    <p>Time passed… but not memory.</p>
+    <button onclick="next()">Continue</button>
   </div>
 </div>
 
-<!-- PHASE 3 -->
-<div class="scene" id="phase3">
-  <div class="cityOverlay"></div>
-  <div class="content">
+<!-- P3 -->
+<div class="scene" id="p3">
+  <div class="overlay"></div>
+  <div class="box">
     <h1>Hyderabad Reunion</h1>
-    <button class="btn" onclick="nextScene()">Continue →</button>
+    <p>After years… I found you again.</p>
+    <button onclick="next()">Continue</button>
   </div>
 </div>
 
-<!-- PHASE 4 -->
-<div class="scene" id="phase4">
-  <div class="content">
+<!-- P4 -->
+<div class="scene" id="p4">
+  <div class="box">
     <h1>Her Stories</h1>
-    <button class="btn" onclick="nextScene()">Continue →</button>
+    <p>Click memories</p>
+    <button onclick="next()">Continue</button>
+  </div>
+
+  <div class="bubble" style="top:30%;left:20%;" onclick="alert('She had endless stories.')">Story 1</div>
+  <div class="bubble" style="top:50%;left:60%;" onclick="alert('Her voice stayed in memory.')">Story 2</div>
+</div>
+
+<!-- P5 -->
+<div class="scene" id="p5">
+  <div class="box verse">
+    <h2 style="color:gold;">Bible Verse</h2>
+    <p>
+      Love is patient, love is kind.  
+      It always protects, always trusts.
+    </p>
+    <button onclick="next()">Continue</button>
   </div>
 </div>
 
-<!-- PHASE 5 -->
-<div class="scene" id="phase5">
-  <div class="glowBG"></div>
-  <div class="content">
-    <h1>Message</h1>
-    <button class="btn" onclick="nextScene()">Continue →</button>
-  </div>
-</div>
-
-<!-- PHASE 6 -->
-<div class="scene" id="phase6">
-  <div class="finalBox">
-    <div class="finalTitle">🎉 Happy Birthday 🎉</div>
-
-    <div class="finalText">
-      From Vijayawada classrooms… to 14 years of silence…  
-      to finding you again in Hyderabad —  
-      you were never forgotten.
-
-      <br><br>
-      Today is your day. ✨
-    </div>
-
-    <button class="btn" onclick="celebrate()">Celebrate 🎆</button>
+<!-- P6 -->
+<div class="scene" id="p6">
+  <div class="box">
+    <h1 style="color:gold;">🎉 Happy Birthday 🎉</h1>
+    <p>You were never forgotten.</p>
+    <button onclick="fireworks()">Celebrate</button>
   </div>
 </div>
 
 <script>
-let current = 1;
+let i = 1;
 
-function nextScene() {
-  document.getElementById("phase" + current).classList.remove("active");
-  current++;
-  let next = document.getElementById("phase" + current);
-  if (next) next.classList.add("active");
+function next() {
+  document.getElementById("p" + i).classList.remove("active");
+  i++;
+  document.getElementById("p" + i).classList.add("active");
 }
 
-/* fireworks generator */
-function celebrate() {
-  for (let i = 0; i < 40; i++) {
+function fireworks() {
+  for (let j = 0; j < 30; j++) {
     let f = document.createElement("div");
-    f.className = "firework";
+    f.className = "fire";
     f.style.left = Math.random() * 100 + "vw";
     f.style.top = Math.random() * 100 + "vh";
-    f.style.animationDuration = (0.8 + Math.random()) + "s";
     document.body.appendChild(f);
 
-    setTimeout(() => f.remove(), 2000);
+    setTimeout(() => f.remove(), 1200);
   }
-}
-
-/* background particles */
-for (let i = 0; i < 30; i++) {
-  let p = document.createElement("div");
-  p.className = "particle";
-  p.style.left = Math.random() * 100 + "vw";
-  p.style.animationDuration = (4 + Math.random() * 5) + "s";
-  document.body.appendChild(p);
-}
-
-/* stars */
-for (let i = 0; i < 80; i++) {
-  let s = document.createElement("div");
-  s.className = "star";
-  s.style.left = Math.random() * 100 + "vw";
-  s.style.top = Math.random() * 100 + "vh";
-  document.getElementById("phase2").appendChild(s);
 }
 </script>
 

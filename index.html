@@ -1,165 +1,185 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+
+<title>A Memory Journey</title>
+
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Birthday Memory Journey</title>
-
 <style>
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Georgia,serif;
 }
 
 body{
-    overflow:hidden;
-    background:black;
-    font-family:Georgia,serif;
+overflow:hidden;
+background:#02030a;
+color:white;
 }
 
 canvas{
-    position:absolute;
-    width:100%;
-    height:100%;
+position:absolute;
+top:0;
+left:0;
 }
 
+
 .scene{
-    position:absolute;
-    width:100%;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    color:white;
-    opacity:0;
-    transition:2s;
+position:absolute;
+width:100%;
+height:100%;
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+text-align:center;
+padding:20px;
 }
 
 .active{
-    opacity:1;
+display:flex;
+animation:fade 2s;
 }
 
 
-#text{
-    font-size:35px;
-    text-align:center;
-    text-shadow:0 0 20px gold;
-    padding:20px;
+@keyframes fade{
+from{opacity:0}
+to{opacity:1}
 }
 
 
-.notebook{
-    width:300px;
-    height:220px;
-    background:#eee;
-    color:#333;
-    border-radius:15px;
-    padding:30px;
-    font-size:25px;
-    transform:rotate(-5deg);
-    animation:open 3s infinite alternate;
+h1{
+font-size:45px;
+color:#ffd36a;
+text-shadow:0 0 30px gold;
 }
 
 
-@keyframes open{
-from{
-transform:rotate(-5deg) scale(1);
-}
-to{
-transform:rotate(5deg) scale(1.1);
-}
+p{
+font-size:25px;
+margin:25px;
+line-height:1.5;
 }
 
 
-.name{
-font-size:90px;
-letter-spacing:10px;
-color:#ffd86b;
-text-shadow:
-0 0 20px #ffae00,
-0 0 50px #ff6600;
-}
+button,input{
 
-
-.flicker{
-animation:flicker 1.5s infinite;
-}
-
-
-@keyframes flicker{
-
-0%,100%{
-opacity:1;
-}
-
-50%{
-opacity:.35;
-}
-
+padding:15px 30px;
+font-size:20px;
+border-radius:30px;
+border:none;
+outline:none;
 }
 
 
 button{
-
-margin-top:40px;
-padding:15px 40px;
-border-radius:30px;
-border:none;
-font-size:22px;
-background:#ffcc55;
+background:#ffcf55;
 cursor:pointer;
+}
+
+
+.card{
+
+background:rgba(255,255,255,.1);
+padding:40px;
+border-radius:25px;
+box-shadow:0 0 40px #ffcc66;
+backdrop-filter:blur(10px);
 
 }
+
+
+#star{
+
+width:90px;
+height:90px;
+background:#ffd45c;
+border-radius:50%;
+box-shadow:0 0 40px gold;
+cursor:grab;
+position:absolute;
+
+}
+
+
+.route{
+
+font-size:40px;
+color:#7ee7ff;
+
+}
+
+
+.big{
+
+font-size:80px;
+color:#ffdf7e;
+text-shadow:0 0 40px orange;
+
+}
+
 
 </style>
 
 </head>
 
+
 <body>
 
 
-<canvas id="stars"></canvas>
+<canvas id="bg"></canvas>
 
 
-<div id="scene1" class="scene active">
 
-<div class="notebook">
+<!-- SCENE 1 -->
 
-📖<br>
+<div class="scene active" id="s1">
 
-School Memories
+<div class="card">
+
+<h1>One Forgotten Story...</h1>
+
+<p>
+Some friendships start in classrooms...
+<br>
+and survive through years.
+</p>
+
+<button onclick="next(2)">
+Open The Diary
+</button>
+
+</div>
+
+</div>
+
+
+
+
+<!-- SCENE 2 -->
+
+<div class="scene" id="s2">
+
+
+<h1>Vijayawada</h1>
+
+
+<p>
+
+Where school memories began...
 
 <br><br>
 
-✨
+Drag the star back to unlock the memory
 
-</div>
-
-
-<div id="text">
-
-Some friendships begin in classrooms...<br>
-and stay forever.
-
-</div>
-
-</div>
+</p>
 
 
-
-
-<div id="scene2" class="scene">
-
-
-<div id="text">
-
-From silly laughs<br>
-to unforgettable moments...
-
-</div>
+<div id="star"></div>
 
 
 </div>
@@ -167,28 +187,162 @@ to unforgettable moments...
 
 
 
-<div id="scene3" class="scene">
+
+<!-- SCENE 3 -->
 
 
-<div class="name">
+<div class="scene" id="s3">
+
+
+<h1>14 Years Later</h1>
+
+
+<p>
+
+Time moved forward...
+
+<br>
+
+but some people stay in our memories.
+
+</p>
+
+
+<button onclick="next(4)">
+Continue Journey
+</button>
+
+
+</div>
+
+
+
+
+
+<!-- SCENE 4 -->
+
+
+<div class="scene" id="s4">
+
+
+<h1 class="route">
+
+VIJAYAWADA ✨ HYDERABAD
+
+</h1>
+
+
+<p>
+
+From school benches...
+<br>
+to new dreams and busy days.
+
+</p>
+
+
+<button onclick="next(5)">
+Next Chapter
+</button>
+
+
+</div>
+
+
+
+
+
+
+<!-- SCENE 5 -->
+
+
+<div class="scene" id="s5">
+
+
+<h1>
+Secret Unlock
+</h1>
+
+
+<p>
+
+Only one person knows this nickname...
+
+</p>
+
+
+<input id="code" placeholder="Enter nickname">
+
+
+<br><br>
+
+
+<button onclick="unlock()">
+Unlock
+</button>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- SCENE 6 -->
+
+
+<div class="scene" id="s6">
+
+
+<h1>
 
 KEERTHI
 
+</h1>
+
+
+<p>
+
+A friend I never forgot...
+<br>
+
+A bond time couldn't erase.
+
+</p>
+
+
+<button onclick="next(7)">
+Final Memory
+</button>
+
+
 </div>
 
 
-<div class="flicker" style="
-font-size:22px;
-margin-top:40px;
-text-align:center;
-">
 
-"You are altogether beautiful, my darling;<br>
-there is no flaw in you."<br>
+
+
+
+
+<!-- SCENE 7 -->
+
+
+<div class="scene" id="s7">
+
+
+<p>
+
+"You are altogether beautiful, my darling;
+<br>
+there is no flaw in you."
+
+<br>
 
 — Song of Solomon 4:7
 
-</div>
+</p>
 
 
 </div>
@@ -197,46 +351,41 @@ there is no flaw in you."<br>
 
 
 
-<div id="scene4" class="scene">
 
 
-<div style="
-font-size:55px;
-color:#ffd27f;
-text-shadow:0 0 30px gold;
-">
+
+<!-- SCENE 8 -->
+
+
+<div class="scene" id="s8">
+
+
+<div class="big">
 
 HAPPY BIRTHDAY
 
 </div>
 
 
-<div class="name">
+<h1>
 
 CHOTI ❤️
 
-</div>
+</h1>
+
+
+<p>
+
+14 years passed...
+<br>
+but this friendship stayed.
+
+</p>
 
 
 </div>
 
 
-
-
-
-
-<button id="btn"
-style="
-position:absolute;
-bottom:40px;
-left:50%;
-transform:translateX(-50%);
-z-index:5;
-">
-
-START MEMORY
-
-</button>
 
 
 
@@ -245,19 +394,24 @@ START MEMORY
 <script>
 
 
-const canvas=document.getElementById("stars");
-const ctx=canvas.getContext("2d");
+// STAR BACKGROUND
+
+
+const c=document.getElementById("bg");
+
+const ctx=c.getContext("2d");
 
 
 function resize(){
 
-canvas.width=innerWidth;
-canvas.height=innerHeight;
+c.width=innerWidth;
+c.height=innerHeight;
 
 }
 
 resize();
-onresize=resize;
+
+window.onresize=resize;
 
 
 let stars=[];
@@ -269,8 +423,7 @@ stars.push({
 
 x:Math.random()*innerWidth,
 y:Math.random()*innerHeight,
-r:Math.random()*2,
-s:Math.random()*0.03
+r:Math.random()*2
 
 });
 
@@ -278,80 +431,122 @@ s:Math.random()*0.03
 
 
 
-function animate(){
+function draw(){
 
-ctx.fillStyle="black";
-ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.clearRect(0,0,c.width,c.height);
 
-
-stars.forEach(star=>{
-
-star.y-=star.s;
-
-
-if(star.y<0)
-star.y=canvas.height;
-
+stars.forEach(s=>{
 
 ctx.fillStyle="white";
-ctx.beginPath();
-ctx.arc(star.x,star.y,star.r,0,Math.PI*2);
-ctx.fill();
 
+ctx.beginPath();
+
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+
+ctx.fill();
 
 });
 
 
-requestAnimationFrame(animate);
+requestAnimationFrame(draw);
 
 }
 
-animate();
+draw();
 
 
 
-let current=1;
+
+// PAGE CONTROL
 
 
-function next(){
+function next(n){
+
+document.querySelectorAll(".scene")
+.forEach(x=>x.classList.remove("active"));
 
 
-document
-.getElementById("scene"+current)
-.classList.remove("active");
-
-
-current++;
-
-
-if(current>4)
-current=1;
-
-
-document
-.getElementById("scene"+current)
+document.getElementById("s"+n)
 .classList.add("active");
 
-
 }
 
 
 
-document
-.getElementById("btn")
-.onclick=()=>{
 
 
-next();
+// DRAG STAR
 
 
-setInterval(next,6000);
+let star=document.getElementById("star");
+
+let dragging=false;
 
 
-document.getElementById("btn").style.display="none";
+star.onmousedown=()=>{
 
+dragging=true;
 
 };
+
+
+document.onmouseup=()=>{
+
+if(dragging){
+
+dragging=false;
+
+next(3);
+
+}
+
+};
+
+
+
+document.onmousemove=e=>{
+
+if(dragging){
+
+star.style.left=e.clientX-45+"px";
+
+star.style.top=e.clientY-45+"px";
+
+}
+
+};
+
+
+
+
+
+// PASSWORD
+
+
+function unlock(){
+
+
+let value=document
+.getElementById("code")
+.value
+.toLowerCase();
+
+
+
+if(value=="choti"){
+
+next(6);
+
+}
+
+else{
+
+alert("Try again 🙂");
+
+}
+
+
+}
 
 
 

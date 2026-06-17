@@ -15,8 +15,8 @@ box-sizing:border-box;
 }
 
 body{
-background:#02030b;
 overflow:hidden;
+background:#090511;
 font-family:Georgia,serif;
 color:white;
 }
@@ -29,9 +29,31 @@ height:100%;
 }
 
 
+/* dreamy cartoon memory background */
+
+.scene:before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:
+radial-gradient(circle at 20% 20%,#4b2a6a,transparent 30%),
+radial-gradient(circle at 80% 70%,#744c2a,transparent 35%),
+linear-gradient(#12091f,#030208);
+
+z-index:-1;
+
+}
+
+
+
 .scene{
 
 position:absolute;
+
 width:100%;
 height:100%;
 
@@ -39,59 +61,73 @@ display:none;
 
 align-items:center;
 justify-content:center;
+
 flex-direction:column;
 
 text-align:center;
+
 padding:30px;
 
 }
 
 
 .active{
+
 display:flex;
-animation:fade 2s ease;
+
+animation:fade 2s;
+
 }
+
 
 
 @keyframes fade{
 
 from{
 opacity:0;
+transform:scale(.95);
 }
 
 to{
 opacity:1;
+transform:scale(1);
 }
 
 }
+
 
 
 
 h1{
 
 font-size:55px;
-color:#ffd67a;
+
+color:#ffd77a;
 
 text-shadow:
-0 0 25px #ffb300,
-0 0 60px #ff6600;
+0 0 30px gold,
+0 0 60px orange;
 
 }
 
 
-p{
 
-max-width:850px;
+
+p{
 
 font-size:25px;
 
 line-height:1.7;
 
+max-width:900px;
+
 margin:30px;
 
-color:#f5e7c5;
+color:#fff1d0;
 
 }
+
+
 
 
 
@@ -99,13 +135,14 @@ button,input{
 
 padding:15px 35px;
 
-border-radius:30px;
+font-size:20px;
 
 border:none;
 
-font-size:20px;
+border-radius:30px;
 
 }
+
 
 
 button{
@@ -117,41 +154,79 @@ cursor:pointer;
 }
 
 
+
+
 .card{
 
-background:rgba(255,255,255,.08);
+background:rgba(255,255,255,.12);
 
 padding:45px;
 
-border-radius:25px;
+border-radius:30px;
 
 backdrop-filter:blur(12px);
 
-box-shadow:0 0 50px rgba(255,200,80,.4);
+box-shadow:
+0 0 50px rgba(255,200,80,.5);
 
 }
 
 
 
 
-#memoryStar{
+/* diary drag */
 
-width:90px;
-height:90px;
 
-background:#ffd35a;
+#diary{
 
-border-radius:50%;
+width:130px;
 
-box-shadow:
-0 0 30px gold,
-0 0 70px orange;
+height:100px;
+
+background:
+linear-gradient(135deg,#ffe3a1,#9b6530);
+
+border-radius:15px;
 
 position:absolute;
 
+left:70%;
+
+top:55%;
+
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+
+font-size:55px;
+
+
+box-shadow:
+0 0 30px gold,
+0 0 80px orange;
+
+
 cursor:grab;
 
+
+animation:float 3s infinite;
+
 }
+
+
+
+@keyframes float{
+
+50%{
+transform:translateY(-25px);
+}
+
+}
+
 
 
 
@@ -159,14 +234,14 @@ cursor:grab;
 
 font-size:90px;
 
-letter-spacing:12px;
+letter-spacing:15px;
 
-color:#ffe082;
+color:#ffe28a;
 
-text-shadow:
-0 0 30px gold;
+text-shadow:0 0 40px gold;
 
 }
+
 
 
 
@@ -184,10 +259,6 @@ animation:flicker 2s infinite;
 
 @keyframes flicker{
 
-0%,100%{
-opacity:1;
-}
-
 50%{
 opacity:.45;
 }
@@ -196,14 +267,15 @@ opacity:.45;
 
 
 
-.big{
 
-font-size:70px;
 
-color:#ffd56a;
+.final{
 
-text-shadow:
-0 0 40px gold;
+font-size:75px;
+
+color:#ffd56b;
+
+text-shadow:0 0 50px gold;
 
 }
 
@@ -217,13 +289,16 @@ text-shadow:
 <body>
 
 
-<canvas id="stars"></canvas>
+<canvas id="bg"></canvas>
 
 
 
-<!-- 1 -->
 
-<div class="scene active" id="s1">
+
+<!-- PAGE 1 -->
+
+
+<div class="scene active" id="page1">
 
 
 <div class="card">
@@ -236,17 +311,17 @@ A Story Across Time
 
 <p>
 
-Some chapters begin quietly...<br>
+Some friendships begin quietly...<br>
 
-in classrooms, conversations, and little moments<br>
+in classrooms, conversations and little moments<br>
 
-that become memories forever.
+that become forever memories.
 
 </p>
 
 
-<button onclick="openScene(2)">
-Begin The Journey
+<button onclick="show(2)">
+Open The Memory
 </button>
 
 
@@ -260,10 +335,12 @@ Begin The Journey
 
 
 
-<!-- 2 -->
 
 
-<div class="scene" id="s2">
+<!-- PAGE 2 -->
+
+
+<div class="scene" id="page2">
 
 
 <h1>
@@ -273,18 +350,18 @@ Vijayawada
 
 <p>
 
-The city where a beautiful friendship started...<br>
-
-with stories, laughter, and countless memories.
+Where the first chapters were written...
 
 <br><br>
 
-Drag the glowing memory back...
+Drag the diary to unlock the next memory.
 
 </p>
 
 
-<div id="memoryStar"></div>
+<div id="diary">
+📖
+</div>
 
 
 </div>
@@ -295,33 +372,35 @@ Drag the glowing memory back...
 
 
 
-<!-- 3 -->
 
 
-<div class="scene" id="s3">
+<!-- PAGE 3 -->
+
+
+<div class="scene" id="page3">
 
 
 <h1>
-14 Years Later...
+14 Years Later
 </h1>
 
 
 <p>
 
-Time changed paths.<br>
+Years passed...
 
-Cities changed.<br>
+cities changed...
 
-Life moved forward.
+life moved forward.
 
 <br><br>
 
-But some friendships stay exactly where the heart left them.
+But some friendships never disappear.
 
 </p>
 
 
-<button onclick="openScene(4)">
+<button onclick="show(4)">
 Continue
 </button>
 
@@ -335,10 +414,11 @@ Continue
 
 
 
-<!-- 4 -->
+
+<!-- PAGE 4 -->
 
 
-<div class="scene" id="s4">
+<div class="scene" id="page4">
 
 
 <h1>
@@ -350,15 +430,15 @@ Vijayawada ✨ Hyderabad
 
 <p>
 
-From school days to new dreams...<br>
+From school benches...
 
-different places, same memories.
+to new dreams and new journeys.
 
 </p>
 
 
-<button onclick="openScene(5)">
-Unlock A Memory
+<button onclick="show(5)">
+Next Chapter
 </button>
 
 
@@ -372,34 +452,32 @@ Unlock A Memory
 
 
 
-<!-- 5 -->
+<!-- PAGE 5 -->
 
 
-<div class="scene" id="s5">
+<div class="scene" id="page5">
 
 
 <h1>
-
 A Secret Name
-
 </h1>
 
 
 <p>
 
-Only one person can open this chapter...
+Only one person can unlock this memory...
 
 </p>
 
 
-<input id="nick"
+<input id="input"
 placeholder="Enter nickname">
 
 
 <br><br>
 
 
-<button onclick="checkName()">
+<button onclick="unlock()">
 
 Unlock
 
@@ -416,16 +494,15 @@ Unlock
 
 
 
-<!-- 6 -->
+
+<!-- PAGE 6 -->
 
 
-<div class="scene" id="s6">
+<div class="scene" id="page6">
 
 
 <h1>
-
 KEERTHI
-
 </h1>
 
 
@@ -440,10 +517,8 @@ you were a chapter I never closed.
 </p>
 
 
-<button onclick="openScene(7)">
-
+<button onclick="show(7)">
 A Blessing
-
 </button>
 
 
@@ -457,15 +532,13 @@ A Blessing
 
 
 
+<!-- PAGE 7 -->
 
-<!-- 7 Bible -->
 
-
-<div class="scene" id="s7">
+<div class="scene" id="page7">
 
 
 <p class="verse">
-
 
 "You are altogether beautiful, my darling;<br>
 
@@ -475,14 +548,11 @@ there is no flaw in you."
 
 — Song of Solomon 4:7
 
-
 </p>
 
 
-<button onclick="openScene(8)">
-
+<button onclick="show(8)">
 Continue
-
 </button>
 
 
@@ -496,13 +566,13 @@ Continue
 
 
 
-<!-- 8 -->
+<!-- PAGE 8 -->
 
 
-<div class="scene" id="s8">
+<div class="scene" id="page8">
 
 
-<div class="big">
+<div class="final">
 
 HAPPY BIRTHDAY
 
@@ -540,10 +610,10 @@ but this friendship was never forgotten.
 <script>
 
 
-// STARS
+// background floating memories
 
 
-const canvas=document.getElementById("stars");
+const canvas=document.getElementById("bg");
 
 const ctx=canvas.getContext("2d");
 
@@ -556,23 +626,27 @@ canvas.height=innerHeight;
 
 }
 
+
 resize();
 
 onresize=resize;
 
 
-let stars=[];
+
+let lights=[];
 
 
-for(let i=0;i<350;i++){
+for(let i=0;i<50;i++){
 
-stars.push({
+lights.push({
 
 x:Math.random()*innerWidth,
 
 y:Math.random()*innerHeight,
 
-r:Math.random()*2
+r:20+Math.random()*50,
+
+s:.2+Math.random()
 
 });
 
@@ -580,30 +654,51 @@ r:Math.random()*2
 
 
 
-function animateStars(){
+function animate(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
 
-stars.forEach(s=>{
+lights.forEach(l=>{
 
-ctx.fillStyle="white";
+
+ctx.globalAlpha=.15;
+
+ctx.fillStyle="#ffd36b";
+
 
 ctx.beginPath();
 
-ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+ctx.arc(
+l.x,
+l.y,
+l.r,
+0,
+Math.PI*2
+);
 
 ctx.fill();
+
+
+l.y-=l.s;
+
+
+if(l.y<0)
+l.y=innerHeight;
+
 
 });
 
 
-requestAnimationFrame(animateStars);
+ctx.globalAlpha=1;
+
+
+requestAnimationFrame(animate);
 
 }
 
 
-animateStars();
+animate();
 
 
 
@@ -611,17 +706,19 @@ animateStars();
 
 
 
-function openScene(n){
 
+// scene change
+
+
+function show(n){
 
 document.querySelectorAll(".scene")
-.forEach(s=>s.classList.remove("active"));
+.forEach(x=>x.classList.remove("active"));
 
 
 document
-.getElementById("s"+n)
+.getElementById("page"+n)
 .classList.add("active");
-
 
 }
 
@@ -630,19 +727,23 @@ document
 
 
 
-// DRAG MEMORY
 
 
-let star=document.getElementById("memoryStar");
+// drag diary
+
+
+let diary=document.getElementById("diary");
 
 let drag=false;
 
 
-star.onmousedown=()=>{
+
+diary.onmousedown=()=>{
 
 drag=true;
 
 };
+
 
 
 document.onmouseup=()=>{
@@ -651,24 +752,25 @@ if(drag){
 
 drag=false;
 
-openScene(3);
+show(3);
 
 }
 
 };
+
+
+
 
 
 document.onmousemove=e=>{
 
-
 if(drag){
 
-star.style.left=e.clientX-45+"px";
+diary.style.left=e.clientX-60+"px";
 
-star.style.top=e.clientY-45+"px";
+diary.style.top=e.clientY-50+"px";
 
 }
-
 
 };
 
@@ -677,27 +779,31 @@ star.style.top=e.clientY-45+"px";
 
 
 
-// PASSWORD
 
 
-function checkName(){
+
+// unlock
 
 
-let v=document
-.getElementById("nick")
+function unlock(){
+
+
+let text=document
+.getElementById("input")
 .value
 .toLowerCase();
 
 
-if(v=="choti"){
 
-openScene(6);
+if(text=="choti"){
+
+show(6);
 
 }
 
 else{
 
-alert("That memory needs the right name ✨");
+alert("That memory is waiting for the right name ✨");
 
 }
 

@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-
 <style>
 
 *{
@@ -18,31 +17,18 @@ box-sizing:border-box;
 
 body{
 overflow:hidden;
-background:#05030a;
+background:#050505;
 font-family:Georgia,serif;
 color:white;
 }
 
 
 
-/* CANVAS BACKGROUND */
-
-canvas{
-position:absolute;
-width:100%;
-height:100%;
-z-index:-1;
-}
-
-
-
-/* SCENES */
-
+/* common scene */
 
 .scene{
 
 position:absolute;
-
 width:100%;
 height:100vh;
 
@@ -50,40 +36,156 @@ display:none;
 
 align-items:center;
 justify-content:center;
-
 flex-direction:column;
 
 text-align:center;
 
-padding:40px;
+overflow:hidden;
 
 }
 
 
 .active{
-
 display:flex;
+animation:enter 1.8s ease;
+}
 
-animation:cinema 1.8s ease;
+
+@keyframes enter{
+
+0%{
+opacity:0;
+transform:scale(1.1);
+}
+
+100%{
+opacity:1;
+transform:scale(1);
+}
+
+}
+
+
+
+/* ===== SCENE 1 CLASSROOM ===== */
+
+
+#s1{
+
+background:
+linear-gradient(
+rgba(0,0,0,.2),
+rgba(0,0,0,.75)
+),
+#9b7653;
+
+}
+
+
+.classroom{
+
+position:absolute;
+inset:0;
+
+}
+
+
+
+.board{
+
+position:absolute;
+
+top:12%;
+left:25%;
+
+width:50%;
+height:22%;
+
+background:#173d32;
+
+border-radius:10px;
+
+box-shadow:
+0 0 40px #ffd27a;
+
+
+animation:write 4s infinite;
+
+}
+
+
+@keyframes write{
+
+0%{
+filter:brightness(.8);
+}
+
+50%{
+filter:brightness(1.3);
+}
+
+}
+
+
+
+.desk{
+
+position:absolute;
+
+bottom:15%;
+
+width:220px;
+height:90px;
+
+background:#7b4b25;
+
+border-radius:10px;
+
+left:40%;
 
 }
 
 
 
 
-@keyframes cinema{
+
+/* ===== SCENE 2 STORIES ===== */
+
+
+#s2{
+
+background:
+linear-gradient(#1d2671,#c33764);
+
+}
+
+
+
+.paper{
+
+position:absolute;
+
+width:120px;
+height:90px;
+
+background:#fff0c8;
+
+animation:papers 6s infinite;
+
+}
+
+
+@keyframes papers{
 
 from{
 
-opacity:0;
-transform:scale(1.08);
+transform:translateY(100vh) rotate(0);
 
 }
 
 to{
 
-opacity:1;
-transform:scale(1);
+transform:translateY(-20vh) rotate(360deg);
 
 }
 
@@ -93,18 +195,37 @@ transform:scale(1);
 
 
 
-.card{
+/* ===== SCENE 3 TIME ===== */
 
-background:rgba(0,0,0,.45);
 
-padding:50px;
+#s3{
 
-border-radius:35px;
+background:
 
-backdrop-filter:blur(12px);
+linear-gradient(#00111f,#003b5c);
 
-box-shadow:
-0 0 60px rgba(255,200,90,.5);
+}
+
+
+.clock{
+
+width:230px;
+height:230px;
+
+border:10px solid #ffd36b;
+
+border-radius:50%;
+
+animation:spin 8s linear infinite;
+
+}
+
+
+@keyframes spin{
+
+100%{
+transform:rotate(360deg);
+}
 
 }
 
@@ -112,62 +233,99 @@ box-shadow:
 
 
 
-h1{
+/* ===== SCENE 4 HYDERABAD ===== */
 
-font-size:60px;
 
-color:#ffd879;
+#s4{
+
+background:
+linear-gradient(#020024,#090979,#00d4ff);
+
+}
+
+
+.city{
+
+position:absolute;
+
+bottom:0;
+
+width:100%;
+
+height:35%;
+
+background:
+linear-gradient(
+90deg,
+#111 20%,
+#333 21%,
+#111 40%,
+#222 60%,
+#111 80%
+);
+
+animation:moveCity 5s infinite alternate;
+
+}
+
+
+
+@keyframes moveCity{
+
+from{
+transform:translateX(-20px);
+}
+
+to{
+transform:translateX(20px);
+}
+
+}
+id="part2"
+
+
+<style>
+
+/* TEXT STYLES */
+
+
+.title{
+
+font-size:65px;
+
+color:#ffe28a;
 
 text-shadow:
-
-0 0 30px gold,
-0 0 70px orange;
+0 0 35px gold;
 
 }
 
 
 
-p{
+.diaryText{
 
-font-size:27px;
+font-size:34px;
+
+font-family:"Segoe Print",cursive;
 
 line-height:1.8;
 
-max-width:950px;
-
-margin:30px;
-
-color:#fff0c7;
+color:#fff2c4;
 
 }
 
 
 
 
+.movieText{
 
-button,input{
+font-size:30px;
 
-padding:18px 40px;
+line-height:1.9;
 
-border-radius:40px;
-
-border:none;
-
-font-size:20px;
+letter-spacing:1px;
 
 }
-
-
-
-button{
-
-background:#ffd36b;
-
-cursor:pointer;
-
-}
-
-
 
 
 
@@ -179,30 +337,23 @@ cursor:pointer;
 #diary{
 
 width:140px;
+height:100px;
 
-height:110px;
+background:#a66b35;
+
+border-radius:15px;
+
+font-size:60px;
 
 position:absolute;
 
-right:130px;
+right:120px;
 
 bottom:120px;
 
 
-background:
-linear-gradient(135deg,#f6d27a,#8b572a);
-
-
-border-radius:20px;
-
-
-font-size:65px;
-
-
 display:flex;
-
 align-items:center;
-
 justify-content:center;
 
 
@@ -210,8 +361,7 @@ cursor:grab;
 
 
 box-shadow:
-
-0 0 40px gold;
+0 0 40px #ffcf55;
 
 
 animation:float 3s infinite;
@@ -220,12 +370,11 @@ animation:float 3s infinite;
 
 
 
-
 @keyframes float{
 
 50%{
 
-transform:translateY(-30px);
+transform:translateY(-25px);
 
 }
 
@@ -236,73 +385,143 @@ transform:translateY(-30px);
 
 
 
+/* scene 5 */
 
-/* text */
+#s5{
 
-
-.story{
-
-font-size:30px;
-
-animation:textGlow 3s infinite;
+background:
+linear-gradient(#301934,#000);
 
 }
 
 
 
-@keyframes textGlow{
-
-50%{
-
-text-shadow:0 0 30px #ffd86b;
-
-}
-
-}
-
-
-
-
-
-
-
-.name{
+.lock{
 
 font-size:100px;
 
-letter-spacing:20px;
+animation:pulse 2s infinite;
 
-color:#ffe28a;
+}
+
+
+
+@keyframes pulse{
+
+50%{
 
 text-shadow:
-
 0 0 50px gold;
 
 }
 
+}
 
+
+
+
+
+
+/* scene 6 */
+
+
+#s6{
+
+background:
+linear-gradient(#200122,#6f0000);
+
+}
+
+
+
+.heart{
+
+font-size:100px;
+
+animation:beat 1.5s infinite;
+
+}
+
+
+@keyframes beat{
+
+50%{
+
+transform:scale(1.2);
+
+}
+
+}
+
+
+
+
+
+/* verse */
+
+
+#s7{
+
+background:
+
+linear-gradient(#87ceeb,#fff);
+
+color:#3b2400;
+
+}
 
 
 
 .verse{
 
-font-size:34px;
+font-size:35px;
 
-line-height:1.8;
+font-family:Georgia,serif;
+
+color:#4a2b00;
 
 animation:flicker 2s infinite;
 
 }
 
 
-
 @keyframes flicker{
 
 50%{
 
-opacity:.45;
+opacity:.5;
 
 }
+
+}
+
+
+
+
+
+/* final */
+
+
+#s8{
+
+background:
+
+linear-gradient(#000,#402060);
+
+}
+
+
+
+.finalName{
+
+font-size:100px;
+
+letter-spacing:15px;
+
+color:#ffe28a;
+
+text-shadow:
+0 0 60px gold;
 
 }
 
@@ -312,92 +531,99 @@ opacity:.45;
 </style>
 
 
-</head>
-
-
-<body>
-
-
-<canvas id="world"></canvas>
 
 
 
 
 
-
-<!-- PHASE 1 -->
+<!-- SCENE 1 CONTENT -->
 
 
 <div class="scene active" id="s1">
 
 
-<div class="card">
+<div class="classroom">
+
+<div class="board"></div>
+
+<div class="desk"></div>
 
 
-<h1>
+</div>
+
+
+
+
+<h1 class="title">
+
 The First Chapter
+
 </h1>
 
 
 
-<p class="story">
+<p class="diaryText">
 
 
-In Vijayawada where the days were bright,<br>
+In Vijayawada where our days were bright,<br>
 
-we built little memories under classroom light.<br>
+we found little worlds beneath classroom light.<br>
 
-With laughter, stories, and moments so true,<br>
+With laughter and stories that time could not erase,<br>
 
-those simple days became treasures we knew.
+those memories still carry a beautiful place.
 
 </p>
 
 
 
-<button onclick="next(2)">
-
-Open The Memory
-
+<button onclick="show(2)">
+Open Memory
 </button>
 
 
 </div>
 
 
-</div>
 
 
 
 
 
 
-
-
-<!-- PHASE 2 -->
+<!-- SCENE 2 -->
 
 
 <div class="scene" id="s2">
 
 
-<h1>
-A Voice Full Of Stories
+<div class="paper" style="left:20%"></div>
+<div class="paper" style="left:70%"></div>
+<div class="paper" style="left:45%"></div>
+
+
+
+<h1 class="title">
+
+The Story Teller
+
 </h1>
 
 
 
-<p class="story">
+<p class="movieText">
 
 
-From Delhi's streets to stories she would share,<br>
+From Delhi came stories with endless light,<br>
 
-she filled every moment with magical flair.<br>
+turning ordinary moments into something bright.<br>
 
-Every tale she told, every laugh she gave,<br>
+Every little tale, every laugh you shared,<br>
 
-became little memories my heart chose to save.
+became a memory my heart always cared.
 
 </p>
+
 
 
 
@@ -410,9 +636,10 @@ became little memories my heart chose to save.
 
 <p>
 
-Drag the diary into the light...
+Drag the diary to continue
 
 </p>
+
 
 
 </div>
@@ -425,38 +652,42 @@ Drag the diary into the light...
 
 
 
-
-<!-- PHASE 3 -->
+<!-- SCENE 3 -->
 
 
 <div class="scene" id="s3">
 
 
-<h1>
+<div class="clock"></div>
+
+
+
+<h1 class="title">
+
 Fourteen Years
+
 </h1>
 
 
 
-<p class="story">
+<p class="movieText">
 
 
-Fourteen years passed like rivers that flow,<br>
+Fourteen years travelled silently away,<br>
 
-through changing seasons and paths we don't know.<br>
+through every night and every day.<br>
 
-But some friendships stay inside the heart,<br>
+Yet some friendships quietly stay,<br>
 
-no distance or time can tear them apart.
+like morning sunshine after the rain fades away.
 
 </p>
 
 
 
-<button onclick="next(4)">
 
+<button onclick="show(4)">
 Continue
-
 </button>
 
 
@@ -465,77 +696,84 @@ Continue
 
 
 
-<!-- PHASE 4 -->
+
+
+
+
+<!-- SCENE 4 -->
+
 
 <div class="scene" id="s4">
 
 
-<h1>
-Hyderabad Chapter
+<div class="city"></div>
+
+
+
+<h1 class="title">
+
+Hyderabad
+
 </h1>
 
 
 
-<p class="story">
+<p class="movieText">
 
 
-New roads appeared and dreams took flight,<br>
+Different roads and different skies,<br>
 
-under Hyderabad's glowing city lights.<br>
+new dreams beneath the city lights.<br>
 
-Yet one old friendship continued to stay,<br>
+But some bonds never lose their glow,<br>
 
-like a beautiful song that never fades away.
+they stay wherever our journeys go.
 
 </p>
 
 
 
-<button onclick="next(5)">
-
-Unlock The Memory
-
+<button onclick="show(5)">
+Next Chapter
 </button>
 
 
 </div>
-
-
-
-
-
-
-
-
-
-<!-- PHASE 5 -->
-
+<!-- SCENE 5 -->
 
 <div class="scene" id="s5">
 
 
-<h1>
-The Hidden Name
+<div class="lock">
+🔐
+</div>
+
+
+
+<h1 class="title">
+
+A Hidden Name
+
 </h1>
 
 
 
-<p class="story">
+<p class="movieText">
 
 
 One little name holds the key,<br>
 
-a hidden word only you can see.<br>
+a precious memory waiting to be free.<br>
 
-Type it softly, let memories start,<br>
+A word from the heart, a name so true,<br>
 
-and open the door inside your heart.
+that brings back a story meant only for you.
 
 </p>
 
 
 
-<input id="key"
+<input id="answer"
 placeholder="Enter nickname">
 
 
@@ -563,38 +801,50 @@ Unlock
 
 
 
-<!-- PHASE 6 -->
+<!-- SCENE 6 -->
 
 
 <div class="scene" id="s6">
 
 
-<h1>
+
+<div class="heart">
+
+❤️
+
+</div>
+
+
+
+<h1 class="title">
+
 KEERTHI
+
 </h1>
 
 
 
-<p class="story">
+<p class="movieText">
 
 
-Not every friend becomes a memory,<br>
+After years the paths aligned,<br>
 
-some become a forever story.<br>
+bringing back a friendship left behind.<br>
 
-Some chapters never need goodbye,<br>
+Some people don't fade with time,<br>
 
-they live like stars in the endless sky.
+they return like a beautiful rhyme.
 
 </p>
 
 
 
-<button onclick="next(7)">
+<button onclick="show(7)">
 
 A Blessing
 
 </button>
+
 
 
 </div>
@@ -608,7 +858,7 @@ A Blessing
 
 
 
-<!-- PHASE 7 -->
+<!-- SCENE 7 -->
 
 
 <div class="scene" id="s7">
@@ -624,20 +874,18 @@ there is no flaw in you."
 
 <br><br>
 
-
 — Song of Solomon 4:7
-
 
 </p>
 
 
 
-
-<button onclick="next(8)">
+<button onclick="show(8)">
 
 Continue
 
 </button>
+
 
 
 </div>
@@ -650,15 +898,14 @@ Continue
 
 
 
-
-<!-- PHASE 8 -->
+<!-- SCENE 8 -->
 
 
 <div class="scene" id="s8">
 
 
 
-<h1>
+<h1 class="title">
 
 HAPPY BIRTHDAY
 
@@ -666,8 +913,7 @@ HAPPY BIRTHDAY
 
 
 
-
-<div class="name">
+<div class="finalName">
 
 CHOTI ❤️
 
@@ -675,41 +921,54 @@ CHOTI ❤️
 
 
 
-<p class="story">
+<p class="movieText">
 
 
-Years may fly and seasons may part,<br>
+Years may pass and seasons may change,<br>
 
-true friendship stays within the heart.<br>
+life may travel a different range.<br>
 
-From Vijayawada memories we made,<br>
+But true friendships forever stay,<br>
 
-to every new road life displayed.
+like golden memories that never fade away.
 
 <br><br>
 
-Some friendships are not written in time...
+A story started in Vijayawada...<br>
+
+A journey continued through Hyderabad...
 
 <br>
 
-they are written in the soul.
+A friendship remembered forever.
 
 </p>
 
 
 
 </div>
+
+
+
+
+
+
+
+
+
+
 <script>
 
 
-// SCENE CONTROL
+// PAGE CHANGE
 
 
-function next(n){
+function show(n){
+
 
 document
 .querySelectorAll(".scene")
-.forEach(s=>s.classList.remove("active"));
+.forEach(x=>x.classList.remove("active"));
 
 
 document
@@ -723,10 +982,15 @@ document
 
 
 
+
+
+
 // DIARY DRAG
 
 
-let diary=document.getElementById("diary");
+let diary =
+document.getElementById("diary");
+
 
 let dragging=false;
 
@@ -740,6 +1004,8 @@ dragging=true;
 
 
 
+
+
 document.onmouseup=()=>{
 
 
@@ -747,11 +1013,12 @@ if(dragging){
 
 dragging=false;
 
-next(3);
+show(3);
 
 }
 
 };
+
 
 
 
@@ -762,11 +1029,17 @@ document.onmousemove=(e)=>{
 
 if(dragging){
 
-diary.style.left=e.clientX-70+"px";
 
-diary.style.top=e.clientY-50+"px";
+diary.style.left =
+e.clientX-60+"px";
+
+
+diary.style.top =
+e.clientY-50+"px";
+
 
 }
+
 
 };
 
@@ -778,14 +1051,16 @@ diary.style.top=e.clientY-50+"px";
 
 
 
-// NICKNAME UNLOCK
+
+// UNLOCK
 
 
 function unlock(){
 
 
-let value=document
-.getElementById("key")
+let value =
+document
+.getElementById("answer")
 .value
 .toLowerCase();
 
@@ -793,13 +1068,19 @@ let value=document
 
 if(value=="choti"){
 
-next(6);
+
+show(6);
+
 
 }
 
 else{
 
-alert("A special memory needs a special name ✨");
+
+alert(
+"Only the right memory can open this chapter ✨"
+);
+
 
 }
 
@@ -812,13 +1093,21 @@ alert("A special memory needs a special name ✨");
 
 
 
+// FLOATING CINEMA PARTICLES
 
-// CINEMATIC BACKGROUND ENGINE
+
+const canvas =
+document.createElement("canvas");
 
 
-const canvas=document.getElementById("world");
+document.body.appendChild(canvas);
 
-const ctx=canvas.getContext("2d");
+
+
+const ctx =
+canvas.getContext("2d");
+
+
 
 
 
@@ -831,33 +1120,30 @@ canvas.height=innerHeight;
 }
 
 
-resize();
 
+resize();
 
 window.onresize=resize;
 
 
 
 
-
-let objects=[];
+let particles=[];
 
 
 
 for(let i=0;i<120;i++){
 
 
-objects.push({
+particles.push({
 
 x:Math.random()*innerWidth,
 
 y:Math.random()*innerHeight,
 
-size:Math.random()*4+1,
+r:Math.random()*4,
 
-speed:Math.random()*1.5+.2,
-
-type:Math.random()
+s:.5+Math.random()*1.5
 
 });
 
@@ -870,8 +1156,8 @@ type:Math.random()
 
 
 
+function animate(){
 
-function draw(){
 
 
 ctx.clearRect(
@@ -884,177 +1170,57 @@ canvas.height
 
 
 
-let current =
-document.querySelector(".active").id;
+particles.forEach(p=>{
 
 
-
-
-
-objects.forEach(o=>{
-
-
-
-
-
-// classroom dust
-
-if(current=="s1"){
-
-
-ctx.fillStyle=
-"rgba(255,220,130,.6)";
-
-
-}
-
-
-
-
-// story papers
-
-else if(current=="s2"){
-
-
-ctx.fillStyle=
-"rgba(255,240,180,.8)";
-
-
-}
-
-
-
-
-// time particles
-
-else if(current=="s3"){
-
-
-ctx.fillStyle=
-"rgba(100,220,255,.8)";
-
-
-}
-
-
-
-
-// city lights
-
-else if(current=="s4"){
-
-
-ctx.fillStyle=
-"rgba(255,180,80,.8)";
-
-
-}
-
-
-
-
-// magical unlock
-
-else if(current=="s5"){
-
-
-ctx.fillStyle=
-"rgba(200,120,255,.8)";
-
-
-}
-
-
-
-
-// golden ending
-
-else{
-
-
-ctx.fillStyle=
-"rgba(255,220,100,.8)";
-
-
-}
-
-
-
-
+ctx.fillStyle =
+"rgba(255,220,120,.6)";
 
 
 
 ctx.beginPath();
 
+
 ctx.arc(
-o.x,
-o.y,
-o.size,
+p.x,
+p.y,
+p.r,
 0,
 Math.PI*2
 );
+
 
 ctx.fill();
 
 
 
-
-o.y-=o.speed;
-
+p.y-=p.s;
 
 
-if(o.y<0)
 
-o.y=canvas.height;
+if(p.y<0)
+
+p.y=canvas.height;
 
 
 });
 
 
 
-requestAnimationFrame(draw);
-
+requestAnimationFrame(animate);
 
 
 }
 
 
-draw();
 
-
-
-
-
-// RANDOM CINEMATIC CAMERA SHAKE
-
-
-setInterval(()=>{
-
-
-let active=document.querySelector(".active");
-
-
-active.style.transform=
-"scale(1.02)";
-
-
-setTimeout(()=>{
-
-active.style.transform="scale(1)";
-
-},400);
-
-
-
-},5000);
-
-
+animate();
 
 
 
 </script>
 
 
-</body>
 
+</body>
 </html>

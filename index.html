@@ -2,7 +2,6 @@
 <html>
 <head>
 <title>For Keerthi</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -20,13 +19,29 @@ color:white;
 background:#000;
 }
 
+/* GOLD CLOCK */
+#goldClock{
+position:fixed;
+top:15px;
+right:15px;
+padding:10px 15px;
+border:2px solid gold;
+border-radius:12px;
+color:gold;
+font-size:18px;
+box-shadow:0 0 20px gold;
+background:rgba(0,0,0,0.3);
+z-index:9999;
+}
 
-/* COMMON */
-
+/* SCENES */
 .scene{
 position:absolute;
 width:100%;
 height:100vh;
+top:0;
+left:0;
+
 display:none;
 align-items:center;
 justify-content:center;
@@ -38,29 +53,19 @@ overflow:hidden;
 
 .active{
 display:flex;
-animation:fade 1.5s ease;
+animation:fade 1.2s ease;
 }
-
 
 @keyframes fade{
-from{
-opacity:0;
-transform:scale(1.08);
+from{opacity:0; transform:scale(1.08);}
+to{opacity:1; transform:scale(1);}
 }
-to{
-opacity:1;
-transform:scale(1);
-}
-}
-
-
 
 h1{
 font-size:60px;
 color:#ffe28a;
 text-shadow:0 0 40px gold;
 }
-
 
 p{
 font-size:26px;
@@ -69,721 +74,331 @@ max-width:900px;
 margin:25px;
 }
 
+/* BACKGROUNDS */
+#s1{background:linear-gradient(#6b4423,#120904);}
+#s2{background:linear-gradient(#351c75,#1d2671);}
+#s3{background:linear-gradient(#001f3f,#000);}
+#s4{background:linear-gradient(#020024,#090979,#00d4ff);}
+#s5{background:linear-gradient(#3a1c71,#000);}
+#s6{background:linear-gradient(#200122,#6f0000);}
+#s7{background:linear-gradient(#87ceeb,#fff);}
+#s8{background:linear-gradient(#000,#3b185f);}
 
-/* PHASE BACKGROUNDS */
-
-
-#s1{
-background:
-linear-gradient(#6b4423,#120904);
-}
-
-
-#s2{
-background:
-linear-gradient(#351c75,#1d2671);
-}
-
-
-#s3{
-background:
-linear-gradient(#001f3f,#000);
-}
-
-
-#s4{
-background:
-linear-gradient(#020024,#090979,#00d4ff);
-}
-
-
-#s5{
-background:
-linear-gradient(#3a1c71,#000);
-}
-
-
-#s6{
-background:
-linear-gradient(#200122,#6f0000);
-}
-
-
-#s7{
-background:
-linear-gradient(#87ceeb,#fff);
-}
-
-
-#s8{
-background:
-linear-gradient(#000,#3b185f);
-}
-
-
-
-/* classroom */
-
+/* BOARD */
 .board{
-
 width:420px;
 height:150px;
-
 background:#164d32;
-
 border-radius:10px;
-
 position:absolute;
 top:80px;
-
 box-shadow:0 0 40px #ffd56b;
-
 }
-
 
 .desk{
-
 width:220px;
 height:80px;
-
 background:#7b4a22;
-
 position:absolute;
-
 bottom:80px;
-
 border-radius:15px;
-
 }
 
-
-
+/* PAPER */
 .paper{
-
 position:absolute;
-
 width:80px;
 height:60px;
-
 background:#fff1b8;
-
 animation:fall 5s infinite;
-
 }
-
 
 @keyframes fall{
-
-from{
-top:-100px;
-transform:rotate(0deg);
+from{top:-100px; transform:rotate(0deg);}
+to{top:100%; transform:rotate(360deg);}
 }
 
-to{
-top:100%;
-transform:rotate(360deg);
-}
-
-}
-
-
-
-
-/* diary */
-
+/* DIARY */
 #diary{
-
 width:130px;
 height:100px;
-
 background:#b4773b;
-
 border-radius:15px;
-
 font-size:55px;
-
 position:absolute;
-
 right:120px;
 bottom:100px;
-
 display:flex;
 align-items:center;
 justify-content:center;
-
 cursor:grab;
-
 box-shadow:0 0 40px gold;
-
 animation:float 3s infinite;
-
+touch-action:none;
 }
-
 
 @keyframes float{
-
-50%{
-transform:translateY(-25px);
+50%{transform:translateY(-25px);}
 }
 
-}
-
-
-
-
-
-/* clock */
-
+/* CLOCK */
 .clock{
-
 width:220px;
 height:220px;
-
 border:10px solid gold;
-
 border-radius:50%;
-
 animation:spin 8s linear infinite;
-
 }
 
 @keyframes spin{
-100%{
-transform:rotate(360deg);
-}
+100%{transform:rotate(360deg);}
 }
 
-
-
-
+/* CITY */
 .city{
-
 position:absolute;
 bottom:0;
-
 height:35%;
 width:100%;
-
 background:#111;
-
-box-shadow:
-inset 0 0 40px #00ffff;
-
+box-shadow:inset 0 0 40px #00ffff;
 }
 
-
-
-
 .lock{
-
 font-size:100px;
-
 animation:pulse 2s infinite;
-
 }
 
 @keyframes pulse{
-
-50%{
-filter:drop-shadow(0 0 30px gold);
+50%{filter:drop-shadow(0 0 30px gold);}
 }
-
-}
-
-
-
-.verse{
-
-font-size:35px;
-color:#4b2b00;
-
-animation:flicker 2s infinite;
-
-}
-
-
-@keyframes flicker{
-
-50%{
-opacity:.4;
-}
-
-}
-
-
 
 .final{
-
 font-size:95px;
-
 letter-spacing:15px;
-
 color:#ffe28a;
-
 text-shadow:0 0 70px gold;
-
 }
-
-
-
 
 button,input{
-
 padding:15px 35px;
-
 border:none;
-
 border-radius:30px;
-
 font-size:20px;
-
 }
-
 
 button{
 background:#ffd36b;
 cursor:pointer;
 }
 
-
 </style>
-
 </head>
-
-
 
 <body>
 
-
+<!-- GOLD CLOCK -->
+<div id="goldClock"></div>
 
 <!-- 1 -->
-
 <div class="scene active" id="s1">
-
-
 <div class="board"></div>
 <div class="desk"></div>
 
-
 <h1>The First Chapter</h1>
-
-
 <p>
-
 In Vijayawada where our memories grew,<br>
 a classroom held a friendship true.<br>
 With little moments and laughter bright,<br>
 those old days still shine like light.
-
 </p>
 
-
-<button onclick="openScene(2)">
-Start The Story
-</button>
-
-
+<button onclick="openScene(2)">Start The Story</button>
 </div>
 
-
-
-
-
-
-
 <!-- 2 -->
-
-
 <div class="scene" id="s2">
-
-
 <div class="paper" style="left:20%"></div>
 <div class="paper" style="left:70%"></div>
 
-
 <h1>The Story Teller</h1>
 
-
 <p>
-
 From Delhi came a heart full of tales,<br>
 where every conversation carried beautiful trails.<br>
 You turned simple moments into memories bright,<br>
 and made ordinary days feel like starlight.
-
 </p>
 
-
-<div id="diary">
-📖
-</div>
-
-
+<div id="diary">📖</div>
 <p>Drag the diary</p>
-
-
 </div>
-
-
-
-
-
-
 
 <!-- 3 -->
-
 <div class="scene" id="s3">
-
-
 <div class="clock"></div>
 
-
 <h1>14 Years Later</h1>
-
-
 <p>
-
 Fourteen years quietly passed away,<br>
 through every night and every day.<br>
 But some friendships never depart,<br>
 they stay forever inside the heart.
-
 </p>
 
-
-<button onclick="openScene(4)">
-Continue
-</button>
-
-
+<button onclick="openScene(4)">Continue</button>
 </div>
 
-
-
-
-
-
-
 <!-- 4 -->
-
-
 <div class="scene" id="s4">
-
-
 <div class="city"></div>
-
 
 <h1>Hyderabad</h1>
 
-
 <p>
-
 New roads came and new dreams grew,<br>
 but old memories still stayed true.<br>
 Different cities, different skies,<br>
 same friendship that never dies.
-
 </p>
 
-
-<button onclick="openScene(5)">
-Unlock
-</button>
-
-
+<button onclick="openScene(5)">Unlock</button>
 </div>
-
-
-
-
-
-
-
 
 <!-- 5 -->
-
-
 <div class="scene" id="s5">
-
-
 <div class="lock">🔐</div>
 
-
 <h1>Hidden Name</h1>
-
-
-<p>
-A little name opens this chapter...
-</p>
-
+<p>A little name opens this chapter...</p>
 
 <input id="name" placeholder="nickname">
-
-
 <br><br>
 
-
-<button onclick="check()">
-Open
-</button>
-
-
+<button onclick="check()">Open</button>
 </div>
 
-
-
-
-
-
-
-
 <!-- 6 -->
-
-
 <div class="scene" id="s6">
-
-
 <h1>KEERTHI</h1>
 
-
 <p>
-
 Some friends become memories,<br>
 some become stories.<br>
 Some stories are never forgotten.
-
 </p>
 
-
-<button onclick="openScene(7)">
-Blessing
-</button>
-
-
+<button onclick="openScene(7)">Blessing</button>
 </div>
-
-
-
-
-
-
-
 
 <!-- 7 -->
-
-
 <div class="scene" id="s7">
-
-
-<p class="verse">
-
+<p>
 "You are altogether beautiful, my darling;<br>
-there is no flaw in you."
-
-<br><br>
-
+there is no flaw in you."<br><br>
 — Song of Solomon 4:7
-
 </p>
 
-
-<button onclick="openScene(8)">
-Continue
-</button>
-
-
+<button onclick="openScene(8)">Continue</button>
 </div>
-
-
-
-
-
-
 
 <!-- 8 -->
-
-
 <div class="scene" id="s8">
-
-
-<div class="final">
-HAPPY BIRTHDAY
-</div>
-
+<div class="final">HAPPY BIRTHDAY</div>
 
 <h1>CHOTI ❤️</h1>
 
-
 <p>
-
 Years may change the road we take,<br>
 but true friendships never break.<br>
-
 From Vijayawada memories to Hyderabad days,<br>
 you remain a beautiful part of my ways.
-
 </p>
 
-
+<button onclick="openScene(1)">Restart</button>
 </div>
-
-
-
-
-
-
-
 
 <script>
 
-
+/* SCENES */
 function openScene(n){
+document.querySelectorAll(".scene").forEach(s=>{
+s.classList.remove("active");
+s.style.display="none";
+});
 
-document.querySelectorAll(".scene")
-.forEach(x=>x.classList.remove("active"));
+let next=document.getElementById("s"+n);
+next.style.display="flex";
 
-document
-.getElementById("s"+n)
-.classList.add("active");
-
+setTimeout(()=>next.classList.add("active"),50);
 }
 
+/* CLOCK */
+function updateClock(){
+let d=new Date();
+let h=String(d.getHours()).padStart(2,'0');
+let m=String(d.getMinutes()).padStart(2,'0');
+let s=String(d.getSeconds()).padStart(2,'0');
 
+document.getElementById("goldClock").innerText=
+`⏰ ${h}:${m}:${s}`;
+}
 
+setInterval(updateClock,1000);
+updateClock();
 
-
+/* DIARY DRAG */
 let diary=document.getElementById("diary");
+let drag=false,ox=0,oy=0;
 
-let drag=false;
+if(diary){
 
+diary.onmousedown=(e)=>{
+drag=true;
+ox=e.clientX-diary.offsetLeft;
+oy=e.clientY-diary.offsetTop;
+};
 
-diary.onmousedown=()=>drag=true;
+document.onmouseup=()=>{drag=false;};
 
-
-document.onmouseup=()=>{
-
+document.onmousemove=(e)=>{
 if(drag){
+diary.style.left=(e.clientX-ox)+"px";
+diary.style.top=(e.clientY-oy)+"px";
+}
+};
 
-drag=false;
+/* MOBILE */
+diary.ontouchstart=(e)=>{
+drag=true;
+let t=e.touches[0];
+ox=t.clientX-diary.offsetLeft;
+oy=t.clientY-diary.offsetTop;
+};
 
-openScene(3);
+document.ontouchend=()=>{drag=false;};
+
+document.ontouchmove=(e)=>{
+if(drag){
+let t=e.touches[0];
+diary.style.left=(t.clientX-ox)+"px";
+diary.style.top=(t.clientY-oy)+"px";
+}
+};
 
 }
 
-};
-
-
-document.onmousemove=e=>{
-
-if(drag){
-
-diary.style.left=e.clientX-60+"px";
-diary.style.top=e.clientY-50+"px";
-
-}
-
-};
-
-
-
-
-
+/* PASSWORD */
 function check(){
-
-let v=document
-.getElementById("name")
-.value
-.toLowerCase();
-
-
+let v=document.getElementById("name").value.toLowerCase();
 if(v=="choti"){
-
 openScene(6);
-
-}
-
-else{
-
+}else{
 alert("Try the special name ✨");
-
 }
-
 }
-
-
-
-
-// floating particles
-
-const c=document.createElement("canvas");
-
-document.body.appendChild(c);
-
-const ctx=c.getContext("2d");
-
-
-function resize(){
-
-c.width=innerWidth;
-c.height=innerHeight;
-
-}
-
-resize();
-
-
-let dots=[];
-
-
-for(let i=0;i<80;i++){
-
-dots.push({
-
-x:Math.random()*innerWidth,
-y:Math.random()*innerHeight,
-r:Math.random()*4,
-s:Math.random()+.2
-
-});
-
-}
-
-
-
-function animate(){
-
-ctx.clearRect(0,0,c.width,c.height);
-
-
-dots.forEach(d=>{
-
-ctx.fillStyle="rgba(255,220,120,.6)";
-
-ctx.beginPath();
-
-ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
-
-ctx.fill();
-
-
-d.y-=d.s;
-
-if(d.y<0)
-d.y=c.height;
-
-});
-
-
-requestAnimationFrame(animate);
-
-}
-
-
-animate();
-
 
 </script>
-
 
 </body>
 </html>

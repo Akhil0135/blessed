@@ -57,7 +57,7 @@ animation:fade 1.2s ease;
 }
 
 @keyframes fade{
-from{opacity:0; transform:scale(1.08);}
+from{opacity:0; transform:scale(1.05);}
 to{opacity:1; transform:scale(1);}
 }
 
@@ -76,7 +76,7 @@ margin:25px;
 
 /* BACKGROUNDS */
 #s1{background:linear-gradient(#6b4423,#120904);}
-#s2{background:linear-gradient(#351c75,#1d2671);}
+#s2{background:linear-gradient(#351c75,#1d2671); position:relative;}
 #s3{background:linear-gradient(#001f3f,#000);}
 #s4{background:linear-gradient(#020024,#090979,#00d4ff);}
 #s5{background:linear-gradient(#3a1c71,#000);}
@@ -125,23 +125,31 @@ height:100px;
 background:#b4773b;
 border-radius:15px;
 font-size:55px;
+
 position:absolute;
-right:120px;
-bottom:100px;
+left:50%;
+top:60%;
+
+transform:translate(-50%,-50%);
+
 display:flex;
 align-items:center;
 justify-content:center;
+
 cursor:grab;
 box-shadow:0 0 40px gold;
+
 animation:float 3s infinite;
+
 touch-action:none;
+user-select:none;
 }
 
 @keyframes float{
-50%{transform:translateY(-25px);}
+50%{transform:translate(-50%,-55%);}
 }
 
-/* CLOCK */
+/* CLOCK (decorative) */
 .clock{
 width:220px;
 height:220px;
@@ -231,7 +239,7 @@ and made ordinary days feel like starlight.
 </p>
 
 <div id="diary">📖</div>
-<p>Drag the diary</p>
+<p>Drag the diary → it unlocks next chapter</p>
 </div>
 
 <!-- 3 -->
@@ -347,44 +355,67 @@ document.getElementById("goldClock").innerText=
 setInterval(updateClock,1000);
 updateClock();
 
-/* DIARY DRAG */
+/* DIARY DRAG FIXED */
 let diary=document.getElementById("diary");
-let drag=false,ox=0,oy=0;
+let drag=false;
+let offsetX=0;
+let offsetY=0;
 
 if(diary){
 
-diary.onmousedown=(e)=>{
+diary.addEventListener("mousedown",(e)=>{
 drag=true;
-ox=e.clientX-diary.offsetLeft;
-oy=e.clientY-diary.offsetTop;
-};
 
-document.onmouseup=()=>{drag=false;};
+let rect=diary.getBoundingClientRect();
+offsetX=e.clientX-rect.left;
+offsetY=e.clientY-rect.top;
 
-document.onmousemove=(e)=>{
+diary.style.animation="none";
+});
+
+document.addEventListener("mouseup",()=>{
 if(drag){
-diary.style.left=(e.clientX-ox)+"px";
-diary.style.top=(e.clientY-oy)+"px";
+drag=false;
+openScene(3);
 }
-};
+});
 
-/* MOBILE */
-diary.ontouchstart=(e)=>{
+document.addEventListener("mousemove",(e)=>{
+if(!drag) return;
+
+diary.style.left=(e.clientX-offsetX)+"px";
+diary.style.top=(e.clientY-offsetY)+"px";
+diary.style.transform="none";
+});
+
+/* TOUCH */
+diary.addEventListener("touchstart",(e)=>{
 drag=true;
+
 let t=e.touches[0];
-ox=t.clientX-diary.offsetLeft;
-oy=t.clientY-diary.offsetTop;
-};
+let rect=diary.getBoundingClientRect();
 
-document.ontouchend=()=>{drag=false;};
+offsetX=t.clientX-rect.left;
+offsetY=t.clientY-rect.top;
 
-document.ontouchmove=(e)=>{
+diary.style.animation="none";
+});
+
+document.addEventListener("touchend",()=>{
 if(drag){
-let t=e.touches[0];
-diary.style.left=(t.clientX-ox)+"px";
-diary.style.top=(t.clientY-oy)+"px";
+drag=false;
+openScene(3);
 }
-};
+});
+
+document.addEventListener("touchmove",(e)=>{
+if(!drag) return;
+
+let t=e.touches[0];
+
+diary.style.left=(t.clientX-offsetX)+"px";
+diary.style.top=(t.clientY-offsetY)+"px";
+});
 
 }
 

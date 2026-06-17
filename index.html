@@ -1,434 +1,291 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>For Keerthi</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Her Story</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
-body{
-overflow:hidden;
-font-family:Georgia,serif;
-color:white;
-background:#000;
+body {
+  height: 100vh;
+  overflow: hidden;
+  background: black;
+  color: white;
 }
 
-/* GOLD CLOCK */
-#goldClock{
-position:fixed;
-top:15px;
-right:15px;
-padding:10px 15px;
-border:2px solid gold;
-border-radius:12px;
-color:gold;
-font-size:18px;
-box-shadow:0 0 20px gold;
-background:rgba(0,0,0,0.3);
-z-index:9999;
+/* ================= SCENES ================= */
+.scene {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: all 1.5s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
-/* SCENES */
-.scene{
-position:absolute;
-width:100%;
-height:100vh;
-top:0;
-left:0;
-
-display:none;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-text-align:center;
-padding:35px;
-overflow:hidden;
+.scene.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 10;
 }
 
-.active{
-display:flex;
-animation:fade 1.2s ease;
+/* ================= BACKGROUNDS ================= */
+#phase1 {
+  background: url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80");
+  background-size: cover;
+  background-position: center;
 }
 
-@keyframes fade{
-from{opacity:0; transform:scale(1.05);}
-to{opacity:1; transform:scale(1);}
+#phase2 {
+  background: radial-gradient(circle at top, #0b1a3a, #000000 70%);
 }
 
-h1{
-font-size:60px;
-color:#ffe28a;
-text-shadow:0 0 40px gold;
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite alternate;
 }
 
-p{
-font-size:26px;
-line-height:1.8;
-max-width:900px;
-margin:25px;
+@keyframes twinkle {
+  from { opacity: 0.2; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.5); }
 }
 
-/* BACKGROUNDS */
-#s1{background:linear-gradient(#6b4423,#120904);}
-#s2{background:linear-gradient(#351c75,#1d2671); position:relative;}
-#s3{background:linear-gradient(#001f3f,#000);}
-#s4{background:linear-gradient(#020024,#090979,#00d4ff);}
-#s5{background:linear-gradient(#3a1c71,#000);}
-#s6{background:linear-gradient(#200122,#6f0000);}
-#s7{background:linear-gradient(#87ceeb,#fff);}
-#s8{background:linear-gradient(#000,#3b185f);}
-
-/* BOARD */
-.board{
-width:420px;
-height:150px;
-background:#164d32;
-border-radius:10px;
-position:absolute;
-top:80px;
-box-shadow:0 0 40px #ffd56b;
+#phase3 {
+  background: url("https://images.unsplash.com/photo-1491884662610-dfcd28f30cfb?auto=format&fit=crop&w=1600&q=80");
+  background-size: cover;
+  background-position: center;
 }
 
-.desk{
-width:220px;
-height:80px;
-background:#7b4a22;
-position:absolute;
-bottom:80px;
-border-radius:15px;
+.cityOverlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
 }
 
-/* PAPER */
-.paper{
-position:absolute;
-width:80px;
-height:60px;
-background:#fff1b8;
-animation:fall 5s infinite;
+#phase4 {
+  background: radial-gradient(circle at center, #1a1a1a, #000);
 }
 
-@keyframes fall{
-from{top:-100px; transform:rotate(0deg);}
-to{top:100%; transform:rotate(360deg);}
+#phase5 {
+  background: radial-gradient(circle at center, #1a1400, #000);
 }
 
-/* DIARY */
-#diary{
-width:130px;
-height:100px;
-background:#b4773b;
-border-radius:15px;
-font-size:55px;
-
-position:absolute;
-left:50%;
-top:60%;
-
-transform:translate(-50%,-50%);
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-cursor:grab;
-box-shadow:0 0 40px gold;
-
-animation:float 3s infinite;
-
-touch-action:none;
-user-select:none;
+.glowBG {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255,215,0,0.15), transparent 60%);
+  animation: slowGlow 6s infinite alternate;
 }
 
-@keyframes float{
-50%{transform:translate(-50%,-55%);}
+@keyframes slowGlow {
+  from { opacity: 0.4; }
+  to { opacity: 0.8; }
 }
 
-/* CLOCK (decorative) */
-.clock{
-width:220px;
-height:220px;
-border:10px solid gold;
-border-radius:50%;
-animation:spin 8s linear infinite;
+/* ================= PHASE 6 ================= */
+#phase6 {
+  background: radial-gradient(circle at center, #2a0000, #000);
+  overflow: hidden;
 }
 
-@keyframes spin{
-100%{transform:rotate(360deg);}
+.finalBox {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 30px;
+  border: 1px solid gold;
+  border-radius: 15px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 2s ease;
 }
 
-/* CITY */
-.city{
-position:absolute;
-bottom:0;
-height:35%;
-width:100%;
-background:#111;
-box-shadow:inset 0 0 40px #00ffff;
+.finalTitle {
+  font-size: 42px;
+  color: gold;
+  animation: glow 2s infinite alternate;
 }
 
-.lock{
-font-size:100px;
-animation:pulse 2s infinite;
+@keyframes glow {
+  from { text-shadow: 0 0 10px gold; }
+  to { text-shadow: 0 0 30px orange, 0 0 50px gold; }
 }
 
-@keyframes pulse{
-50%{filter:drop-shadow(0 0 30px gold);}
+.finalText {
+  margin-top: 15px;
+  font-size: 18px;
+  line-height: 1.6;
 }
 
-.final{
-font-size:95px;
-letter-spacing:15px;
-color:#ffe28a;
-text-shadow:0 0 70px gold;
+.btn {
+  margin-top: 25px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  background: gold;
+  color: black;
+  transition: 0.3s;
 }
 
-button,input{
-padding:15px 35px;
-border:none;
-border-radius:30px;
-font-size:20px;
+.btn:hover {
+  transform: scale(1.1);
 }
 
-button{
-background:#ffd36b;
-cursor:pointer;
+/* fireworks */
+.firework {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: gold;
+  border-radius: 50%;
+  animation: explode 1.5s ease-out infinite;
 }
 
+@keyframes explode {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(8); opacity: 0; }
+}
+
+/* particles */
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  animation: floatUp 7s linear infinite;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-10vh); opacity: 0; }
+}
 </style>
 </head>
 
 <body>
 
-<!-- GOLD CLOCK -->
-<div id="goldClock"></div>
-
-<!-- 1 -->
-<div class="scene active" id="s1">
-<div class="board"></div>
-<div class="desk"></div>
-
-<h1>The First Chapter</h1>
-<p>
-In Vijayawada where our memories grew,<br>
-a classroom held a friendship true.<br>
-With little moments and laughter bright,<br>
-those old days still shine like light.
-</p>
-
-<button onclick="openScene(2)">Start The Story</button>
+<!-- PHASE 1 -->
+<div class="scene active" id="phase1">
+  <div class="content">
+    <h1>Where It All Began</h1>
+    <button class="btn" onclick="nextScene()">Start Journey →</button>
+  </div>
 </div>
 
-<!-- 2 -->
-<div class="scene" id="s2">
-<div class="paper" style="left:20%"></div>
-<div class="paper" style="left:70%"></div>
-
-<h1>The Story Teller</h1>
-
-<p>
-From Delhi came a heart full of tales,<br>
-where every conversation carried beautiful trails.<br>
-You turned simple moments into memories bright,<br>
-and made ordinary days feel like starlight.
-</p>
-
-<div id="diary">📖</div>
-<p>Drag the diary → it unlocks next chapter</p>
+<!-- PHASE 2 -->
+<div class="scene" id="phase2">
+  <div class="content">
+    <h1>14 Years of Silence</h1>
+    <button class="btn" onclick="nextScene()">Continue →</button>
+  </div>
 </div>
 
-<!-- 3 -->
-<div class="scene" id="s3">
-<div class="clock"></div>
-
-<h1>14 Years Later</h1>
-<p>
-Fourteen years quietly passed away,<br>
-through every night and every day.<br>
-But some friendships never depart,<br>
-they stay forever inside the heart.
-</p>
-
-<button onclick="openScene(4)">Continue</button>
+<!-- PHASE 3 -->
+<div class="scene" id="phase3">
+  <div class="cityOverlay"></div>
+  <div class="content">
+    <h1>Hyderabad Reunion</h1>
+    <button class="btn" onclick="nextScene()">Continue →</button>
+  </div>
 </div>
 
-<!-- 4 -->
-<div class="scene" id="s4">
-<div class="city"></div>
-
-<h1>Hyderabad</h1>
-
-<p>
-New roads came and new dreams grew,<br>
-but old memories still stayed true.<br>
-Different cities, different skies,<br>
-same friendship that never dies.
-</p>
-
-<button onclick="openScene(5)">Unlock</button>
+<!-- PHASE 4 -->
+<div class="scene" id="phase4">
+  <div class="content">
+    <h1>Her Stories</h1>
+    <button class="btn" onclick="nextScene()">Continue →</button>
+  </div>
 </div>
 
-<!-- 5 -->
-<div class="scene" id="s5">
-<div class="lock">🔐</div>
-
-<h1>Hidden Name</h1>
-<p>A little name opens this chapter...</p>
-
-<input id="name" placeholder="nickname">
-<br><br>
-
-<button onclick="check()">Open</button>
+<!-- PHASE 5 -->
+<div class="scene" id="phase5">
+  <div class="glowBG"></div>
+  <div class="content">
+    <h1>Message</h1>
+    <button class="btn" onclick="nextScene()">Continue →</button>
+  </div>
 </div>
 
-<!-- 6 -->
-<div class="scene" id="s6">
-<h1>KEERTHI</h1>
+<!-- PHASE 6 -->
+<div class="scene" id="phase6">
+  <div class="finalBox">
+    <div class="finalTitle">🎉 Happy Birthday 🎉</div>
 
-<p>
-Some friends become memories,<br>
-some become stories.<br>
-Some stories are never forgotten.
-</p>
+    <div class="finalText">
+      From Vijayawada classrooms… to 14 years of silence…  
+      to finding you again in Hyderabad —  
+      you were never forgotten.
 
-<button onclick="openScene(7)">Blessing</button>
-</div>
+      <br><br>
+      Today is your day. ✨
+    </div>
 
-<!-- 7 -->
-<div class="scene" id="s7">
-<p>
-"You are altogether beautiful, my darling;<br>
-there is no flaw in you."<br><br>
-— Song of Solomon 4:7
-</p>
-
-<button onclick="openScene(8)">Continue</button>
-</div>
-
-<!-- 8 -->
-<div class="scene" id="s8">
-<div class="final">HAPPY BIRTHDAY</div>
-
-<h1>CHOTI ❤️</h1>
-
-<p>
-Years may change the road we take,<br>
-but true friendships never break.<br>
-From Vijayawada memories to Hyderabad days,<br>
-you remain a beautiful part of my ways.
-</p>
-
-<button onclick="openScene(1)">Restart</button>
+    <button class="btn" onclick="celebrate()">Celebrate 🎆</button>
+  </div>
 </div>
 
 <script>
+let current = 1;
 
-/* SCENES */
-function openScene(n){
-document.querySelectorAll(".scene").forEach(s=>{
-s.classList.remove("active");
-s.style.display="none";
-});
-
-let next=document.getElementById("s"+n);
-next.style.display="flex";
-
-setTimeout(()=>next.classList.add("active"),50);
+function nextScene() {
+  document.getElementById("phase" + current).classList.remove("active");
+  current++;
+  let next = document.getElementById("phase" + current);
+  if (next) next.classList.add("active");
 }
 
-/* CLOCK */
-function updateClock(){
-let d=new Date();
-let h=String(d.getHours()).padStart(2,'0');
-let m=String(d.getMinutes()).padStart(2,'0');
-let s=String(d.getSeconds()).padStart(2,'0');
+/* fireworks generator */
+function celebrate() {
+  for (let i = 0; i < 40; i++) {
+    let f = document.createElement("div");
+    f.className = "firework";
+    f.style.left = Math.random() * 100 + "vw";
+    f.style.top = Math.random() * 100 + "vh";
+    f.style.animationDuration = (0.8 + Math.random()) + "s";
+    document.body.appendChild(f);
 
-document.getElementById("goldClock").innerText=
-`⏰ ${h}:${m}:${s}`;
+    setTimeout(() => f.remove(), 2000);
+  }
 }
 
-setInterval(updateClock,1000);
-updateClock();
-
-/* DIARY DRAG FIXED */
-let diary=document.getElementById("diary");
-let drag=false;
-let offsetX=0;
-let offsetY=0;
-
-if(diary){
-
-diary.addEventListener("mousedown",(e)=>{
-drag=true;
-
-let rect=diary.getBoundingClientRect();
-offsetX=e.clientX-rect.left;
-offsetY=e.clientY-rect.top;
-
-diary.style.animation="none";
-});
-
-document.addEventListener("mouseup",()=>{
-if(drag){
-drag=false;
-openScene(3);
-}
-});
-
-document.addEventListener("mousemove",(e)=>{
-if(!drag) return;
-
-diary.style.left=(e.clientX-offsetX)+"px";
-diary.style.top=(e.clientY-offsetY)+"px";
-diary.style.transform="none";
-});
-
-/* TOUCH */
-diary.addEventListener("touchstart",(e)=>{
-drag=true;
-
-let t=e.touches[0];
-let rect=diary.getBoundingClientRect();
-
-offsetX=t.clientX-rect.left;
-offsetY=t.clientY-rect.top;
-
-diary.style.animation="none";
-});
-
-document.addEventListener("touchend",()=>{
-if(drag){
-drag=false;
-openScene(3);
-}
-});
-
-document.addEventListener("touchmove",(e)=>{
-if(!drag) return;
-
-let t=e.touches[0];
-
-diary.style.left=(t.clientX-offsetX)+"px";
-diary.style.top=(t.clientY-offsetY)+"px";
-});
-
+/* background particles */
+for (let i = 0; i < 30; i++) {
+  let p = document.createElement("div");
+  p.className = "particle";
+  p.style.left = Math.random() * 100 + "vw";
+  p.style.animationDuration = (4 + Math.random() * 5) + "s";
+  document.body.appendChild(p);
 }
 
-/* PASSWORD */
-function check(){
-let v=document.getElementById("name").value.toLowerCase();
-if(v=="choti"){
-openScene(6);
-}else{
-alert("Try the special name ✨");
+/* stars */
+for (let i = 0; i < 80; i++) {
+  let s = document.createElement("div");
+  s.className = "star";
+  s.style.left = Math.random() * 100 + "vw";
+  s.style.top = Math.random() * 100 + "vh";
+  document.getElementById("phase2").appendChild(s);
 }
-}
-
 </script>
 
 </body>

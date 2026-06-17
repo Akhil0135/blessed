@@ -3,206 +3,263 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Her Story</title>
+<title>Friendship Story - Keerthi</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
   font-family: Arial, sans-serif;
 }
 
-body {
-  overflow: hidden;
-  height: 100vh;
-  background: black;
-  color: white;
+body{
+  overflow:hidden;
+  height:100vh;
+  background:black;
+  color:white;
 }
 
-/* SCENES */
-.scene {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: 1.2s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+/* ===== SCENES ===== */
+.scene{
+  position:absolute;
+  width:100%;
+  height:100%;
+  opacity:0;
+  transition:1.2s ease;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
 }
 
-.scene.active {
-  opacity: 1;
-  z-index: 10;
+.scene.active{
+  opacity:1;
+  z-index:10;
 }
 
-/* BACKGROUNDS */
-#p1 { background: url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80") center/cover; }
-#p2 { background: radial-gradient(circle, #0b1a3a, #000); }
-#p3 { background: url("https://images.unsplash.com/photo-1491884662610-dfcd28f30cfb?auto=format&fit=crop&w=1600&q=80") center/cover; }
-#p4 { background: #111; }
-#p5 { background: radial-gradient(circle, #1a1400, #000); }
-#p6 { background: radial-gradient(circle, #2a0000, #000); }
-
-/* overlay */
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.55);
+/* ===== CARTOON STYLE BACKGROUNDS (PHASES) ===== */
+#p1{
+  background: linear-gradient(135deg,#ffecd2,#fcb69f);
 }
 
-/* content */
-.box {
-  position: relative;
-  z-index: 2;
-  max-width: 700px;
-  padding: 20px;
+#p2{
+  background: linear-gradient(135deg,#a1c4fd,#c2e9fb);
 }
 
-h1 {
-  font-size: 40px;
-  margin-bottom: 10px;
+#p3{
+  background: linear-gradient(135deg,#d4fc79,#96e6a1);
 }
 
-p {
-  font-size: 18px;
-  opacity: 0.9;
-  line-height: 1.5;
+#p4{
+  background: linear-gradient(135deg,#84fab0,#8fd3f4);
 }
 
-/* button */
-button {
-  margin-top: 20px;
-  padding: 12px 20px;
-  border: none;
-  background: gold;
-  color: black;
-  cursor: pointer;
-  border-radius: 8px;
+#p5{
+  background: linear-gradient(135deg,#fddb92,#d1fdff);
 }
 
-/* phase 4 bubbles */
-.bubble {
-  position: absolute;
-  padding: 10px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 20px;
-  cursor: pointer;
+#p6{
+  background: linear-gradient(135deg,#434343,#000000);
 }
 
-/* phase 5 verse */
-.verse {
-  border: 1px solid gold;
-  padding: 20px;
-  border-radius: 12px;
-  background: rgba(0,0,0,0.5);
+/* ===== CONTENT BOX ===== */
+.box{
+  max-width:750px;
+  padding:25px;
+  background:rgba(0,0,0,0.35);
+  border-radius:15px;
+  backdrop-filter: blur(6px);
 }
 
-/* phase 6 fireworks */
-.fire {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: gold;
-  border-radius: 50%;
-  animation: boom 1s ease-out forwards;
+/* ===== TEXT ===== */
+h1{
+  font-size:40px;
+  margin-bottom:10px;
 }
 
-@keyframes boom {
-  from { transform: scale(0); opacity: 1; }
-  to { transform: scale(10); opacity: 0; }
+p{
+  font-size:18px;
+  line-height:1.6;
+  opacity:0.95;
+}
+
+/* ===== BUTTON ===== */
+button{
+  margin-top:20px;
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:gold;
+  color:black;
+}
+
+/* ===== MEMORY CARDS ===== */
+.card{
+  position:absolute;
+  padding:10px 15px;
+  background:rgba(255,255,255,0.25);
+  border-radius:15px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:scale(1.1);
+}
+
+/* ===== POPUP ===== */
+.popup{
+  position:fixed;
+  bottom:10%;
+  left:50%;
+  transform:translateX(-50%);
+  background:black;
+  padding:15px;
+  border:1px solid gold;
+  border-radius:10px;
+  display:none;
 }
 </style>
 </head>
 
 <body>
 
-<!-- P1 -->
+<!-- PHASE 1 -->
 <div class="scene active" id="p1">
   <div class="box">
-    <h1>Where It All Began</h1>
-    <p>Vijayawada school days… memories started here.</p>
-    <button onclick="next()">Start</button>
+    <h1>Vijayawada Days 🌸</h1>
+    <p>
+      We studied in the same school…  
+      Keerthi used to tell stories,  
+      and I always enjoyed listening.
+    </p>
+    <p>
+      “Simple days, big memories.”
+    </p>
+    <button onclick="next()">Start Journey</button>
   </div>
 </div>
 
-<!-- P2 -->
+<!-- PHASE 2 -->
 <div class="scene" id="p2">
   <div class="box">
-    <h1>14 Years of Silence</h1>
-    <p>Time passed… but not memory.</p>
-    <button onclick="next()">Continue</button>
-  </div>
-</div>
-
-<!-- P3 -->
-<div class="scene" id="p3">
-  <div class="overlay"></div>
-  <div class="box">
-    <h1>Hyderabad Reunion</h1>
-    <p>After years… I found you again.</p>
-    <button onclick="next()">Continue</button>
-  </div>
-</div>
-
-<!-- P4 -->
-<div class="scene" id="p4">
-  <div class="box">
-    <h1>Her Stories</h1>
-    <p>Click memories</p>
-    <button onclick="next()">Continue</button>
-  </div>
-
-  <div class="bubble" style="top:30%;left:20%;" onclick="alert('She had endless stories.')">Story 1</div>
-  <div class="bubble" style="top:50%;left:60%;" onclick="alert('Her voice stayed in memory.')">Story 2</div>
-</div>
-
-<!-- P5 -->
-<div class="scene" id="p5">
-  <div class="box verse">
-    <h2 style="color:gold;">Bible Verse</h2>
+    <h1>14 Years Passed ⏳</h1>
     <p>
-      Love is patient, love is kind.  
-      It always protects, always trusts.
+      Years changed everything around us…  
+      but not the memory of those school days.
+    </p>
+    <p>
+      “Some bonds don’t age with time.”
     </p>
     <button onclick="next()">Continue</button>
   </div>
 </div>
 
-<!-- P6 -->
-<div class="scene" id="p6">
+<!-- PHASE 3 -->
+<div class="scene" id="p3">
   <div class="box">
-    <h1 style="color:gold;">🎉 Happy Birthday 🎉</h1>
-    <p>You were never forgotten.</p>
-    <button onclick="fireworks()">Celebrate</button>
+    <h1>Hyderabad Reunion 🌆</h1>
+    <p>
+      After 14 years… I found you again in Hyderabad.  
+      It felt like time quietly fixed itself.
+    </p>
+    <p>
+      “Some meetings are written, not planned.”
+    </p>
+    <button onclick="next()">Continue</button>
   </div>
 </div>
 
-<script>
-let i = 1;
+<!-- PHASE 4 -->
+<div class="scene" id="p4">
+  <div class="box">
+    <h1>Her Stories 📖</h1>
+    <p>Click the memories</p>
+    <button onclick="next()">Continue</button>
+  </div>
 
-function next() {
-  document.getElementById("p" + i).classList.remove("active");
+  <div class="card" style="top:30%;left:15%;" onclick="show('She told stories… and I never got bored.')">Story 1</div>
+
+  <div class="card" style="top:50%;left:70%;" onclick="show('Her stories made normal days feel special.')">Story 2</div>
+
+  <div class="card" style="top:70%;left:35%;" onclick="show('Even now, I remember her voice more than words.')">Story 3</div>
+</div>
+
+<!-- PHASE 5 -->
+<div class="scene" id="p5">
+  <div class="box">
+    <h1>Bible Verse ✨</h1>
+    <p>
+      Love is patient, love is kind…  
+      it always protects, always trusts, always hopes.
+    </p>
+    <p>
+      “Some friendships feel blessed beyond time.”
+    </p>
+    <button onclick="next()">Continue</button>
+  </div>
+</div>
+
+<!-- PHASE 6 -->
+<div class="scene" id="p6">
+  <div class="box">
+    <h1 style="color:gold;">🎉 Happy Birthday Keerthi 🎉</h1>
+    <p>
+      From Vijayawada classrooms…  
+      to 14 years of silence…  
+      to finding you again in Hyderabad…
+    </p>
+    <p>
+      You were never forgotten, Choti 🌸
+    </p>
+    <button onclick="fire()">Celebrate</button>
+  </div>
+</div>
+
+<!-- POPUP -->
+<div class="popup" id="popup"></div>
+
+<script>
+let i=1;
+
+function next(){
+  document.getElementById("p"+i).classList.remove("active");
   i++;
-  document.getElementById("p" + i).classList.add("active");
+  document.getElementById("p"+i).classList.add("active");
 }
 
-function fireworks() {
-  for (let j = 0; j < 30; j++) {
-    let f = document.createElement("div");
-    f.className = "fire";
-    f.style.left = Math.random() * 100 + "vw";
-    f.style.top = Math.random() * 100 + "vh";
-    document.body.appendChild(f);
+function show(txt){
+  let p=document.getElementById("popup");
+  p.innerText=txt;
+  p.style.display="block";
+  setTimeout(()=>p.style.display="none",3000);
+}
 
-    setTimeout(() => f.remove(), 1200);
+function fire(){
+  for(let j=0;j<40;j++){
+    let f=document.createElement("div");
+    f.style.position="absolute";
+    f.style.width="6px";
+    f.style.height="6px";
+    f.style.background="gold";
+    f.style.borderRadius="50%";
+    f.style.left=Math.random()*100+"vw";
+    f.style.top=Math.random()*100+"vh";
+    f.style.animation="boom 1s ease-out forwards";
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1200);
   }
 }
 </script>
+
+<style>
+@keyframes boom{
+  from{transform:scale(0);opacity:1;}
+  to{transform:scale(8);opacity:0;}
+}
+</style>
 
 </body>
 </html>

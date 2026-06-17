@@ -2,9 +2,9 @@
 <html>
 <head>
 
-<title>The Friendship Time Couldn't Erase</title>
+<title>The Story That Stayed</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 
 <style>
@@ -18,16 +18,31 @@ box-sizing:border-box;
 
 body{
 overflow:hidden;
-background:#000;
+background:#05030a;
 font-family:Georgia,serif;
 color:white;
 }
 
 
 
+/* CANVAS BACKGROUND */
+
+canvas{
+position:absolute;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+
+
+/* SCENES */
+
+
 .scene{
 
 position:absolute;
+
 width:100%;
 height:100vh;
 
@@ -35,144 +50,63 @@ display:none;
 
 align-items:center;
 justify-content:center;
+
 flex-direction:column;
 
 text-align:center;
 
-overflow:hidden;
+padding:40px;
 
 }
 
 
 .active{
+
 display:flex;
-animation:cinema 2s ease;
+
+animation:cinema 1.8s ease;
+
 }
+
 
 
 
 @keyframes cinema{
 
 from{
+
 opacity:0;
-transform:scale(1.15);
+transform:scale(1.08);
+
 }
 
 to{
+
 opacity:1;
 transform:scale(1);
-}
 
 }
-
-
-
-/* CINEMATIC BACKGROUNDS */
-
-
-#one{
-
-background:
-linear-gradient(
-rgba(0,0,0,.4),
-rgba(0,0,0,.8)
-),
-url("https://images.unsplash.com/photo-1580582932707-520aed937b7b")
-center/cover;
-
-}
-
-
-#two{
-
-background:
-linear-gradient(
-rgba(0,0,0,.3),
-rgba(0,0,0,.8)
-),
-url("https://images.unsplash.com/photo-1509062522246-3755977927d7")
-center/cover;
-
-}
-
-
-
-#three{
-
-background:
-linear-gradient(
-rgba(0,0,30,.4),
-rgba(0,0,0,.9)
-);
-
-}
-
-
-
-#four{
-
-background:
-linear-gradient(
-rgba(0,0,0,.3),
-rgba(0,0,0,.9)
-),
-url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df")
-center/cover;
 
 }
 
 
 
 
-#five{
 
-background:
-linear-gradient(
-#251033,
-#000
-);
+.card{
 
-}
+background:rgba(0,0,0,.45);
 
+padding:50px;
 
+border-radius:35px;
 
+backdrop-filter:blur(12px);
 
-#six{
-
-background:
-linear-gradient(
-#1a0000,
-#000
-);
+box-shadow:
+0 0 60px rgba(255,200,90,.5);
 
 }
-
-
-
-
-#seven{
-
-background:
-linear-gradient(
-#ffaf7b,
-#3f2b96
-);
-
-}
-
-
-
-
-#eight{
-
-background:
-linear-gradient(
-#000,
-#3a1c71
-);
-
-}
-
 
 
 
@@ -182,9 +116,10 @@ h1{
 
 font-size:60px;
 
-color:#ffd878;
+color:#ffd879;
 
 text-shadow:
+
 0 0 30px gold,
 0 0 70px orange;
 
@@ -192,21 +127,20 @@ text-shadow:
 
 
 
-
-
 p{
 
-font-size:28px;
-
-max-width:900px;
+font-size:27px;
 
 line-height:1.8;
 
+max-width:950px;
+
 margin:30px;
 
-color:#fff2d0;
+color:#fff0c7;
 
 }
+
 
 
 
@@ -236,23 +170,6 @@ cursor:pointer;
 
 
 
-.card{
-
-background:rgba(0,0,0,.45);
-
-padding:50px;
-
-border-radius:30px;
-
-backdrop-filter:blur(10px);
-
-box-shadow:
-0 0 50px gold;
-
-}
-
-
-
 
 
 
@@ -265,23 +182,27 @@ width:140px;
 
 height:110px;
 
-background:#b87935;
-
-border-radius:15px;
-
 position:absolute;
 
-right:150px;
+right:130px;
 
 bottom:120px;
 
 
-font-size:60px;
+background:
+linear-gradient(135deg,#f6d27a,#8b572a);
+
+
+border-radius:20px;
+
+
+font-size:65px;
 
 
 display:flex;
 
 align-items:center;
+
 justify-content:center;
 
 
@@ -289,23 +210,56 @@ cursor:grab;
 
 
 box-shadow:
-0 0 50px #ffcc55;
+
+0 0 40px gold;
 
 
 animation:float 3s infinite;
 
-
 }
+
 
 
 
 @keyframes float{
 
 50%{
+
 transform:translateY(-30px);
+
 }
 
 }
+
+
+
+
+
+
+
+/* text */
+
+
+.story{
+
+font-size:30px;
+
+animation:textGlow 3s infinite;
+
+}
+
+
+
+@keyframes textGlow{
+
+50%{
+
+text-shadow:0 0 30px #ffd86b;
+
+}
+
+}
+
 
 
 
@@ -318,9 +272,10 @@ font-size:100px;
 
 letter-spacing:20px;
 
-color:#ffe58a;
+color:#ffe28a;
 
 text-shadow:
+
 0 0 50px gold;
 
 }
@@ -333,23 +288,29 @@ text-shadow:
 
 font-size:34px;
 
-animation:glow 2s infinite;
+line-height:1.8;
+
+animation:flicker 2s infinite;
 
 }
 
 
 
-@keyframes glow{
+@keyframes flicker{
 
 50%{
-opacity:.35;
+
+opacity:.45;
+
 }
 
 }
+
 
 
 
 </style>
+
 
 </head>
 
@@ -357,37 +318,47 @@ opacity:.35;
 <body>
 
 
+<canvas id="world"></canvas>
 
 
 
-<!-- SCENE 1 -->
 
-<div class="scene active" id="one">
+
+
+<!-- PHASE 1 -->
+
+
+<div class="scene active" id="s1">
 
 
 <div class="card">
 
 
 <h1>
-The Forgotten Chapter
+The First Chapter
 </h1>
 
 
-<p>
 
-Among the whispers of a classroom wall,<br>
+<p class="story">
 
-there lived a friendship beyond it all.<br>
 
-A thousand stories, a thousand smiles,<br>
+In Vijayawada where the days were bright,<br>
 
-still waiting after countless miles.
+we built little memories under classroom light.<br>
+
+With laughter, stories, and moments so true,<br>
+
+those simple days became treasures we knew.
 
 </p>
 
 
-<button onclick="go('two')">
+
+<button onclick="next(2)">
+
 Open The Memory
+
 </button>
 
 
@@ -401,96 +372,129 @@ Open The Memory
 
 
 
-<!-- SCENE 2 -->
 
 
-<div class="scene" id="two">
+<!-- PHASE 2 -->
+
+
+<div class="scene" id="s2">
 
 
 <h1>
-Vijayawada
+A Voice Full Of Stories
 </h1>
 
 
-<p>
 
-Where school days quietly bloomed...<br>
+<p class="story">
 
-where stories were told and laughter grew.
 
-<br><br>
+From Delhi's streets to stories she would share,<br>
 
-Drag the diary into the light.
+she filled every moment with magical flair.<br>
+
+Every tale she told, every laugh she gave,<br>
+
+became little memories my heart chose to save.
 
 </p>
+
 
 
 <div id="diary">
+
 📖
-</div>
-
 
 </div>
-
-
-
-
-
-<!-- SCENE 3 -->
-
-
-<div class="scene" id="three">
-
-
-<h1>
-14 Years Later
-</h1>
 
 
 <p>
 
-Fourteen years crossed like a river wide,<br>
-
-yet your memory stayed by my side.<br>
-
-Time changed roads and skies turned new,<br>
-
-but some bonds remain forever true.
+Drag the diary into the light...
 
 </p>
 
 
-<button onclick="go('four')">
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- PHASE 3 -->
+
+
+<div class="scene" id="s3">
+
+
+<h1>
+Fourteen Years
+</h1>
+
+
+
+<p class="story">
+
+
+Fourteen years passed like rivers that flow,<br>
+
+through changing seasons and paths we don't know.<br>
+
+But some friendships stay inside the heart,<br>
+
+no distance or time can tear them apart.
+
+</p>
+
+
+
+<button onclick="next(4)">
+
 Continue
+
 </button>
 
 
 </div>
-<!-- SCENE 4 -->
 
-<div class="scene" id="four">
+
+
+
+<!-- PHASE 4 -->
+
+<div class="scene" id="s4">
 
 
 <h1>
-Hyderabad
+Hyderabad Chapter
 </h1>
 
 
-<p>
 
-Different streets and different skies,<br>
+<p class="story">
 
-new dreams beneath unfamiliar lights.<br>
 
-Still somewhere inside my heart remained,<br>
+New roads appeared and dreams took flight,<br>
 
-a friendship time never could change.
+under Hyderabad's glowing city lights.<br>
+
+Yet one old friendship continued to stay,<br>
+
+like a beautiful song that never fades away.
 
 </p>
 
 
-<button onclick="go('five')">
+
+<button onclick="next(5)">
+
 Unlock The Memory
+
 </button>
 
 
@@ -504,10 +508,10 @@ Unlock The Memory
 
 
 
-<!-- SCENE 5 -->
+<!-- PHASE 5 -->
 
 
-<div class="scene" id="five">
+<div class="scene" id="s5">
 
 
 <h1>
@@ -515,19 +519,29 @@ The Hidden Name
 </h1>
 
 
-<p>
 
-One little name, one little sign...<br>
+<p class="story">
 
-Unlocks a memory lost in time.
+
+One little name holds the key,<br>
+
+a hidden word only you can see.<br>
+
+Type it softly, let memories start,<br>
+
+and open the door inside your heart.
 
 </p>
 
 
-<input id="answer" placeholder="Enter nickname">
+
+<input id="key"
+placeholder="Enter nickname">
+
 
 
 <br><br>
+
 
 
 <button onclick="unlock()">
@@ -537,6 +551,7 @@ Unlock
 </button>
 
 
+
 </div>
 
 
@@ -547,10 +562,11 @@ Unlock
 
 
 
-<!-- SCENE 6 -->
+
+<!-- PHASE 6 -->
 
 
-<div class="scene" id="six">
+<div class="scene" id="s6">
 
 
 <h1>
@@ -558,22 +574,23 @@ KEERTHI
 </h1>
 
 
-<p>
 
-Not every chapter needs an end,<br>
+<p class="story">
 
-some souls return as timeless friends.
 
-<br><br>
+Not every friend becomes a memory,<br>
 
-A story remembered...<br>
+some become a forever story.<br>
 
-a friendship never forgotten.
+Some chapters never need goodbye,<br>
+
+they live like stars in the endless sky.
 
 </p>
 
 
-<button onclick="go('seven')">
+
+<button onclick="next(7)">
 
 A Blessing
 
@@ -590,10 +607,12 @@ A Blessing
 
 
 
-<!-- SCENE 7 -->
+
+<!-- PHASE 7 -->
 
 
-<div class="scene" id="seven">
+<div class="scene" id="s7">
+
 
 
 <p class="verse">
@@ -605,13 +624,16 @@ there is no flaw in you."
 
 <br><br>
 
+
 — Song of Solomon 4:7
 
 
 </p>
 
 
-<button onclick="go('eight')">
+
+
+<button onclick="next(8)">
 
 Continue
 
@@ -629,11 +651,11 @@ Continue
 
 
 
+<!-- PHASE 8 -->
 
-<!-- SCENE 8 -->
 
+<div class="scene" id="s8">
 
-<div class="scene" id="eight">
 
 
 <h1>
@@ -641,6 +663,8 @@ Continue
 HAPPY BIRTHDAY
 
 </h1>
+
+
 
 
 <div class="name">
@@ -651,52 +675,45 @@ CHOTI ❤️
 
 
 
-<p>
+<p class="story">
 
-Years may pass and roads may part,<br>
 
-but true friendships stay inside the heart.
+Years may fly and seasons may part,<br>
+
+true friendship stays within the heart.<br>
+
+From Vijayawada memories we made,<br>
+
+to every new road life displayed.
 
 <br><br>
 
-From Vijayawada memories...<br>
-
-to Hyderabad journeys...
+Some friendships are not written in time...
 
 <br>
 
-some bonds are written forever.
+they are written in the soul.
 
 </p>
 
 
 
 </div>
-
-
-
-
-
-
-
-
-
 <script>
 
 
-// SCENE CHANGE
+// SCENE CONTROL
 
 
-function go(id){
-
+function next(n){
 
 document
 .querySelectorAll(".scene")
-.forEach(x=>x.classList.remove("active"));
+.forEach(s=>s.classList.remove("active"));
 
 
 document
-.getElementById(id)
+.getElementById("s"+n)
 .classList.add("active");
 
 
@@ -706,10 +723,7 @@ document
 
 
 
-
-
-
-// DRAG DIARY
+// DIARY DRAG
 
 
 let diary=document.getElementById("diary");
@@ -733,7 +747,7 @@ if(dragging){
 
 dragging=false;
 
-go("three");
+next(3);
 
 }
 
@@ -743,7 +757,7 @@ go("three");
 
 
 
-document.onmousemove=e=>{
+document.onmousemove=(e)=>{
 
 
 if(dragging){
@@ -752,7 +766,6 @@ diary.style.left=e.clientX-70+"px";
 
 diary.style.top=e.clientY-50+"px";
 
-
 }
 
 };
@@ -765,33 +778,28 @@ diary.style.top=e.clientY-50+"px";
 
 
 
-
-// PASSWORD
+// NICKNAME UNLOCK
 
 
 function unlock(){
 
 
-let text=document
-.getElementById("answer")
+let value=document
+.getElementById("key")
 .value
 .toLowerCase();
 
 
 
-if(text=="choti"){
+if(value=="choti"){
 
-
-go("six");
-
+next(6);
 
 }
 
 else{
 
-
-alert("The memory is waiting for the right name ✨");
-
+alert("A special memory needs a special name ✨");
 
 }
 
@@ -804,19 +812,17 @@ alert("The memory is waiting for the right name ✨");
 
 
 
-// CINEMATIC FLOATING PARTICLES
+
+// CINEMATIC BACKGROUND ENGINE
 
 
-const canvas=document.createElement("canvas");
-
-document.body.appendChild(canvas);
-
+const canvas=document.getElementById("world");
 
 const ctx=canvas.getContext("2d");
 
 
 
-function size(){
+function resize(){
 
 canvas.width=innerWidth;
 
@@ -825,28 +831,33 @@ canvas.height=innerHeight;
 }
 
 
-size();
-
-window.onresize=size;
+resize();
 
 
+window.onresize=resize;
 
-let particles=[];
+
+
+
+
+let objects=[];
 
 
 
 for(let i=0;i<120;i++){
 
 
-particles.push({
+objects.push({
 
 x:Math.random()*innerWidth,
 
 y:Math.random()*innerHeight,
 
-r:Math.random()*3,
+size:Math.random()*4+1,
 
-s:Math.random()+.2
+speed:Math.random()*1.5+.2,
+
+type:Math.random()
 
 });
 
@@ -858,60 +869,192 @@ s:Math.random()+.2
 
 
 
-function animate(){
 
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
+function draw(){
+
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
 
 
 
-particles.forEach(p=>{
+
+let current =
+document.querySelector(".active").id;
+
+
+
+
+
+objects.forEach(o=>{
+
+
+
+
+
+// classroom dust
+
+if(current=="s1"){
 
 
 ctx.fillStyle=
-"rgba(255,220,130,.7)";
+"rgba(255,220,130,.6)";
+
+
+}
+
+
+
+
+// story papers
+
+else if(current=="s2"){
+
+
+ctx.fillStyle=
+"rgba(255,240,180,.8)";
+
+
+}
+
+
+
+
+// time particles
+
+else if(current=="s3"){
+
+
+ctx.fillStyle=
+"rgba(100,220,255,.8)";
+
+
+}
+
+
+
+
+// city lights
+
+else if(current=="s4"){
+
+
+ctx.fillStyle=
+"rgba(255,180,80,.8)";
+
+
+}
+
+
+
+
+// magical unlock
+
+else if(current=="s5"){
+
+
+ctx.fillStyle=
+"rgba(200,120,255,.8)";
+
+
+}
+
+
+
+
+// golden ending
+
+else{
+
+
+ctx.fillStyle=
+"rgba(255,220,100,.8)";
+
+
+}
+
+
+
+
 
 
 
 ctx.beginPath();
 
 ctx.arc(
-p.x,
-p.y,
-p.r,
+o.x,
+o.y,
+o.size,
 0,
 Math.PI*2
 );
-
 
 ctx.fill();
 
 
 
-p.y-=p.s;
+
+o.y-=o.speed;
 
 
 
-if(p.y<0)
-p.y=innerHeight;
+if(o.y<0)
+
+o.y=canvas.height;
 
 
 });
 
 
 
-requestAnimationFrame(animate);
+requestAnimationFrame(draw);
+
 
 
 }
 
 
-animate();
+draw();
+
+
+
+
+
+// RANDOM CINEMATIC CAMERA SHAKE
+
+
+setInterval(()=>{
+
+
+let active=document.querySelector(".active");
+
+
+active.style.transform=
+"scale(1.02)";
+
+
+setTimeout(()=>{
+
+active.style.transform="scale(1)";
+
+},400);
+
+
+
+},5000);
+
+
+
 
 
 </script>
 
 
-
 </body>
+
 </html>

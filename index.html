@@ -35,7 +35,7 @@ animation:shake 0.6s ease;
 100%{transform:translate(0,0);}
 }
 
-/* CANVAS */
+/* CANVAS LAYERS */
 canvas{
 position:absolute;
 top:0;
@@ -44,8 +44,16 @@ width:100%;
 height:100%;
 }
 
-#stars{z-index:0;}
-#particles{z-index:1;pointer-events:none;}
+/* STAR LAYER */
+#stars{
+z-index:0;
+}
+
+/* PARTICLES */
+#particles{
+z-index:1;
+pointer-events:none;
+}
 
 /* SCENES */
 .scene{
@@ -74,7 +82,6 @@ transform:scale(1);
 pointer-events:auto;
 }
 
-/* TEXT */
 h1{
 font-size:55px;
 color:#ffd67a;
@@ -107,7 +114,6 @@ transform:scale(1.05);
 box-shadow:0 0 20px gold;
 }
 
-/* CARD */
 .card{
 background:rgba(255,255,255,.08);
 padding:45px;
@@ -116,7 +122,7 @@ backdrop-filter:blur(12px);
 box-shadow:0 0 50px rgba(255,200,80,.4);
 }
 
-/* DRAG */
+/* DRAG AREA */
 .drag-area{
 width:100%;
 height:260px;
@@ -127,6 +133,7 @@ position:relative;
 margin-top:30px;
 }
 
+/* MEMORY */
 #memoryStar{
 width:90px;
 height:90px;
@@ -140,42 +147,25 @@ transform:translateX(-50%);
 cursor:grab;
 }
 
-/* UNLOCK GLOW */
+/* GLow unlock */
 .unlock-glow{
 animation:unlockPulse 1s ease;
 }
 
 @keyframes unlockPulse{
 0%{transform:scale(1);}
-40%{transform:scale(1.6);}
+40%{transform:scale(1.5);box-shadow:0 0 80px gold;}
 100%{transform:scale(1);}
 }
 
-/* HEARTBEAT VISUAL */
-.heartbeat{
-animation:beat 1s infinite;
+/* typing cursor */
+.type::after{
+content:"|";
+animation:blink 0.8s infinite;
 }
 
-@keyframes beat{
-0%{transform:scale(1);}
-25%{transform:scale(1.03);}
-50%{transform:scale(1);}
-75%{transform:scale(1.05);}
-100%{transform:scale(1);}
-}
-
-/* FINAL FADE */
-#finalFade{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-opacity:0;
-z-index:999;
-transition:opacity 2.5s ease;
-pointer-events:none;
+@keyframes blink{
+50%{opacity:0;}
 }
 
 /* BIG TEXT */
@@ -199,48 +189,59 @@ line-height:1.8;
 <canvas id="stars"></canvas>
 <canvas id="particles"></canvas>
 
-<div id="finalFade"></div>
-
 <!-- 1 -->
 <div class="scene active" id="s1">
 <div class="card">
-<h1>A Story Across Time</h1>
-<p>Some chapters begin quietly... but some stay forever.</p>
+<h1 class="type">A Story Across Time</h1>
+<p class="type">
+Some chapters begin quietly... in classrooms, conversations, and little moments that become memories forever.
+</p>
 <button onclick="openScene(2)">Begin The Journey</button>
 </div>
 </div>
 
 <!-- 2 -->
 <div class="scene" id="s2">
+
 <h1>Vijayawada</h1>
-<p>The city where friendship began...</p>
+
+<p class="type">
+The city where a beautiful friendship started... with stories, laughter, and countless memories.
+</p>
 
 <div class="drag-area">
 <div id="memoryStar"></div>
 </div>
 
 <p>Drag the glowing memory ✨</p>
+
 </div>
 
 <!-- 3 -->
 <div class="scene" id="s3">
-<h1>14 Years Later...</h1>
-<p>Time changed everything... but not memory.</p>
+<h1 class="type">14 Years Later...</h1>
+<p class="type">
+Time changed paths. Cities changed. Life moved forward.<br><br>
+But some friendships stay exactly where the heart left them.
+</p>
 <button onclick="openScene(4)">Continue</button>
 </div>
 
 <!-- 4 -->
 <div class="scene" id="s4">
 <h1>Vijayawada ✨ Hyderabad</h1>
-<p>Same memories, different places.</p>
+<p class="type">From school days to new dreams... same memories.</p>
 <button onclick="openScene(5)">Unlock A Memory</button>
 </div>
 
 <!-- 5 -->
 <div class="scene" id="s5">
+
 <h1>A Secret Name</h1>
 
-<p>I still remember your stories from school... I truly enjoyed them ✨</p>
+<p class="type">
+And I still remember sitting in school, listening to your stories... I genuinely enjoyed every single one of them ✨
+</p>
 
 <input id="nick" placeholder="Enter your nickname...">
 <br><br>
@@ -250,15 +251,16 @@ line-height:1.8;
 
 <!-- 6 -->
 <div class="scene" id="s6">
-<h1>KEERTHI</h1>
-<p>You were never just a memory... you were peace.</p>
+<h1 class="type">KEERTHI</h1>
+<p class="type">You were never just a memory... you were a chapter I never closed.</p>
 <button onclick="openScene(7)">A Blessing</button>
 </div>
 
 <!-- 7 -->
 <div class="scene" id="s7">
-<p class="verse">
-"You are altogether beautiful, my darling..."<br>
+<p class="verse type">
+"You are altogether beautiful, my darling;<br>
+there is no flaw in you."<br><br>
 — Song of Solomon 4:7
 </p>
 <button onclick="openScene(8)">Continue</button>
@@ -266,9 +268,9 @@ line-height:1.8;
 
 <!-- 8 -->
 <div class="scene" id="s8">
-<div class="big">HAPPY BIRTHDAY</div>
+<div class="big type">HAPPY BIRTHDAY</div>
 <h1>CHOTI ❤️</h1>
-<p>14 years... still here.</p>
+<p class="type">14 years passed... but this friendship was never forgotten.</p>
 </div>
 
 <script>
@@ -310,41 +312,35 @@ pCanvas.width=innerWidth;
 pCanvas.height=innerHeight;
 }
 resizeP();
+onresize=()=>{resize();resizeP();};
 
 let particles=[];
 
 document.addEventListener("mousemove",(e)=>{
-if(Math.random()<0.4){
+for(let i=0;i<2;i++){
 particles.push({
 x:e.clientX,
 y:e.clientY,
-vx:(Math.random()-0.5)*1.2,
-vy:(Math.random()-0.5)*1.2 - 0.3,
-life:60
+vx:(Math.random()-0.5)*2,
+vy:(Math.random()-0.5)*2,
+life:30
 });
 }
 });
 
-/* SAFE LOOP */
 function drawParticles(){
+pctx.clearRect(0,0,pCanvas.width,pCanvas.height);
 
-pctx.fillStyle="rgba(2,3,11,0.25)";
-pctx.fillRect(0,0,pCanvas.width,pCanvas.height);
-
-for(let i=particles.length-1;i>=0;i--){
-let p=particles[i];
-
+particles.forEach((p,i)=>{
 p.x+=p.vx;
 p.y+=p.vy;
 p.life--;
 
-pctx.beginPath();
-pctx.fillStyle=`rgba(255,215,0,${p.life/60})`;
-pctx.arc(p.x,p.y,1.8,0,Math.PI*2);
-pctx.fill();
+pctx.fillStyle="gold";
+pctx.fillRect(p.x,p.y,2,2);
 
 if(p.life<=0) particles.splice(i,1);
-}
+});
 
 requestAnimationFrame(drawParticles);
 }
@@ -354,12 +350,6 @@ drawParticles();
 function openScene(n){
 document.querySelectorAll(".scene").forEach(s=>s.classList.remove("active"));
 document.getElementById("s"+n).classList.add("active");
-
-/* HEARTBEAT TRIGGER */
-if(n===8){
-startHeartbeat();
-setTimeout(finalExplosion,1200);
-}
 }
 
 /* DRAG */
@@ -372,6 +362,7 @@ document.onmouseup=()=>{
 if(drag){
 drag=false;
 
+/* CAMERA SHAKE + GLOW */
 document.body.classList.add("shake");
 star.classList.add("unlock-glow");
 
@@ -399,52 +390,49 @@ alert("That memory needs the right name ✨");
 }
 }
 
-/* HEARTBEAT AUDIO */
-let audioCtx,osc,gain;
+/* SIMPLE BACKGROUND MUSIC (soft ambient) */
+let audioCtx=null;
 
-function startHeartbeat(){
+function startMusic(){
 if(audioCtx) return;
-
 audioCtx=new (window.AudioContext||window.webkitAudioContext)();
 
-osc=audioCtx.createOscillator();
-gain=audioCtx.createGain();
+let osc=audioCtx.createOscillator();
+let gain=audioCtx.createGain();
 
 osc.type="sine";
-osc.frequency.value=60;
-gain.gain.value=0;
+osc.frequency.value=220;
+
+gain.gain.value=0.03;
 
 osc.connect(gain);
 gain.connect(audioCtx.destination);
 
 osc.start();
 
-/* visual */
-document.getElementById("s8").classList.add("heartbeat");
-
-let beat=700;
-
+/* soft pulse */
 setInterval(()=>{
-gain.gain.setValueAtTime(0.3,audioCtx.currentTime);
-gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.12);
-},beat);
+osc.frequency.value=220 + Math.random()*20;
+},2000);
 }
 
-/* FINAL EXPLOSION */
-function finalExplosion(){
+document.body.addEventListener("click",startMusic,{once:true});
 
-for(let i=0;i<150;i++){
-particles.push({
-x:innerWidth/2,
-y:innerHeight/2,
-vx:(Math.random()-0.5)*9,
-vy:(Math.random()-0.5)*9,
-life:80
+/* TYPING EFFECT */
+document.querySelectorAll(".type").forEach(el=>{
+let text=el.innerText;
+el.innerText="";
+let i=0;
+
+function type(){
+if(i<text.length){
+el.innerText+=text.charAt(i);
+i++;
+setTimeout(type,20);
+}
+}
+type();
 });
-}
-
-document.getElementById("finalFade").style.opacity="1";
-}
 
 </script>
 

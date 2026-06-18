@@ -1,265 +1,713 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Friendship Story - Keerthi</title>
+
+<title>A Story Across Time</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: Arial, sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
-  overflow:hidden;
-  height:100vh;
-  background:black;
-  color:white;
+background:#02030b;
+overflow:hidden;
+font-family:Georgia,serif;
+color:white;
 }
 
-/* ===== SCENES ===== */
+
+canvas{
+position:absolute;
+width:100%;
+height:100%;
+}
+
+
 .scene{
-  position:absolute;
-  width:100%;
-  height:100%;
-  opacity:0;
-  transition:1.2s ease;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
+
+position:absolute;
+width:100%;
+height:100%;
+
+display:none;
+
+align-items:center;
+justify-content:center;
+flex-direction:column;
+
+text-align:center;
+padding:30px;
+
 }
 
-.scene.active{
-  opacity:1;
-  z-index:10;
+
+.active{
+display:flex;
+animation:fade 2s ease;
 }
 
-/* ===== CARTOON STYLE BACKGROUNDS (PHASES) ===== */
-#p1{
-  background: linear-gradient(135deg,#ffecd2,#fcb69f);
+
+@keyframes fade{
+
+from{
+opacity:0;
 }
 
-#p2{
-  background: linear-gradient(135deg,#a1c4fd,#c2e9fb);
+to{
+opacity:1;
 }
 
-#p3{
-  background: linear-gradient(135deg,#d4fc79,#96e6a1);
 }
 
-#p4{
-  background: linear-gradient(135deg,#84fab0,#8fd3f4);
-}
 
-#p5{
-  background: linear-gradient(135deg,#fddb92,#d1fdff);
-}
 
-#p6{
-  background: linear-gradient(135deg,#434343,#000000);
-}
-
-/* ===== CONTENT BOX ===== */
-.box{
-  max-width:750px;
-  padding:25px;
-  background:rgba(0,0,0,0.35);
-  border-radius:15px;
-  backdrop-filter: blur(6px);
-}
-
-/* ===== TEXT ===== */
 h1{
-  font-size:40px;
-  margin-bottom:10px;
+
+font-size:55px;
+color:#ffd67a;
+
+text-shadow:
+0 0 25px #ffb300,
+0 0 60px #ff6600;
+
 }
+
 
 p{
-  font-size:18px;
-  line-height:1.6;
-  opacity:0.95;
+
+max-width:850px;
+
+font-size:25px;
+
+line-height:1.7;
+
+margin:30px;
+
+color:#f5e7c5;
+
 }
 
-/* ===== BUTTON ===== */
+
+
+button,input{
+
+padding:15px 35px;
+
+border-radius:30px;
+
+border:none;
+
+font-size:20px;
+
+}
+
+
 button{
-  margin-top:20px;
-  padding:12px 20px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  background:gold;
-  color:black;
+
+background:#ffd36b;
+
+cursor:pointer;
+
 }
 
-/* ===== MEMORY CARDS ===== */
+
 .card{
-  position:absolute;
-  padding:10px 15px;
-  background:rgba(255,255,255,0.25);
-  border-radius:15px;
-  cursor:pointer;
-  transition:0.3s;
+
+background:rgba(255,255,255,.08);
+
+padding:45px;
+
+border-radius:25px;
+
+backdrop-filter:blur(12px);
+
+box-shadow:0 0 50px rgba(255,200,80,.4);
+
 }
 
-.card:hover{
-  transform:scale(1.1);
+
+
+
+#memoryStar{
+
+width:90px;
+height:90px;
+
+background:#ffd35a;
+
+border-radius:50%;
+
+box-shadow:
+0 0 30px gold,
+0 0 70px orange;
+
+position:absolute;
+
+cursor:grab;
+
 }
 
-/* ===== POPUP ===== */
-.popup{
-  position:fixed;
-  bottom:10%;
-  left:50%;
-  transform:translateX(-50%);
-  background:black;
-  padding:15px;
-  border:1px solid gold;
-  border-radius:10px;
-  display:none;
+
+
+.name{
+
+font-size:90px;
+
+letter-spacing:12px;
+
+color:#ffe082;
+
+text-shadow:
+0 0 30px gold;
+
 }
+
+
+
+.verse{
+
+font-size:30px;
+
+line-height:1.8;
+
+animation:flicker 2s infinite;
+
+}
+
+
+
+@keyframes flicker{
+
+0%,100%{
+opacity:1;
+}
+
+50%{
+opacity:.45;
+}
+
+}
+
+
+
+.big{
+
+font-size:70px;
+
+color:#ffd56a;
+
+text-shadow:
+0 0 40px gold;
+
+}
+
+
+
 </style>
+
 </head>
+
 
 <body>
 
-<!-- PHASE 1 -->
-<div class="scene active" id="p1">
-  <div class="box">
-    <h1>Vijayawada Days 🌸</h1>
-    <p>
-      We studied in the same school…  
-      Keerthi used to tell stories,  
-      and I always enjoyed listening.
-    </p>
-    <p>
-      “Simple days, big memories.”
-    </p>
-    <button onclick="next()">Start Journey</button>
-  </div>
+
+<canvas id="stars"></canvas>
+
+
+
+<!-- 1 -->
+
+<div class="scene active" id="s1">
+
+
+<div class="card">
+
+
+<h1>
+A Story Across Time
+</h1>
+
+
+<p>
+
+Some chapters begin quietly...<br>
+
+in classrooms, conversations, and little moments<br>
+
+that become memories forever.
+
+</p>
+
+
+<button onclick="openScene(2)">
+Begin The Journey
+</button>
+
+
 </div>
 
-<!-- PHASE 2 -->
-<div class="scene" id="p2">
-  <div class="box">
-    <h1>14 Years Passed ⏳</h1>
-    <p>
-      Years changed everything around us…  
-      but not the memory of those school days.
-    </p>
-    <p>
-      “Some bonds don’t age with time.”
-    </p>
-    <button onclick="next()">Continue</button>
-  </div>
+
 </div>
 
-<!-- PHASE 3 -->
-<div class="scene" id="p3">
-  <div class="box">
-    <h1>Hyderabad Reunion 🌆</h1>
-    <p>
-      After 14 years… I found you again in Hyderabad.  
-      It felt like time quietly fixed itself.
-    </p>
-    <p>
-      “Some meetings are written, not planned.”
-    </p>
-    <button onclick="next()">Continue</button>
-  </div>
+
+
+
+
+
+<!-- 2 -->
+
+
+<div class="scene" id="s2">
+
+
+<h1>
+Vijayawada
+</h1>
+
+
+<p>
+
+The city where a beautiful friendship started...<br>
+
+with stories, laughter, and countless memories.
+
+<br><br>
+
+Drag the glowing memory back...
+
+</p>
+
+
+<div id="memoryStar"></div>
+
+
 </div>
 
-<!-- PHASE 4 -->
-<div class="scene" id="p4">
-  <div class="box">
-    <h1>Her Stories 📖</h1>
-    <p>Click the memories</p>
-    <button onclick="next()">Continue</button>
-  </div>
 
-  <div class="card" style="top:30%;left:15%;" onclick="show('She told stories… and I never got bored.')">Story 1</div>
 
-  <div class="card" style="top:50%;left:70%;" onclick="show('Her stories made normal days feel special.')">Story 2</div>
 
-  <div class="card" style="top:70%;left:35%;" onclick="show('Even now, I remember her voice more than words.')">Story 3</div>
+
+
+
+<!-- 3 -->
+
+
+<div class="scene" id="s3">
+
+
+<h1>
+14 Years Later...
+</h1>
+
+
+<p>
+
+Time changed paths.<br>
+
+Cities changed.<br>
+
+Life moved forward.
+
+<br><br>
+
+But some friendships stay exactly where the heart left them.
+
+</p>
+
+
+<button onclick="openScene(4)">
+Continue
+</button>
+
+
 </div>
 
-<!-- PHASE 5 -->
-<div class="scene" id="p5">
-  <div class="box">
-    <h1>Bible Verse ✨</h1>
-    <p>
-      Love is patient, love is kind…  
-      it always protects, always trusts, always hopes.
-    </p>
-    <p>
-      “Some friendships feel blessed beyond time.”
-    </p>
-    <button onclick="next()">Continue</button>
-  </div>
+
+
+
+
+
+
+
+<!-- 4 -->
+
+
+<div class="scene" id="s4">
+
+
+<h1>
+
+Vijayawada ✨ Hyderabad
+
+</h1>
+
+
+<p>
+
+From school days to new dreams...<br>
+
+different places, same memories.
+
+</p>
+
+
+<button onclick="openScene(5)">
+Unlock A Memory
+</button>
+
+
 </div>
 
-<!-- PHASE 6 -->
-<div class="scene" id="p6">
-  <div class="box">
-    <h1 style="color:gold;">🎉 Happy Birthday Keerthi 🎉</h1>
-    <p>
-      From Vijayawada classrooms…  
-      to 14 years of silence…  
-      to finding you again in Hyderabad…
-    </p>
-    <p>
-      You were never forgotten, Choti 🌸
-    </p>
-    <button onclick="fire()">Celebrate</button>
-  </div>
+
+
+
+
+
+
+
+
+<!-- 5 -->
+
+
+<div class="scene" id="s5">
+
+
+<h1>
+
+A Secret Name
+
+</h1>
+
+
+<p>
+
+Only one person can open this chapter...
+
+</p>
+
+
+<input id="nick"
+placeholder="Enter nickname">
+
+
+<br><br>
+
+
+<button onclick="checkName()">
+
+Unlock
+
+</button>
+
+
 </div>
 
-<!-- POPUP -->
-<div class="popup" id="popup"></div>
+
+
+
+
+
+
+
+
+<!-- 6 -->
+
+
+<div class="scene" id="s6">
+
+
+<h1>
+
+KEERTHI
+
+</h1>
+
+
+<p>
+
+You were never just a memory...
+
+<br>
+
+you were a chapter I never closed.
+
+</p>
+
+
+<button onclick="openScene(7)">
+
+A Blessing
+
+</button>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- 7 Bible -->
+
+
+<div class="scene" id="s7">
+
+
+<p class="verse">
+
+
+"You are altogether beautiful, my darling;<br>
+
+there is no flaw in you."
+
+<br><br>
+
+— Song of Solomon 4:7
+
+
+</p>
+
+
+<button onclick="openScene(8)">
+
+Continue
+
+</button>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- 8 -->
+
+
+<div class="scene" id="s8">
+
+
+<div class="big">
+
+HAPPY BIRTHDAY
+
+</div>
+
+
+<h1>
+
+CHOTI ❤️
+
+</h1>
+
+
+<p>
+
+14 years passed...
+
+<br>
+
+but this friendship was never forgotten.
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+
 
 <script>
-let i=1;
 
-function next(){
-  document.getElementById("p"+i).classList.remove("active");
-  i++;
-  document.getElementById("p"+i).classList.add("active");
+
+// STARS
+
+
+const canvas=document.getElementById("stars");
+
+const ctx=canvas.getContext("2d");
+
+
+function resize(){
+
+canvas.width=innerWidth;
+
+canvas.height=innerHeight;
+
 }
 
-function show(txt){
-  let p=document.getElementById("popup");
-  p.innerText=txt;
-  p.style.display="block";
-  setTimeout(()=>p.style.display="none",3000);
+resize();
+
+onresize=resize;
+
+
+let stars=[];
+
+
+for(let i=0;i<350;i++){
+
+stars.push({
+
+x:Math.random()*innerWidth,
+
+y:Math.random()*innerHeight,
+
+r:Math.random()*2
+
+});
+
 }
 
-function fire(){
-  for(let j=0;j<40;j++){
-    let f=document.createElement("div");
-    f.style.position="absolute";
-    f.style.width="6px";
-    f.style.height="6px";
-    f.style.background="gold";
-    f.style.borderRadius="50%";
-    f.style.left=Math.random()*100+"vw";
-    f.style.top=Math.random()*100+"vh";
-    f.style.animation="boom 1s ease-out forwards";
-    document.body.appendChild(f);
-    setTimeout(()=>f.remove(),1200);
-  }
+
+
+function animateStars(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+
+stars.forEach(s=>{
+
+ctx.fillStyle="white";
+
+ctx.beginPath();
+
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+
+ctx.fill();
+
+});
+
+
+requestAnimationFrame(animateStars);
+
 }
+
+
+animateStars();
+
+
+
+
+
+
+
+function openScene(n){
+
+
+document.querySelectorAll(".scene")
+.forEach(s=>s.classList.remove("active"));
+
+
+document
+.getElementById("s"+n)
+.classList.add("active");
+
+
+}
+
+
+
+
+
+
+// DRAG MEMORY
+
+
+let star=document.getElementById("memoryStar");
+
+let drag=false;
+
+
+star.onmousedown=()=>{
+
+drag=true;
+
+};
+
+
+document.onmouseup=()=>{
+
+if(drag){
+
+drag=false;
+
+openScene(3);
+
+}
+
+};
+
+
+document.onmousemove=e=>{
+
+
+if(drag){
+
+star.style.left=e.clientX-45+"px";
+
+star.style.top=e.clientY-45+"px";
+
+}
+
+
+};
+
+
+
+
+
+
+// PASSWORD
+
+
+function checkName(){
+
+
+let v=document
+.getElementById("nick")
+.value
+.toLowerCase();
+
+
+if(v=="choti"){
+
+openScene(6);
+
+}
+
+else{
+
+alert("That memory needs the right name ✨");
+
+}
+
+
+}
+
+
+
 </script>
 
-<style>
-@keyframes boom{
-  from{transform:scale(0);opacity:1;}
-  to{transform:scale(8);opacity:0;}
-}
-</style>
 
 </body>
 </html>

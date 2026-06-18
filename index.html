@@ -21,15 +21,18 @@ color:white;
 user-select:none;
 }
 
-/* 🌌 CAMERA + SCENE BLUR TRANSITION */
-body.transition{
-animation:camBlur 0.8s ease;
+/* CAMERA SHAKE */
+.shake{
+animation:shake 0.6s ease;
 }
 
-@keyframes camBlur{
-0%{filter:blur(0px);}
-40%{filter:blur(6px);}
-100%{filter:blur(0px);}
+@keyframes shake{
+0%{transform:translate(0,0);}
+20%{transform:translate(-5px,3px);}
+40%{transform:translate(5px,-3px);}
+60%{transform:translate(-4px,2px);}
+80%{transform:translate(4px,-2px);}
+100%{transform:translate(0,0);}
 }
 
 /* CANVAS */
@@ -41,7 +44,6 @@ width:100%;
 height:100%;
 }
 
-/* STAR BACKGROUND */
 #stars{z-index:0;}
 #particles{z-index:1;pointer-events:none;}
 
@@ -61,8 +63,7 @@ padding:30px;
 z-index:2;
 
 opacity:0;
-transform:scale(1.35);
-filter:blur(10px);
+transform:scale(1.3);
 transition:all 1.2s ease;
 pointer-events:none;
 }
@@ -70,10 +71,10 @@ pointer-events:none;
 .scene.active{
 opacity:1;
 transform:scale(1);
-filter:blur(0px);
 pointer-events:auto;
 }
 
+/* TEXT */
 h1{
 font-size:55px;
 color:#ffd67a;
@@ -106,7 +107,16 @@ transform:scale(1.05);
 box-shadow:0 0 20px gold;
 }
 
-/* DRAG AREA */
+/* CARD */
+.card{
+background:rgba(255,255,255,.08);
+padding:45px;
+border-radius:25px;
+backdrop-filter:blur(12px);
+box-shadow:0 0 50px rgba(255,200,80,.4);
+}
+
+/* DRAG */
 .drag-area{
 width:100%;
 height:260px;
@@ -117,7 +127,6 @@ position:relative;
 margin-top:30px;
 }
 
-/* MEMORY STAR */
 #memoryStar{
 width:90px;
 height:90px;
@@ -131,7 +140,7 @@ transform:translateX(-50%);
 cursor:grab;
 }
 
-/* ✨ UNLOCK PULSE */
+/* UNLOCK GLOW */
 .unlock-glow{
 animation:unlockPulse 1s ease;
 }
@@ -142,6 +151,33 @@ animation:unlockPulse 1s ease;
 100%{transform:scale(1);}
 }
 
+/* HEARTBEAT VISUAL */
+.heartbeat{
+animation:beat 1s infinite;
+}
+
+@keyframes beat{
+0%{transform:scale(1);}
+25%{transform:scale(1.03);}
+50%{transform:scale(1);}
+75%{transform:scale(1.05);}
+100%{transform:scale(1);}
+}
+
+/* FINAL FADE */
+#finalFade{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+opacity:0;
+z-index:999;
+transition:opacity 2.5s ease;
+pointer-events:none;
+}
+
 /* BIG TEXT */
 .big{
 font-size:70px;
@@ -149,14 +185,9 @@ color:#ffd56a;
 text-shadow:0 0 40px gold;
 }
 
-/* TYPE CURSOR */
-.type::after{
-content:"|";
-animation:blink 0.8s infinite;
-}
-
-@keyframes blink{
-50%{opacity:0;}
+.verse{
+font-size:30px;
+line-height:1.8;
 }
 
 </style>
@@ -168,22 +199,21 @@ animation:blink 0.8s infinite;
 <canvas id="stars"></canvas>
 <canvas id="particles"></canvas>
 
+<div id="finalFade"></div>
+
 <!-- 1 -->
 <div class="scene active" id="s1">
-<h1 class="type">A Story Across Time</h1>
-<p class="type">
-Some chapters begin quietly... but some stay forever in memory.
-</p>
+<div class="card">
+<h1>A Story Across Time</h1>
+<p>Some chapters begin quietly... but some stay forever.</p>
 <button onclick="openScene(2)">Begin The Journey</button>
+</div>
 </div>
 
 <!-- 2 -->
 <div class="scene" id="s2">
 <h1>Vijayawada</h1>
-
-<p class="type">
-Where laughter started... and memories were born.
-</p>
+<p>The city where friendship began...</p>
 
 <div class="drag-area">
 <div id="memoryStar"></div>
@@ -194,17 +224,15 @@ Where laughter started... and memories were born.
 
 <!-- 3 -->
 <div class="scene" id="s3">
-<h1 class="type">14 Years Later...</h1>
-<p class="type">
-Time changed everything... but not what mattered.
-</p>
+<h1>14 Years Later...</h1>
+<p>Time changed everything... but not memory.</p>
 <button onclick="openScene(4)">Continue</button>
 </div>
 
 <!-- 4 -->
 <div class="scene" id="s4">
 <h1>Vijayawada ✨ Hyderabad</h1>
-<p class="type">Same memories, different places.</p>
+<p>Same memories, different places.</p>
 <button onclick="openScene(5)">Unlock A Memory</button>
 </div>
 
@@ -212,9 +240,7 @@ Time changed everything... but not what mattered.
 <div class="scene" id="s5">
 <h1>A Secret Name</h1>
 
-<p class="type">
-I still remember sitting in school... listening to your stories I genuinely enjoyed them ✨
-</p>
+<p>I still remember your stories from school... I truly enjoyed them ✨</p>
 
 <input id="nick" placeholder="Enter your nickname...">
 <br><br>
@@ -224,24 +250,25 @@ I still remember sitting in school... listening to your stories I genuinely enjo
 
 <!-- 6 -->
 <div class="scene" id="s6">
-<h1 class="type">KEERTHI</h1>
-<p class="type">You were never a memory... you were my peace.</p>
+<h1>KEERTHI</h1>
+<p>You were never just a memory... you were peace.</p>
 <button onclick="openScene(7)">A Blessing</button>
 </div>
 
 <!-- 7 -->
 <div class="scene" id="s7">
-<p class="type">
-"You are altogether beautiful, my darling..." — Song of Solomon 4:7
+<p class="verse">
+"You are altogether beautiful, my darling..."<br>
+— Song of Solomon 4:7
 </p>
 <button onclick="openScene(8)">Continue</button>
 </div>
 
 <!-- 8 -->
 <div class="scene" id="s8">
-<div class="big type">HAPPY BIRTHDAY</div>
+<div class="big">HAPPY BIRTHDAY</div>
 <h1>CHOTI ❤️</h1>
-<p class="type">14 years... but still here.</p>
+<p>14 years... still here.</p>
 </div>
 
 <script>
@@ -259,14 +286,10 @@ onresize=resize;
 
 let stars=[];
 for(let i=0;i<300;i++){
-stars.push({
-x:Math.random()*innerWidth,
-y:Math.random()*innerHeight,
-r:Math.random()*2
-});
+stars.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2});
 }
 
-function drawStars(){
+function draw(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 for(let s of stars){
 ctx.fillStyle="white";
@@ -274,11 +297,11 @@ ctx.beginPath();
 ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
 ctx.fill();
 }
-requestAnimationFrame(drawStars);
+requestAnimationFrame(draw);
 }
-drawStars();
+draw();
 
-/* 🌟 PARTICLES (IMPROVED GOLD DUST SYSTEM) */
+/* PARTICLES */
 const pCanvas=document.getElementById("particles");
 const pctx=pCanvas.getContext("2d");
 
@@ -291,47 +314,37 @@ resizeP();
 let particles=[];
 
 document.addEventListener("mousemove",(e)=>{
-
 if(Math.random()<0.4){
 particles.push({
 x:e.clientX,
 y:e.clientY,
 vx:(Math.random()-0.5)*1.2,
-vy:(Math.random()-0.5)*1.2 - 0.3, /* upward drift */
+vy:(Math.random()-0.5)*1.2 - 0.3,
 life:60
 });
 }
-
 });
 
+/* SAFE LOOP */
 function drawParticles(){
 
-/* soft fade trail */
 pctx.fillStyle="rgba(2,3,11,0.25)";
 pctx.fillRect(0,0,pCanvas.width,pCanvas.height);
 
-particles.forEach((p,i)=>{
+for(let i=particles.length-1;i>=0;i--){
+let p=particles[i];
 
 p.x+=p.vx;
 p.y+=p.vy;
 p.life--;
 
-p.alpha=p.life/60;
-
-/* subtle “word formation illusion” clusters */
-if(Math.random()<0.002){
-p.vx=0;
-p.vy=-0.5;
-}
-
-pctx.fillStyle=`rgba(255,215,0,${p.alpha})`;
 pctx.beginPath();
-pctx.arc(p.x,p.y,2,0,Math.PI*2);
+pctx.fillStyle=`rgba(255,215,0,${p.life/60})`;
+pctx.arc(p.x,p.y,1.8,0,Math.PI*2);
 pctx.fill();
 
 if(p.life<=0) particles.splice(i,1);
-
-});
+}
 
 requestAnimationFrame(drawParticles);
 }
@@ -339,16 +352,14 @@ drawParticles();
 
 /* SCENES */
 function openScene(n){
-document.body.classList.add("transition");
-
-setTimeout(()=>{
-document.body.classList.remove("transition");
-},800);
-
-document.querySelectorAll(".scene")
-.forEach(s=>s.classList.remove("active"));
-
+document.querySelectorAll(".scene").forEach(s=>s.classList.remove("active"));
 document.getElementById("s"+n).classList.add("active");
+
+/* HEARTBEAT TRIGGER */
+if(n===8){
+startHeartbeat();
+setTimeout(finalExplosion,1200);
+}
 }
 
 /* DRAG */
@@ -361,12 +372,11 @@ document.onmouseup=()=>{
 if(drag){
 drag=false;
 
+document.body.classList.add("shake");
 star.classList.add("unlock-glow");
 
-document.body.classList.add("transition");
-
 setTimeout(()=>{
-document.body.classList.remove("transition");
+document.body.classList.remove("shake");
 openScene(3);
 },800);
 }
@@ -387,6 +397,53 @@ openScene(6);
 }else{
 alert("That memory needs the right name ✨");
 }
+}
+
+/* HEARTBEAT AUDIO */
+let audioCtx,osc,gain;
+
+function startHeartbeat(){
+if(audioCtx) return;
+
+audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+
+osc=audioCtx.createOscillator();
+gain=audioCtx.createGain();
+
+osc.type="sine";
+osc.frequency.value=60;
+gain.gain.value=0;
+
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+
+osc.start();
+
+/* visual */
+document.getElementById("s8").classList.add("heartbeat");
+
+let beat=700;
+
+setInterval(()=>{
+gain.gain.setValueAtTime(0.3,audioCtx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.12);
+},beat);
+}
+
+/* FINAL EXPLOSION */
+function finalExplosion(){
+
+for(let i=0;i<150;i++){
+particles.push({
+x:innerWidth/2,
+y:innerHeight/2,
+vx:(Math.random()-0.5)*9,
+vy:(Math.random()-0.5)*9,
+life:80
+});
+}
+
+document.getElementById("finalFade").style.opacity="1";
 }
 
 </script>
